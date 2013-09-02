@@ -1,0 +1,3 @@
+require 'Rose'
+
+Rose.startRose()

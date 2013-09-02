@@ -1,0 +1,26 @@
+{
+  "content_scripts": [
+    "bower_components/jquery/jquery.js",
+    "bower_components/jssha/src/sha.js",
+    "scripts/app.js"
+  ],
+  "homepage_url":"http://www.sit.fraunhofer.de/",
+  "description":"Research tool for field studies in online social networks.",
+  "creator":"Fraunhofer Institute SIT",
+  "background_scripts": [
+    "main.js"
+  ], 
+  "homepage_url":"http://www.sit.fraunhofer.de/",
+  "version": "2.0", 
+  "browser_button":{
+      "caption":"ROSE",
+      "tooltipText":"ROSE Browser Plugin",
+      "icon":"icons/rose-icon.png",
+      "popup":{
+          "url":"popup/index.html",
+          "width":800,
+          "height":600
+      }
+  },
+  "name": "ROSE"
+}

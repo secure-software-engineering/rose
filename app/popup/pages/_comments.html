@@ -1,0 +1,13 @@
+<h2><span data-i18n="headings.comments-caption"></span> {{=it.networkName}}</h2>
+
+<ul class="comments-list">
+{{ for(var i in it.comments) { }}
+{{ var comment = it.comments[i]; }}
+<li>
+  <ul>
+    <li><strong><span data-i18n="comments.date"></span> {{=new Date(comment['date']).toLocaleString()}}</strong></li>
+    <li>{{=comment['comment']}}</li>
+  </ul>
+</li>
+{{ } }}
+</ul>

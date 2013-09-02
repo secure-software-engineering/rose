@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="../bower_components/bootstrap.css/css/bootstrap.css">
+    <!-- <link rel="stylesheet" href="styles/style.css"> -->
+    <!-- endbuild -->
+
+</head>
+<body style="width: 750px;">
+    <div class="container-fluid" style="margin-top: 20px;">
+        <div class="row-fluid">
+            <div class="span4">
+                <ul id="rose-navigation" class="nav nav-list">
+                    <li class="nav-header">ROSE</li>
+                    <li><a href="#" class="navigation-link" action="page" page-name="home" data-i18n="navigation.home"></a></li>
+                    <li><a href="#" class="navigation-link" action="page" page-name="backup" data-i18n="navigation.backup"></a></li>
+                    <li><a href="#" class="navigation-link" action="page" page-name="help" data-i18n="navigation.help"></a></li>
+                    <li><a href="#" class="navigation-link" action="page" page-name="about" data-i18n="navigation.about"></a></li>
+                    <li class="nav-header" data-i18n="navigation.diary"></li>
+                    <li><a href="#" class="navigation-link" action="diary" data-i18n="navigation.diary"></a></li>
+                </ul>
+            </div>
+            <div id="rose-content-field" class="span8">
+            </div>
+        </div>
+    </div>
+
+    <!-- build:js scripts/components.js -->
+    <script src="../bower_components/jquery/jquery.js"></script>
+    <script src="../bower_components/bootstrap.css/js/bootstrap.js"></script>
+    <script src="../bower_components/doT/doT.js"></script>
+    <script src="../bower_components/i18next/release/i18next-1.6.3.js"></script>
+    <!-- endbuild -->
+
+    <script src="../scripts/app.js"></script>
+
+    <!-- build:js scripts/app.js -->
+    <script src="ui.js"></script>
+    <script src="language.js"></script>
+    <!-- endbuild -->
+
+    <script type="text/javascript" src="../kango-ui/kango_api.js"></script>
+</body>
+</html>

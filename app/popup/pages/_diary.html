@@ -1,0 +1,13 @@
+<h2 data-i18n="headings.diary-caption"></h2>
+
+<ul class="comments-list">
+{{ for(var i in it.diaryEntries) { }}
+{{ var diaryEntry = it.diaryEntries[i]; }}
+<li>
+  <ul>
+    <li><strong><span data-i18n="diaryEntries.date"></span> {{=new Date(diaryEntry['date']).toLocaleString()}}</strong></li>
+    <li>{{=diaryEntry['comment']}}</li>
+  </ul>
+</li>
+{{ } }}
+</ul>

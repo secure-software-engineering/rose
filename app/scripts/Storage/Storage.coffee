@@ -21,4 +21,4 @@ class @Storage
 
 	@getDiaryEntries: (callback) ->
 
-	@removeDiaryEntry: (entry) ->
+	@removeDiaryEntry: (index) ->

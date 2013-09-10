@@ -1,20 +1,20 @@
 class @Storage
-	@addInteraction: (interaction, platform) ->
+    @addInteraction: (interaction, platform) ->
 
-	@getInteraction: (index, platform, callback) ->
+    @getInteraction: (index, platform, callback) ->
 
-	@getInteractions: (platform, callback) ->
+    @getInteractions: (platform, callback) ->
 
-	@removeInteraction: (index, platform) ->
+    @removeInteraction: (index, platform) ->
 
-	@addComment: (comment, platform) ->
+    @addComment: (comment, platform) ->
 
-	@getComment: (index, platform, callback) ->
+    @getComment: (index, platform, callback) ->
 
-	@getComments: (platform, callback) ->
+    @getComments: (platform, callback) ->
 
-	@removeComment: (index, platform) ->
+    @removeComment: (index, platform) ->
 
-	@addDiaryEntry: (entry) ->
+    @addDiaryEntry: (entry) ->
 
-	@getDiaryEntries: (callback) ->
+    @getDiaryEntries: (callback) ->

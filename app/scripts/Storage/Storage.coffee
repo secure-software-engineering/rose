@@ -1,7 +1,9 @@
+require 'Storage/RoseData'
+
 class @Storage
     @addPlatform: (platformName) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             roseData.addPlatform(platformName)
             
@@ -9,7 +11,7 @@ class @Storage
     
     @hasPlatform: (platformName, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             hasPlatform = roseData.hasPlatform(platformName)
             
@@ -17,7 +19,7 @@ class @Storage
     
     @addInteraction: (record, platformName) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             roseData.addInteraction(record, platformName)
             
@@ -25,7 +27,7 @@ class @Storage
 
     @getInteraction: (index, platformName, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             interaction = roseData.getInteraction(index, platformName)
             
@@ -33,7 +35,7 @@ class @Storage
 
     @getInteractions: (platformName, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             interactions = roseData.getInteractions(platformName)
             
@@ -41,7 +43,7 @@ class @Storage
 
     @removeInteraction: (index, platformName) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             roseData.removeInteraction(index, platformName)
             
@@ -49,7 +51,7 @@ class @Storage
 
     @addComment: (comment, platformName) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             roseData.addComment(comment, platformName)
             
@@ -57,14 +59,14 @@ class @Storage
 
     @getComment: (index, platformName, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             comment = roseData.getComment(index, platformName)
             
             callback(comment)
 
     @getComments: (platformName, callback) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             comments = roseData.getComments(platformName)
             
@@ -72,7 +74,7 @@ class @Storage
 
     @removeComment: (index, platformName) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             roseData.removeComment(index, platformName)
             
@@ -80,7 +82,7 @@ class @Storage
 
     @addDiaryEntry: (entry) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             roseData.addDiaryEntry(entry)
             
@@ -88,14 +90,14 @@ class @Storage
     
     @removeDiaryEntry: (index) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             roseData.removeDiaryEntry(index)
             
             kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
 
     @getDiaryEntries: (callback) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             entries = roseData.getDiaryEntries()
             
@@ -103,7 +105,7 @@ class @Storage
     
     @getPrivacyEntry: (platformName, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             entry = roseData.getPrivacyEntry(platformName)
             
@@ -111,7 +113,7 @@ class @Storage
     
     @setPrivacyEntry: (entry, platformName) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             roseData.setPrivacyEntry(entry, platformName)
             
@@ -119,7 +121,7 @@ class @Storage
     
     @getMetaInformation: (callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             meta = roseData.getMeta()
             
@@ -127,7 +129,7 @@ class @Storage
     
     @setMetaInformation: (meta) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             roseData.setPrivacyEntry(entry, platformName)
             
@@ -135,7 +137,7 @@ class @Storage
     
     @appendMetaInformation: (meta) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new @RoseData(roseStorage)
+            roseData = new RoseData(roseStorage)
             
             roseData.setMeta(meta)
             

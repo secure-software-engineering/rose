@@ -3,7 +3,7 @@ require 'Storage/Storage'
 
 class @Network
 	# Network name.
-	network:   "Stub"
+	network:   "Facebook"
 
 	# List of observers.
 	observers: []

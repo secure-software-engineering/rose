@@ -35,10 +35,11 @@ class @RoseData
         return false
     
     addInteraction: (record, platformName) ->
-        index = @getInteractions(platformName).length + 1
+        index = @getInteractions(platformName).length
         interaction =
             index: index
             deleted: false
+            createdAt: new Date()
             record: record
         @getInteractions(platformName).push interaction
     
@@ -64,10 +65,11 @@ class @RoseData
         return null
     
     addComment: (record, platformName) ->
-        index = @getComments(platformName).length + 1
+        index = @getComments(platformName).length
         comment =
             index: index
             deleted: false
+            createdAt: new Date()
             record: record
         @getComments(platformName).push comment
 
@@ -100,9 +102,10 @@ class @RoseData
     
     addDiaryEntry: (content) ->
         @addDiary() unless @hasDiary()
-        index = @getDiaryEntries().length + 1
+        index = @getDiaryEntries().length
         entry =
             index: index
+            createdAt: new Date()
             content: content
         @getDiaryEntries().push entry
     

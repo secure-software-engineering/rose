@@ -65,7 +65,7 @@ class window.Facebook extends Network
 					id = likeObserver.getID($(this))
 
 					# Create interaction.
-					interaction = 
+					interaction =
 						'interaction_type': 'commentstatus'
 						'object_type':      'comment'
 						'object_owner':     FacebookUtilities.getUserID()
@@ -74,7 +74,7 @@ class window.Facebook extends Network
 						'time':             new Date()
 
 					# Save interaction.
-					Storage.saveInteraction(interaction, name)
+					Storage.addInteraction(interaction, name)
 
 	integrateChatTextareaObserver: ->
 		# Get network name.
@@ -113,7 +113,7 @@ class window.Facebook extends Network
 					}
 
 					# Save interaction.
-					Storage.saveInteraction(interaction, name)
+					Storage.addInteraction(interaction, name)
 
 	integrateChatSubmitButtonObserver: ->
 		# Get network name.
@@ -148,7 +148,7 @@ class window.Facebook extends Network
 				}
 
 				# Save interaction.
-				Storage.saveInteraction(interaction, name)
+				Storage.addInteraction(interaction, name)
 
 	getNetworkName: ->
 		@network

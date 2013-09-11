@@ -15,6 +15,12 @@ class @RoseData
         for key, value of meta
             @data['meta'][key] = value
     
+    setMeta: (meta) ->
+        @data['meta'] = meta
+    
+    getMeta: ->
+        @data['meta']
+    
     addPlatform: (platformName) ->
         platform =
             name: platformName

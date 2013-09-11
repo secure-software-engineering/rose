@@ -1,5 +1,5 @@
 require 'InteractionFactory'
-require 'Storage'
+require 'Storage/Storage'
 
 class @Network
 	# Network name.

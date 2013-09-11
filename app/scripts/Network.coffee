@@ -41,7 +41,7 @@ class @Network
 				interaction = InteractionFactory.createInteraction(id, metaData)
 
 				# ... and save to storage.
-				Storage.saveInteraction(interaction, name)
+				Storage.addInteraction(interaction, name)
 
 	integrateIntoDOM: ->
 		# Stub.

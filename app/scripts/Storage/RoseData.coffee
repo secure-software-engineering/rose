@@ -1,8 +1,19 @@
 class @RoseData
     constructor: (@data) ->
+        @initializeMeta()
     
     getData: ->
         @data
+    
+    initializeMeta: ->
+        meta =
+            version: '2.0.1'
+        @data['meta'] = meta if @data['meta'] == undefined
+    
+    appendMeta: (meta) ->
+        @initializeMeta()
+        for key, value of meta
+            @data['meta'][key] = value
     
     addPlatform: (platformName) ->
         platform =

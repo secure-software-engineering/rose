@@ -100,3 +100,19 @@ class @Storage
             entries = roseData.getDiaryEntries()
             
             callback(entries)
+    
+    @getPrivacyEntry: (platformName, callback) ->
+        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+            roseData = new @RoseData(roseStorage)
+            
+            entry = roseData.getPrivacyEntry(platformName)
+            
+            callback(entry)
+    
+    @setPrivacyEntry: (entry, platformName) ->
+        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+            roseData = new @RoseData(roseStorage)
+            
+            roseData.setPrivacyEntry(entry, platformName)
+            
+            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()

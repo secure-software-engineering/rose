@@ -9,6 +9,7 @@ class @RoseData
             name: platformName
             interactions: []
             comments: []
+            privacy: {}
         @data['platforms'].push platform
     
     hasPlatform: (platformName) ->
@@ -98,3 +99,15 @@ class @RoseData
     
     getDiaryEntries: ->
         return @data['diary']
+    
+    getPrivacyEntry: (platformName) ->
+        @addPlatform(platformName) unless @hasPlatform(platformName)
+        for platform in @data['platforms']
+            return platform['privacy'] if platform['name'] == platformName
+        return null
+    
+    setPrivacyEntry: (entry, platformName) ->
+        @addPlatform(platformName) unless @hasPlatform(platformName)
+        for platform in @data['platforms']
+           platform['privacy'] = entry if platform['name'] == platformName
+ 

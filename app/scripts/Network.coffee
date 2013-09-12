@@ -1,9 +1,9 @@
 require 'InteractionFactory'
-require 'Storage'
+require 'Storage/Storage'
 
 class @Network
 	# Network name.
-	network:   "Stub"
+	network:   "Facebook"
 
 	# List of observers.
 	observers: []
@@ -41,7 +41,7 @@ class @Network
 				interaction = InteractionFactory.createInteraction(id, metaData)
 
 				# ... and save to storage.
-				Storage.saveInteraction(interaction, name)
+				Storage.addInteraction(interaction, name)
 
 	integrateIntoDOM: ->
 		# Stub.

@@ -6,10 +6,10 @@
 <li>
 	<ul class="unstyled">
 		<li><strong><span data-i18n="interactions.interaction"></span> {{=interaction.id}}</strong></li>
-    <li><span data-i18n="interactions.interaction-type"></span>: <span data-i18n="interactions.{{=interaction.content['interaction_type']}}"></span></li>
+        <li><span data-i18n="interactions.interaction-type"></span>: <span data-i18n="interactions.{{=interaction.record.interaction_type}}"></span></li>
 		<li><span data-i18n="interactions.date"></span>: {{=interaction.createdAt}}</li>
-		<li><span data-i18n="interactions.object-owner"></span>: {{=interaction.content['object_owner']}}</li>
-		<li><span data-i18n="interactions.object-type"></span>: {{=interaction.content['object_type']}}</li>
+		<li><span data-i18n="interactions.object-owner"></span>: {{=interaction.record.object_owner}}</li>
+		<li><span data-i18n="interactions.object-type"></span>: {{=interaction.record.object_type}}</li>
 	</ul>
 </li>
 {{ } }}

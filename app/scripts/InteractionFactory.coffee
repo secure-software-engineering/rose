@@ -1,4 +1,4 @@
-class window.InteractionFactory
+class @InteractionFactory
 	@createInteraction: (id, metaData) ->
 		# Create interaction.
 		interaction = {}

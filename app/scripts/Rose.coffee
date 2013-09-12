@@ -6,17 +6,6 @@ class window.Rose
 	@startRose: ->
 		# Initialize Management.
 		Management.initialize()
-		
-		# Initialize storage, if possible.
-		# Storage.initialize() unless Storage.isInitialized()
-
-		# Push sample privacy for Facebook.
-		# Storage.savePrivacyEntry({
-		# 	"access": {
-		# 		"description": "Access rights",
-		# 		"content": "Super cool content"
-		# 	}
-		# }, "Facebook")
 
 		# Set event handling.
 		Rose.mutationObserver = new MutationObserver () ->

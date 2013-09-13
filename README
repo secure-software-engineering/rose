@@ -1,0 +1,37 @@
+== Overview ==
+
+ROSE is a browser extension researchers can use to capture in situ data on how users actually use the online social network Facebook.
+
+ROSE has been developed by
+
+Fraunhofer Institute for Secure Information Technology SIT
+Rheinstrasse 75
+64295 Darmstadt
+Germany
+
+in coorporation with the Institute for Cultural Anthropology and European Studies at Goethe-University Frankfurt.
+
+For questions about ROSE feel free to contact Andreas Poller, andreas.poller@sit.fraunhofer.de
+
+== License ==
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License version as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+
+== Used 3rd party technologies ==
+
+	* Kango - cross-browser extension framework
+	  <http://kangoextensions.com/>
+	* jQuery
+	  <http://jquery.com/>
+	* Bootstrap, from Twitter
+	  <http://twitter.github.com/bootstrap/>
+	* jQuery UI
+	  <http://jqueryui.com/>
+	* jQuery SHA1
+	  <http://archive.plugins.jquery.com/project/sha1>
+	* jquery-json
+	  <http://code.google.com/p/jquery-json/>
+	* jStorage
+	  <http://www.jstorage.info/>
+	* yaml.js
+	  <https://bitbucket.org/dupuy/yaml.js/overview>

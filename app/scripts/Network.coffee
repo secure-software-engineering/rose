@@ -20,28 +20,32 @@ class @Network
 	integrateObserver: (observer) ->
 		# Get network name.
 		name = @getNetworkName()
-
-		# Integrate observer.
-		$(observer.getIntegrationPatterns().join(", ")).each ->
-			# Skip if already integrated.
-			return if $(this).hasClass("rose-integrated")
-
-			# Add integration class.
-			$(this).addClass("rose-integrated")
-
-			# Add functionality.
-			$(this).on observer.getEventType(), (e) ->
-				# Get ID.
-				id = observer.getID($(this))
-
-				# Get meta data.
-				metaData = observer.getMetaData($(this))
-
-				# Create interaction...
-				interaction = InteractionFactory.createInteraction(id, metaData)
-
-				# ... and save to storage.
-				Storage.addInteraction(interaction, name)
+		
+		if observer.getObserverType == "pattern"
+			return
+		
+		if observer.getObserverType == "classic"
+			# Integrate observer the classic way.
+			$(observer.getIntegrationPatterns().join(", ")).each ->
+				# Skip if already integrated.
+				return if $(this).hasClass("rose-integrated")
+	
+				# Add integration class.
+				$(this).addClass("rose-integrated")
+	
+				# Add functionality.
+				$(this).on observer.getEventType(), (e) ->
+					# Get ID.
+					id = observer.getID($(this))
+	
+					# Get meta data.
+					metaData = observer.getMetaData($(this))
+	
+					# Create interaction...
+					interaction = InteractionFactory.createInteraction(id, metaData)
+	
+					# ... and save to storage.
+					Storage.addInteraction(interaction, name)
 
 	integrateIntoDOM: ->
 		# Stub.

@@ -12,3 +12,6 @@ class window.FacebookPageLikeObserver
 		return {
 			'interaction_type': 'pagelike'
 		}
+	
+	getObserverType: ->
+		"classic"

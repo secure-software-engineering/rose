@@ -36,3 +36,6 @@ class window.FacebookUpdateStatusObserver
 			'privacy_scope':    privacy,
 			'object_type':      "status"
 		}
+	
+	getObserverType: ->
+		"classic"

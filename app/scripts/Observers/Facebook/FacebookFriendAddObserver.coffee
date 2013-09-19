@@ -13,3 +13,6 @@ class window.FacebookFriendAddObserver
 		return {
 			'interaction_type': "friendadded"
 		}
+	
+	getObserverType: ->
+		"classic"

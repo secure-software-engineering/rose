@@ -102,3 +102,6 @@ class window.FacebookLikeObserver
 			"object_type":      storyType,
 			"location":         location
 		}
+	
+	getObserverType: ->
+		"classic"

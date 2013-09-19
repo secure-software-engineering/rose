@@ -25,3 +25,6 @@ class window.FacebookHideActivityObserver
 			'object_owner':     likeMeta['object_owner'],
 			'object_type':      likeMeta['object_type']
 		}
+	
+	getObserverType: ->
+		"classic"

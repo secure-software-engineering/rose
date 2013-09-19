@@ -14,3 +14,6 @@ class window.FacebookUpdateStatusPictureObserver
 			'interaction_type': "updatestatuspicture",
 			'object_type':      "status"
 		}
+	
+	getObserverType: ->
+		"classic"

@@ -14,3 +14,6 @@ class window.FacebookChatActivatedObserver
 		return {
 			'interaction_type': "chatactivated"
 		}
+	
+	getObserverType: ->
+		"classic"

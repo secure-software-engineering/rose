@@ -17,3 +17,6 @@ class window.FacebookDeleteStatusObserver
 		return {
 			'interaction_type': "deletestatus"
 		}
+	
+	getObserverType: ->
+		"classic"

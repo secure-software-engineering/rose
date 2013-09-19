@@ -13,3 +13,6 @@ class window.FacebookFriendIgnoreObserver
 		return {
 			'interaction_type': "friendignored"
 		}
+	
+	getObserverType: ->
+		"classic"

@@ -14,3 +14,6 @@ class window.FacebookChatTurnedOffObserver
 		return {
 			'interaction_type': "chatturnoff"
 		}
+	
+	getObserverType: ->
+		"classic"

@@ -14,3 +14,6 @@ class window.FacebookUnfriendObserver
 		return {
 			'interaction_type': "unfriend"
 		}
+	
+	getObserverType: ->
+		"classic"

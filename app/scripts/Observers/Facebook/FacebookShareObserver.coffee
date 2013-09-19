@@ -38,3 +38,6 @@ class window.FacebookShareObserver
 			'object_owner':     Utilities.hash(objectOwner),
 			'object_type':      "status"
 		}
+	
+	getObserverType: ->
+		"classic"

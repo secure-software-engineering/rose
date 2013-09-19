@@ -75,14 +75,13 @@
           for(var i in hooks) {
             var hook = hooks[i];
             
-            if(!$(hook['node']).hasClass('integrated')) {
-              $(hook['node']).on(hook['type'], fields, function(event) {
-                var func = events[hook['event']];
-                
-                func(event.data);
-              });
-              $(hook['node']).addClass('integrated');
-            }
+            $(hook['node']).on(hook['type'], fields, function(event) {
+              event.stopImmediatePropagation();
+              
+              var func = events[hook['event']];
+              
+              func(event.data);
+            });
           }
         }
       }

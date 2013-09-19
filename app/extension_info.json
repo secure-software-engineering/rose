@@ -1,6 +1,7 @@
 {
   "content_scripts": [
     "bower_components/jquery/jquery.js",
+    "scripts/jquery.patterns.js",
     "bower_components/jssha/src/sha.js",
     "scripts/app.js"
   ],
@@ -9,9 +10,9 @@
   "creator":"Fraunhofer Institute SIT",
   "background_scripts": [
     "main.js"
-  ], 
+  ],
   "homepage_url":"http://www.sit.fraunhofer.de/",
-  "version": "2.0", 
+  "version": "2.0",
   "browser_button":{
       "caption":"ROSE",
       "tooltipText":"ROSE Browser Plugin",

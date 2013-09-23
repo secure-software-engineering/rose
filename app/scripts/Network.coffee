@@ -31,7 +31,12 @@ class @Network
 				$(this).addClass("rose-integrated")
 				
 				$(this).on observer.getEventType(), (e) ->
-					observer.handleNode(this)
+					# Get parsed information, if possible.
+					parsed = observer.handleNode(this)
+					
+					if parsed['found']
+						# If record is valid, save interaction.
+						Storage.addInteraction(parsed['record'], name)
 		
 		if observer.getObserverType() == "classic"
 			# Integrate observer the classic way.

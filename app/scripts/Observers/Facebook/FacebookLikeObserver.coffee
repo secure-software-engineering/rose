@@ -12,13 +12,35 @@ class window.FacebookLikeObserver
 	getIntegrationPatterns: ->
 		[".UFILikeLink", ".UFICommentActions > a", ".UFILikeThumb"]
 	
+	sanitize: (record) ->
+		return record
+	
 	handleNode: (node) ->
-		result = $($(node).closest('.storyInnerContent')).applyPattern({
-			structure: @patterns[0],
-			events: {}
-		})
+		# Get parent container.
+		parent = $(node).closest('.storyInnerContent')
 		
-		console.log(result['success'] + " - " + JSON.stringify(result['data']));
+		# Traverse through patterns.
+		for pattern in @patterns
+			# Assemble pattern for call.
+			args =
+				structure: pattern
+			
+			# Try to apply pattern.
+			result = $(parent).applyPattern(args)
+			
+			if result['success']
+				# Successful? Sanitize and return record.
+				record = @sanitize(result['data'][0])
+				
+				return {
+					'found': true,
+					'record': record
+				}
+		
+		# Nothing found? Return failure.
+		return {
+			'found': false
+		}
 	
 	getObserverType: ->
 		"pattern"

@@ -3,8 +3,6 @@
   "use strict";
   
   var preprocess = function(structure) {
-    return structure;
-    
     for(;;) {
       var match = /\<(.+)\>\{(.+)\}\<(.+)\>/gi.exec(structure);
       

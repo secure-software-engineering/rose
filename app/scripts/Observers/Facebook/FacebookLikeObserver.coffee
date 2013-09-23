@@ -3,7 +3,7 @@ require 'Utilities'
 
 class window.FacebookLikeObserver
 	patterns: [
-		'<div role="article" click="[handler]"></div>'
+		'<div role="article"><h5><div><a></a></div></h5><h5><span></span></h5><form><span><span><a class="share_action_link" click="[handler]"></a></span></span></form></div>'
 	]
 	
 	handler: ->
@@ -13,8 +13,7 @@ class window.FacebookLikeObserver
 	
 	integrate: ->
 		for pattern in @patterns
-			console.log("Integrating: " + pattern)
-			$("body").applyPattern({
+			$("#contentArea").applyPattern({
 				'structure': pattern,
 				'events': {
 					'handler': @handler()

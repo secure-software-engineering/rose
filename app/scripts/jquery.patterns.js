@@ -75,12 +75,30 @@
           for(var i in hooks) {
             var hook = hooks[i];
             
-            $(hook['node']).on(hook['type'], fields, function(event) {
-              event.stopImmediatePropagation();
-              
+            var proceed = true;
+            var registeredEvents = $._data(hook['node'], "events");
+            if(registeredEvents !== undefined) {
+              if(registeredEvents['click'] !== undefined) {
+                for(var j in registeredEvents['click']) {
+                  var registeredEvent = registeredEvents['click'][j];
+                  
+                  if(registeredEvent['data'] !== undefined) {
+                    if(registeredEvent['data']['pattern'] !== undefined) {
+                      proceed = false;
+                    }
+                  }
+                }
+              }
+            }
+            
+            if(!proceed) {
+              continue;
+            }
+            
+            $(hook['node']).on(hook['type'], {'pattern': 'yes', 'fields': fields}, function(event) {
               var func = events[hook['event']];
               
-              func(event.data);
+              func(event.data['fields']);
             });
           }
         }

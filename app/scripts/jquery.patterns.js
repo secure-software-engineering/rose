@@ -20,6 +20,19 @@
     $(node).find(pattern['tag']).each(function() {
       var fields = {}, currentNode = this, found = true;
       
+      var conditionsSatisfied = true;
+      for(var i in pattern['conditions']) {
+        var condition = pattern['conditions'][i];
+        
+        if($(currentNode).attr(condition['name']) != condition['value']) {
+          conditionsSatisfied = false;
+        }
+      }
+      
+      if(!conditionsSatisfied) {
+        return;
+      }
+      
       $.each(pattern['children'], function(i, child) {
         var rec = findPattern(child, currentNode, events, level + 1);
         

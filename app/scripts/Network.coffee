@@ -7,35 +7,31 @@ class @Network
 
 	# List of observers.
 	observers: []
-	
-	# Pattern flag.
-	patternsIntegrated: false
 
 	isOnNetwork: ->
 		# Stub.
 		false
 
 	applyObservers: ->
-		# Check pattern observers.
-		@integratePatternObserver()
-		
 		# Integrate observers.
 		for observer in @observers
 			@integrateObserver observer
-	
-	integratePatternObserver: ->
-		if @patternsIntegrated
-			return
-		
-		for observer in @observers
-			if observer.getObserverType() == "pattern"
-				observer.integrate()
-		
-		@patternsIntegrated = true
 
 	integrateObserver: (observer) ->
 		# Get network name.
 		name = @getNetworkName()
+		
+		if observer.getObserverType() == "pattern"
+			# Integrate observer the pattern way.
+			$(observer.getIntegrationPatterns().join(", ")).each ->
+				# Skip if already integrated.
+				return if $(this).hasClass("rose-integrated")
+		
+				# Add integration class.
+				$(this).addClass("rose-integrated")
+				
+				$(this).on observer.getEventType(), (e) ->
+					observer.handleNode(this)
 		
 		if observer.getObserverType() == "classic"
 			# Integrate observer the classic way.

@@ -3,7 +3,7 @@ require 'Utilities'
 
 class window.FacebookLikeObserver
 	patterns: [
-		'<div role="article"><h5><div><a>{author}</a></div></h5><h5><span><div><span>{content}</span></div></span></h5><form><span><span><a class="share_action_link"></a></span></span></form></div>'
+		'<div role="article"><h5><div class="actorName"><a>{author}</a></div></h5><h5><span><div><span class="userContent">{content}</span></div></span></h5><form><span><span><a class="share_action_link"></a></span></span></form></div>'
 	]
 	
 	getEventType: ->
@@ -13,8 +13,8 @@ class window.FacebookLikeObserver
 		[".UFILikeLink", ".UFICommentActions > a", ".UFILikeThumb"]
 	
 	sanitize: (record) ->
-		for secretField in ["author", "content"]
-			record[secretField] = Utilities.hash(record[secretField]) if record[secretField]
+		#for secretField in ["author", "content"]
+		#	record[secretField] = Utilities.hash(record[secretField]) if record[secretField]
 		
 		return record
 	

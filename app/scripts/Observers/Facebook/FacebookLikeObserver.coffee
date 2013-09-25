@@ -19,6 +19,20 @@ class window.FacebookLikeObserver
 		# Get parent container.
 		parent = $(node).closest('.storyInnerContent')
 		
+		# Interaction types.
+		interactionTypes =
+			'like': 'like'
+			'unlike': 'unlike'
+			'gefällt mir': 'like'
+			'gefällt mir nicht mehr': 'unlike'
+		
+		# Get field content.
+		fieldContent = Utilities.stripTags($(node).html()).toLowerCase()
+		
+		# Set interaction type (like, unlike, unknown).
+		interactionType = interactionTypes[fieldContent]
+		interactionType = "unknown/like/unlike" unless interactionType
+		
 		# Traverse through patterns.
 		for pattern in @patterns
 			# Assemble pattern for call.
@@ -31,6 +45,9 @@ class window.FacebookLikeObserver
 			if result['success']
 				# Successful? Sanitize and return record.
 				record = @sanitize(result['data'][0])
+				
+				# Set interaction type (like, unlike, unknown).
+				record['type'] = interactionType
 				
 				return {
 					'found': true,

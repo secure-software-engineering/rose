@@ -24,8 +24,20 @@
       for(var i in pattern['conditions']) {
         var condition = pattern['conditions'][i];
         
-        if($(currentNode).attr(condition['name']) != condition['value']) {
-          conditionsSatisfied = false;
+        if(condition['name'] == "class") {
+          var classes = condition['value'].split(" ");
+          
+          for(var i in classes) {
+            var c = classes[i];
+            
+            if(!$(currentNode).hasClass(c)) {
+              conditionsSatisfied = false;
+            }
+          }
+        } else {
+          if($(currentNode).attr(condition['name']) != condition['value']) {
+            conditionsSatisfied = false;
+          }
         }
       }
       

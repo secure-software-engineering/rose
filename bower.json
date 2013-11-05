@@ -9,12 +9,12 @@
     "test",
     "tests"
   ],
-  "devDependencies": {
+  "devDependencies": {},
+  "dependencies": {
+    "handlebars": "~1.1.0",
     "jquery": "~2.0.3",
-    "jssha": "*",
-    "bootstrap.css": "~2.3.2",
-    "handlebars": "~1.0.0",
-    "doT": "~0.2.0",
-    "i18next": "~1.6.3"
+    "semantic-ui": "*",
+    "i18next": "~1.7.1",
+    "jssha": "*"
   }
 }

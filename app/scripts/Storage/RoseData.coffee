@@ -7,7 +7,7 @@ class @RoseData
     
     initializeMeta: ->
         meta =
-            version: '2.0.1'
+            version: '2.0.2'
         @data['meta'] = meta if @data['meta'] == undefined
     
     appendMeta: (meta) ->
@@ -39,7 +39,7 @@ class @RoseData
         interaction =
             index: index
             deleted: false
-            createdAt: new Date()
+            createdAt: new Date().toJSON()
             record: record
         @getInteractions(platformName).push interaction
     
@@ -69,7 +69,7 @@ class @RoseData
         comment =
             index: index
             deleted: false
-            createdAt: new Date()
+            createdAt: new Date().toJSON()
             record: record
         @getComments(platformName).push comment
 
@@ -105,7 +105,7 @@ class @RoseData
         index = @getDiaryEntries().length
         entry =
             index: index
-            createdAt: new Date()
+            createdAt: new Date().toJSON()
             content: content
         @getDiaryEntries().push entry
     

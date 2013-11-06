@@ -34,18 +34,15 @@
                     <i class="home icon"></i>
                     ROSE
                 </div>
-                <a data-page="diary" class="item">
-                Diary
-                <i class="book icon"></i>
-                </a>
-                <a data-page="backup" class="item">
-                Backup
-                <i class="download disk icon"></i>
-                </a>
-                <a data-page="settings" class="item">
-                Settings
-                <i class="settings icon"></i>
-                </a>
+                {{#linkTo 'diary' classNames='item'}}
+                Diary<i class="book icon"></i>
+                {{/linkTo}}
+                {{#linkTo 'backup' classNames='item'}}
+                Backup<i class="download disk icon"></i>
+                {{/linkTo}}
+                {{#linkTo 'settings' classNames='item'}}
+                Settings<i class="settings icon"></i>
+                {{/linkTo}}
                 <div class="header item">
                     <i class="user icon"></i>
                     Communities
@@ -54,32 +51,42 @@
                     Facebook
                     <i class="facebook icon"></i>
                     <div class="menu">
-                        <a data-page="facebook-interactions" class="item">Interactions</a>
-                        <a data-page="facebook-comments"  class="item">Comments</a>
-                        <a data-page="facebook-settings" class="item">Security Settings</a>
+                        {{#linkTo 'facebook.interactions' classNames='item'}}
+                        Interactions
+                        {{/linkTo}}
+                        {{#linkTo 'facebook.comments' classNames='item'}}
+                        Comments
+                        {{/linkTo}}
+                        {{#linkTo 'facebook.security' classNames='item'}}
+                        Security Settings
+                        {{/linkTo}}
                     </div>
                 </div>
                 <div class="item">
                     Google+
-                    <i class="facebook icon"></i>
+                    <i class="google plus icon"></i>
                     <div class="menu">
-                        <a data-page="facebook-interactions" class="item">Interactions</a>
-                        <a data-page="facebook-comments" class="item">Comments</a>
-                        <a data-page="facebook-settings" class="item">Security Settings</a>
+                        {{#linkTo 'google.interactions' classNames='item'}}
+                        Interactions
+                        {{/linkTo}}
+                        {{#linkTo 'google.comments' classNames='item'}}
+                        Comments
+                        {{/linkTo}}
+                        {{#linkTo 'google.security' classNames='item'}}
+                        Security Settings
+                        {{/linkTo}}
                     </div>
                 </div>
                 <div class="header item">
                     <i class="help icon"></i>
                     Help
                 </div>
-                <a data-page="about" class="item">
-                About
-                <i class="info letter icon"></i>
-                </a>
-                <a data-page="documentation" class="item">
-                Documentation
-                <i class="text file icon"></i>
-                </a>
+                {{#linkTo 'about' classNames='item'}}
+                About<i class="info letter icon"></i>
+                {{/linkTo}}
+                {{#linkTo 'documentation' classNames='item'}}
+                Documentation<i class="text file icon"></i>
+                {{/linkTo}}
             </div>
         </div>
         <div class="fluid eleven wide column">
@@ -91,6 +98,9 @@
 </div>
 </script>
 
+
+
+
 <script type="text/x-handlebars" data-template-name="about">
 <h2 class="ui header">
     <i class="info letter icon"></i>
@@ -100,18 +110,333 @@
     </div>
 </h2>
 <div class="ui basic segment">
-            is a browser extension to support empirical Field studies by recording users' interactions with the social network Facebook for a limited period of time. Please consider the help page for further information on ROSE's functioning.</p>
+    ROSE is a browser extension to support empirical Field studies by recording users' interactions with the social network Facebook for a limited period of time. Please consider the help page for further information on ROSE's functioning.</p>
     <div class="ui divider"></div>
-    <p> ROSE has been developed by </p>
+    ROSE has been developed by
     <div class="ui basic segment">
         <address><strong>Fraunhofer Institute for Secure Information Technology SIT</strong><br/> Rheinstrasse 75<br/> 64295 Darmstadt<br/> Germany </address>
     </div>
     <p> For questions about ROSE feel free to contact <a href="mailto:andreas.poller@sit.fraunhofer.de">Andreas Poller, andreas.poller@sit.fraunhofer.de</a></p>
-        <div class="ui divider"></div>
-        <div class="ui basic vertical disabled segment">
-                          program is free software;you can redistribute it and/or modify it under the terms of the GNU General Public License version as published by the Free Software Foundation;either version 3 of the License, or (at your option) any later version. </p>
-        </div>
+    <div class="ui divider"></div>
+    <div class="ui basic vertical disabled segment">
+        This program is free software;you can redistribute it and/or modify it under the terms of the GNU General Public License version as published by the Free Software Foundation;either version 3 of the License, or (at your option) any later version. </p>
+    </div>
 </div>
+</script>
+
+
+
+
+<script type="text/x-handlebars" data-template-name="settings">
+<h2 class="ui header">
+    <i class="settings icon"></i>
+    <div class="content">
+        Settings
+        <div class="sub header">Manage your ROSE Settings.</div>
+    </div>
+</h2>
+<div class="ui toggle checkbox">
+    <input type="checkbox" name="pet">
+    <label></label>
+</div>
+<b>Enable</b> comment reminder.
+</script>
+
+
+
+
+<script type="text/x-handlebars" data-template-name="diary">
+<h2 class="ui header">
+    <i class="book icon"></i>
+    <div class="content">
+        Diary
+        <div class="sub header">Write about things that we do not care about.</div>
+    </div>
+</h2>
+<div class="ui form">
+    <div class="field">
+        {{textarea value=diaryText placeholder='Here is some place to write down your thoughts.'}}
+    </div>
+    <div class="two fluid ui buttons">
+        <div class="ui button" {{action cancel}}>Cancel</div>
+        <div class="or"></div>
+        <div class="ui positive button" {{action saveEntry}}>Save</div>
+    </div>
+</div>
+<div class="ui divider"></div>
+<div class="ui comments">
+    {{#each}}
+    <div class="comment">
+        <a class="avatar">
+        <i class="large circular file icon"></i>
+        </a>
+        <div class="content">
+            <a class="author">Sergey Harutoonian</a>
+            <div class="metadata">
+                <div class="date">{{timeAgo createdAt}}</div>
+            </div>
+            <div class="text">
+                {{content}}
+            </div>
+            <div class="actions">
+                <a class="edit"{{action editEntry this}}>Edit</a>
+                <a class="delete"{{action deleteEntry this}}>Delete</a>
+            </div>
+        </div>
+    </div>
+    {{else}}
+    <div class="ui icon message">
+        <i class="file icon"></i>
+        <div class="content">
+            <div class="header">
+                There are no diary entries!
+            </div>
+            <p>Write something</p>
+        </div>
+    </div>
+    {{/each}}
+</div>
+</script>
+
+
+
+
+<script type="text/x-handlebars" data-template-name="backup">
+<h2 class="ui header">
+    <i class="download disk icon"></i>
+    <div class="content">
+        Backup
+        <div class="sub header">Export or backup your data and send it to the researchers. Restore data is also possible.</div>
+    </div>
+</h2>
+<div class="fluid ui icon labeled button right">Restore<i class="black upload disk icon"></i></div>
+<div class="ui horizontal divider">
+    Or
+</div>
+<div class="fluid ui positive icon labeled right button" {{action backup}}>Backup<i class="download disk icon"></i></div>
+</script>
+
+
+
+
+<script type="text/x-handlebars" data-template-name="facebook/interactions">
+<h2 class="ui header">
+    <i class="star icon"></i>
+    <div class="content">
+        Interactions
+        <div class="sub header">All your recent interactions.</div>
+    </div>
+</h2>
+<div class="ui pilled feed">
+    <div class="event">
+        <div class="label">
+            <i class="user icon"></i>
+        </div>
+        <div class="content">
+            <div class="date">
+                Just moments ago
+            </div>
+            <div class="summary">
+                You added a new friend
+            </div>
+            <div class="actions">
+                <a class="hide">Hide</a>
+                <a class="delete">Delete</a>
+            </div>
+        </div>
+    </div>
+    <div class="event">
+        <div class="label">
+            <i class="chat icon"></i>
+        </div>
+        <div class="content">
+            <div class="date">
+                2 minutes ago
+            </div>
+            <div class="summary">
+                You sent a chat message
+            </div>
+            <div class="actions">
+                <a class="hide">Hide</a>
+                <a class="delete">Delete</a>
+            </div>
+        </div>
+    </div>
+    <div class="event">
+        <div class="label">
+            <i class="thumbs up icon"></i>
+        </div>
+        <div class="content">
+            <div class="date">
+                2 minutes ago
+            </div>
+            <div class="summary">
+                You liked some stuff
+            </div>
+            <div class="actions">
+                <a class="hide">Hide</a>
+                <a class="delete">Delete</a>
+            </div>
+        </div>
+    </div>
+    <div class="event">
+        <div class="label">
+            <i class="thumbs down icon"></i>
+        </div>
+        <div class="content">
+            <div class="date">
+                2 minutes ago
+            </div>
+            <div class="summary">
+                You disliked some stuff
+            </div>
+            <div class="actions">
+                <a class="hide">Hide</a>
+                <a class="delete">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+</script>
+
+
+
+
+<script type="text/x-handlebars" data-template-name="facebook/comments">
+<h2 class="ui header">
+    <i class="comment icon"></i>
+    <div class="content">
+        Comments
+        <div class="sub header">Have a look at all your comments.</div>
+    </div>
+</h2>
+<div class="ui comments">
+    <div class="comment">
+        <a class="avatar">
+        <img src="https://fbcdn-sphotos-h-a.akamaihd.net/hphotos-ak-prn1/526577_4982524514485_138377559_n.jpg">
+        </a>
+        <div class="content">
+            <a class="author">Dog Doggington</a>
+            <div class="metadata">
+                <div class="date">2 days ago</div>
+                <div class="stars">
+                    <i class="icon star"></i>
+                    <i class="icon star"></i>
+                    <i class="icon star"></i>
+                    <i class="icon empty star"></i>
+                    <i class="icon empty star"></i>
+                </div>
+            </div>
+            <div class="text">
+                I think this is a great idea and i am voting on it
+            </div>
+            <div class="actions">
+                <a class="hide">Hide</a>
+                <a class="delete">Delete</a>
+            </div>
+        </div>
+    </div>
+    <div class="comment">
+        <a class="avatar">
+        <img src="https://fbcdn-sphotos-h-a.akamaihd.net/hphotos-ak-prn1/526577_4982524514485_138377559_n.jpg">
+        </a>
+        <div class="content">
+            <a class="author">Dog Doggington</a>
+            <div class="metadata">
+                <div class="date">2 days ago</div>
+                <div class="stars">
+                    <i class="icon star"></i>
+                    <i class="icon empty star"></i>
+                    <i class="icon empty star"></i>
+                    <i class="icon empty star"></i>
+                    <i class="icon empty star"></i>
+                </div>
+            </div>
+            <div class="text">
+                I think this is a great idea and i am voting on it
+            </div>
+            <div class="actions">
+                <a class="hide">Hide</a>
+                <a class="delete">Delete</a>
+            </div>
+        </div>
+    </div>
+    <div class="comment">
+        <a class="avatar">
+        <img src="https://fbcdn-sphotos-h-a.akamaihd.net/hphotos-ak-prn1/526577_4982524514485_138377559_n.jpg">
+        </a>
+        <div class="content">
+            <a class="author">Dog Doggington</a>
+            <div class="metadata">
+                <div class="date">2 days ago</div>
+                <div class="stars">
+                    <i class="icon star"></i>
+                    <i class="icon star"></i>
+                    <i class="icon star"></i>
+                    <i class="icon empty star"></i>
+                    <i class="icon empty star"></i>
+                </div>
+            </div>
+            <div class="text">
+                I think this is a great idea and i am voting on it
+            </div>
+            <div class="actions">
+                <a class="hide">Hide</a>
+                <a class="delete">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+</script>
+
+
+
+
+<script type="text/x-handlebars" data-template-name="facebook/security">
+<h2 class="ui header">
+    <i class="lock icon"></i>
+    <div class="content">
+        Security Settings
+        <div class="sub header">Have a look at all your comments.</div>
+    </div>
+</h2>
+</script>
+
+
+
+
+<script type="text/x-handlebars" data-template-name="google/interactions">
+<h2 class="ui header">
+    <i class="star icon"></i>
+    <div class="content">
+        Interactions
+        <div class="sub header">All your recent interactions.</div>
+    </div>
+</h2>
+</script>
+
+
+
+<script type="text/x-handlebars" data-template-name="google/comments">
+<h2 class="ui header">
+    <i class="comment icon"></i>
+    <div class="content">
+        Comments
+        <div class="sub header">Have a look at all your comments.</div>
+    </div>
+</h2>
+</script>
+
+
+
+<script type="text/x-handlebars" data-template-name="google/security">
+<h2 class="ui header">
+    <i class="lock icon"></i>
+    <div class="content">
+        Security Settings
+        <div class="sub header">Have a look at all your comments.</div>
+    </div>
+</h2>
 </script>
 
 <!-- <script type="text/x-handlebars" data-template-name="about"></script> -->
@@ -121,11 +446,17 @@
     <script src="../bower_components/handlebars/handlebars.js"></script>
     <script src="../bower_components/ember/ember.js"></script>
     <script src="../bower_components/i18next/release/i18next-1.7.1.js"></script>
+    <script src="../bower_components/momentjs/moment.js"></script>
+    <script src="../bower_components/FileSaver/FileSaver.js"></script>
+    <script src="../bower_components/semantic-ui/build/packaged/javascript/semantic.js"></script>
     <!-- endbuild -->
+
     <!-- build:js scripts/app.js -->
-    <script src="js/plugins.js"></script>
     <script src="scripts/main.js"></script>
     <!-- endbuild -->
+
+    <script type="text/javascript" src="../kango-ui/kango_api.js"></script>
+    <script type="text/javascript" src="../scripts/app.js"></script>
 
 </body>
 </html>

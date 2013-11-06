@@ -15,6 +15,9 @@
     "jquery": "~2.0.3",
     "semantic-ui": "*",
     "i18next": "~1.7.1",
-    "jssha": "*"
+    "jssha": "*",
+    "open-sans-fontface": "~1.0.3",
+    "normalize-css": "~2.1.3",
+    "ember": "~1.1.2"
   }
 }

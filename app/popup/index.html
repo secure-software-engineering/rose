@@ -1,47 +1,131 @@
 <!DOCTYPE html>
-<html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <![endif]-->
 <head>
-    <meta charset="UTF-8">
-    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
     <!-- build:css styles/main.css -->
-    <link rel="stylesheet" href="../bower_components/bootstrap.css/css/bootstrap.css">
-    <!-- <link rel="stylesheet" href="styles/style.css"> -->
+    <link rel="stylesheet" href="../bower_components/normalize-css/normalize.css">
+    <link rel="stylesheet" href="../bower_components/semantic-ui/build/packaged/css/semantic.css">
+    <link rel="stylesheet" href="styles/open-sans.css">
+    <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
-
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <script>window.html5 || document.write('<script src="js/vendor/html5shiv.js"><\/script>')</script>
+    <![endif]-->
 </head>
-<body style="width: 750px;">
-    <div class="container-fluid" style="margin-top: 20px;">
-        <div class="row-fluid">
-            <div class="span4">
-                <ul id="rose-navigation" class="nav nav-list">
-                    <li class="nav-header">ROSE</li>
-                    <li><a href="#" class="navigation-link" action="page" page-name="home" data-i18n="navigation.home"></a></li>
-                    <li><a href="#" class="navigation-link" action="page" page-name="backup" data-i18n="navigation.backup"></a></li>
-                    <li><a href="#" class="navigation-link" action="page" page-name="help" data-i18n="navigation.help"></a></li>
-                    <li><a href="#" class="navigation-link" action="page" page-name="about" data-i18n="navigation.about"></a></li>
-                    <li class="nav-header" data-i18n="navigation.diary"></li>
-                    <li><a href="#" class="navigation-link" action="diary" data-i18n="navigation.diary"></a></li>
-                </ul>
+<body>
+    <!--[if lt IE 7]>
+    <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+    <![endif]-->
+
+<script type="text/x-handlebars" data-template-name="application">
+<div class="container">
+    <div class="ui page grid">
+        <div class="fluid five wide column">
+            <div class="ui red fluid vertical menu">
+                <div class="header item">
+                    <i class="home icon"></i>
+                    ROSE
+                </div>
+                <a data-page="diary" class="item">
+                Diary
+                <i class="book icon"></i>
+                </a>
+                <a data-page="backup" class="item">
+                Backup
+                <i class="download disk icon"></i>
+                </a>
+                <a data-page="settings" class="item">
+                Settings
+                <i class="settings icon"></i>
+                </a>
+                <div class="header item">
+                    <i class="user icon"></i>
+                    Communities
+                </div>
+                <div class="item">
+                    Facebook
+                    <i class="facebook icon"></i>
+                    <div class="menu">
+                        <a data-page="facebook-interactions" class="item">Interactions</a>
+                        <a data-page="facebook-comments"  class="item">Comments</a>
+                        <a data-page="facebook-settings" class="item">Security Settings</a>
+                    </div>
+                </div>
+                <div class="item">
+                    Google+
+                    <i class="facebook icon"></i>
+                    <div class="menu">
+                        <a data-page="facebook-interactions" class="item">Interactions</a>
+                        <a data-page="facebook-comments" class="item">Comments</a>
+                        <a data-page="facebook-settings" class="item">Security Settings</a>
+                    </div>
+                </div>
+                <div class="header item">
+                    <i class="help icon"></i>
+                    Help
+                </div>
+                <a data-page="about" class="item">
+                About
+                <i class="info letter icon"></i>
+                </a>
+                <a data-page="documentation" class="item">
+                Documentation
+                <i class="text file icon"></i>
+                </a>
             </div>
-            <div id="rose-content-field" class="span8">
+        </div>
+        <div class="fluid eleven wide column">
+            <div id="outlet" class="ui segment">
+                {{outlet}}
             </div>
         </div>
     </div>
+</div>
+</script>
+
+<script type="text/x-handlebars" data-template-name="about">
+<h2 class="ui header">
+    <i class="info letter icon"></i>
+    <div class="content">
+        About
+        <div class="sub header">Some information about team Awesome and the Science Club.</div>
+    </div>
+</h2>
+<div class="ui basic segment">
+            is a browser extension to support empirical Field studies by recording users' interactions with the social network Facebook for a limited period of time. Please consider the help page for further information on ROSE's functioning.</p>
+    <div class="ui divider"></div>
+    <p> ROSE has been developed by </p>
+    <div class="ui basic segment">
+        <address><strong>Fraunhofer Institute for Secure Information Technology SIT</strong><br/> Rheinstrasse 75<br/> 64295 Darmstadt<br/> Germany </address>
+    </div>
+    <p> For questions about ROSE feel free to contact <a href="mailto:andreas.poller@sit.fraunhofer.de">Andreas Poller, andreas.poller@sit.fraunhofer.de</a></p>
+        <div class="ui divider"></div>
+        <div class="ui basic vertical disabled segment">
+                          program is free software;you can redistribute it and/or modify it under the terms of the GNU General Public License version as published by the Free Software Foundation;either version 3 of the License, or (at your option) any later version. </p>
+        </div>
+</div>
+</script>
+
+<!-- <script type="text/x-handlebars" data-template-name="about"></script> -->
 
     <!-- build:js scripts/components.js -->
     <script src="../bower_components/jquery/jquery.js"></script>
-    <script src="../bower_components/bootstrap.css/js/bootstrap.js"></script>
-    <script src="../bower_components/doT/doT.js"></script>
-    <script src="../bower_components/i18next/release/i18next-1.6.3.js"></script>
+    <script src="../bower_components/handlebars/handlebars.js"></script>
+    <script src="../bower_components/ember/ember.js"></script>
+    <script src="../bower_components/i18next/release/i18next-1.7.1.js"></script>
     <!-- endbuild -->
-
-    <script src="../scripts/app.js"></script>
-
     <!-- build:js scripts/app.js -->
-    <script src="ui.js"></script>
-    <script src="language.js"></script>
+    <script src="js/plugins.js"></script>
+    <script src="scripts/main.js"></script>
     <!-- endbuild -->
 
-    <script type="text/javascript" src="../kango-ui/kango_api.js"></script>
 </body>
 </html>

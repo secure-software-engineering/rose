@@ -143,3 +143,7 @@ class @Storage
             roseData.setMeta(meta)
             
             kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
+
+    @getStorageAsJson: (callback) ->
+        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+            callback JSON.stringify roseStorage, undefined, 2

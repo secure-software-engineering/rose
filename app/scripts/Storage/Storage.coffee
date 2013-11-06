@@ -97,6 +97,7 @@ class @Storage
             kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
 
     @getDiaryEntries: (callback) ->
+        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
             
             entries = roseData.getDiaryEntries()

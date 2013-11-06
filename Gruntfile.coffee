@@ -29,7 +29,7 @@ module.exports = (grunt) ->
                 tasks: ['copy', 'livereload']
             htmlmin: 
                 files: [
-                    '<%= yeoman.app %>/popup/*.{html,js}'
+                    '<%= yeoman.app %>/popup/{,**/}*.{html,js}'
                     '<%= yeoman.app %>/popup/styles/*.css'
                 ]
                 tasks: ['useminPrepare', 'htmlmin', 'usemin', 'livereload']
@@ -94,7 +94,8 @@ module.exports = (grunt) ->
                     dest: '<%= yeoman.kangoDist %>'
                     src: [
                         'icons/{,*/}*.{webp,gif,png,svg}'
-                        'popup/pages/*.html'
+                        'popup/templates/*.hbs'
+                        'popup/styles/font/**'
                     ]
                 ]
 
@@ -125,7 +126,7 @@ module.exports = (grunt) ->
 
         shell: 
             kangoBuild:
-                command: 'kango.py build --output-directory <%= yeoman.package %> <%= yeoman.dist %>'
+                command: 'kango.py build --no-pack --target chrome --output-directory <%= yeoman.package %> <%= yeoman.dist %>'
 
     grunt.registerTask 'livereload', [
         'kangoManifest'

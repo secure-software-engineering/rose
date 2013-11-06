@@ -112,7 +112,7 @@ class @RoseData
     removeDiaryEntry: (index) ->
         entries = @getDiaryEntries().filter (entry) ->
             entry['index'] isnt index
-        @setDiaryEntries(entries, platformName)
+        @setDiaryEntries(entries)
     
     setDiaryEntries: (entries) ->
         @data['diary'] = entries

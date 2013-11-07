@@ -39,6 +39,7 @@ class @RoseData
         interaction =
             index: index
             deleted: false
+            hidden: false
             createdAt: new Date().toJSON()
             record: record
         @getInteractions(platformName).push interaction
@@ -69,6 +70,7 @@ class @RoseData
         comment =
             index: index
             deleted: false
+            hidden: false
             createdAt: new Date().toJSON()
             record: record
         @getComments(platformName).push comment

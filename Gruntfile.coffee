@@ -94,6 +94,7 @@ module.exports = (grunt) ->
                     dest: '<%= yeoman.kangoDist %>'
                     src: [
                         'icons/{,*/}*.{webp,gif,png,svg}'
+                        'res/{,**/}*.*'
                         'popup/templates/*.hbs'
                         'popup/styles/font/**'
                     ]

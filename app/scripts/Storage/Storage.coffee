@@ -66,6 +66,7 @@ class @Storage
             callback(comment)
 
     @getComments: (platformName, callback) ->
+        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
             
             comments = roseData.getComments(platformName)
@@ -147,3 +148,7 @@ class @Storage
     @getStorageAsJson: (callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             callback JSON.stringify roseStorage, undefined, 2
+
+    @setStorage: (json, callback) ->
+        store = JSON.parse(json)
+        kango.invokeAsync 'kango.storage.setItem', 'roseStorage', store, callback

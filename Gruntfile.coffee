@@ -127,7 +127,7 @@ module.exports = (grunt) ->
 
         shell: 
             kangoBuild:
-                command: 'kango.py build --no-pack --target chrome --output-directory <%= yeoman.package %> <%= yeoman.dist %>'
+                command: 'kango.py build --target chrome --output-directory <%= yeoman.package %> <%= yeoman.dist %>'
 
     grunt.registerTask 'livereload', [
         'kangoManifest'

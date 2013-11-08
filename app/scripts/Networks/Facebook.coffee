@@ -98,7 +98,6 @@ class window.Facebook extends Network
 						'object_owner':     FacebookUtilities.getUserID()
 						'proband_id':       FacebookUtilities.getUserID()
 						'object_id':        id
-						'time':             new Date()
 
 					# Save interaction.
 					Storage.addInteraction(interaction, name)

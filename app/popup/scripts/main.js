@@ -201,7 +201,7 @@ App.FacebookInteractionsRoute = Ember.Route.extend({
         response.forEach(function (item) {
             model.pushObject(App.Interaction.create(item));
         });
-        controller.set('model', model);
+        controller.set('model', model.reverse());
     }
 });
 
@@ -250,7 +250,7 @@ App.FacebookCommentsRoute = Ember.Route.extend({
         response.forEach(function (item) {
             model.pushObject(App.Comment.create(item));
         });
-        controller.set('model', model);
+        controller.set('model', model.reverse());
     }
 });
 

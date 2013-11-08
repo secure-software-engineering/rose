@@ -28,10 +28,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 require 'DOM'
 require 'Utilities'
 
-class window.FacebookLikeObserver
+class @FacebookLikeObserver
 	patterns: [
 		'<div role="article"><h5><div class="actorName"><a>{author}</a></div></h5><h5><span><div><span class="userContent">{content}</span></div></span></h5><form><span><span><a class="share_action_link"></a></span></span></form></div>'
 	]
+
+	getID: (obj) ->
+		# FIXME: needs to be implemented. right now it's just a stub
+		Utilities.hash(obj)
 	
 	getEventType: ->
 		"click"

@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 require 'Management'
 
-class window.Rose
+class @Rose
 	@mutationObserver: null
 
 	@startRose: ->

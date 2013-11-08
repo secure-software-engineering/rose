@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 require 'Network'
 require 'Observers/**/*'
 
-class window.Facebook extends Network
+class @Facebook extends Network
 	# Network name.
 	network:   "Facebook"
 

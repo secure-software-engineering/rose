@@ -25,7 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-class window.FacebookUpdateStatusPictureObserver
+class @FacebookUpdateStatusPictureObserver
 	getIntegrationPatterns: ->
 		["form[action*=photos] button[type=submit]", "form[action*=photos] input[type=submit]"]
 

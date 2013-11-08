@@ -25,7 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-class window.GooglePlus extends Network
+class @GooglePlus extends Network
 	# Network name.
 	network:   "GooglePlus"
 

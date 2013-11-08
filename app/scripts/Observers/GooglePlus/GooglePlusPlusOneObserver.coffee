@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 require 'Observer'
 
-class window.GooglePlusPlusOneObserver extends Observer
+class @GooglePlusPlusOneObserver extends Observer
 	getIntegrationPatterns: ->
 		['div[guidedhelpid="actionblock"] div:first', 'button.esw']
 

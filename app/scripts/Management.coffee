@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 require 'Networks/Facebook'
 require 'Networks/GooglePlus'
 
-class window.Management
+class @Management
 	@networks: []
 
 	@isInitialized: false

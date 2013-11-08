@@ -25,7 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-class window.FacebookShareObserver
+class @FacebookShareObserver
 	getIntegrationPatterns: ->
 		["form[action*=share] button[type=submit]", "form[action*=share] input[type=submit]"]
 

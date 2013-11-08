@@ -135,7 +135,6 @@ class @Facebook extends Network
 						'object_type':      'message',
 						'object_id':        recipient,
 						'proband_id':       FacebookUtilities.getUserID(),
-						'time':             new Date()
 					}
 
 					# Save interaction.
@@ -170,7 +169,6 @@ class @Facebook extends Network
 					'object_type':      'message',
 					'object_id':        recipient,
 					'proband_id':       FacebookUtilities.getUserID(),
-					'time':             new Date()
 				}
 
 				# Save interaction.

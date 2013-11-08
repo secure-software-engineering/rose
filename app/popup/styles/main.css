@@ -35,3 +35,30 @@ body {
 	margin-top: 8px;
 	background: #fafafa;
 }
+
+input.hidden {
+	display: none;
+}
+
+.ui.feed .hidden {
+	opacity: 0.3;
+}
+
+.ui.comments .hidden {
+	opacity: 0.3;
+}
+
+.ui.feed .event .actions {
+	font-size: 0.9em;
+	margin-top: 0.5em;
+}
+
+.ui.feed .event .actions a {
+	cursor: pointer;
+	display: inline-block;
+	margin: 0em 0.3em 0em 0em;
+	color: rgba(0,0,0,0.3);
+}
+.ui.feed .event .actions a:hover {
+	color: rgba(0, 0, 0, 0.6);
+}

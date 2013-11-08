@@ -209,7 +209,8 @@
         <div class="sub header">Export or backup your data and send it to the researchers. Restore data is also possible.</div>
     </div>
 </h2>
-<div class="fluid ui icon labeled button right">Restore<i class="black upload disk icon"></i></div>
+<div class="fluid ui icon labeled button right" {{action openFileChooser}}>Restore<i class="black upload disk icon"></i></div>
+{{view App.UploadFileView fileContentBinding='fileContent'}}
 <div class="ui horizontal divider">
     Or
 </div>
@@ -227,75 +228,40 @@
         <div class="sub header">All your recent interactions.</div>
     </div>
 </h2>
-<div class="ui pilled feed">
-    <div class="event">
+<div class="ui small pilled feed">
+    {{#each item in activeInteractions}}
+    <div {{bind-attr class=":event item.hidden"}}>
         <div class="label">
             <i class="user icon"></i>
         </div>
         <div class="content">
             <div class="date">
-                Just moments ago
+                {{timeAgo item.createdAt}}
             </div>
             <div class="summary">
-                You added a new friend
+               <a>Sally Poodle</a> created a {{item.record.type}}
+            </div>
+            <div class="extra text">
+            {{pretty item}}
             </div>
             <div class="actions">
-                <a class="hide">Hide</a>
-                <a class="delete">Delete</a>
+                {{#if item.hidden}}
+                <a class="hide" {{action show item}}>Show</a>
+                {{else}}
+                <a class="hide" {{action hide item}}>Hide</a>
+                {{/if}}
+                <a class="delete" {{action delete item}}>Delete</a>
             </div>
         </div>
     </div>
-    <div class="event">
-        <div class="label">
-            <i class="chat icon"></i>
+    {{else}}
+    <div class="ui warning message">
+        <div class="header">
+            You must register before you can do that!
         </div>
-        <div class="content">
-            <div class="date">
-                2 minutes ago
-            </div>
-            <div class="summary">
-                You sent a chat message
-            </div>
-            <div class="actions">
-                <a class="hide">Hide</a>
-                <a class="delete">Delete</a>
-            </div>
-        </div>
+        Visit our registration page, then try again
     </div>
-    <div class="event">
-        <div class="label">
-            <i class="thumbs up icon"></i>
-        </div>
-        <div class="content">
-            <div class="date">
-                2 minutes ago
-            </div>
-            <div class="summary">
-                You liked some stuff
-            </div>
-            <div class="actions">
-                <a class="hide">Hide</a>
-                <a class="delete">Delete</a>
-            </div>
-        </div>
-    </div>
-    <div class="event">
-        <div class="label">
-            <i class="thumbs down icon"></i>
-        </div>
-        <div class="content">
-            <div class="date">
-                2 minutes ago
-            </div>
-            <div class="summary">
-                You disliked some stuff
-            </div>
-            <div class="actions">
-                <a class="hide">Hide</a>
-                <a class="delete">Delete</a>
-            </div>
-        </div>
-    </div>
+    {{/each}}
 </div>
 </script>
 
@@ -310,82 +276,39 @@
         <div class="sub header">Have a look at all your comments.</div>
     </div>
 </h2>
-<div class="ui comments">
-    <div class="comment">
+<div class="ui small comments">
+    {{#each}}
+    <div {{bind-attr class=":comment hidden"}}>
         <a class="avatar">
         <img src="https://fbcdn-sphotos-h-a.akamaihd.net/hphotos-ak-prn1/526577_4982524514485_138377559_n.jpg">
         </a>
         <div class="content">
             <a class="author">Dog Doggington</a>
             <div class="metadata">
-                <div class="date">2 days ago</div>
-                <div class="stars">
-                    <i class="icon star"></i>
-                    <i class="icon star"></i>
-                    <i class="icon star"></i>
-                    <i class="icon empty star"></i>
-                    <i class="icon empty star"></i>
-                </div>
+                <div class="date">{{timeAgo createdAt}}</div>
             </div>
             <div class="text">
                 I think this is a great idea and i am voting on it
             </div>
             <div class="actions">
-                <a class="hide">Hide</a>
-                <a class="delete">Delete</a>
+            {{!-- MAKE A VIEW OUT OF THE CONTROLLS --}}
+                {{#if hidden}}
+                <a class="hide" {{action show this}}>Show</a>
+                {{else}}
+                <a class="hide" {{action hide this}}>Hide</a>
+                {{/if}}
+                <a class="delete" {{action delete this}}>Delete</a>
             </div>
         </div>
     </div>
-    <div class="comment">
-        <a class="avatar">
-        <img src="https://fbcdn-sphotos-h-a.akamaihd.net/hphotos-ak-prn1/526577_4982524514485_138377559_n.jpg">
-        </a>
-        <div class="content">
-            <a class="author">Dog Doggington</a>
-            <div class="metadata">
-                <div class="date">2 days ago</div>
-                <div class="stars">
-                    <i class="icon star"></i>
-                    <i class="icon empty star"></i>
-                    <i class="icon empty star"></i>
-                    <i class="icon empty star"></i>
-                    <i class="icon empty star"></i>
-                </div>
-            </div>
-            <div class="text">
-                I think this is a great idea and i am voting on it
-            </div>
-            <div class="actions">
-                <a class="hide">Hide</a>
-                <a class="delete">Delete</a>
-            </div>
+    {{else}}
+    <div class="ui warning message">
+        <div class="header">
+            You must register before you can do that!
         </div>
+        Visit our registration page, then try again
     </div>
-    <div class="comment">
-        <a class="avatar">
-        <img src="https://fbcdn-sphotos-h-a.akamaihd.net/hphotos-ak-prn1/526577_4982524514485_138377559_n.jpg">
-        </a>
-        <div class="content">
-            <a class="author">Dog Doggington</a>
-            <div class="metadata">
-                <div class="date">2 days ago</div>
-                <div class="stars">
-                    <i class="icon star"></i>
-                    <i class="icon star"></i>
-                    <i class="icon star"></i>
-                    <i class="icon empty star"></i>
-                    <i class="icon empty star"></i>
-                </div>
-            </div>
-            <div class="text">
-                I think this is a great idea and i am voting on it
-            </div>
-            <div class="actions">
-                <a class="hide">Hide</a>
-                <a class="delete">Delete</a>
-            </div>
-        </div>
-    </div>
+    {{/each}}
 </div>
 </script>
 

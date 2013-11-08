@@ -41,13 +41,21 @@ class @Storage
             
             callback(interactions)
 
-    @removeInteraction: (index, platformName) ->
+    @removeInteraction: (index, platformName, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
             
             roseData.removeInteraction(index, platformName)
             
-            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
+            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData(), callback
+
+    @hideInteraction: (index, hide, platformName, callback) ->
+        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+            roseData = new RoseData(roseStorage)
+            
+            roseData.hideInteraction(index, hide, platformName)
+            
+            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData(), callback
 
     @addComment: (comment, platformName) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
@@ -96,6 +104,14 @@ class @Storage
             roseData.removeDiaryEntry(index)
             
             kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
+
+    @updateDiaryEntry: (index, text, callback) ->
+        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+            roseData = new RoseData(roseStorage)
+            
+            roseData.updateDiaryEntry(index, text)
+            
+            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData(), callback
 
     @getDiaryEntries: (callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->

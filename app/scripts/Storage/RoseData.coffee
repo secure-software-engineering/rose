@@ -50,8 +50,18 @@ class @RoseData
         return null
     
     removeInteraction: (index, platformName) ->
-        interactions = @getInteractions(platformName).filter (interaction) ->
-            interaction['index'] isnt index
+        interactions = @getInteractions(platformName).map (interaction) ->
+            if interaction['index'] is index
+                interaction.deleted = true
+                interaction.record = null
+            return interaction
+        @setInteractions(interactions, platformName)
+
+    hideInteraction: (index, hide, platformName) ->
+        interactions = @getInteractions(platformName).map (interaction) ->
+            if interaction['index'] is index
+                interaction.hidden = hide
+            return interaction
         @setInteractions(interactions, platformName)
     
     setInteractions: (interactions, platformName) ->
@@ -77,7 +87,7 @@ class @RoseData
 
     getComment: (index, platformName) ->
         for comment in @getComments(platformName)
-            return comment if comment['index'] == index
+            return comment if comment['index'] is index
         return null
     
     removeComment: (index, platformName) ->
@@ -114,6 +124,14 @@ class @RoseData
     removeDiaryEntry: (index) ->
         entries = @getDiaryEntries().filter (entry) ->
             entry['index'] isnt index
+        @setDiaryEntries(entries)
+
+    updateDiaryEntry: (index, text) ->
+        entries = @getDiaryEntries().map (entry) ->
+            if entry['index'] is index
+                entry.content = text
+            return entry
+
         @setDiaryEntries(entries)
     
     setDiaryEntries: (entries) ->

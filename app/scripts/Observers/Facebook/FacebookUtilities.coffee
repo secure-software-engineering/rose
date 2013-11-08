@@ -25,10 +25,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
+require 'Utilities'
+
 class @FacebookUtilities
+	# FIXME: THIS ID COULD CHANGE WHEN USER CHANGES HIS NAME
 	@getUserID: ->
-		debugger
-		Utilities.hash $("#mainContainer").first("a").value()
+		Utilities.hash $(".fbxWelcomeBoxName").text()
 
 	@getStoryType: (obj) ->
 		# Story classes.

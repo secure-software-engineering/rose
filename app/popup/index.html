@@ -198,7 +198,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <i class="large circular file icon"></i>
         </a>
         <div class="content">
-            <a class="author">Sergey Harutoonian</a>
+            <a class="author">You</a>
             <div class="metadata">
                 <div class="date">{{timeAgo createdAt}}</div>
             </div>
@@ -212,8 +212,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
     </div>
     {{else}}
-    <div class="ui icon message">
-        <i class="file icon"></i>
+    <div class="ui info message">
         <div class="content">
             <div class="header">
                 There are no diary entries!
@@ -266,7 +265,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 {{timeAgo item.createdAt}}
             </div>
             <div class="summary">
-               <a>Sally Poodle</a> created a {{item.record.type}}
+               <a>You</a> created a {{item.record.interaction_type}}
             </div>
             <div class="extra text">
             {{pretty item}}
@@ -282,11 +281,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
     </div>
     {{else}}
-    <div class="ui warning message">
+    <div class="ui info message">
         <div class="header">
-            You must register before you can do that!
+            No interactions have been recorded!
         </div>
-        Visit our registration page, then try again
+        Please visit facebook.com and interact with your friends.
     </div>
     {{/each}}
 </div>
@@ -310,7 +309,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <img src="https://fbcdn-sphotos-h-a.akamaihd.net/hphotos-ak-prn1/526577_4982524514485_138377559_n.jpg">
         </a>
         <div class="content">
-            <a class="author">Dog Doggington</a>
+            <a class="author">You</a>
             <div class="metadata">
                 <div class="date">{{timeAgo createdAt}}</div>
             </div>
@@ -329,11 +328,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
     </div>
     {{else}}
-    <div class="ui warning message">
+    <div class="ui info message">
         <div class="header">
-            You must register before you can do that!
+            You have not commented!
         </div>
-        Visit our registration page, then try again
+        Please visit facebook.com and add some ROSE comments.
     </div>
     {{/each}}
 </div>
@@ -347,7 +346,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <i class="lock icon"></i>
     <div class="content">
         Security Settings
-        <div class="sub header">Have a look at all your comments.</div>
+        <div class="sub header">Have a look at all your settings.</div>
     </div>
 </h2>
 </script>
@@ -384,7 +383,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <i class="lock icon"></i>
     <div class="content">
         Security Settings
-        <div class="sub header">Have a look at all your comments.</div>
+        <div class="sub header">Have a look at all your settings.</div>
     </div>
 </h2>
 </script>

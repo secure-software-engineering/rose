@@ -81,7 +81,7 @@ $('body').on('click', '.button.save', function (evt) {
 });
 
 $(function () {
-	if (window.location.href.indexOf("facebook.com") > -1) {
+	if (FacebookUtilities.getUserID() != null && FacebookUtilities.getUserID().length > 0) {
 		setTimeout(function () {
 			$('.ui.modal')
 				.modal('setting', 'transition', 'fade')

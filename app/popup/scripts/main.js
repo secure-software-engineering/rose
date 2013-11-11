@@ -39,12 +39,12 @@ App.Router.map(function () {
     this.resource('facebook', function () {
         this.route('interactions');
         this.route('comments');
-        this.route('security');
+        this.route('privacy');
     });
     this.resource('google', function () {
         this.route('interactions');
         this.route('comments');
-        this.route('security');
+        this.route('privacy');
     });
 });
 

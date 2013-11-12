@@ -11,7 +11,7 @@
   ],
   "devDependencies": {},
   "dependencies": {
-    "handlebars": "~1.1.0",
+    "handlebars": "~1.0.0",
     "jquery": "~2.0.3",
     "semantic-ui": "*",
     "i18next": "~1.7.1",

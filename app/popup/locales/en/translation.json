@@ -1,3 +1,71 @@
 {
-    "test": "test"
+    "about": "About",
+    "backup": "Datensicherung",
+    "restore": "Wiederherstellen",
+    "comments": "Kommentare",
+    "diary": "Tagebuch",
+    "documentation": "Dokumentation",
+    "help": "Hilfe",
+    "interactions": "Interaktionen",
+    "networks": "Netzwerke",
+    "privacy-settings": "Privatsphäreneinstellungen",
+    "settings": "Einstellungen",
+    "test": "test",
+
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "or": "oder",
+
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "exclude": "Ausschließen",
+    "include": "Einschließen",
+
+    "you": "Du",
+
+    "settingsPage": {
+        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
+        "messageContent": "Schreib etwas"
+    },
+
+    "diaryPage": {
+        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
+        "messageContent": "Schreib etwas"
+    },
+
+    "privacyPage": {
+        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
+        "messageContent": "Schreib etwas"
+    },
+
+    "backupPage": {
+        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen"
+    },
+
+    "aboutPage": {
+        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
+        "messageContent": "Schreib etwas"
+    },
+
+    "interactionsPage": {
+        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
+        "messageContent": "Schreib etwas"
+    },
+
+    "commentsPage": {
+        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
+        "messageContent": "Schreib etwas"
+    },
+
+    "documentationPage": {
+        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
+        "messageContent": "Schreib etwas"
+    }
 }

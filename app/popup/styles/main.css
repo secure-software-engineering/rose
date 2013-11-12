@@ -58,7 +58,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 body {
 	font-family: 'Open Sans';
-	width: 760px;
+	width: 780px;
+    height: 600px;
 	margin-top: 8px;
 	background: #fafafa;
 }

@@ -55,7 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/x-handlebars" data-template-name="application">
 <div class="container">
     <div class="ui page grid">
-        <div class="fluid five wide column">
+        <div class="fluid six wide column">
             <div class="ui red fluid vertical menu">
                 <div class="header item">
                     <i class="home icon"></i>
@@ -116,7 +116,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 {{/linkTo}}
             </div>
         </div>
-        <div class="fluid eleven wide column">
+        <div class="fluid ten wide column">
             <div id="outlet" class="ui segment">
                 {{outlet}}
             </div>
@@ -129,13 +129,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <script type="text/x-handlebars" data-template-name="about">
-<h2 class="ui header">
+<h3 class="ui header">
     <i class="info letter icon"></i>
     <div class="content">
         {{I18n "about"}}
-        <div class="sub header">Some information about team Awesome and the Science Club.</div>
+        <div class="sub header">{{I18n 'aboutPage.subHeader'}}.</div>
     </div>
-</h2>
+</h3>
 <div class="ui basic segment">
     ROSE is a browser extension to support empirical Field studies by recording users' interactions with the social network Facebook for a limited period of time. Please consider the help page for further information on ROSE's functioning.</p>
     <div class="ui divider"></div>
@@ -155,13 +155,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <script type="text/x-handlebars" data-template-name="settings">
-<h2 class="ui header">
+<h3 class="ui header">
     <i class="settings icon"></i>
     <div class="content">
         {{I18n 'settings'}}
-        <div class="sub header">Manage your ROSE Settings.</div>
+        <div class="sub header">{{I18n 'settingsPage.subHeader'}}.</div>
     </div>
-</h2>
+</h3>
 <div class="ui toggle checkbox">
     <input type="checkbox" name="pet">
     <label></label>
@@ -173,21 +173,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <script type="text/x-handlebars" data-template-name="diary">
-<h2 class="ui header">
+<h3 class="ui header">
     <i class="book icon"></i>
     <div class="content">
-        Diary
-        <div class="sub header">Write about things that we do not care about.</div>
+        {{I18n 'diary'}}
+        <div class="sub header">{{I18n 'diaryPage.subHeader'}}.</div>
     </div>
-</h2>
+</h3>
 <div class="ui form">
     <div class="field">
-        {{textarea value=diaryText placeholder='Here is some place to write down your thoughts.'}}
+        {{textarea value=diaryText}}
     </div>
     <div class="two fluid ui buttons">
-        <div class="ui button" {{action cancel}}>Cancel</div>
-        <div class="or"></div>
-        <div class="ui positive button" {{action saveEntry}}>Save</div>
+        <div class="ui button" {{action cancel}}>{{I18n 'cancel'}}</div>
+        <div class="ui positive button" {{action saveEntry}}>{{I18n 'save'}}</div>
     </div>
 </div>
 <div class="ui divider"></div>
@@ -198,7 +197,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <i class="large circular file icon"></i>
         </a>
         <div class="content">
-            <a class="author">You</a>
+            <a class="author">{{I18n 'you'}}</a>
             <div class="metadata">
                 <div class="date">{{timeAgo createdAt}}</div>
             </div>
@@ -206,8 +205,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 {{content}}
             </div>
             <div class="actions">
-                <a class="edit"{{action editEntry this}}>Edit</a>
-                <a class="delete"{{action deleteEntry this}}>Delete</a>
+                <a class="edit"{{action editEntry this}}>{{I18n 'edit'}}</a>
+                <a class="delete"{{action deleteEntry this}}>{{I18n 'delete'}}</a>
             </div>
         </div>
     </div>
@@ -215,9 +214,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <div class="ui info message">
         <div class="content">
             <div class="header">
-                There are no diary entries!
+                {{I18n 'diaryPage.messageHeader'}}
             </div>
-            <p>Write something</p>
+            <p>{{I18n 'diaryPage.messageContent'}}!</p>
         </div>
     </div>
     {{/each}}
@@ -228,35 +227,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <script type="text/x-handlebars" data-template-name="backup">
-<h2 class="ui header">
+<h3 class="ui header">
     <i class="download disk icon"></i>
     <div class="content">
-        Backup
-        <div class="sub header">Export or backup your data and send it to the researchers. Restore data is also possible.</div>
+        {{I18n 'backup'}}
+        <div class="sub header">{{I18n 'backupPage.subHeader'}}.</div>
     </div>
-</h2>
-<div class="fluid ui icon labeled button right" {{action openFileChooser}}>Restore<i class="black upload disk icon"></i></div>
-{{view App.UploadFileView fileContentBinding='fileContent'}}
-<div class="ui horizontal divider">
-    Or
+</h3>
+<div class="ui form">
+    <div class="field">
+        {{textarea value=storageData}}
+    </div>
+    <div class="fluid ui positive icon labeled right button" {{action backup}}>{{I18n 'backup'}}<i class="download disk icon"></i></div>
+    <div class="ui horizontal divider">
+        {{I18n 'or'}}
+    </div>
+    <div class="fluid ui icon labeled button right" {{action openFileChooser}}>{{I18n 'restore'}}<i class="black upload disk icon"></i></div>
+    {{view App.UploadFileView fileContentBinding='fileContent'}}
 </div>
-<div class="fluid ui positive icon labeled right button" {{action backup}}>Backup<i class="download disk icon"></i></div>
 </script>
 
 
 
 
 <script type="text/x-handlebars" data-template-name="facebook/interactions">
-<h2 class="ui header">
+<h3 class="ui header">
     <i class="star icon"></i>
     <div class="content">
-        Interactions
-        <div class="sub header">All your recent interactions.</div>
+        {{I18n 'interactions'}}
+        <div class="sub header">{{I18n 'interactionsPage.subHeader'}}</div>
     </div>
-</h2>
+</h3>
 <div class="ui small pilled feed">
     {{#each item in activeInteractions}}
-    <div {{bind-attr class=":event"}}>
+    <div class="event">
         <div class="label">
             <i class="user icon"></i>
             {{#if item.hidden}}
@@ -268,27 +272,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 {{timeAgo item.createdAt}}
             </div>
             <div class="summary">
-               <a>You</a> created a {{item.record.interaction_type}}
+               {{I18n 'you'}} created a {{item.record.interaction_type}}
             </div>
             <div class="extra text">
             {{pretty item}}
             </div>
             <div class="actions">
                 {{#if item.hidden}}
-                <a class="hide" {{action show item}}>Include</a>
+                <a class="hide" {{action show item}}>{{I18n 'include'}}</a>
                 {{else}}
-                <a class="hide" {{action hide item}}>Exclude</a>
+                <a class="hide" {{action hide item}}>{{I18n 'exclude'}}</a>
                 {{/if}}
-                <a class="delete" {{action delete item}}>Delete</a>
+                <a class="delete" {{action delete item}}>{{I18n 'delete'}}</a>
             </div>
         </div>
     </div>
     {{else}}
     <div class="ui info message">
         <div class="header">
-            No interactions have been recorded!
+            {{I18n 'interactionsPage.messageHeader'}}
         </div>
-        Please visit facebook.com and interact with your friends.
+        {{I18n 'interactionsPage.messageHeader'}}.
     </div>
     {{/each}}
 </div>
@@ -298,44 +302,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <script type="text/x-handlebars" data-template-name="facebook/comments">
-<h2 class="ui header">
+<h3 class="ui header">
     <i class="comment icon"></i>
     <div class="content">
-        Comments
-        <div class="sub header">Have a look at all your comments.</div>
+        {{I18n 'comments'}}
+        <div class="sub header">{{I18n 'commentsPage.subHeader'}}.</div>
     </div>
-</h2>
-<div class="ui small comments">
+</h3>
+<div class="ui small pilled feed">
     {{#each}}
-    <div {{bind-attr class=":comment hidden"}}>
-        <a class="avatar">
-        <img src="https://fbcdn-sphotos-h-a.akamaihd.net/hphotos-ak-prn1/526577_4982524514485_138377559_n.jpg">
-        </a>
+    <div class="event">
+        <div class="label">
+            <i class="comment icon"></i>
+            {{#if hidden}}
+            <i class="minus red sign icon"></i>
+            {{/if}}
+        </div>
         <div class="content">
-            <a class="author">You</a>
-            <div class="metadata">
-                <div class="date">{{timeAgo createdAt}}</div>
+            <div class="date">
+                {{timeAgo createdAt}}
             </div>
-            <div class="text">
-                I think this is a great idea and i am voting on it
+            <div class="summary">
+               {{I18n 'you'}} created a comment
+            </div>
+            <div class="extra text">
+            Some bulk comment text
             </div>
             <div class="actions">
-            {{!-- MAKE A VIEW OUT OF THE CONTROLLS --}}
                 {{#if hidden}}
-                <a class="hide" {{action show this}}>Show</a>
+                <a class="hide" {{action show this}}>{{I18n 'include'}}</a>
                 {{else}}
-                <a class="hide" {{action hide this}}>Hide</a>
+                <a class="hide" {{action hide this}}>{{I18n 'exclude'}}</a>
                 {{/if}}
-                <a class="delete" {{action delete this}}>Delete</a>
+                <a class="delete" {{action delete this}}>{{I18n 'delete'}}</a>
             </div>
         </div>
     </div>
     {{else}}
     <div class="ui info message">
         <div class="header">
-            You have not commented!
+            {{I18n 'commentsPage.messageHeader'}}
         </div>
-        Please visit facebook.com and add some ROSE comments.
+        {{I18n 'commentsPage.messageContent'}}.
     </div>
     {{/each}}
 </div>
@@ -345,63 +353,63 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <script type="text/x-handlebars" data-template-name="facebook/privacy">
-<h2 class="ui header">
+<h3 class="ui header">
     <i class="lock icon"></i>
     <div class="content">
-        Privacy Settings
-        <div class="sub header">Have a look at all your settings.</div>
+        {{I18n 'privacy-settings'}}
+        <div class="sub header">{{I18n 'privacyPage.subHeader'}}.</div>
     </div>
-</h2>
+</h3>
 </script>
 
 
 
 
 <script type="text/x-handlebars" data-template-name="google/interactions">
-<h2 class="ui header">
+<h3 class="ui header">
     <i class="star icon"></i>
     <div class="content">
         Interactions
         <div class="sub header">All your recent interactions.</div>
     </div>
-</h2>
+</h3>
 </script>
 
 
 
 <script type="text/x-handlebars" data-template-name="google/comments">
-<h2 class="ui header">
+<h3 class="ui header">
     <i class="comment icon"></i>
     <div class="content">
         Comments
         <div class="sub header">Have a look at all your comments.</div>
     </div>
-</h2>
+</h3>
 </script>
 
 
 
 <script type="text/x-handlebars" data-template-name="google/privacy">
-<h2 class="ui header">
+<h3 class="ui header">
     <i class="lock icon"></i>
     <div class="content">
         Privacy Settings
         <div class="sub header">Have a look at all your settings.</div>
     </div>
-</h2>
+</h3>
 </script>
 
 
 
 
 <script type="text/x-handlebars" data-template-name="documentation">
-<h2 class="ui header">
+<h3 class="ui header">
     <i class="text file icon"></i>
     <div class="content">
-        Documentation
-        <div class="sub header">Here we answer frequently asked questions for ROSE.</div>
+        {{I18n 'documentation'}}
+        <div class="sub header">{{I18n 'documentationPage.subHeader'}}.</div>
     </div>
-</h2>
+</h3>
 <h4>Where does ROSE collect the data about my Facebook usage and my inserted comments?</h4>
 <p>
     Rose exclusively collects data in your web browser. ROSE can provide a pre-assembled Mail which you can use to transmit your data to the study advisor. ROSE does not transmit data to Facebook; Facebook can not detect your usage of ROSE with their computer systems. ROSE neither transmits data itself to the study advisor nor receives them.
@@ -466,6 +474,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <script src="../bower_components/ember/ember.js"></script>
     <script src="../bower_components/i18next/release/i18next-1.7.1.js"></script>
     <script src="../bower_components/momentjs/moment.js"></script>
+    <script src="../bower_components/momentjs/lang/de.js"></script>
     <script src="../bower_components/FileSaver/FileSaver.js"></script>
     <script src="../bower_components/semantic-ui/build/packaged/javascript/semantic.js"></script>
     <!-- endbuild -->

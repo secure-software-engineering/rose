@@ -30,6 +30,8 @@ i18n.init({
     getAsync: false
 });
 
+moment.lang(i18n.lng());
+
 App = window.App = Ember.Application.create({
     LOG_TRANSITIONS: true,
     debugMode: true
@@ -54,7 +56,6 @@ App.Router.map(function () {
 });
 
 App.BackupController = Ember.Controller.extend({
-
     restoreStorage: function () {
         var self = this;
         var setStorage = Ember.RSVP.Promise(function (resolve, reject) {
@@ -64,15 +65,15 @@ App.BackupController = Ember.Controller.extend({
 
     actions: {
         backup: function () {
+            var self = this;
             var getStorage = Ember.RSVP.Promise(function (resolve, reject) {
                 Storage.getStorageAsJson(resolve);
             });
 
             getStorage.then(function (data) {
-                var blob = new Blob([data], {
-                    type: "text/plain;charset=utf-8"
-                });
-                saveAs(blob, "rose-storage.txt");
+                self.set('storageData', data);
+            }).then(function () {
+                $('textarea').select();
             });
         },
 
@@ -194,6 +195,8 @@ App.DiaryController = Ember.ArrayController.extend({
     }
 });
 
+App.Interaction = Ember.Object.extend();
+
 App.FacebookInteractionsRoute = Ember.Route.extend({
     model: function () {
         return new Ember.RSVP.Promise(function (resolve, reject) {
@@ -210,8 +213,6 @@ App.FacebookInteractionsRoute = Ember.Route.extend({
     }
 });
 
-App.Interaction = Ember.Object.extend();
-
 App.FacebookInteractionsController = Ember.ArrayController.extend({
     platform: "Facebook",
 
@@ -223,17 +224,14 @@ App.FacebookInteractionsController = Ember.ArrayController.extend({
     actions: {
         delete: function (interaction) {
             interaction.set('deleted', true);
-            // TODO
             Storage.removeInteraction(interaction.get('index'), this.get('platform'));
         },
         hide: function (interaction) {
             interaction.set("hidden", true);
-            // TODO
             Storage.hideInteraction(interaction.get('index'), true, this.get('platform'));
         },
         show: function (interaction) {
             interaction.set('hidden', false);
-            // TODO
             Storage.hideInteraction(interaction.get('index'), false, this.get('platform'));
         }
     }
@@ -243,11 +241,23 @@ App.Comment = Ember.Object.extend();
 
 App.FacebookCommentsRoute = Ember.Route.extend({
     model: function () {
-        return [1, 2, 3, 4];
+        return [{
+            createdAt: "2013-11-12T14:56:11.415Z",
+            hidden: false
+        }, {
+            createdAt: "2013-11-12T14:56:11.415Z",
+            hidden: false
+        }, {
+            createdAt: "2013-11-12T14:56:11.415Z",
+            hidden: false
+        }, {
+            createdAt: "2013-11-12T14:56:11.415Z",
+            hidden: false
+        }];
 
-        return new Ember.RSVP.Promise(function (resolve, reject) {
-            Storage.getComments("Facebook", resolve);
-        });
+        // return new Ember.RSVP.Promise(function (resolve, reject) {
+        //     Storage.getComments("Facebook", resolve);
+        // });
     },
 
     setupController: function (controller, response) {

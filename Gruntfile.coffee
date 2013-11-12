@@ -24,6 +24,9 @@ module.exports = (grunt) ->
                     '.tmp/scripts/{,**/}*.js'
                 ]
                 tasks: ['neuter', 'livereload']
+            locales: 
+                files: '<%= yeoman.app %>/popup/locales/**'
+                tasks: ['copy', 'livereload']
             pages: 
                 files: '<%= yeoman.app %>/popup/pages/*.html'
                 tasks: ['copy', 'livereload']
@@ -97,6 +100,7 @@ module.exports = (grunt) ->
                         'res/{,**/}*.*'
                         'popup/templates/*.hbs'
                         'popup/styles/font/**'
+                        'popup/locales/**'
                     ]
                 ]
 
@@ -127,7 +131,7 @@ module.exports = (grunt) ->
 
         shell: 
             kangoBuild:
-                command: 'kango.py build --target chrome --output-directory <%= yeoman.package %> <%= yeoman.dist %>'
+                command: 'kango.py build --output-directory <%= yeoman.package %> <%= yeoman.dist %>'
 
     grunt.registerTask 'livereload', [
         'kangoManifest'

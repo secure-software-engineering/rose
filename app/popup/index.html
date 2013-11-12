@@ -62,30 +62,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     ROSE
                 </div>
                 {{#linkTo 'diary' classNames='item'}}
-                Diary<i class="book icon"></i>
+                {{I18n 'diary'}}<i class="book icon"></i>
                 {{/linkTo}}
                 {{#linkTo 'backup' classNames='item'}}
-                Backup<i class="download disk icon"></i>
+                {{I18n 'backup'}}<i class="download disk icon"></i>
                 {{/linkTo}}
                 {{#linkTo 'settings' classNames='item'}}
-                Settings<i class="settings icon"></i>
+                {{I18n 'settings'}}<i class="settings icon"></i>
                 {{/linkTo}}
                 <div class="header item">
                     <i class="user icon"></i>
-                    Communities
+                    {{I18n 'networks'}}
                 </div>
                 <div class="item">
                     Facebook
                     <i class="facebook icon"></i>
                     <div class="menu">
                         {{#linkTo 'facebook.interactions' classNames='item'}}
-                        Interactions
+                        {{I18n 'interactions'}}
                         {{/linkTo}}
                         {{#linkTo 'facebook.comments' classNames='item'}}
-                        Comments
+                        {{I18n "comments"}}
                         {{/linkTo}}
                         {{#linkTo 'facebook.privacy' classNames='item'}}
-                        Privacy Settings
+                        {{I18n 'privacy-settings'}}
                         {{/linkTo}}
                     </div>
                 </div>
@@ -94,25 +94,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <i class="google plus icon"></i>
                     <div class="menu">
                         {{#linkTo 'google.interactions' classNames='item'}}
-                        Interactions
+                        {{I18n 'interactions'}}
                         {{/linkTo}}
                         {{#linkTo 'google.comments' classNames='item'}}
-                        Comments
+                        {{I18n "comments"}}
                         {{/linkTo}}
                         {{#linkTo 'google.privacy' classNames='item'}}
-                        Privacy Settings
+                        {{I18n 'privacy-settings'}}
                         {{/linkTo}}
                     </div>
                 </div>
                 <div class="header item">
                     <i class="help icon"></i>
-                    Help
+                    {{I18n 'help'}}
                 </div>
                 {{#linkTo 'about' classNames='item'}}
-                About<i class="info letter icon"></i>
+                {{I18n 'about'}}<i class="info letter icon"></i>
                 {{/linkTo}}
                 {{#linkTo 'documentation' classNames='item'}}
-                Documentation<i class="text file icon"></i>
+                {{I18n 'documentation'}}<i class="text file icon"></i>
                 {{/linkTo}}
             </div>
         </div>
@@ -132,7 +132,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <h2 class="ui header">
     <i class="info letter icon"></i>
     <div class="content">
-        About
+        {{I18n "about"}}
         <div class="sub header">Some information about team Awesome and the Science Club.</div>
     </div>
 </h2>
@@ -158,7 +158,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <h2 class="ui header">
     <i class="settings icon"></i>
     <div class="content">
-        Settings
+        {{I18n 'settings'}}
         <div class="sub header">Manage your ROSE Settings.</div>
     </div>
 </h2>
@@ -256,9 +256,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </h2>
 <div class="ui small pilled feed">
     {{#each item in activeInteractions}}
-    <div {{bind-attr class=":event item.hidden"}}>
+    <div {{bind-attr class=":event"}}>
         <div class="label">
             <i class="user icon"></i>
+            {{#if item.hidden}}
+            <i class="minus red sign icon"></i>
+            {{/if}}
         </div>
         <div class="content">
             <div class="date">
@@ -272,9 +275,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div>
             <div class="actions">
                 {{#if item.hidden}}
-                <a class="hide" {{action show item}}>Show</a>
+                <a class="hide" {{action show item}}>Include</a>
                 {{else}}
-                <a class="hide" {{action hide item}}>Hide</a>
+                <a class="hide" {{action hide item}}>Exclude</a>
                 {{/if}}
                 <a class="delete" {{action delete item}}>Delete</a>
             </div>

@@ -25,6 +25,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+i18n.init({
+    fallbackLng: 'en',
+    getAsync: false
+});
+
 App = window.App = Ember.Application.create({
     LOG_TRANSITIONS: true,
     debugMode: true
@@ -290,4 +295,9 @@ Ember.Handlebars.helper('timeAgo', function (time) {
 
 Ember.Handlebars.helper('pretty', function (object) {
     return new Handlebars.SafeString(JSON.stringify(object, null, 2));
+});
+
+Ember.Handlebars.helper('I18n', function (i18n_key) {
+    var result = i18n.t(i18n_key);
+    return new Handlebars.SafeString(result);
 });

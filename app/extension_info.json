@@ -1,11 +1,15 @@
 {
   "content_scripts": [
     "bower_components/jquery/jquery.js",
-    "bower_components/semantic-ui/build/packaged/javascript/semantic.js",
-    "scripts/jquery.patterns.js",
+    "bower_components/jquery.cookie/jquery.cookie.js",
+    "bower_components/semantic/build/packaged/javascript/semantic.js",
     "bower_components/jssha/src/sha.js",
+    "bower_components/rsvp/rsvp.js",
+    "bower_components/handlebars/handlebars.js",
+    "bower_components/i18next/release/i18next-1.7.1.js",
     "scripts/app.js",
-    "scripts/injectedUIMockup.js"
+    "scripts/injectedUIMockup.js",
+    "scripts/jquery.patterns.js"
   ],
   "homepage_url": "http://www.sit.fraunhofer.de/",
   "description": "Research tool for field studies in online social networks.",

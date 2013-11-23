@@ -25,8 +25,21 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// Initialization of i18next
+var options = {
+	fallbackLng: 'en',
+	resGetPath: kango.io.getResourceUrl('res/locales/__lng__/__ns__.json')
+};
+i18n.init(options);
+
+// I18n helper method
+Handlebars.registerHelper('I18n', function (i18n_key) {
+	var result = i18n.t(i18n_key);
+	return new Handlebars.SafeString(result);
+});
+
+// helper function to inject local css files
 var loadCSS = function (resLink) {
-	var href = kango.io.getResource;
 	var cssLink = $("<link>");
 	$("head").append(cssLink);
 	cssLink.attr({
@@ -34,61 +47,79 @@ var loadCSS = function (resLink) {
 		type: "text/css",
 		href: kango.io.getResourceUrl(resLink)
 	});
-	console.log(kango.io.getResourceUrl(resLink));
 };
 
-// load the css file 
-loadCSS("res/semantic-ui/build/packaged/css/semantic.css");
-loadCSS("res/main.css");
+var getTemplate = function (url) {
+	var promise = new RSVP.Promise(function (resolve, reject) {
+		var resource = kango.io.getResourceUrl('/res/templates/' + url + ".hbs");
+		$.get(resource, function (data) {
+			resolve(data);
+		});
+	});
 
-var leftSidebar = '<div class="ui floating styled segment left wide sidebar">  <h2 class="ui header">Comment</h2>  <div class="ui form">    <div class="field">      <label>Message</label>      <textarea></textarea>    </div>    <div class="field">      <label>Rating</label>      <div class="ui large rating active">        <i class="icon"></i>        <i class="icon"></i>        <i class="icon"></i>        <i class="icon"></i>        <i class="icon"></i>      </div>    </div>    <div class="two fluid ui buttons">      <div class="ui positive button save">Save</div>      <div class="or"></div>      <div class="ui button discard">Discard</div>    </div>  </div>  <div class="ui horizontal icon divider">    <i class="circular info letter icon"></i>  </div>  <div class="ui message">    <div class="header">      Welcome back!    </div>    <p>      It is good to see you again. I have had a lot to think about since our last visit, I have changed much as a person and I can see that you have too.    </p>    <p>      Perhaps we can talk about it if you have the time.    </p>  </div></div>';
-var reminderModal = '<div class="ui small modal">    <i class="close icon"></i>    <div class="ui icon info message">      <i class="comment icon"></i>      <div class="content">        <div class="header">          Please comment regularly!      </div>      <p>And be nice to Rose...</p>  </div></div></div>';
-var commentLabel = '<a class="ui red ribbon label rose comment">Comment</a>';
+	return promise;
+};
 
-$("body").append(reminderModal);
+if (window.location.hostname.indexOf("www.facebook.com") > -1) {
+	// var settings = Storage.getSettings();
 
-$(".uiUnifiedStory").addClass("segment");
-$(".fbTimelineUnit ").has(".fbTimelineFeedbackActions").find("div[role=article]").addClass("segment");
-$(".segment").prepend(commentLabel);
+	// load css files into facebook DOM
+	loadCSS("res/semantic/build/packaged/css/semantic.css");
+	loadCSS("res/main.css");
 
-$(".ui.icon.info.message").css("margin", "0");
+	// add reminder to facebook DOM if not disabled in settings
+	if (true) {
+		getTemplate('reminder').then(function (source) {
+			var template = Handlebars.compile(source);
+			return template;
+		}).then(function (template) {
+			$('body').append(template());
 
-if ($(".fbTimelineUnit ").has(".fbTimelineFeedbackActions").find("div[role=article]").length !== 0) {
-	$(".ui.red.ribbon").css("left", "-1.7rem");
-	$(".ui.red.ribbon").css("margin", "0 0.2em 0.5em");
-} else {
-	$(".ui.red.ribbon").css("margin", "0.5em -0.2em -1em");
-}
-
-$('body').on('click', '.button.discard', function (evt) {
-	evt.stopPropagation();
-	$('.sidebar').sidebar('hide');
-});
-
-$('body').on('click', '.ui.red.ribbon', function () {
-	$('.sidebar.left')
-		.sidebar('pushPage')
-		.sidebar('show');
-});
-
-$('body').on('click', '.button.save', function (evt) {
-	evt.stopPropagation();
-	$('.sidebar').sidebar('hide');
-	var comment = $('.sidebar textarea').val() || "no comment";
-	var rating = $('.ui.rating').rating("getRating") || 0;
-	console.log("Comment: " + comment);
-	console.log("Rating: " + rating);
-});
-
-$(function () {
-	if (FacebookUtilities.getUserID() != null && FacebookUtilities.getUserID().length > 0) {
-		setTimeout(function () {
-			$('.ui.modal')
-				.modal('setting', 'transition', 'fade')
-				.modal('show');
-			$("body").append(leftSidebar);
-			$('.ui.rating')
-				.rating();
-		}, 2000);
+			$('.ui.nag').nag({
+				easing: 'swing'
+			});
+		});
 	}
-});
+
+	// add sidebar to facebook DOM
+	getTemplate('sidebar').then(function (source) {
+		var template = Handlebars.compile(source);
+		return template;
+	}).then(function (template) {
+		$('body').append(template());
+
+		// init sidebar module
+		$('.ui.sidebar').sidebar();
+
+		// init rating module
+		$('.ui.rating').rating();
+	});
+
+	// add comment label to every story item with a fbid
+	getTemplate('commentLabel').then(function (source) {
+		var template = Handlebars.compile(source);
+		return template;
+	}).then(function (template) {
+		$('*[data-timestamp]').prepend(template());
+		$('.rose.comment').css('margin', '-5px 0 5px 0');
+	});
+
+	$('body').on('click', '.rose.comment', function (evt) {
+		$('.ui.sidebar').sidebar('pushPage');
+		$('.ui.sidebar').sidebar('show');
+	});
+
+	$('body').on('click', '.sidebar .cancel.button', function (evt) {
+		$('.ui.sidebar').sidebar('hide');
+	});
+
+	$('body').on('click', '.sidebar .save.button', function (evt) {
+		evt.stopPropagation();
+		$('.sidebar').sidebar('hide');
+		var comment = $('.sidebar textarea').val() || "no comment";
+		var rating = $('.ui.rating').rating("getRating") || 0;
+		console.log("Comment: " + comment);
+		console.log("Rating: " + rating);
+	});
+
+}

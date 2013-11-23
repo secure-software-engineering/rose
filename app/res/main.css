@@ -44,6 +44,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 }
 
+.ui.star.rating.right {
+	padding-left: 5px;
+	float: right;
+}
+
 .rose.comment {
 	opacity: 0.25;
 	-webkit-transition: opacity 0.3s;
@@ -55,4 +60,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 .rose.comment:hover {
 	opacity: 1.0;
+}
+
+.ui.nag {
+	z-index: 10000;
 }

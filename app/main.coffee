@@ -32,6 +32,11 @@ class MyExtension
             roseStorage = 
                 platforms: []
                 diary: []
+                settings: {
+                    reminder: {
+                        isActive: true
+                    }
+                }
 
             kango.storage.setItem 'roseStorage', roseStorage
 

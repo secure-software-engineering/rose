@@ -2,7 +2,8 @@
     "about": "Über",
     "backup": "Datensicherung",
     "restore": "Wiederherstellen",
-    "comments": "Kommentare",
+    "comment": "Kommentar",
+    "comment_plural": "Kommentare",
     "diary": "Tagebuch",
     "documentation": "Dokumentation",
     "help": "Hilfe",
@@ -67,5 +68,9 @@
         "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
         "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
         "messageContent": "Schreib etwas"
+    },
+
+    "reminder": {
+        "prompt": "Vergiss nicht zu kommentieren"
     }
 }

@@ -30,6 +30,9 @@ module.exports = (grunt) ->
             pages: 
                 files: '<%= yeoman.app %>/popup/pages/*.html'
                 tasks: ['copy', 'livereload']
+            templates:
+                files: '<%= yeoman.app %>/res/templates/*.hbs'
+                tasks: ['copy', 'livereload']
             htmlmin: 
                 files: [
                     '<%= yeoman.app %>/popup/{,**/}*.{html,js}'

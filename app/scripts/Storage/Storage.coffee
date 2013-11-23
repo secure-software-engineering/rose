@@ -195,3 +195,8 @@ class @Storage
     @setStorage: (json, callback) ->
         store = JSON.parse(json)
         kango.invokeAsync 'kango.storage.setItem', 'roseStorage', store, callback
+
+    @getSettings: (callback) ->
+        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+            settings = roseStorage.settings
+            callback settings || {}

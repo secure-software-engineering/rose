@@ -102,6 +102,9 @@ if (window.location.hostname.indexOf("www.facebook.com") > -1) {
 	}).then(function (template) {
 		$('*[data-timestamp]').prepend(template());
 		$('.rose.comment').css('margin', '-5px 0 5px 0');
+
+		$('.timelineUnitContainer').has('.fbTimelineFeedbackActions').prepend(template());
+		$('.rose.comment').css('margin', '0 0 5px 6px');
 	});
 
 	$('body').on('click', '.rose.comment', function (evt) {

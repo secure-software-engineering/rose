@@ -25,11 +25,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-i18n.init({
-    fallbackLng: 'en',
-    getAsync: false
-});
 
+// Initialization of i18next
+var options = {
+    getAsync: false,
+    fallbackLng: 'en',
+    resGetPath: '../res/locales/__lng__/__ns__.json'
+};
+i18n.init(options);
+
+// Initialization of moment.js
 moment.lang(i18n.lng());
 
 App = window.App = Ember.Application.create({
@@ -237,6 +242,13 @@ App.FacebookInteractionsController = Ember.ArrayController.extend({
     }
 });
 
+App.FacebookInteractionsView = Ember.View.extend({
+    initPopups: function () {
+        this.$('.red.sign.icon')
+            .popup();
+    }.on('didInsertElement')
+});
+
 App.Comment = Ember.Object.extend();
 
 App.FacebookCommentsRoute = Ember.Route.extend({
@@ -287,16 +299,44 @@ App.FacebookCommentsController = Ember.ArrayController.extend({
     }
 });
 
+App.FacebookCommentsView = Ember.View.extend({
+    initPopups: function () {
+        this.$('.red.sign.icon')
+            .popup();
+    }.on('didInsertElement')
+});
+
 App.BackupView = Ember.View.extend({
     focusTextarea: function () {
         this.$('.ui.form textarea').focus();
     }.on('didInsertElement')
 });
 
-App.SettingsView = Ember.View.extend({
-    activateCheckbox: function () {
-        this.$('.ui.checkbox').checkbox();
-    }.on('didInsertElement')
+App.SettingsController = Ember.Controller.extend({
+    updateReminder: function () {
+        console.log(this.get('showReminder'));
+    }.observes('showReminder'),
+});
+
+App.SettingsRoute = Ember.Route.extend({
+    model: function () {
+        return {
+            'reminder': {
+                'isActive': true
+            }
+        };
+        return new Ember.RSVP.Promise(function (resolve, reject) {
+            Storage.getSettings(resolve);
+        });
+    },
+
+    setupController: function (controller, response) {
+        controller.set('model', Ember.Object.create(response));
+    }
+});
+
+Ember.Handlebars.helper('timeFormated', function (time) {
+    return new Handlebars.SafeString(moment(time).format('LLLL'));
 });
 
 Ember.Handlebars.helper('timeAgo', function (time) {

@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <meta name="viewport" content="width=device-width">
     <!-- build:css styles/main.css -->
     <link rel="stylesheet" href="../bower_components/normalize-css/normalize.css">
-    <link rel="stylesheet" href="../bower_components/semantic-ui/build/packaged/css/semantic.css">
+    <link rel="stylesheet" href="../bower_components/semantic/build/packaged/css/semantic.css">
     <link rel="stylesheet" href="styles/open-sans.css">
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
@@ -140,6 +140,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     ROSE is a browser extension to support empirical Field studies by recording users' interactions with the social network Facebook for a limited period of time. Please consider the help page for further information on ROSE's functioning.</p>
     <div class="ui divider"></div>
     ROSE has been developed by
+
+    <p>Oliver Hoffmann and Sebastian Ruhleder</p>
+
     <div class="ui basic segment">
         <address><strong>Fraunhofer Institute for Secure Information Technology SIT</strong><br/> Rheinstrasse 75<br/> 64295 Darmstadt<br/> Germany </address>
     </div>
@@ -163,10 +166,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </div>
 </h3>
 <div class="ui toggle checkbox">
-    <input type="checkbox" name="pet">
-    <label></label>
+    {{view Ember.Checkbox checkedBinding='showReminder' id="reminder-checkbox"}}
+    <label for="reminder-checkbox">Comment reminder: <b>Disabled</b></label>
 </div>
-<b>Enable</b> comment reminder.
 </script>
 
 
@@ -264,11 +266,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div class="label">
             <i class="user icon"></i>
             {{#if item.hidden}}
-            <i class="minus red sign icon"></i>
+            <i class="minus red sign icon" title="Hello I am a popup" data-variation="inverted"></i>
             {{/if}}
         </div>
         <div class="content">
-            <div class="date">
+            <div class="date" title="{{unbound timeFormated item.createdAt}}">
                 {{timeAgo item.createdAt}}
             </div>
             <div class="summary">
@@ -315,11 +317,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div class="label">
             <i class="comment icon"></i>
             {{#if hidden}}
-            <i class="minus red sign icon"></i>
+            <i class="minus red sign icon" title="Hello I am a popup" data-variation="inverted"></i>
             {{/if}}
         </div>
         <div class="content">
-            <div class="date">
+            <div class="date" title="{{unbound timeFormated item.createdAt}}">
                 {{timeAgo createdAt}}
             </div>
             <div class="summary">
@@ -475,7 +477,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <script src="../bower_components/i18next/release/i18next-1.7.1.js"></script>
     <script src="../bower_components/momentjs/moment.js"></script>
     <script src="../bower_components/momentjs/lang/de.js"></script>
-    <script src="../bower_components/semantic-ui/build/packaged/javascript/semantic.js"></script>
+    <script src="../bower_components/semantic/build/packaged/javascript/semantic.js"></script>
     <!-- endbuild -->
 
     <!-- build:js scripts/app.js -->

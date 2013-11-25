@@ -313,18 +313,23 @@ App.BackupView = Ember.View.extend({
 });
 
 App.SettingsController = Ember.Controller.extend({
+    showReminder: function () {
+        debugger;
+        return this.get('model.reminder.isActive');
+    }.property('model.reminder.isActive'),
+
     updateReminder: function () {
-        console.log(this.get('showReminder'));
+        var reminder = {
+            isActive: this.get('showReminder')
+        };
+
+        Storage.setSettings('reminder', reminder);
+        console.log(this.get('reminder'));
     }.observes('showReminder'),
 });
 
 App.SettingsRoute = Ember.Route.extend({
     model: function () {
-        return {
-            'reminder': {
-                'isActive': true
-            }
-        };
         return new Ember.RSVP.Promise(function (resolve, reject) {
             Storage.getSettings(resolve);
         });
@@ -335,7 +340,7 @@ App.SettingsRoute = Ember.Route.extend({
     }
 });
 
-Ember.Handlebars.helper('timeFormated', function (time) {
+Ember.Handlebars.helper('timeFormatted', function (time) {
     return new Handlebars.SafeString(moment(time).format('LLLL'));
 });
 

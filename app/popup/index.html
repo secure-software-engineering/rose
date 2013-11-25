@@ -167,7 +167,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </h3>
 <div class="ui toggle checkbox">
     {{view Ember.Checkbox checkedBinding='showReminder' id="reminder-checkbox"}}
-    <label for="reminder-checkbox">Comment reminder: <b>Disabled</b></label>
+    <label for="reminder-checkbox">Comment reminder: 
+    <b>{{#if showReminder}}
+        {{I18n 'enabled'}}
+    {{else}}
+        {{I18n 'disabled'}}
+    {{/if}}</b>
+    </label>
 </div>
 </script>
 
@@ -270,7 +276,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             {{/if}}
         </div>
         <div class="content">
-            <div class="date" title="{{unbound timeFormated item.createdAt}}">
+            <div class="date" title="{{unbound timeFormatted item.createdAt}}">
                 {{timeAgo item.createdAt}}
             </div>
             <div class="summary">
@@ -321,7 +327,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             {{/if}}
         </div>
         <div class="content">
-            <div class="date" title="{{unbound timeFormated item.createdAt}}">
+            <div class="date" title="{{unbound timeFormatted item.createdAt}}">
                 {{timeAgo createdAt}}
             </div>
             <div class="summary">

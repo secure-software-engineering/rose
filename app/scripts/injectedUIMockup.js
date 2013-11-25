@@ -60,26 +60,37 @@ var getTemplate = function (url) {
 	return promise;
 };
 
+var getSettings = function () {
+	var promise = new RSVP.Promise(function (resolve, reject) {
+		Storage.getSettings(function (data) {
+			resolve(data);
+		});
+	});
+
+	return promise;
+};
+
 if (window.location.hostname.indexOf("www.facebook.com") > -1) {
-	// var settings = Storage.getSettings();
 
 	// load css files into facebook DOM
 	loadCSS("res/semantic/build/packaged/css/semantic.css");
 	loadCSS("res/main.css");
 
 	// add reminder to facebook DOM if not disabled in settings
-	if (true) {
-		getTemplate('reminder').then(function (source) {
-			var template = Handlebars.compile(source);
-			return template;
-		}).then(function (template) {
-			$('body').append(template());
+	getSettings().then(function (settings) {
+		if (settings.reminder.isActive) {
+			getTemplate('reminder').then(function (source) {
+				var template = Handlebars.compile(source);
+				return template;
+			}).then(function (template) {
+				$('body').append(template());
 
-			$('.ui.nag').nag({
-				easing: 'swing'
+				$('.ui.nag').nag({
+					easing: 'swing'
+				});
 			});
-		});
-	}
+		}
+	});
 
 	// add sidebar to facebook DOM
 	getTemplate('sidebar').then(function (source) {
@@ -109,15 +120,20 @@ if (window.location.hostname.indexOf("www.facebook.com") > -1) {
 		}
 	});
 
+	// event handler
+
+	// when user clicks rose comment sidebar should appear
 	$('body').on('click', '.rose.comment', function (evt) {
 		$('.ui.sidebar').sidebar('pushPage');
 		$('.ui.sidebar').sidebar('show');
 	});
 
+	// when user clicks cancel button sidebar should disappear
 	$('body').on('click', '.sidebar .cancel.button', function (evt) {
 		$('.ui.sidebar').sidebar('hide');
 	});
 
+	// when user clicks save button sidebar should disappear and user input should be saved
 	$('body').on('click', '.sidebar .save.button', function (evt) {
 		evt.stopPropagation();
 		$('.sidebar').sidebar('hide');

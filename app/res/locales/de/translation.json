@@ -24,6 +24,9 @@
 
     "you": "Du",
 
+    "enabled": "Aktiviert",
+    "disabled": "Deaktiviert",
+
     "settingsPage": {
         "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
         "messageHeader": "Es sind keine Tagebucheinträge vorhanden",

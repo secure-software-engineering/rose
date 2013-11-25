@@ -200,3 +200,10 @@ class @Storage
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             settings = roseStorage.settings
             callback settings || {}
+
+    @setSettings: (key, settings) ->
+        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+            roseStorage.settings[key] = settings
+
+            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseStorage
+            

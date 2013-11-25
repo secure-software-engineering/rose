@@ -1,3 +1,30 @@
+###
+ROSE is a browser extension researchers can use to capture in situ 
+data on how users actually use the online social network Facebook.
+Copyright (C) 2013
+
+    Fraunhofer Institute for Secure Information Technology
+    Andreas Poller <andreas.poller@sit.fraunhofer.de>
+
+Authors  
+
+    Oliver Hoffmann <oliverh855@gmail.com>
+    Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
+
 class @RoseData
     constructor: (@data) ->
         @initializeMeta()
@@ -39,6 +66,7 @@ class @RoseData
         interaction =
             index: index
             deleted: false
+            hidden: false
             createdAt: new Date().toJSON()
             record: record
         @getInteractions(platformName).push interaction
@@ -49,8 +77,18 @@ class @RoseData
         return null
     
     removeInteraction: (index, platformName) ->
-        interactions = @getInteractions(platformName).filter (interaction) ->
-            interaction['index'] isnt index
+        interactions = @getInteractions(platformName).map (interaction) ->
+            if interaction['index'] is index
+                interaction.deleted = true
+                interaction.record = null
+            return interaction
+        @setInteractions(interactions, platformName)
+
+    hideInteraction: (index, hide, platformName) ->
+        interactions = @getInteractions(platformName).map (interaction) ->
+            if interaction['index'] is index
+                interaction.hidden = hide
+            return interaction
         @setInteractions(interactions, platformName)
     
     setInteractions: (interactions, platformName) ->
@@ -69,13 +107,14 @@ class @RoseData
         comment =
             index: index
             deleted: false
+            hidden: false
             createdAt: new Date().toJSON()
             record: record
         @getComments(platformName).push comment
 
     getComment: (index, platformName) ->
         for comment in @getComments(platformName)
-            return comment if comment['index'] == index
+            return comment if comment['index'] is index
         return null
     
     removeComment: (index, platformName) ->
@@ -112,7 +151,15 @@ class @RoseData
     removeDiaryEntry: (index) ->
         entries = @getDiaryEntries().filter (entry) ->
             entry['index'] isnt index
-        @setDiaryEntries(entries, platformName)
+        @setDiaryEntries(entries)
+
+    updateDiaryEntry: (index, text) ->
+        entries = @getDiaryEntries().map (entry) ->
+            if entry['index'] is index
+                entry.content = text
+            return entry
+
+        @setDiaryEntries(entries)
     
     setDiaryEntries: (entries) ->
         @data['diary'] = entries

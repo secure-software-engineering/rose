@@ -3,7 +3,7 @@ require 'Utilities'
 
 class window.FacebookLikeObserver
 	patterns: [
-		'<div role="article"><h5><div class="actorName"><a>{author}</a></div></h5><h5><span><div><span class="userContent">{content}</span></div></span></h5><form><span><span><a class="share_action_link"></a></span></span></form></div>'
+		'<div><h5><div><a>{author}</a></div></h5><div class="userContent">{content}</div><form></form></div>'
 	]
 	
 	getEventType: ->
@@ -20,7 +20,7 @@ class window.FacebookLikeObserver
 	
 	handleNode: (node) ->
 		# Get parent container.
-		parent = $(node).closest('.storyInnerContent')
+		parent = $(node).closest('.userContentWrapper')
 		
 		# Interaction types.
 		interactionTypes =

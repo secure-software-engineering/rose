@@ -34,8 +34,6 @@ class @Network
 					# Get parsed information, if possible.
 					parsed = observer.handleNode(this)
 					
-					console.log(JSON.stringify(parsed));
-					
 					if parsed['found']
 						# If record is valid, save interaction.
 						Storage.addInteraction(parsed['record'], name)

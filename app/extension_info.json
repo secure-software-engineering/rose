@@ -1,27 +1,32 @@
 {
-  "content_scripts": [
-    "bower_components/jquery/jquery.js",
-    "scripts/jquery.patterns.js",
-    "bower_components/jssha/src/sha.js",
-    "scripts/app.js"
-  ],
-  "homepage_url":"http://www.sit.fraunhofer.de/",
-  "description":"Research tool for field studies in online social networks.",
-  "creator":"Fraunhofer Institute SIT",
-  "background_scripts": [
-    "main.js"
-  ],
-  "homepage_url":"http://www.sit.fraunhofer.de/",
-  "version": "2.0",
-  "browser_button":{
-      "caption":"ROSE",
-      "tooltipText":"ROSE Browser Plugin",
-      "icon":"icons/rose-icon.png",
-      "popup":{
-          "url":"popup/index.html",
-          "width":800,
-          "height":600
-      }
-  },
-  "name": "ROSE"
+    "content_scripts": [
+        "bower_components/jquery/jquery.js",
+        "bower_components/jquery.cookie/jquery.cookie.js",
+        "bower_components/semantic/build/packaged/javascript/semantic.js",
+        "bower_components/jssha/src/sha.js",
+        "bower_components/rsvp/rsvp.js",
+        "bower_components/handlebars/handlebars.js",
+        "bower_components/i18next/release/i18next-1.7.1.js",
+        "scripts/app.js",
+        "scripts/injectedUIMockup.js",
+        "scripts/jquery.patterns.js"
+    ],
+    "homepage_url": "http://www.sit.fraunhofer.de/",
+    "description": "Research tool for field studies in online social networks.",
+    "creator": "Fraunhofer Institute SIT",
+    "background_scripts": [
+        "main.js"
+    ],
+    "version": "2.0.2",
+    "browser_button": {
+        "caption": "ROSE",
+        "tooltipText": "ROSE Browser Plugin",
+        "icon": "icons/rose-icon.png",
+        "popup": {
+            "url": "popup/index.html",
+            "width": 800,
+            "height": 600
+        }
+    },
+    "name": "ROSE"
 }

@@ -24,12 +24,18 @@ module.exports = (grunt) ->
                     '.tmp/scripts/{,**/}*.js'
                 ]
                 tasks: ['neuter', 'livereload']
+            locales: 
+                files: '<%= yeoman.app %>/popup/locales/**'
+                tasks: ['copy', 'livereload']
             pages: 
                 files: '<%= yeoman.app %>/popup/pages/*.html'
                 tasks: ['copy', 'livereload']
+            templates:
+                files: '<%= yeoman.app %>/res/templates/*.hbs'
+                tasks: ['copy', 'livereload']
             htmlmin: 
                 files: [
-                    '<%= yeoman.app %>/popup/*.{html,js}'
+                    '<%= yeoman.app %>/popup/{,**/}*.{html,js}'
                     '<%= yeoman.app %>/popup/styles/*.css'
                 ]
                 tasks: ['useminPrepare', 'htmlmin', 'usemin', 'livereload']
@@ -69,9 +75,15 @@ module.exports = (grunt) ->
                 ]
 
         kangoManifest:
-            dist:
+            dev:
                 options: 
                     buildnumber: false
+                    background: 'background.js'
+                src: '<%= yeoman.app %>'
+                dest: '<%= yeoman.kangoDist %>'
+            dist:
+                options: 
+                    buildnumber: true
                     background: 'background.js'
                 src: '<%= yeoman.app %>'
                 dest: '<%= yeoman.kangoDist %>'
@@ -94,7 +106,10 @@ module.exports = (grunt) ->
                     dest: '<%= yeoman.kangoDist %>'
                     src: [
                         'icons/{,*/}*.{webp,gif,png,svg}'
-                        'popup/pages/*.html'
+                        'res/{,**/}*.*'
+                        'popup/templates/*.hbs'
+                        'popup/styles/font/**'
+                        'popup/locales/**'
                     ]
                 ]
 
@@ -128,7 +143,7 @@ module.exports = (grunt) ->
                 command: 'kango.py build --output-directory <%= yeoman.package %> <%= yeoman.dist %>'
 
     grunt.registerTask 'livereload', [
-        'kangoManifest'
+        'kangoManifest:dev'
         'concat'
         'uglify'
         'shell'
@@ -146,6 +161,20 @@ module.exports = (grunt) ->
         'coffee'
         'neuter'
         'kangoManifest'
+        'useminPrepare'
+        'htmlmin'
+        'usemin'
+        'concat'
+        'uglify'
+        'copy'
+        'shell'
+    ]
+
+    grunt.registerTask 'dist', [
+        'clean'
+        'coffee'
+        'neuter'
+        'kangoManifest:dist'
         'useminPrepare'
         'htmlmin'
         'usemin'

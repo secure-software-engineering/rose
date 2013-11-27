@@ -160,7 +160,7 @@ module.exports = (grunt) ->
         'clean'
         'coffee'
         'neuter'
-        'kangoManifest'
+        'kangoManifest:dev'
         'useminPrepare'
         'htmlmin'
         'usemin'

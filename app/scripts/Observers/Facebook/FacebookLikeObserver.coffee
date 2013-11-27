@@ -13,10 +13,8 @@ class window.FacebookLikeObserver
 		[".UFILikeLink", ".UFICommentActions > a", ".UFILikeThumb"]
 	
 	sanitize: (record) ->
-		#for secretField in ["author", "content"]
-		#	record[secretField] = Utilities.hash(record[secretField]) if record[secretField]
-		
-		return record
+		for secretField in ["author", "content"]
+			record[secretField] = Utilities.hash(record[secretField]) if record[secretField]
 	
 	handleNode: (node) ->
 		# Get parent container.

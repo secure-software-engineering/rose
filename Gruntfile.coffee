@@ -75,9 +75,15 @@ module.exports = (grunt) ->
                 ]
 
         kangoManifest:
-            dist:
+            dev:
                 options: 
                     buildnumber: false
+                    background: 'background.js'
+                src: '<%= yeoman.app %>'
+                dest: '<%= yeoman.kangoDist %>'
+            dist:
+                options: 
+                    buildnumber: true
                     background: 'background.js'
                 src: '<%= yeoman.app %>'
                 dest: '<%= yeoman.kangoDist %>'
@@ -137,7 +143,7 @@ module.exports = (grunt) ->
                 command: 'kango.py build --output-directory <%= yeoman.package %> <%= yeoman.dist %>'
 
     grunt.registerTask 'livereload', [
-        'kangoManifest'
+        'kangoManifest:dev'
         'concat'
         'uglify'
         'shell'
@@ -155,6 +161,20 @@ module.exports = (grunt) ->
         'coffee'
         'neuter'
         'kangoManifest'
+        'useminPrepare'
+        'htmlmin'
+        'usemin'
+        'concat'
+        'uglify'
+        'copy'
+        'shell'
+    ]
+
+    grunt.registerTask 'dist', [
+        'clean'
+        'coffee'
+        'neuter'
+        'kangoManifest:dist'
         'useminPrepare'
         'htmlmin'
         'usemin'

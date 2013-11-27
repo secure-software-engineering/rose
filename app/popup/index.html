@@ -220,7 +220,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div class="content">
             <a class="author">{{I18n 'you'}}</a>
             <div class="metadata">
-                <div class="date">{{timeAgo createdAt}}</div>
+                <div class="date" title="{{unbound timeFormatted createdAt}}">{{timeAgo createdAt}}</div>
             </div>
             <div class="text">
                 {{content}}
@@ -493,7 +493,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- build:js scripts/components.js -->
     <script src="../bower_components/jquery/jquery.js"></script>
     <script src="../bower_components/handlebars/handlebars.js"></script>
-    <script src="../bower_components/ember/ember.js"></script>
+    <script src="../bower_components/ember/ember.prod.js"></script>
     <script src="../bower_components/i18next/release/i18next-1.7.1.js"></script>
     <script src="../bower_components/momentjs/moment.js"></script>
     <script src="../bower_components/momentjs/lang/de.js"></script>

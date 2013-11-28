@@ -12,7 +12,7 @@ class window.FacebookChatTurnedOffObserver
 	getMetaData: (obj) ->
 		# Return meta data.
 		return {
-			'interaction_type': "chatturnoff"
+			'type': "chatturnoff"
 		}
 	
 	getObserverType: ->

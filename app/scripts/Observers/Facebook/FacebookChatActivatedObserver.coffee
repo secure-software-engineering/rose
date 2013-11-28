@@ -12,7 +12,7 @@ class window.FacebookChatActivatedObserver
 	getMetaData: (obj) ->
 		# Return meta data.
 		return {
-			'interaction_type': "chatactivated"
+			'type': "chatactivated"
 		}
 	
 	getObserverType: ->

@@ -11,7 +11,7 @@ class window.FacebookFriendAddObserver
 	getMetaData: (obj) ->
 		# Return meta data.
 		return {
-			'interaction_type': "friendadded"
+			'type': "friendadded"
 		}
 	
 	getObserverType: ->

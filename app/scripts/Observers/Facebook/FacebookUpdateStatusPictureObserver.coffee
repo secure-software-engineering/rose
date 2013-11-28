@@ -11,7 +11,7 @@ class window.FacebookUpdateStatusPictureObserver
 	getMetaData: (obj) ->
 		# Return meta data.
 		return {
-			'interaction_type': "updatestatuspicture",
+			'type': "updatestatuspicture",
 			'object_type':      "status"
 		}
 	

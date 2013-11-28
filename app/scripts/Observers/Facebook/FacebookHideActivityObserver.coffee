@@ -21,7 +21,7 @@ class window.FacebookHideActivityObserver
 
 		# Return meta data.
 		return {
-			'interaction_type': "hideactivity",
+			'type': "hideactivity",
 			'object_owner':     likeMeta['object_owner'],
 			'object_type':      likeMeta['object_type']
 		}

@@ -18,7 +18,7 @@ class window.FacebookDeleteStatusObserver
 	getMetaData: (obj) ->
 		# Return meta data.
 		return {
-			'interaction_type': "deletestatus"
+			'type': "deletestatus"
 		}
 	
 	getObserverType: ->

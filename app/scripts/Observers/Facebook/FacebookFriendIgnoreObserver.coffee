@@ -11,7 +11,7 @@ class window.FacebookFriendIgnoreObserver
 	getMetaData: (obj) ->
 		# Return meta data.
 		return {
-			'interaction_type': "friendignored"
+			'type': "friendignored"
 		}
 	
 	getObserverType: ->

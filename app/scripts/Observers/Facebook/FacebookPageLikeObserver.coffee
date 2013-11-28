@@ -10,7 +10,7 @@ class window.FacebookPageLikeObserver
 
 	getMetaData: (obj) ->
 		return {
-			'interaction_type': 'pagelike'
+			'type': 'pagelike'
 		}
 	
 	getObserverType: ->

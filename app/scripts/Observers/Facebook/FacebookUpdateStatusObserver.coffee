@@ -32,7 +32,7 @@ class window.FacebookUpdateStatusObserver
 
 		# Return meta data.
 		return {
-			'interaction_type': "updatestatus",
+			'type': "updatestatus",
 			'privacy_scope':    privacy,
 			'object_type':      "status"
 		}

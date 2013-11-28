@@ -34,7 +34,7 @@ class window.FacebookShareObserver
 
 		# Return meta data.
 		return {
-			'interaction_type': "share",
+			'type': "share",
 			'object_owner':     Utilities.hash(objectOwner),
 			'object_type':      "status"
 		}

@@ -1,6 +1,6 @@
 class window.FacebookChatActivatedObserver
 	getIntegrationPatterns: ->
-		["#fbDockChat a.fbNubButton"]
+		["li.fbChatGoOnlineItem a"]
 
 	getEventType: ->
 		"click"

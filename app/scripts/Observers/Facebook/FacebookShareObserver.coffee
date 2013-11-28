@@ -5,7 +5,7 @@ class window.FacebookShareObserver
 	getEventType: ->
 		"click"
 
-	getID: (obj) ->
+	getData: (obj) ->
 		# Content classes.
 		classes = {
 			'form': '.UIShareStage_Summary'
@@ -17,10 +17,6 @@ class window.FacebookShareObserver
 		# Trim content.
 		content = content.substr(0, Constants.getContentLength) if content
 
-		# Return content.
-		return content
-
-	getMetaData: (obj) ->
 		# Get object owner classes.
 		objectOwnerClasses = {
 			'form': '.UIShareStage_Subtitle'
@@ -35,8 +31,11 @@ class window.FacebookShareObserver
 		# Return meta data.
 		return {
 			'type': "share",
-			'object_owner':     Utilities.hash(objectOwner),
-			'object_type':      "status"
+			'object': {
+				'id': Utilities.hash(content),
+				'owner': Utilities.hash(objectOwner),
+				'type': "status"
+			}
 		}
 	
 	getObserverType: ->

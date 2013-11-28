@@ -5,11 +5,13 @@ class window.FacebookPageLikeObserver
 	getEventType: ->
 		"click"
 
-	getID: (obj) ->
-		$("#fbProfileCover").find("span[itemprop=name]").html()
-
-	getMetaData: (obj) ->
+	getData: (obj) ->
+		# Get name of page.
+		page = $("#fbProfileCover").find("span[itemprop=name]").html()
+		page = Utilities.hash(page)
+		
 		return {
+			'page': oage,
 			'type': 'pagelike'
 		}
 	

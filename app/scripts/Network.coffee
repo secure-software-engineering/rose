@@ -54,17 +54,11 @@ class @Network
 	
 				# Add functionality.
 				$(this).on observer.getEventType(), (e) ->
-					# Get ID.
-					id = observer.getID($(this))
+					# Get data.
+					data = observer.getData($(this))
 	
-					# Get meta data.
-					metaData = observer.getMetaData($(this))
-	
-					# Create interaction...
-					interaction = InteractionFactory.createInteraction(id, metaData)
-	
-					# ... and save to storage.
-					Storage.addInteraction(interaction, name)
+					# Add interaction.
+					Storage.addInteraction(data, name)
 
 	integrateIntoDOM: ->
 		# Stub.

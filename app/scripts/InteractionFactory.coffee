@@ -1,5 +1,5 @@
 class @InteractionFactory
-	@createInteraction: (id, metaData) ->
+	@createInteraction: (data) ->
 		# Create interaction.
 		interaction = {}
 

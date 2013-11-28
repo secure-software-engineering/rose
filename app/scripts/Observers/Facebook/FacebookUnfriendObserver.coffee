@@ -5,11 +5,7 @@ class window.FacebookUnfriendObserver
 	getEventType: ->
 		"click"
 
-	getID: (obj) ->
-		""
-
-	getMetaData: (obj) ->
-		# Return meta data.
+	getData: (obj) ->
 		return {
 			'type': "unfriend"
 		}

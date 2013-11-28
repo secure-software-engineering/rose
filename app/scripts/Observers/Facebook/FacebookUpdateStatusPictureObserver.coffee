@@ -5,14 +5,16 @@ class window.FacebookUpdateStatusPictureObserver
 	getEventType: ->
 		"click"
 
-	getID: (obj) ->
-		obj.closest("form[action*=photos]").find("textarea.mentionsTextarea").val()
+	getData: (obj) ->
+		# Generate ID.
+		id = Utilities.hash(obj.closest("form[action*=photos]").find("textarea.mentionsTextarea").val())
 
-	getMetaData: (obj) ->
-		# Return meta data.
 		return {
 			'type': "updatestatuspicture",
-			'object_type':      "status"
+			'object': {
+				'type': "status",
+				'id': id
+			}
 		}
 	
 	getObserverType: ->

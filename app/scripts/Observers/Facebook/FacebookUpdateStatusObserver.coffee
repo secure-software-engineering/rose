@@ -5,10 +5,7 @@ class window.FacebookUpdateStatusObserver
 	getEventType: ->
 		"click"
 
-	getID: (obj) ->
-		obj.closest("form[action*=updatestatus]").find("input[name=xhpc_message]").attr("value")
-
-	getMetaData: (obj) ->
+	getData: (obj) ->
 		# Privacy types.
 		privacyTypes = {
 			# German
@@ -30,11 +27,18 @@ class window.FacebookUpdateStatusObserver
 		privacy = privacyTypes[privacy]
 		privacy = "privacyunknown" if privacy == null
 
+		# Get ID.
+		id = obj.closest("form[action*=updatestatus]").find("input[name=xhpc_message]").attr("value")
+		id = Utilities.hash(id)
+
 		# Return meta data.
 		return {
 			'type': "updatestatus",
-			'privacy_scope':    privacy,
-			'object_type':      "status"
+			'scope': privacy,
+			'object': {
+				'type': "status",
+				'id': id
+			}
 		}
 	
 	getObserverType: ->

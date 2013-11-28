@@ -5,18 +5,9 @@ class window.FacebookDeleteStatusObserver
 	getEventType: ->
 		"click"
 
-	getID: (obj) ->
-		# Instantiate Facebook like observer.
-		likeObserver = new FacebookLikeObserver()
-
-		# Handle node in like observer.
-		interaction = likeObserver.handleNode(obj, "status")
-
-		# No ID found?
-		return ""
-
-	getMetaData: (obj) ->
-		# Return meta data.
+	getData: (obj) ->
+		# TODO: Add more information.
+		
 		return {
 			'type': "deletestatus"
 		}

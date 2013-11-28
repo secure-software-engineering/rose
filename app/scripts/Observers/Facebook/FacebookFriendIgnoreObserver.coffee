@@ -5,12 +5,13 @@ class window.FacebookFriendIgnoreObserver
 	getEventType: ->
 		"click"
 
-	getID: (obj) ->
-		Utilities.stripTags DOM.findRelative(obj, '.clearfix': '.title a')
-
-	getMetaData: (obj) ->
-		# Return meta data.
+	getData: (obj) ->
+		# Get name of friend.
+		friend = Utilities.stripTags(DOM.findRelative(obj, '.clearfix': '.title a'))
+		friend = Utilities.hash(friend)
+		
 		return {
+			'friend': friend,
 			'type': "friendignored"
 		}
 	

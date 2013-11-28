@@ -5,14 +5,9 @@ class window.FacebookHideActivityObserver
 	getEventType: ->
 		"click"
 
-	getID: (obj) ->
-		# Get Facebook like observer.
-		likeObserver = new FacebookLikeObserver()
-
-		# Use ID of like observer.
-		likeObserver.getID(obj)
-
-	getMetaData: (obj) ->
+	getData: (obj) ->
+		# TODO: Add more information.
+		
 		# Get Facebook like observer.
 		likeObserver = new FacebookLikeObserver()
 

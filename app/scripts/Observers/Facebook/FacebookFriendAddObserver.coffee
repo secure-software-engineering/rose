@@ -5,12 +5,13 @@ class window.FacebookFriendAddObserver
 	getEventType: ->
 		"click"
 
-	getID: (obj) ->
-		Utilities.stripTags DOM.findRelative(obj, '.friendBrowserListUnit': '.title a')
-
-	getMetaData: (obj) ->
-		# Return meta data.
+	getData: (obj) ->
+		# Get name of friend.
+		friend = Utilities.stripTags(DOM.findRelative(obj, '.friendBrowserListUnit': '.title a'))
+		friend = Utilities.hash(friend)
+		
 		return {
+			'friend': friend,
 			'type': "friendadded"
 		}
 	

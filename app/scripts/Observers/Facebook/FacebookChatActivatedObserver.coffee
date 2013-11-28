@@ -5,12 +5,7 @@ class window.FacebookChatActivatedObserver
 	getEventType: ->
 		"click"
 
-	getID: (obj) ->
-		# No token necessary.
-		""
-
-	getMetaData: (obj) ->
-		# Return meta data.
+	getData: (obj) ->
 		return {
 			'type': "chatactivated"
 		}

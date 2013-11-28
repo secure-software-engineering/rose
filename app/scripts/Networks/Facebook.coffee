@@ -61,17 +61,24 @@ class window.Facebook extends Network
 					# Get Facebook like observer.
 					likeObserver = new FacebookLikeObserver()
 
-					# Use ID of like observer.
-					id = likeObserver.getID($(this))
+					# Get result of like observer.
+					result = likeObserver.handleNode(this, "status")
+
+					if not result['found']
+						return
 
 					# Create interaction.
-					interaction =
-						'interaction_type': 'commentstatus'
-						'object_type':      'comment'
-						'object_owner':     FacebookUtilities.getUserID()
-						'proband_id':       FacebookUtilities.getUserID()
-						'object_id':        id
-						'time':             new Date()
+					interaction = {
+						'type': 'commentstatus',
+						'target': result['record']['object'],
+						'object': {
+							'type': "comment",
+							'owner': FacebookUtilities.getUserID(),
+							'id': content
+						},
+						'proband_id': FacebookUtilities.getUserID(),
+						'time': new Date()
+					}
 
 					# Save interaction.
 					Storage.addInteraction(interaction, name)

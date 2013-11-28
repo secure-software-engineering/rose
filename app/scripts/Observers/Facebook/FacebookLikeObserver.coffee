@@ -47,10 +47,12 @@ class window.FacebookLikeObserver
 		# Set interaction type (like, unlike, unknown).
 		interactionType = interactionTypes[fieldContent]
 		interactionType = "unknown/like/unlike" unless interactionType
-		
+
 		# Traverse through patterns.
 		records = []
 		for pattern in @patterns[container]
+			record = {}
+			
 			# Assemble pattern for call.
 			args =
 				structure: pattern

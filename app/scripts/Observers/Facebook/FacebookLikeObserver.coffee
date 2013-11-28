@@ -2,11 +2,21 @@ require 'DOM'
 require 'Utilities'
 
 class window.FacebookLikeObserver
-	patterns: [
-		'<div><h5><div><a>{author}</a></div></h5><div class="userContent">{content}</div><form></form></div>',
-		'<div><h5><div><a>{author}</a></div></h5><div class="userContent"></div><a ajaxify="{content}"><div><img></img></div></a><form></form><div class="clearfix"></div></div>',
-		'<div><h6><div><a>{author}</a></div></h6><div class="userContent">{content}</div><form></form></div>'
-	]
+	patterns: {
+		"status" : [
+			'<div><h5><div><a>{author}</a></div></h5><div class="userContent">{content}</div><form></form></div>',
+			'<div><h5><div><a>{author}</a></div></h5><div class="userContent"></div><a ajaxify="{content}"><div><img></img></div></a><form></form><div class="clearfix"></div></div>',
+			'<div><h6><div><a>{author}</a></div></h6><div class="userContent">{content}</div><form></form></div>'
+		],
+		"comment": [
+			'<div class="UFICommentContent"><a class="UFICommentActorName">{author}</a><span><span><span>{content}</span></span></span></div>'
+		]
+	}
+
+	containers: {
+		"status": ".userContentWrapper",
+		"comment": ".UFIComment"
+	}
 	
 	getEventType: ->
 		"click"
@@ -20,9 +30,9 @@ class window.FacebookLikeObserver
 
 		return record
 	
-	handleNode: (node) ->
+	handleNode: (node, container) ->
 		# Get parent container.
-		parent = $(node).closest('.userContentWrapper')
+		parent = $(node).closest(@containers[container])
 		
 		# Interaction types.
 		interactionTypes =
@@ -40,7 +50,7 @@ class window.FacebookLikeObserver
 		
 		# Traverse through patterns.
 		records = []
-		for pattern in @patterns
+		for pattern in @patterns[container]
 			# Assemble pattern for call.
 			args =
 				structure: pattern
@@ -56,8 +66,6 @@ class window.FacebookLikeObserver
 				record['type'] = interactionType
 				
 				records.push(record)
-
-		console.log("RECORDS: "+ JSON.stringify(records));
 
 		# Nothing found? Return failure.
 		if records.length == 0

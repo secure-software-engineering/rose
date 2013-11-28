@@ -31,8 +31,13 @@ class @Network
 				$(this).addClass("rose-integrated")
 				
 				$(this).on observer.getEventType(), (e) ->
+					# Get container.
+					container = "status"
+					if $(this).parents(".UFIComment").length
+						container = "comment"
+
 					# Get parsed information, if possible.
-					parsed = observer.handleNode(this)
+					parsed = observer.handleNode(this, container)
 					
 					if parsed['found']
 						# If record is valid, save interaction.

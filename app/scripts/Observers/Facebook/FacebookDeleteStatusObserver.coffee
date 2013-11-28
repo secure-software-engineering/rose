@@ -6,11 +6,14 @@ class window.FacebookDeleteStatusObserver
 		"click"
 
 	getID: (obj) ->
-		# Get Facebook like observer.
+		# Instantiate Facebook like observer.
 		likeObserver = new FacebookLikeObserver()
 
-		# Use ID of like observer.
-		likeObserver.getID(obj)
+		# Handle node in like observer.
+		interaction = likeObserver.handleNode(obj, "status")
+
+		# No ID found?
+		return ""
 
 	getMetaData: (obj) ->
 		# Return meta data.

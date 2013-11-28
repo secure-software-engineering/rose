@@ -1,12 +1,11 @@
 class window.FacebookUnfriendObserver
 	getIntegrationPatterns: ->
-		["input[name*=remove]"]
+		["li.FriendListUnfriend a"]
 
 	getEventType: ->
 		"click"
 
 	getID: (obj) ->
-		# Stub.
 		""
 
 	getMetaData: (obj) ->

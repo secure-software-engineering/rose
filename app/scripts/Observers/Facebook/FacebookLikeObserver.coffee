@@ -4,12 +4,12 @@ require 'Utilities'
 class window.FacebookLikeObserver
 	patterns: {
 		"status" : [
-			'<div><h5><div><a>{author}</a></div></h5><div class="userContent">{content}</div><form></form></div>',
-			'<div><h5><div><a>{author}</a></div></h5><div class="userContent"></div><a ajaxify="{content}"><div><img></img></div></a><form></form><div class="clearfix"></div></div>',
-			'<div><h6><div><a>{author}</a></div></h6><div class="userContent">{content}</div><form></form></div>'
+			'<div><h5><div><a>{owner}</a></div></h5><div class="userContent">{id}</div><form></form></div>',
+			'<div><h5><div><a>{owner}</a></div></h5><div class="userContent"></div><a ajaxify="{id}"><div><img></img></div></a><form></form><div class="clearfix"></div></div>',
+			'<div><h6><div><a>{owner}</a></div></h6><div class="userContent">{id}</div><form></form></div>'
 		],
 		"comment": [
-			'<div class="UFICommentContent"><a class="UFICommentActorName">{author}</a><span><span><span>{content}</span></span></span></div>'
+			'<div class="UFICommentContent"><a class="UFICommentActorName">{owner}</a><span><span><span>{id}</span></span></span></div>'
 		]
 	}
 
@@ -25,7 +25,7 @@ class window.FacebookLikeObserver
 		[".UFILikeLink", ".UFICommentActions > a", ".UFILikeThumb"]
 	
 	sanitize: (record) ->
-		for secretField in ["author", "content"]
+		for secretField in ["owner", "id"]
 			record[secretField] = Utilities.hash(record[secretField]) if record[secretField]
 
 		return record
@@ -60,7 +60,10 @@ class window.FacebookLikeObserver
 			
 			if result['success']
 				# Successful? Sanitize and return record.
-				record = result['data'][0]
+				record['object'] = result['data'][0]
+
+				# Set object container type.
+				record['object']['type'] = container
 				
 				# Set interaction type (like, unlike, unknown).
 				record['type'] = interactionType

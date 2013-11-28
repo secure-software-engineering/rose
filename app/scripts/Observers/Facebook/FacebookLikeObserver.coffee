@@ -3,7 +3,9 @@ require 'Utilities'
 
 class window.FacebookLikeObserver
 	patterns: [
-		'<div><h5><div><a>{author}</a></div></h5><div class="userContent">{content}</div><form></form></div>'
+		'<div><h5><div><a>{author}</a></div></h5><div class="userContent">{content}</div><form></form></div>',
+		'<div><h5><div><a>{author}</a></div></h5><div class="userContent"></div><a ajaxify="{content}"><div><img></img></div></a><form></form><div class="clearfix"></div></div>',
+		'<div><h6><div><a>{author}</a></div></h6><div class="userContent">{content}</div><form></form></div>'
 	]
 	
 	getEventType: ->
@@ -15,6 +17,8 @@ class window.FacebookLikeObserver
 	sanitize: (record) ->
 		for secretField in ["author", "content"]
 			record[secretField] = Utilities.hash(record[secretField]) if record[secretField]
+
+		return record
 	
 	handleNode: (node) ->
 		# Get parent container.
@@ -35,6 +39,7 @@ class window.FacebookLikeObserver
 		interactionType = "unknown/like/unlike" unless interactionType
 		
 		# Traverse through patterns.
+		records = []
 		for pattern in @patterns
 			# Assemble pattern for call.
 			args =
@@ -45,20 +50,39 @@ class window.FacebookLikeObserver
 			
 			if result['success']
 				# Successful? Sanitize and return record.
-				record = @sanitize(result['data'][0])
+				record = result['data'][0]
 				
 				# Set interaction type (like, unlike, unknown).
 				record['type'] = interactionType
 				
-				return {
-					'found': true,
-					'record': record
-				}
-		
+				records.push(record)
+
+		console.log("RECORDS: "+ JSON.stringify(records));
+
 		# Nothing found? Return failure.
-		return {
-			'found': false
+		if records.length == 0
+			return {
+				'found': false
+			}
+
+		# Prepare entry.
+		entry = {
+			'found': true,
+			'record': null
 		}
+
+		# Compare results.
+		max = 0
+		for record in records
+			count = 0
+			for key, value of record
+				if value != ""
+					count = count + 1
+			if count > max
+				max = count
+				entry['record'] = @sanitize(record)
+
+		return entry
 	
 	getObserverType: ->
 		"pattern"

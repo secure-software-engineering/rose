@@ -93,6 +93,21 @@ KangoAPI.onReady(function () {
         });
       },
 
+      restore: function () {
+        console.log("hit restore");
+        var self = this;
+        var text = $('textarea').val();
+        var jsonData = JSON.parse(text);
+        var setStorage = Ember.RSVP.Promise(function (resolve) {
+          Storage.setStorage(jsonData, resolve);
+        });
+
+        setStorage.then(function () {
+          self.set('storageData', '');
+          console.log('restored data!');
+        });
+      },
+
       openFileChooser: function () {
         $('input[type=file]').click();
       }

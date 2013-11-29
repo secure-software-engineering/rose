@@ -1,4 +1,4 @@
-class window.FacebookPageLikeObserver
+class @FacebookPageLikeObserver
 	getIntegrationPatterns: ->
 		[".PageLikeButton input[type=submit]"]
 
@@ -11,7 +11,7 @@ class window.FacebookPageLikeObserver
 		page = Utilities.hash(page)
 		
 		return {
-			'page': oage,
+			'page': page,
 			'type': 'pagelike'
 		}
 	

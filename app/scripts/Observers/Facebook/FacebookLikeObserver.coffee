@@ -10,12 +10,16 @@ class window.FacebookLikeObserver
 		],
 		"comment": [
 			'<div class="UFICommentContent"><a class="UFICommentActorName">{owner}</a><span><span><span>{id}</span></span></span></div>'
+		],
+		"timeline": [
+			'<div role="article"><div><h5><span><span><a>{owner}</a></span></span></h5></div><div class="userContentWrapper"><span>{id}</span></div></div>'
 		]
 	}
 
 	containers: {
 		"status": ".userContentWrapper",
-		"comment": ".UFIComment"
+		"comment": ".UFIComment",
+		"timeline": ".fbTimelineUnit"
 	}
 	
 	getEventType: ->

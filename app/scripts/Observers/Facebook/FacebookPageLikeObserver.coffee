@@ -11,7 +11,7 @@ class window.FacebookPageLikeObserver
 		page = Utilities.hash(page)
 		
 		return {
-			'page': oage,
+			'page': page,
 			'type': 'pagelike'
 		}
 	

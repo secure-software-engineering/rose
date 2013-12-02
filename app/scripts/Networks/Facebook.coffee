@@ -58,11 +58,16 @@ class window.Facebook extends Network
 					# Get comment text.
 					content = $(this).val()
 
+					# Get container.
+					container = "status"
+					if $(this).parents(".timelineUnitContainer").length
+						container = "timeline"
+
 					# Get Facebook like observer.
 					likeObserver = new FacebookLikeObserver()
 
 					# Get result of like observer.
-					result = likeObserver.handleNode(this, "status")
+					result = likeObserver.handleNode(this, container)
 
 					if not result['found']
 						return

@@ -26,21 +26,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 class @FacebookPageLikeObserver
-    getIntegrationPatterns: ->
-        [".PageLikeButton input[type=submit]"]
+	getIntegrationPatterns: ->
+		[".PageLikeButton input[type=submit]"]
 
-    getEventType: ->
-        "click"
+	getEventType: ->
+		"click"
 
-    getData: (obj) ->
-        # Get name of page.
-        page = $("#fbProfileCover").find("span[itemprop=name]").html()
-        page = Utilities.hash(page)
-        
-        return {
-            'page': page,
-            'type': 'pagelike'
-        }
-    
-    getObserverType: ->
-        "classic"            
+	getID: (obj) ->
+		$("#fbProfileCover").find("span[itemprop=name]").html()
+
+	getMetaData: (obj) ->
+		return {
+			'interaction_type': 'pagelike'
+		}
+	
+	getObserverType: ->
+		"classic"

@@ -28,37 +28,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 require 'Management'
 
 class @Rose
-    @mutationObserver: null
+	@mutationObserver: null
 
-    @startRose: ->
-        # Initialize Management.
-        Management.initialize()
+	@startRose: ->
+		# Initialize Management.
+		Management.initialize()
 
-        # Set event handling.
-        Rose.mutationObserver = new MutationObserver () ->
-            Rose.integrate()
+		# Set event handling.
+		Rose.mutationObserver = new MutationObserver () ->
+			Rose.integrate()
 
-        # Start observation.
-        Rose.mutationObserver.observe document, {
-            subtree:       true,
-            childList:     true,
-            characterData: true
-        }
+		# Start observation.
+		Rose.mutationObserver.observe document, {
+			subtree:       true,
+			childList:     true,
+			characterData: true
+		}
 
-        # Integrate into site.
-        Rose.integrate()
+		# Integrate into site.
+		Rose.integrate()
 
-    @integrate: ->
-        # Get list of networks.
-        networks = Management.getListOfNetworks()
+	@integrate: ->
+		# Get list of networks.
+		networks = Management.getListOfNetworks()
 
-        # Integrate networks, if possible.
-        for network in networks
-            # Continue unless applicable.
-            continue unless network.isOnNetwork()
+		# Integrate networks, if possible.
+		for network in networks
+			# Continue unless applicable.
+			continue unless network.isOnNetwork()
 
-            # Apply observers.
-            network.applyObservers()
+			# Apply observers.
+			network.applyObservers()
 
-            # Integrate into DOM.
-            network.integrateIntoDOM()
+			# Integrate into DOM.
+			network.integrateIntoDOM()

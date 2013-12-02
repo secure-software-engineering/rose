@@ -26,10 +26,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 class @Observer
-    getIntegrationPatterns: ->
+	getIntegrationPatterns: ->
 
-    getEventType: ->
+	getEventType: ->
 
-    getID: (obj) ->
+	getID: (obj) ->
 
-    getMetaData: (obj) ->
+	getMetaData: (obj) ->

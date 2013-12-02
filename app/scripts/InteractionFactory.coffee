@@ -25,19 +25,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-require 'Utilities'
-
 class @InteractionFactory
-    @createInteraction: (data) ->
-        # Create interaction.
-        interaction = {}
+	@createInteraction: (id, metaData) ->
+		# Create interaction.
+		interaction = {}
 
-        # Set fixed field.
-        interaction["object_id"] = Utilities.hash(id)
+		# Set fixed field.
+		interaction["object_id"] = Utilities.hash(id)
 
-        # Merge meta data.
-        for key of metaData
-            interaction[key] = metaData[key]
+		# Merge meta data.
+		for key of metaData
+			interaction[key] = metaData[key]
 
-        # Return interaction.
-        return interaction
+		# Return interaction.
+		return interaction

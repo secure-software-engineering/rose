@@ -25,66 +25,46 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-require 'Utilities'
-
 class @FacebookShareObserver
-    pattern: [
-        '<div class="UIShareStage"><div class="UIShareStage_ShareContent"><div class="UIShareStage_Subtitle">{owner}</div><div class="UIShareStage_Summary">{id}</div></div></div>'
-    ]
+	getIntegrationPatterns: ->
+		["form[action*=share] button[type=submit]", "form[action*=share] input[type=submit]"]
 
-    getIntegrationPatterns: ->
-        ["form[action*=share] button[type=submit]", "form[action*=share] input[type=submit]"]
+	getEventType: ->
+		"click"
 
-    getEventType: ->
-        "click"
+	getID: (obj) ->
+		# Content classes.
+		classes = {
+			'form': '.UIShareStage_Summary'
+		}
 
-    sanitize: (record) ->
-        # Remove "By " from author of shared post.
-        owner = record['object']['owner']
-        if owner
-            owner = owner.substr(owner.indexOf(' ') + 1)
-        record['object']['owner'] = owner
+		# Get content.
+		content = DOM.findRelative(obj, classes)
 
-        for secretField in ["owner", "id"]
-            record['object'][secretField] = Utilities.hash(record['object'][secretField]) if record['object'][secretField]
+		# Trim content.
+		content = content.substr(0, Constants.getContentLength) if content
 
-        return record
+		# Return content.
+		return content
 
-    handleNode: (node, container) ->
-        # Get parent container.
-        parent = $(node).closest('div[role=dialog]')
+	getMetaData: (obj) ->
+		# Get object owner classes.
+		objectOwnerClasses = {
+			'form': '.UIShareStage_Subtitle'
+		}
 
-        record = null
-        
-        # Assemble pattern for call.
-        args =
-            structure: @pattern
-        
-        # Try to apply pattern.
-        result = $(parent).applyPattern(args)
-        
-        if result['success']
-            record = {}
+		# Get object owner.
+		objectOwner = DOM.findRelative(obj, objectOwnerClasses)
 
-            # Successful? Sanitize and return record.
-            record['object'] = result['data'][0]
-            
-            # Set interaction type.
-            record['type'] = "share"
+		# Remove "By ".
+		objectOwner = objectOwner.substr(objectOwner.indexOf(" ") + 1)
 
-        # Nothing found? Return failure.
-        if record == null
-            return {
-                'found': false
-            }
-
-        # Prepare entry.
-        entry = {
-            'found': true,
-            'record': @sanitize(record)
-        }
-
-        return entry
-    
-    getObserverType: ->
-        "pattern"
+		# Return meta data.
+		return {
+			'interaction_type': "share",
+			'object_owner':     Utilities.hash(objectOwner),
+			'object_type':      "status"
+		}
+	
+	getObserverType: ->
+		"classic"

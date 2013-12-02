@@ -29,22 +29,22 @@ require 'Networks/Facebook'
 require 'Networks/GooglePlus'
 
 class @Management
-    @networks: []
+	@networks: []
 
-    @isInitialized: false
+	@isInitialized: false
 
-    @initialize: ->
-        if not Management.isInitialized
-            # Add networks to Management.
-            Management.add new Facebook()
-            Management.add new GooglePlus()
+	@initialize: ->
+		if not Management.isInitialized
+			# Add networks to Management.
+			Management.add new Facebook()
+			Management.add new GooglePlus()
 
-            # Set initialized flag.
-            Management.isInitialized = true
+			# Set initialized flag.
+			Management.isInitialized = true
 
-    @getListOfNetworks: ->
-        Management.networks
+	@getListOfNetworks: ->
+		Management.networks
 
-    @add: (network) ->
-        Management.networks.push network
+	@add: (network) ->
+		Management.networks.push network
         

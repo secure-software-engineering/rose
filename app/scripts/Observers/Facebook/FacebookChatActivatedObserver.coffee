@@ -26,16 +26,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 class @FacebookChatActivatedObserver
-    getIntegrationPatterns: ->
-        ["li.fbChatGoOnlineItem a"]
+	getIntegrationPatterns: ->
+		["#fbDockChat a.fbNubButton"]
 
-    getEventType: ->
-        "click"
+	getEventType: ->
+		"click"
 
-    getData: (obj) ->
-        return {
-            'type': "chatactivated"
-        }
-    
-    getObserverType: ->
-        "classic"
+	getID: (obj) ->
+		# No token necessary.
+		""
+
+	getMetaData: (obj) ->
+		# Return meta data.
+		return {
+			'interaction_type': "chatactivated"
+		}
+	
+	getObserverType: ->
+		"classic"

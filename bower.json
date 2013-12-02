@@ -21,6 +21,7 @@
     "momentjs": "~2.4.0",
     "semantic": "~0.9.3",
     "jquery.cookie": "~1.4.0",
-    "rsvp": "~2.0.4"
+    "rsvp": "~2.0.4",
+    "moment": "~2.4.0"
   }
 }

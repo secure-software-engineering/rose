@@ -207,4 +207,3 @@ class @Storage
             roseStorage.settings[key] = settings
 
             kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseStorage
-            

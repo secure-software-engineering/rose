@@ -1,70 +1,97 @@
+###
+ROSE is a browser extension researchers can use to capture in situ 
+data on how users actually use the online social network Facebook.
+Copyright (C) 2013
+
+    Fraunhofer Institute for Secure Information Technology
+    Andreas Poller <andreas.poller@sit.fraunhofer.de>
+
+Authors  
+
+    Oliver Hoffmann <oliverh855@gmail.com>
+    Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
+
 require 'InteractionFactory'
 require 'Storage/Storage'
 
 class @Network
-	# Network name.
-	network:   "Facebook"
+    # Network name.
+    network:   "Facebook"
 
-	# List of observers.
-	observers: []
+    # List of observers.
+    observers: []
 
-	isOnNetwork: ->
-		# Stub.
-		false
+    isOnNetwork: ->
+        # Stub.
+        false
 
-	applyObservers: ->
-		# Integrate observers.
-		for observer in @observers
-			@integrateObserver observer
+    applyObservers: ->
+        # Integrate observers.
+        for observer in @observers
+            @integrateObserver observer
 
-	integrateObserver: (observer) ->
-		# Get network name.
-		name = @getNetworkName()
-		
-		if observer.getObserverType() == "pattern"
-			# Integrate observer the pattern way.
-			$(observer.getIntegrationPatterns().join(", ")).each ->
-				# Skip if already integrated.
-				return if $(this).hasClass("rose-integrated")
-		
-				# Add integration class.
-				$(this).addClass("rose-integrated")
-				
-				$(this).on observer.getEventType(), (e) ->
-					# Get container.
-					container = "status"
-					if $(this).parents(".timelineUnitContainer").length
-						container = "timeline"
-					if $(this).parents(".UFIComment").length
-						container = "comment"
+    integrateObserver: (observer) ->
+        # Get network name.
+        name = @getNetworkName()
+        
+        if observer.getObserverType() is "pattern"
+            # Integrate observer the pattern way.
+            $(observer.getIntegrationPatterns().join(", ")).each ->
+                # Skip if already integrated.
+                return if $(this).hasClass("rose-integrated")
+        
+                # Add integration class.
+                $(this).addClass("rose-integrated")
+                
+                $(this).on observer.getEventType(), (e) ->
+                    # Get container.
+                    container = "status"
+                    if $(this).parents(".timelineUnitContainer").length
+                        container = "timeline"
+                    if $(this).parents(".UFIComment").length
+                        container = "comment"
 
-					# Get parsed information, if possible.
-					parsed = observer.handleNode(this, container)
-					
-					if parsed['found']
-						# If record is valid, save interaction.
-						Storage.addInteraction(parsed['record'], name)
-		
-		if observer.getObserverType() == "classic"
-			# Integrate observer the classic way.
-			$(observer.getIntegrationPatterns().join(", ")).each ->
-				# Skip if already integrated.
-				return if $(this).hasClass("rose-integrated")
-	
-				# Add integration class.
-				$(this).addClass("rose-integrated")
-	
-				# Add functionality.
-				$(this).on observer.getEventType(), (e) ->
-					# Get data.
-					data = observer.getData($(this))
-	
-					# Add interaction.
-					Storage.addInteraction(data, name)
+                    # Get parsed information, if possible.
+                    parsed = observer.handleNode(this, container)
+                    
+                    if parsed['found']
+                        # If record is valid, save interaction.
+                        Storage.addInteraction(parsed['record'], name)
+        
+        if observer.getObserverType() is "classic"
+            # Integrate observer the classic way.
+            $(observer.getIntegrationPatterns().join(", ")).each ->
+                # Skip if already integrated.
+                return if $(this).hasClass("rose-integrated")
+    
+                # Add integration class.
+                $(this).addClass("rose-integrated")
+    
+                # Add functionality.
+                $(this).on observer.getEventType(), (e) ->
+                    # Get data.
+                    data = observer.getData($(this))
+    
+                    # Add interaction.
+                    Storage.addInteraction(data, name)
 
-	integrateIntoDOM: ->
-		# Stub.
-		true
+    integrateIntoDOM: ->
+        # Stub.
+        true
 
-	getNetworkName: ->
-		@network
+    getNetworkName: ->
+        @network

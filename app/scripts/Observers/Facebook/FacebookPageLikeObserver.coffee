@@ -43,4 +43,4 @@ class @FacebookPageLikeObserver
         }
     
     getObserverType: ->
-        "classic"
+        "classic"            

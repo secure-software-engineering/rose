@@ -25,21 +25,24 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
+require 'Utilities'
+
 class @FacebookUtilities
-    @getUserID: ->
-        ""
+	# FIXME: THIS ID COULD CHANGE WHEN USER CHANGES HIS NAME
+	@getUserID: ->
+		Utilities.hash $(".fbxWelcomeBoxName").text()
 
-    @getStoryType: (obj) ->
-        # Story classes.
-        storyClasses =
-            '.UFIComment': 'comment',
-            'div[role=article]': 'status',
-            '.photoUfiContainer': 'photo',
-            '.timelineUnitContainer': 'status'
+	@getStoryType: (obj) ->
+		# Story classes.
+		storyClasses =
+			'.UFIComment': 'comment',
+			'div[role=article]': 'status',
+			'.photoUfiContainer': 'photo',
+			'.timelineUnitContainer': 'status'
 
-        # Find story type.
-        for className of storyClasses
-            return storyClasses[className] if $(className).find(obj).length > 0
+		# Find story type.
+		for className of storyClasses
+			return storyClasses[className] if $(className).find(obj).length > 0
 
-        # Still here? Story type not known.
-        return "unknown"
+		# Still here? Story type not known.
+		return "unknown"

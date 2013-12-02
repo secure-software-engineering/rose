@@ -1,41 +1,74 @@
-class window.FacebookUpdateStatusObserver
-	getIntegrationPatterns: ->
-		["form[action*=updatestatus] button[type=submit]", "form[action*=updatestatus] input[type=submit]"]
+###
+ROSE is a browser extension researchers can use to capture in situ 
+data on how users actually use the online social network Facebook.
+Copyright (C) 2013
 
-	getEventType: ->
-		"click"
+    Fraunhofer Institute for Secure Information Technology
+    Andreas Poller <andreas.poller@sit.fraunhofer.de>
 
-	getID: (obj) ->
-		obj.closest("form[action*=updatestatus]").find("input[name=xhpc_message]").attr("value")
+Authors  
 
-	getMetaData: (obj) ->
-		# Privacy types.
-		privacyTypes = {
-			# German
-			'benutzerdefiniert': 'custom',
-			'nur ich':           'only me',
-			'freunde':           'friends',
-			'öffentlich':        'public',
-			# English
-			'custom':  'custom',
-			'only me': 'only me',
-			'friends': 'friends',
-			'public':  'public'
-		}
+    Oliver Hoffmann <oliverh855@gmail.com>
+    Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
 
-		# Get privacy.
-		privacy = DOM.findRelative(obj, "form": ".uiSelectorButton span").toLowerCase()
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-		# Consider language.
-		privacy = privacyTypes[privacy]
-		privacy = "privacyunknown" if privacy == null
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-		# Return meta data.
-		return {
-			'interaction_type': "updatestatus",
-			'privacy_scope':    privacy,
-			'object_type':      "status"
-		}
-	
-	getObserverType: ->
-		"classic"
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
+
+require 'Utilities'
+
+class @FacebookUpdateStatusObserver
+    getIntegrationPatterns: ->
+        ["form[action*=updatestatus] button[type=submit]", "form[action*=updatestatus] input[type=submit]"]
+
+    getEventType: ->
+        "click"
+
+    getData: (obj) ->
+        # Privacy types.
+        privacyTypes = {
+            # German
+            'benutzerdefiniert': 'custom',
+            'nur ich':           'only me',
+            'freunde':           'friends',
+            'öffentlich':        'public',
+            # English
+            'custom':  'custom',
+            'only me': 'only me',
+            'friends': 'friends',
+            'public':  'public'
+        }
+
+        # Get privacy.
+        privacy = DOM.findRelative(obj, "form": ".uiSelectorButton span").toLowerCase()
+
+        # Consider language.
+        privacy = privacyTypes[privacy]
+        privacy = "privacyunknown" if privacy == null
+
+        # Get ID.
+        id = obj.closest("form[action*=updatestatus]").find("input[name=xhpc_message]").attr("value")
+        id = Utilities.hash(id)
+
+        # Return meta data.
+        return {
+            'type': "updatestatus",
+            'scope': privacy,
+            'object': {
+                'type': "status",
+                'id': id
+            }
+        }
+    
+    getObserverType: ->
+        "classic"

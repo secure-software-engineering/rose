@@ -45,6 +45,7 @@ class @Storage
             callback(hasPlatform)
     
     @addInteraction: (record, platformName) ->
+        console.log("[INTERACTION] " + JSON.stringify(record))
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
             
@@ -206,4 +207,3 @@ class @Storage
             roseStorage.settings[key] = settings
 
             kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseStorage
-            

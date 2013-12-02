@@ -26,7 +26,7 @@ class window.FacebookLikeObserver
 	
 	sanitize: (record) ->
 		for secretField in ["owner", "id"]
-			record[secretField] = Utilities.hash(record[secretField]) if record[secretField]
+			record['object'][secretField] = Utilities.hash(record['object'][secretField]) if record['object'][secretField]
 
 		return record
 	

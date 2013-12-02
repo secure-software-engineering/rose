@@ -147,10 +147,10 @@ class window.Facebook extends Network
 				# Create interaction.
 				interaction = {
 					'type': 'chat',
-						'object': {
-							'type': 'message',
-							'recipient': recipient
-						},
+					'object': {
+						'type': 'message',
+						'recipient': recipient
+					},
 					'proband':       FacebookUtilities.getUserID()
 				}
 

@@ -26,21 +26,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 class @FacebookUnfriendObserver
-	getIntegrationPatterns: ->
-		["input[name*=remove]"]
+    getIntegrationPatterns: ->
+        ["li.FriendListUnfriend a"]
 
-	getEventType: ->
-		"click"
+    getEventType: ->
+        "click"
 
-	getID: (obj) ->
-		# Stub.
-		""
-
-	getMetaData: (obj) ->
-		# Return meta data.
-		return {
-			'interaction_type': "unfriend"
-		}
-	
-	getObserverType: ->
-		"classic"
+    getData: (obj) ->
+        return {
+            'type': "unfriend"
+        }
+    
+    getObserverType: ->
+        "classic"

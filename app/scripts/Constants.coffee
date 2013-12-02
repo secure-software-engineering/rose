@@ -26,11 +26,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 class @Constants
-	@getContentLength: ->
-		30
+    @getContentLength: ->
+        30
 
-	@getHashLength: ->
-		8
+    @getHashLength: ->
+        8
 
-	@getSalt: ->
-		"ROSE"
+    @getSalt: ->
+        "ROSE"

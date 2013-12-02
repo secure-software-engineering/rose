@@ -26,21 +26,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 class @FacebookChatTurnedOffObserver
-	getIntegrationPatterns: ->
-		["li.fbChatGoOfflineItem a"]
+    getIntegrationPatterns: ->
+        ["li.fbChatGoOfflineItem a"]
 
-	getEventType: ->
-		"click"
+    getEventType: ->
+        "click"
 
-	getID: (obj) ->
-		# No token necessary.
-		""
-
-	getMetaData: (obj) ->
-		# Return meta data.
-		return {
-			'interaction_type': "chatturnoff"
-		}
-	
-	getObserverType: ->
-		"classic"
+    getData: (obj) ->
+        return {
+            'type': "chatturnoff"
+        }
+    
+    getObserverType: ->
+        "classic"

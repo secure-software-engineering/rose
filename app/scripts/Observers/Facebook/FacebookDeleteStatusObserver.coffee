@@ -26,24 +26,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 class @FacebookDeleteStatusObserver
-	getIntegrationPatterns: ->
-		["a[ajaxify*=remove_content]"]
+    getIntegrationPatterns: ->
+        ['a[ajaxify*="take_action_on_story"]', 'a[ajaxify*=delete]']
 
-	getEventType: ->
-		"click"
+    getEventType: ->
+        "click"
 
-	getID: (obj) ->
-		# Get Facebook like observer.
-		likeObserver = new FacebookLikeObserver()
-
-		# Use ID of like observer.
-		likeObserver.getID(obj)
-
-	getMetaData: (obj) ->
-		# Return meta data.
-		return {
-			'interaction_type': "deletestatus"
-		}
-	
-	getObserverType: ->
-		"classic"
+    getData: (obj) ->
+        # Return meta data.
+        return {
+            'type': "deletestatus"
+        }
+    
+    getObserverType: ->
+        "classic"

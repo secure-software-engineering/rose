@@ -25,22 +25,26 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
+require 'Utilities'
+
 class @FacebookUpdateStatusPictureObserver
-	getIntegrationPatterns: ->
-		["form[action*=photos] button[type=submit]", "form[action*=photos] input[type=submit]"]
+    getIntegrationPatterns: ->
+        ["form[action*=photos] button[type=submit]", "form[action*=photos] input[type=submit]"]
 
-	getEventType: ->
-		"click"
+    getEventType: ->
+        "click"
 
-	getID: (obj) ->
-		obj.closest("form[action*=photos]").find("textarea.mentionsTextarea").val()
+    getData: (obj) ->
+        # Generate ID.
+        id = Utilities.hash(obj.closest("form[action*=photos]").find("textarea.mentionsTextarea").val())
 
-	getMetaData: (obj) ->
-		# Return meta data.
-		return {
-			'interaction_type': "updatestatuspicture",
-			'object_type':      "status"
-		}
-	
-	getObserverType: ->
-		"classic"
+        return {
+            'type': "updatestatuspicture"
+            'object': {
+                'type': "status"
+                'id': id
+            }
+        }
+    
+    getObserverType: ->
+        "classic"

@@ -26,8 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 class @DOM
-	@findRelative: (obj, classes) ->
-		for name of classes
-			node = obj.closest(name).find(classes[name]).html()
-			return node if node && obj.closest(name).find(obj).length > 0
-		return "error"
+    @findRelative: (obj, classes) ->
+        for name of classes
+            node = obj.closest(name).find(classes[name]).html()
+            return node if node && obj.closest(name).find(obj).length > 0
+        return "error"

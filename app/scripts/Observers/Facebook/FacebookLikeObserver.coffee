@@ -2,11 +2,13 @@ require 'DOM'
 require 'Utilities'
 
 class window.FacebookLikeObserver
+	# text_exposed_root
 	patterns: {
 		"status" : [
 			'<div><h5><div><a>{owner}</a></div></h5><div class="userContent">{id}</div><form></form></div>',
 			'<div><h5><div><a>{owner}</a></div></h5><div class="userContent"></div><a ajaxify="{id}"><div><img></img></div></a><form></form><div class="clearfix"></div></div>',
-			'<div><h6><div><a>{owner}</a></div></h6><div class="userContent">{id}</div><form></form></div>'
+			'<div><h6><div><a>{owner}</a></div></h6><div class="userContent">{id}</div><form></form></div>',
+			'<div><h6><div><a>{owner}</a></div></h6><div><div class="text_exposed_root">{id}</div></div><form></form></div>'
 		],
 		"comment": [
 			'<div class="UFICommentContent"><a class="UFICommentActorName">{owner}</a><span><span><span>{id}</span></span></span></div>'
@@ -92,7 +94,7 @@ class window.FacebookLikeObserver
 		max = 0
 		for record in records
 			count = 0
-			for key, value of record
+			for key, value of record['object']
 				if value != ""
 					count = count + 1
 			if count > max

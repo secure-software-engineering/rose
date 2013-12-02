@@ -35,43 +35,41 @@
     },
 
     "diaryPage": {
-        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "subHeader": "Hier können Sie alles Weitere notieren, was Ihnen bei Ihrer Nutzung aufgefallen ist",
         "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
         "messageContent": "Schreib etwas"
     },
 
     "privacyPage": {
-        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "subHeader": "Lassen Sie hier bitte Ihre Privatsphäreneinstellungen auslesen",
         "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
         "messageContent": "Schreib etwas"
     },
 
     "backupPage": {
-        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen"
+        "subHeader": "Hier können Sie alle eingegebenen und aufgezeichneten Daten nochmal einsehen, speichern oder wiederherstellen"
     },
 
     "aboutPage": {
-        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "subHeader": "Informationen zu ROSE",
         "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
         "messageContent": "Schreib etwas"
     },
 
     "interactionsPage": {
-        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "subHeader": "Alle von ROSE aufgezeichneten Interaktionen",
         "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
         "messageContent": "Schreib etwas"
     },
 
     "commentsPage": {
-        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "subHeader": "Hier können Sie alle Kommentare einsehen",
         "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
         "messageContent": "Schreib etwas"
     },
 
     "documentationPage": {
-        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
-        "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
-        "messageContent": "Schreib etwas"
+        "subHeader": "Häufig gestellte Fragen zu ROSE"
     },
 
     "reminder": {

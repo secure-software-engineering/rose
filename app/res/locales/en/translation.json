@@ -24,48 +24,46 @@
     "you": "Du",
 
     "settingsPage": {
-        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "subHeader": "Here you can manage your ROSE settings",
         "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
         "messageContent": "Schreib etwas"
     },
 
     "diaryPage": {
-        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "subHeader": "Here you can make a note of everything else that attracted your attention",
         "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
         "messageContent": "Schreib etwas"
     },
 
     "privacyPage": {
-        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "subHeader": "Have a look at your privacy settings",
         "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
         "messageContent": "Schreib etwas"
     },
 
     "backupPage": {
-        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen"
+        "subHeader": "Here you can review, save or restore all data you supplied or which was recorded by ROSE"
     },
 
     "aboutPage": {
-        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "subHeader": "Information about ROSE",
         "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
         "messageContent": "Schreib etwas"
     },
 
     "interactionsPage": {
-        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "subHeader": "All your recent interactions",
         "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
         "messageContent": "Schreib etwas"
     },
 
     "commentsPage": {
-        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+        "subHeader": "Have a look at all your comments",
         "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
         "messageContent": "Schreib etwas"
     },
 
     "documentationPage": {
-        "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
-        "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
-        "messageContent": "Schreib etwas"
+        "subHeader": "Frequently asked questions about ROSE",
     }
 }

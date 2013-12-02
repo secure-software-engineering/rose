@@ -50,14 +50,16 @@ class @FacebookUpdateStatusObserver
         }
 
         # Get privacy.
-        privacy = DOM.findRelative(obj, "form": ".uiSelectorButton span").toLowerCase()
+        privacy = obj.closest("form[action*=updatestatus]").find(".uiSelectorButton span").html()
 
         # Consider language.
-        privacy = privacyTypes[privacy]
-        privacy = "privacyunknown" if privacy == null
+        if privacy == null
+            privacy = "privacyunknown"
+        else
+            privacy = privacyTypes[privacy.toLowerCase()]
 
         # Get ID.
-        id = obj.closest("form[action*=updatestatus]").find("input[name=xhpc_message]").attr("value")
+        id = obj.closest("form[action*=updatestatus]").find("textarea[name=xhpc_message_text]").val()
         id = Utilities.hash(id)
 
         # Return meta data.

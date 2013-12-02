@@ -62,7 +62,15 @@ class @FacebookLikeObserver
 
         return record
     
-    handleNode: (node, container) ->
+    handleNode: (node, container = null) ->
+        if container == null
+            # Get container.
+            container = "status"
+            if $(this).parents(".timelineUnitContainer").length
+                container = "timeline"
+            if $(this).parents(".UFIComment").length
+                container = "comment"
+
         # Get parent container.
         parent = $(node).closest(@containers[container])
         

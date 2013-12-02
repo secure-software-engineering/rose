@@ -50,7 +50,7 @@ class @FacebookShareObserver
 
         return record
 
-    handleNode: (node, container) ->
+    handleNode: (node) ->
         # Get parent container.
         parent = $(node).closest('div[role=dialog]')
 

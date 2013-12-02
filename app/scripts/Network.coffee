@@ -58,15 +58,8 @@ class @Network
                 $(this).addClass("rose-integrated")
                 
                 $(this).on observer.getEventType(), (e) ->
-                    # Get container.
-                    container = "status"
-                    if $(this).parents(".timelineUnitContainer").length
-                        container = "timeline"
-                    if $(this).parents(".UFIComment").length
-                        container = "comment"
-
                     # Get parsed information, if possible.
-                    parsed = observer.handleNode(this, container)
+                    parsed = observer.handleNode(this)
                     
                     if parsed['found']
                         # If record is valid, save interaction.

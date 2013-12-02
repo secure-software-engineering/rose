@@ -1,6 +1,5 @@
 class @FacebookUtilities
 	@getUserID: ->
-		# Utilities.hash $("#mainContainer").first("a").value()
 		""
 
 	@getStoryType: (obj) ->

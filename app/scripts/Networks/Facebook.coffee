@@ -76,7 +76,6 @@ class window.Facebook extends Network
 							'owner': FacebookUtilities.getUserID(),
 							'id': content
 						},
-						'proband_id': FacebookUtilities.getUserID(),
 						'time': new Date()
 					}
 
@@ -112,10 +111,12 @@ class window.Facebook extends Network
 
 					# Create interaction.
 					interaction = {
-						'interaction_type': 'chat',
-						'object_type':      'message',
-						'object_id':        recipient,
-						'proband_id':       FacebookUtilities.getUserID(),
+						'type': 'chat',
+						'object': {
+							'type': 'message',
+							'recipient': recipient
+						},
+						'proband':       FacebookUtilities.getUserID(),
 						'time':             new Date()
 					}
 
@@ -147,10 +148,12 @@ class window.Facebook extends Network
 
 				# Create interaction.
 				interaction = {
-					'interaction_type': 'chat',
-					'object_type':      'message',
-					'object_id':        recipient,
-					'proband_id':       FacebookUtilities.getUserID(),
+					'type': 'chat',
+						'object': {
+							'type': 'message',
+							'recipient': recipient
+						},
+					'proband':       FacebookUtilities.getUserID(),
 					'time':             new Date()
 				}
 

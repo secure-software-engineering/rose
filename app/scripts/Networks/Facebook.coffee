@@ -75,8 +75,7 @@ class window.Facebook extends Network
 							'type': "comment",
 							'owner': FacebookUtilities.getUserID(),
 							'id': content
-						},
-						'time': new Date()
+						}
 					}
 
 					# Save interaction.
@@ -116,8 +115,7 @@ class window.Facebook extends Network
 							'type': 'message',
 							'recipient': recipient
 						},
-						'proband':       FacebookUtilities.getUserID(),
-						'time':             new Date()
+						'proband': FacebookUtilities.getUserID()
 					}
 
 					# Save interaction.
@@ -153,8 +151,7 @@ class window.Facebook extends Network
 							'type': 'message',
 							'recipient': recipient
 						},
-					'proband':       FacebookUtilities.getUserID(),
-					'time':             new Date()
+					'proband':       FacebookUtilities.getUserID()
 				}
 
 				# Save interaction.

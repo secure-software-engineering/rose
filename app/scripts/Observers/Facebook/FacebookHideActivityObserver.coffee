@@ -6,8 +6,6 @@ class window.FacebookHideActivityObserver
 		"click"
 
 	getData: (obj) ->
-		# TODO: Add more information.
-		
 		# Get Facebook like observer.
 		likeObserver = new FacebookLikeObserver()
 
@@ -20,8 +18,7 @@ class window.FacebookHideActivityObserver
 		# Return meta data.
 		return {
 			'type': "hideactivity",
-			'object_owner':     likeMeta['object_owner'],
-			'object_type':      likeMeta['object_type']
+			'object': result['record']['object']
 		}
 	
 	getObserverType: ->

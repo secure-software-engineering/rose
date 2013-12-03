@@ -81,7 +81,7 @@ class @Facebook extends Network
 
             # Add event handler.
             $(this).on "keydown", (e) ->
-                if e.which == 13 or e.keyCode == 13
+                if e.which is 13 or e.keyCode is 13
                     # Get comment text.
                     content = $(this).val()
 

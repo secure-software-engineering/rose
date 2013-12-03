@@ -1,12 +1,12 @@
 ###
-ROSE is a browser extension researchers can use to capture in situ 
+ROSE is a browser extension researchers can use to capture in situ
 data on how users actually use the online social network Facebook.
 Copyright (C) 2013
 
     Fraunhofer Institute for Secure Information Technology
     Andreas Poller <andreas.poller@sit.fraunhofer.de>
 
-Authors  
+Authors
 
     Oliver Hoffmann <oliverh855@gmail.com>
     Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
@@ -81,7 +81,7 @@ class @Facebook extends Network
 
             # Add event handler.
             $(this).on "keydown", (e) ->
-                if e.which == 13 || e.keyCode == 13
+                if e.which == 13 or e.keyCode == 13
                     # Get comment text.
                     content = $(this).val()
 
@@ -100,15 +100,13 @@ class @Facebook extends Network
                         return
 
                     # Create interaction.
-                    interaction = {
-                        'type': 'commentstatus',
-                        'target': result['record']['object'],
-                        'object': {
-                            'type': "comment",
-                            'owner': FacebookUtilities.getUserID(),
+                    interaction =
+                        'type': 'commentstatus'
+                        'target': result['record']['object']
+                        'object':
+                            'type': "comment"
+                            'owner': FacebookUtilities.getUserID()
                             'id': content
-                        }
-                    }
 
                     # Save interaction.
                     Storage.addInteraction(interaction, name)
@@ -118,7 +116,7 @@ class @Facebook extends Network
         name = @getNetworkName()
 
         # Set identifier.
-        identifier = ".fbDockChatTabFlyout textarea.uiTextareaAutogrow, #pagelet_web_messenger textarea"
+        identifier = ".fbDockChatTabFlyout textarea, #pagelet_web_messenger textarea"
 
         # Find all elements.
         $(identifier).each ->
@@ -130,35 +128,54 @@ class @Facebook extends Network
 
             # Add event handler.
             $(this).on "keydown", (e) ->
-                if e.which == 13 || e.keyCode == 13
-                    # Get recipient.
-                    recipient = DOM.findRelative $(this), {
-                        "#pagelet_web_messenger": "#webMessengerHeaderName",
-                        ".fbDockChatTabFlyout":   "a.titlebarText"
-                    }
+                # Get parent container.
+                parent = ""
+                if $(this).parents(".fbDockChatTabFlyout").length
+                    parent = "sidechat"
+                if $(this).parents("#pagelet_web_messenger").length
+                    parent = "mainchat"
 
-                    # Strig tags.
-                    recipient = Utilities.stripTags(recipient) if recipient
+                if parent is "sidechat" and e.keyCode is 13
+                    # Get recipient.
+                    recipient = $(this).closest(".fbDockChatTabFlyout").find('h4.titlebarTextWrapper a').html()
 
                     # Create interaction.
-                    interaction = {
-                        'type': 'chat',
-                        'object': {
-                            'type': 'message',
-                            'recipient': recipient
-                        },
-                        'proband': FacebookUtilities.getUserID()
-                    }
+                    interaction =
+                        'type': 'chat'
+                        'object':
+                            'type': 'message'
+                            'recipient': Utilities.hash(recipient)
 
                     # Save interaction.
                     Storage.addInteraction(interaction, name)
+                if parent is "mainchat"
+                    # Get "Press Enter to send" checkbox
+                    checkbox = $(this).closest("#pagelet_web_messenger").find("a[role=checkbox]")
+
+                    if checkbox.attr("aria-checked") is "false"
+                        # Chat Submit Button observer handles this chat message, so...
+                        return
+                    else
+                        if e.keyCode is 13
+                            # Get recipient.
+                            recipient = $(this).closest("#pagelet_web_messenger").find('h2#webMessengerHeaderName a').html()
+
+                            # Create interaction.
+                            interaction =
+                                'type': 'chat'
+                                'object':
+                                    'type': 'message'
+                                    'recipient': Utilities.hash(recipient)
+
+                            # Save interaction.
+                            Storage.addInteraction(interaction, name)
 
     integrateChatSubmitButtonObserver: ->
         # Get network name.
         name = @getNetworkName()
 
         # Set identifier.
-        identifier = "#pagelet_web_messenger .uiButtonConfirm input, div[role=dialog] button[type=submit]"
+        identifier = "#pagelet_web_messenger .uiButtonConfirm input"
 
         # Find all elements.
         $(identifier).each ->
@@ -171,20 +188,14 @@ class @Facebook extends Network
             # Add event handler.
             $(this).on "click", (e) ->
                 # Get recipient.
-                recipient = DOM.findRelative $(this), "#pagelet_web_messenger": "#webMessengerHeaderName"
-
-                # Strig tags.
-                recipient = Utilities.stripTags(recipient) if recipient
+                recipient = $(this).closest("#pagelet_web_messenger").find('h2#webMessengerHeaderName a').html()
 
                 # Create interaction.
-                interaction = {
-                    'type': 'chat',
-                    'object': {
-                        'type': 'message',
-                        'recipient': recipient
-                    },
-                    'proband':       FacebookUtilities.getUserID()
-                }
+                interaction =
+                    'type': 'chat'
+                    'object':
+                        'type': 'message'
+                        'recipient': Utilities.hash(recipient)
 
                 # Save interaction.
                 Storage.addInteraction(interaction, name)

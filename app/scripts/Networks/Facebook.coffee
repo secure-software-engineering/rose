@@ -118,7 +118,7 @@ class @Facebook extends Network
         name = @getNetworkName()
 
         # Set identifier.
-        identifier = ".fbDockChatTabFlyout textarea.uiTextareaAutogrow, #pagelet_web_messenger textarea"
+        identifier = ".fbDockChatTabFlyout textarea, #pagelet_web_messenger textarea"
 
         # Find all elements.
         $(identifier).each ->
@@ -130,29 +130,51 @@ class @Facebook extends Network
 
             # Add event handler.
             $(this).on "keydown", (e) ->
-                console.log("KEY " + e.keyCode)
-                if e.which == 13 || e.keyCode == 13
-                    # Get recipient.
-                    recipient = DOM.findRelative $(this), {
-                        "#pagelet_web_messenger": "#webMessengerHeaderName",
-                        ".fbDockChatTabFlyout":   "a.titlebarText"
-                    }
+                # Get parent container.
+                parent = ""
+                if $(this).parents(".fbDockChatTabFlyout").length
+                    parent = "sidechat"
+                if $(this).parents("#pagelet_web_messenger").length
+                    parent = "mainchat"
 
-                    # Strig tags.
-                    recipient = Utilities.stripTags(recipient) if recipient
+                if parent == "sidechat" and e.keyCode == 13
+                    # Get recipient.
+                    recipient = $(this).closest(".fbDockChatTabFlyout").find('h4.titlebarTextWrapper a').html()
 
                     # Create interaction.
                     interaction = {
                         'type': 'chat',
                         'object': {
                             'type': 'message',
-                            'recipient': recipient
-                        },
-                        'proband': FacebookUtilities.getUserID()
+                            'recipient': Utilities.hash(recipient)
+                        }
                     }
 
                     # Save interaction.
                     Storage.addInteraction(interaction, name)
+                if parent == "mainchat"
+                    # Get "Press Enter to send" checkbox
+                    checkbox = $(this).closest("#pagelet_web_messenger").find("a[role=checkbox]")
+
+                    if checkbox.attr("aria-checked") == "false"
+                        # Chat Submit Button observer handles this chat message, so...
+                        return
+                    else
+                        if e.keyCode == 13
+                            # Get recipient.
+                            recipient = $(this).closest("#pagelet_web_messenger").find('h2#webMessengerHeaderName a').html()
+
+                            # Create interaction.
+                            interaction = {
+                                'type': 'chat',
+                                'object': {
+                                    'type': 'message',
+                                    'recipient': Utilities.hash(recipient)
+                                }
+                            }
+
+                            # Save interaction.
+                            Storage.addInteraction(interaction, name)
 
     integrateChatSubmitButtonObserver: ->
         # Get network name.
@@ -180,8 +202,7 @@ class @Facebook extends Network
                     'object': {
                         'type': 'message',
                         'recipient': Utilities.hash(recipient)
-                    },
-                    'proband': FacebookUtilities.getUserID()
+                    }
                 }
 
                 # Save interaction.

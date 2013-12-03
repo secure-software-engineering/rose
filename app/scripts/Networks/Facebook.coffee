@@ -158,7 +158,7 @@ class @Facebook extends Network
         name = @getNetworkName()
 
         # Set identifier.
-        identifier = "#pagelet_web_messenger .uiButtonConfirm input, div[role=dialog] button[type=submit]"
+        identifier = "#pagelet_web_messenger .uiButtonConfirm input"
 
         # Find all elements.
         $(identifier).each ->

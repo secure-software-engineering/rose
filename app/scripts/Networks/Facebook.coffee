@@ -130,6 +130,7 @@ class @Facebook extends Network
 
             # Add event handler.
             $(this).on "keydown", (e) ->
+                console.log("KEY " + e.keyCode)
                 if e.which == 13 || e.keyCode == 13
                     # Get recipient.
                     recipient = DOM.findRelative $(this), {
@@ -171,19 +172,16 @@ class @Facebook extends Network
             # Add event handler.
             $(this).on "click", (e) ->
                 # Get recipient.
-                recipient = DOM.findRelative $(this), "#pagelet_web_messenger": "#webMessengerHeaderName"
-
-                # Strig tags.
-                recipient = Utilities.stripTags(recipient) if recipient
+                recipient = $(this).closest("#pagelet_web_messenger").find('h2#webMessengerHeaderName a').html()
 
                 # Create interaction.
                 interaction = {
                     'type': 'chat',
                     'object': {
                         'type': 'message',
-                        'recipient': recipient
+                        'recipient': Utilities.hash(recipient)
                     },
-                    'proband':       FacebookUtilities.getUserID()
+                    'proband': FacebookUtilities.getUserID()
                 }
 
                 # Save interaction.

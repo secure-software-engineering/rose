@@ -47,6 +47,7 @@ class @Facebook extends Network
         @observers.push new FacebookFriendAddObserver()
         @observers.push new FacebookUnfriendObserver()
         @observers.push new FacebookDeleteStatusObserver()
+        @observers.push new FacebookDeleteCommentObserver()
         @observers.push new FacebookChatTurnedOffObserver()
         @observers.push new FacebookChatActivatedObserver()
         @observers.push new FacebookHideActivityObserver()

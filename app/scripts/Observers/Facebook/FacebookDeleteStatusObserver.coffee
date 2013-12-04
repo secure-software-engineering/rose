@@ -95,6 +95,6 @@ class @FacebookDeleteStatusObserver
         return {
             'type': 'error'
         }
-    
+
     getObserverType: ->
         "classic"

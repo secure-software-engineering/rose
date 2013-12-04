@@ -25,31 +25,25 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-class @FacebookHideActivityObserver
+class @FacebookDeleteCommentObserver
     getIntegrationPatterns: ->
-        ['a[ajaxify*="customize_action=2"]']
+        ['ul[role=menu] li:nth-child(2) a[role=menuitem]']
 
     getEventType: ->
         "click"
 
     getData: (obj) ->
-        # Get event URL.
-        ajaxify = obj.attr("ajaxify")
+        # Find parent.
+        parent = obj.closest(".uiLayer")
 
-        # Extract status ID.
-        match = /unit_data%5Bhash%5D=(.+?)&/.exec ajaxify
-
-        # No match found?
-        if match is null
-            return
-
-        id = match[1]
+        # Get owner id.
+        id = parent.attr("data-ownerid")
 
         # Get Facebook like observer.
         likeObserver = new FacebookLikeObserver()
 
         # Get result of like observer.
-        result = likeObserver.handleNode("#tl_unit_" + id + " div[role=article]", "timeline")
+        result = likeObserver.handleNode("a#" + id, "comment")
 
         if not result['found']
             return
@@ -57,7 +51,7 @@ class @FacebookHideActivityObserver
         # Return meta data.
         return {
             'object': result['record']['object'],
-            'type': "hideactivity"
+            'type': "deletecomment"
         }
 
     getObserverType: ->

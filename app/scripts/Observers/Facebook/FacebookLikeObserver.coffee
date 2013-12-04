@@ -30,7 +30,7 @@ require 'Utilities'
 class @FacebookLikeObserver
     # text_exposed_root
     patterns: {
-        "status" : [
+        "status": [
             '<div><h5><div><a>{owner}</a></div></h5><div class="userContent">{id}</div><form></form></div>',
             '<div><h5><div><a>{owner}</a></div></h5><div class="userContent"></div><a ajaxify="{id}"><div><img></img></div></a><form></form><div class="clearfix"></div></div>',
             '<div><h6><div><a>{owner}</a></div></h6><div class="userContent">{id}</div><form></form></div>',
@@ -63,7 +63,7 @@ class @FacebookLikeObserver
         return record
 
     handleNode: (node, container = null) ->
-        if container == null
+        if container is null
             # Get container.
             container = "status"
             if $(node).parents(".fbTimelineFeedbackHeader").length
@@ -87,6 +87,9 @@ class @FacebookLikeObserver
         # Set interaction type (like, unlike, unknown).
         interactionType = interactionTypes[fieldContent]
         interactionType = "unknown/like/unlike" unless interactionType
+
+        # Check if thumbs up button has been clicked.
+        interactionType = "like" if $(node).hasClass("UFILikeThumb")
 
         # Traverse through patterns.
         records = []
@@ -113,23 +116,22 @@ class @FacebookLikeObserver
                 records.push(record)
 
         # Nothing found? Return failure.
-        if records.length == 0
+        if records.length is 0
             return {
                 'found': false
             }
 
         # Prepare entry.
-        entry = {
-            'found': true,
+        entry =
+            'found': true
             'record': null
-        }
 
         # Compare results.
         max = 0
         for record in records
             count = 0
             for key, value of record['object']
-                if value != ""
+                if value isnt ""
                     count = count + 1
             if count > max
                 max = count

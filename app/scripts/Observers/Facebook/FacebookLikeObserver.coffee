@@ -88,6 +88,9 @@ class @FacebookLikeObserver
         interactionType = interactionTypes[fieldContent]
         interactionType = "unknown/like/unlike" unless interactionType
 
+        # Check if thumbs up button has been clicked.
+        interactionType = "like" if $(node).hasClass("UFILikeThumb")
+
         # Traverse through patterns.
         records = []
         for pattern in @patterns[container]

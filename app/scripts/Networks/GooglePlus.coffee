@@ -1,12 +1,12 @@
 ###
-ROSE is a browser extension researchers can use to capture in situ 
+ROSE is a browser extension researchers can use to capture in situ
 data on how users actually use the online social network Facebook.
 Copyright (C) 2013
 
     Fraunhofer Institute for Secure Information Technology
     Andreas Poller <andreas.poller@sit.fraunhofer.de>
 
-Authors  
+Authors
 
     Oliver Hoffmann <oliverh855@gmail.com>
     Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
@@ -26,24 +26,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 class @GooglePlus extends Network
-	# Network name.
-	network:   "GooglePlus"
+    # Network name.
+    network:   "GooglePlus"
 
-	# List of observers.
-	observers: []
+    # List of observers.
+    observers: []
 
-	constructor: ->
-		# Add observers.
-		@observers.push new GooglePlusPlusOneObserver()
-		# @observers.push new GooglePlusAddToCircleObserver
-		# @observers.push new GooglePlusShareObserver
+    constructor: ->
+        # Add observers.
+        @observers.push new GooglePlusPlusOneObserver()
+        # @observers.push new GooglePlusAddToCircleObserver
+        # @observers.push new GooglePlusShareObserver
 
-	isOnNetwork: ->
-		(window.location + "").indexOf("plus.google.com") >= 0
+    isOnNetwork: ->
+        (window.location + "").indexOf("plus.google.com") >= 0
 
-	integrateIntoDOM: ->
-		# Stub.
-		true
+    integrateIntoDOM: ->
+        # Stub.
+        true
 
-	getNetworkName: ->
-		@network
+    getNetworkName: ->
+        @network

@@ -1,12 +1,12 @@
 /*
-ROSE is a browser extension researchers can use to capture in situ 
+ROSE is a browser extension researchers can use to capture in situ
 data on how users actually use the online social network Facebook.
 Copyright (C) 2013
 
     Fraunhofer Institute for Secure Information Technology
     Andreas Poller <andreas.poller@sit.fraunhofer.de>
 
-Authors  
+Authors
 
     Oliver Hoffmann <oliverh855@gmail.com>
     Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
@@ -44,49 +44,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
 .rose.comment {
-	opacity: 0.25;
-	-webkit-transition: opacity 0.3s;
- 	-moz-transition: opacity 0.3s;
-  	-o-transition: opacity 0.3s;
-  	-ms-transition: opacity 0.3s;
-  	transition: opacity 0.3s;
+    opacity: 0.25;
+    -webkit-transition: opacity 0.3s;
+    -moz-transition: opacity 0.3s;
+    -o-transition: opacity 0.3s;
+    -ms-transition: opacity 0.3s;
+    transition: opacity 0.3s;
 }
 
 .rose.comment:hover {
-	opacity: 1.0;
+    opacity: 1.0;
 }
 
 body {
-	font-family: 'Open Sans';
-	width: 760px;
+    font-family: 'Open Sans';
+    width: 760px;
     height: 600px;
-	margin-top: 8px;
-	background: #fafafa;
+    margin-top: 8px;
+    background: #fafafa;
 }
 
 input.hidden {
-	display: none;
+    display: none;
 }
 
 .ui.feed .hidden {
-	opacity: 0.3;
+    opacity: 0.3;
 }
 
 .ui.comments .actions .hidden {
-	opacity: 0.3;
+    opacity: 0.3;
 }
 
 .ui.feed .event .actions {
-	font-size: 0.9em;
-	margin-top: 0.5em;
+    font-size: 0.9em;
+    margin-top: 0.5em;
 }
 
 .ui.feed .event .actions a {
-	cursor: pointer;
-	display: inline-block;
-	margin: 0em 0.3em 0em 0em;
-	color: rgba(0,0,0,0.3);
+    cursor: pointer;
+    display: inline-block;
+    margin: 0em 0.3em 0em 0em;
+    color: rgba(0,0,0,0.3);
 }
 .ui.feed .event .actions a:hover {
-	color: rgba(0, 0, 0, 0.6);
+    color: rgba(0, 0, 0, 0.6);
 }

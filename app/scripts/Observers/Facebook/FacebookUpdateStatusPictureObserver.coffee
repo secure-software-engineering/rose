@@ -1,12 +1,12 @@
 ###
-ROSE is a browser extension researchers can use to capture in situ 
+ROSE is a browser extension researchers can use to capture in situ
 data on how users actually use the online social network Facebook.
 Copyright (C) 2013
 
     Fraunhofer Institute for Secure Information Technology
     Andreas Poller <andreas.poller@sit.fraunhofer.de>
 
-Authors  
+Authors
 
     Oliver Hoffmann <oliverh855@gmail.com>
     Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
@@ -26,21 +26,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 class @FacebookUpdateStatusPictureObserver
-	getIntegrationPatterns: ->
-		["form[action*=photos] button[type=submit]", "form[action*=photos] input[type=submit]"]
+    getIntegrationPatterns: ->
+        ["form[action*=photos] button[type=submit]", "form[action*=photos] input[type=submit]"]
 
-	getEventType: ->
-		"click"
+    getEventType: ->
+        "click"
 
-	getID: (obj) ->
-		obj.closest("form[action*=photos]").find("textarea.mentionsTextarea").val()
+    getID: (obj) ->
+        obj.closest("form[action*=photos]").find("textarea.mentionsTextarea").val()
 
-	getMetaData: (obj) ->
-		# Return meta data.
-		return {
-			'interaction_type': "updatestatuspicture",
-			'object_type':      "status"
-		}
-	
-	getObserverType: ->
-		"classic"
+    getMetaData: (obj) ->
+        # Return meta data.
+        return {
+            'interaction_type': "updatestatuspicture",
+            'object_type':      "status"
+        }
+
+    getObserverType: ->
+        "classic"

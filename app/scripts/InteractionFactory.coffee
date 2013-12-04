@@ -1,12 +1,12 @@
 ###
-ROSE is a browser extension researchers can use to capture in situ 
+ROSE is a browser extension researchers can use to capture in situ
 data on how users actually use the online social network Facebook.
 Copyright (C) 2013
 
     Fraunhofer Institute for Secure Information Technology
     Andreas Poller <andreas.poller@sit.fraunhofer.de>
 
-Authors  
+Authors
 
     Oliver Hoffmann <oliverh855@gmail.com>
     Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
@@ -26,16 +26,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 class @InteractionFactory
-	@createInteraction: (id, metaData) ->
-		# Create interaction.
-		interaction = {}
+    @createInteraction: (id, metaData) ->
+        # Create interaction.
+        interaction = {}
 
-		# Set fixed field.
-		interaction["object_id"] = Utilities.hash(id)
+        # Set fixed field.
+        interaction["object_id"] = Utilities.hash(id)
 
-		# Merge meta data.
-		for key of metaData
-			interaction[key] = metaData[key]
+        # Merge meta data.
+        for key of metaData
+            interaction[key] = metaData[key]
 
-		# Return interaction.
-		return interaction
+        # Return interaction.
+        return interaction

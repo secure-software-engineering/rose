@@ -1,12 +1,12 @@
 /*
-ROSE is a browser extension researchers can use to capture in situ 
+ROSE is a browser extension researchers can use to capture in situ
 data on how users actually use the online social network Facebook.
 Copyright (C) 2013
 
     Fraunhofer Institute for Secure Information Technology
     Andreas Poller <andreas.poller@sit.fraunhofer.de>
 
-Authors  
+Authors
 
     Oliver Hoffmann <oliverh855@gmail.com>
     Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
@@ -27,120 +27,120 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // Initialization of i18next
 var options = {
-	fallbackLng: 'en',
-	resGetPath: kango.io.getResourceUrl('res/locales/__lng__/__ns__.json')
+    fallbackLng: 'en',
+    resGetPath: kango.io.getResourceUrl('res/locales/__lng__/__ns__.json')
 };
 i18n.init(options);
 
 // I18n helper method
 Handlebars.registerHelper('I18n', function (i18n_key) {
-	var result = i18n.t(i18n_key);
-	return new Handlebars.SafeString(result);
+    var result = i18n.t(i18n_key);
+    return new Handlebars.SafeString(result);
 });
 
 // helper function to inject local css files
 var loadCSS = function (resLink) {
-	var cssLink = $("<link>");
-	$("head").append(cssLink);
-	cssLink.attr({
-		rel: "stylesheet",
-		type: "text/css",
-		href: kango.io.getResourceUrl(resLink)
-	});
+    var cssLink = $("<link>");
+    $("head").append(cssLink);
+    cssLink.attr({
+        rel: "stylesheet",
+        type: "text/css",
+        href: kango.io.getResourceUrl(resLink)
+    });
 };
 
 var getTemplate = function (url) {
-	var promise = new RSVP.Promise(function (resolve, reject) {
-		var resource = kango.io.getResourceUrl('/res/templates/' + url + ".hbs");
-		$.get(resource, function (data) {
-			resolve(data);
-		});
-	});
+    var promise = new RSVP.Promise(function (resolve, reject) {
+        var resource = kango.io.getResourceUrl('/res/templates/' + url + ".hbs");
+        $.get(resource, function (data) {
+            resolve(data);
+        });
+    });
 
-	return promise;
+    return promise;
 };
 
 var getSettings = function () {
-	var promise = new RSVP.Promise(function (resolve, reject) {
-		Storage.getSettings(function (data) {
-			resolve(data);
-		});
-	});
+    var promise = new RSVP.Promise(function (resolve, reject) {
+        Storage.getSettings(function (data) {
+            resolve(data);
+        });
+    });
 
-	return promise;
+    return promise;
 };
 
 if (window.location.hostname.indexOf("www.facebook.com") > -1) {
 
-	// load css files into facebook DOM
-	loadCSS("res/semantic/build/packaged/css/semantic.css");
-	loadCSS("res/main.css");
+    // load css files into facebook DOM
+    loadCSS("res/semantic/build/packaged/css/semantic.css");
+    loadCSS("res/main.css");
 
-	// add reminder to facebook DOM if not disabled in settings
-	getSettings().then(function (settings) {
-		if (settings.reminder.isActive) {
-			getTemplate('reminder').then(function (source) {
-				var template = Handlebars.compile(source);
-				return template;
-			}).then(function (template) {
-				$('body').append(template());
+    // add reminder to facebook DOM if not disabled in settings
+    getSettings().then(function (settings) {
+        if (settings.reminder.isActive) {
+            getTemplate('reminder').then(function (source) {
+                var template = Handlebars.compile(source);
+                return template;
+            }).then(function (template) {
+                $('body').append(template());
 
-				$('.ui.nag').nag({
-					easing: 'swing'
-				});
-			});
-		}
-	});
+                $('.ui.nag').nag({
+                    easing: 'swing'
+                });
+            });
+        }
+    });
 
-	// add sidebar to facebook DOM
-	getTemplate('sidebar').then(function (source) {
-		var template = Handlebars.compile(source);
-		return template;
-	}).then(function (template) {
-		$('body').append(template());
+    // add sidebar to facebook DOM
+    getTemplate('sidebar').then(function (source) {
+        var template = Handlebars.compile(source);
+        return template;
+    }).then(function (template) {
+        $('body').append(template());
 
-		// init sidebar module
-		$('.ui.sidebar').sidebar();
+        // init sidebar module
+        $('.ui.sidebar').sidebar();
 
-		// init rating module
-		$('.ui.rating').rating();
-	});
+        // init rating module
+        $('.ui.rating').rating();
+    });
 
-	// add comment label to every story item with a fbid
-	getTemplate('commentLabel').then(function (source) {
-		var template = Handlebars.compile(source);
-		return template;
-	}).then(function (template) {
-		if ($('.fbxWelcomeBoxName').length > 0) {
-			$('*[data-timestamp]').prepend(template());
-			$('.rose.comment').css('margin', '-5px 0 5px 0');
-		} else {
-			$('.timelineUnitContainer').has('.fbTimelineFeedbackActions').prepend(template());
-			$('.rose.comment').css('margin', '0 0 5px 6px');
-		}
-	});
+    // add comment label to every story item with a fbid
+    getTemplate('commentLabel').then(function (source) {
+        var template = Handlebars.compile(source);
+        return template;
+    }).then(function (template) {
+        if ($('.fbxWelcomeBoxName').length > 0) {
+            $('*[data-timestamp]').prepend(template());
+            $('.rose.comment').css('margin', '-5px 0 5px 0');
+        } else {
+            $('.timelineUnitContainer').has('.fbTimelineFeedbackActions').prepend(template());
+            $('.rose.comment').css('margin', '0 0 5px 6px');
+        }
+    });
 
-	// event handler
+    // event handler
 
-	// when user clicks rose comment sidebar should appear
-	$('body').on('click', '.rose.comment', function (evt) {
-		$('.ui.sidebar').sidebar('pushPage');
-		$('.ui.sidebar').sidebar('show');
-	});
+    // when user clicks rose comment sidebar should appear
+    $('body').on('click', '.rose.comment', function (evt) {
+        $('.ui.sidebar').sidebar('pushPage');
+        $('.ui.sidebar').sidebar('show');
+    });
 
-	// when user clicks cancel button sidebar should disappear
-	$('body').on('click', '.sidebar .cancel.button', function (evt) {
-		$('.ui.sidebar').sidebar('hide');
-	});
+    // when user clicks cancel button sidebar should disappear
+    $('body').on('click', '.sidebar .cancel.button', function (evt) {
+        $('.ui.sidebar').sidebar('hide');
+    });
 
-	// when user clicks save button sidebar should disappear and user input should be saved
-	$('body').on('click', '.sidebar .save.button', function (evt) {
-		evt.stopPropagation();
-		$('.sidebar').sidebar('hide');
-		var comment = $('.sidebar textarea').val() || "no comment";
-		var rating = $('.ui.rating').rating("getRating") || 0;
-		console.log("Comment: " + comment);
-		console.log("Rating: " + rating);
-	});
+    // when user clicks save button sidebar should disappear and user input should be saved
+    $('body').on('click', '.sidebar .save.button', function (evt) {
+        evt.stopPropagation();
+        $('.sidebar').sidebar('hide');
+        var comment = $('.sidebar textarea').val() || "no comment";
+        var rating = $('.ui.rating').rating("getRating") || 0;
+        console.log("Comment: " + comment);
+        console.log("Rating: " + rating);
+    });
 
 }

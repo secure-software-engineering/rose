@@ -1,12 +1,12 @@
 ###
-ROSE is a browser extension researchers can use to capture in situ 
+ROSE is a browser extension researchers can use to capture in situ
 data on how users actually use the online social network Facebook.
 Copyright (C) 2013
 
     Fraunhofer Institute for Secure Information Technology
     Andreas Poller <andreas.poller@sit.fraunhofer.de>
 
-Authors  
+Authors
 
     Oliver Hoffmann <oliverh855@gmail.com>
     Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
@@ -29,22 +29,22 @@ require 'Networks/Facebook'
 require 'Networks/GooglePlus'
 
 class @Management
-	@networks: []
+    @networks: []
 
-	@isInitialized: false
+    @isInitialized: false
 
-	@initialize: ->
-		if not Management.isInitialized
-			# Add networks to Management.
-			Management.add new Facebook()
-			Management.add new GooglePlus()
+    @initialize: ->
+        if not Management.isInitialized
+            # Add networks to Management.
+            Management.add new Facebook()
+            Management.add new GooglePlus()
 
-			# Set initialized flag.
-			Management.isInitialized = true
+            # Set initialized flag.
+            Management.isInitialized = true
 
-	@getListOfNetworks: ->
-		Management.networks
+    @getListOfNetworks: ->
+        Management.networks
 
-	@add: (network) ->
-		Management.networks.push network
-        
+    @add: (network) ->
+        Management.networks.push network
+

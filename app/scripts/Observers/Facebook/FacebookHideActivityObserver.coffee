@@ -1,12 +1,12 @@
 ###
-ROSE is a browser extension researchers can use to capture in situ 
+ROSE is a browser extension researchers can use to capture in situ
 data on how users actually use the online social network Facebook.
 Copyright (C) 2013
 
     Fraunhofer Institute for Secure Information Technology
     Andreas Poller <andreas.poller@sit.fraunhofer.de>
 
-Authors  
+Authors
 
     Oliver Hoffmann <oliverh855@gmail.com>
     Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
@@ -26,32 +26,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 class @FacebookHideActivityObserver
-	getIntegrationPatterns: ->
-		["a[ajaxify*=uninteresting]"]
+    getIntegrationPatterns: ->
+        ["a[ajaxify*=uninteresting]"]
 
-	getEventType: ->
-		"click"
+    getEventType: ->
+        "click"
 
-	getID: (obj) ->
-		# Get Facebook like observer.
-		likeObserver = new FacebookLikeObserver()
+    getID: (obj) ->
+        # Get Facebook like observer.
+        likeObserver = new FacebookLikeObserver()
 
-		# Use ID of like observer.
-		likeObserver.getID(obj)
+        # Use ID of like observer.
+        likeObserver.getID(obj)
 
-	getMetaData: (obj) ->
-		# Get Facebook like observer.
-		likeObserver = new FacebookLikeObserver()
+    getMetaData: (obj) ->
+        # Get Facebook like observer.
+        likeObserver = new FacebookLikeObserver()
 
-		# Get meta data from like observer.
-		likeMeta = likeObserver.getMetaData(obj)
+        # Get meta data from like observer.
+        likeMeta = likeObserver.getMetaData(obj)
 
-		# Return meta data.
-		return {
-			'interaction_type': "hideactivity",
-			'object_owner':     likeMeta['object_owner'],
-			'object_type':      likeMeta['object_type']
-		}
-	
-	getObserverType: ->
-		"classic"
+        # Return meta data.
+        return {
+            'interaction_type': "hideactivity",
+            'object_owner':     likeMeta['object_owner'],
+            'object_type':      likeMeta['object_type']
+        }
+
+    getObserverType: ->
+        "classic"

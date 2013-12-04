@@ -1,12 +1,12 @@
 /*
-ROSE is a browser extension researchers can use to capture in situ 
+ROSE is a browser extension researchers can use to capture in situ
 data on how users actually use the online social network Facebook.
 Copyright (C) 2013
 
     Fraunhofer Institute for Secure Information Technology
     Andreas Poller <andreas.poller@sit.fraunhofer.de>
 
-Authors  
+Authors
 
     Oliver Hoffmann <oliverh855@gmail.com>
     Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
@@ -45,23 +45,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
 .ui.star.rating.right {
-	padding-left: 5px;
-	float: right;
+    padding-left: 5px;
+    float: right;
 }
 
 .rose.comment {
-	opacity: 0.25;
-	-webkit-transition: opacity 0.3s;
- 	-moz-transition: opacity 0.3s;
-  	-o-transition: opacity 0.3s;
-  	-ms-transition: opacity 0.3s;
-  	transition: opacity 0.3s;
+    opacity: 0.25;
+    -webkit-transition: opacity 0.3s;
+    -moz-transition: opacity 0.3s;
+    -o-transition: opacity 0.3s;
+    -ms-transition: opacity 0.3s;
+    transition: opacity 0.3s;
 }
 
 .rose.comment:hover {
-	opacity: 1.0;
+    opacity: 1.0;
 }
 
 .ui.nag {
-	z-index: 10000;
+    z-index: 10000;
 }

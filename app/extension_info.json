@@ -17,7 +17,7 @@
     "background_scripts": [
         "main.js"
     ],
-    "version": "2.0.3",
+    "version": "2.0.4",
     "browser_button": {
         "caption": "ROSE",
         "tooltipText": "ROSE Browser Plugin",

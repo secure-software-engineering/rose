@@ -54,7 +54,7 @@ class @FacebookLikeObserver
         "click"
     
     getIntegrationPatterns: ->
-        [".UFILikeLink", ".UFICommentActions > a", ".UFILikeThumb"]
+        [".UFILikeLink", ".UFILikeThumb"]
     
     sanitize: (record) ->
         for secretField in ["owner", "id"]

@@ -66,9 +66,9 @@ class @FacebookLikeObserver
         if container == null
             # Get container.
             container = "status"
-            if $(this).parents(".timelineUnitContainer").length
+            if $(node).parents(".fbTimelineFeedbackHeader").length
                 container = "timeline"
-            if $(this).parents(".UFIComment").length
+            if $(node).parents(".UFIComment").length
                 container = "comment"
 
         # Get parent container.

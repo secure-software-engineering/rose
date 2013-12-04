@@ -72,12 +72,34 @@ KangoAPI.onReady(function () {
   });
 
   App.BackupController = Ember.Controller.extend({
-    restoreStorage: function () {
-      var self = this;
-      Ember.RSVP.Promise(function (resolve) {
-        Storage.setStorage(self.get('fileContent'), resolve);
-      });
-    }.observes('fileContent'),
+    isValid: false,
+    isEmpty: true,
+
+    jsonValidator: function () {
+      var text = this.get('textfield');
+      try {
+        var jsonObj = JSON.parse(text);
+        this.set('isValid', true);
+      } catch (e) {
+        this.set('isValid', false);
+      }
+    }.observes('textfield'),
+
+    lengthChecker: function () {
+      var text = this.get('textfield');
+      if (text.length > 0) {
+        this.set('isEmpty', false);
+      } else {
+        this.set('isEmpty', true);
+      };
+    }.observes('textfield'),
+
+    isEmptyOrValid: function () {
+      if (this.get('isValid') || this.get('isEmpty')) {
+        return true;
+      }
+      return false;
+    }.property('isValid', 'isEmpty'),
 
     actions: {
       backup: function () {
@@ -87,30 +109,25 @@ KangoAPI.onReady(function () {
         });
 
         getStorage.then(function (data) {
-          self.set('storageData', data);
+          self.set('textfield', data);
         }).then(function () {
           $('textarea').select();
         });
       },
 
       restore: function () {
-        console.log("hit restore");
-        var self = this;
-        var text = $('textarea').val();
-        var jsonData = JSON.parse(text);
-        var setStorage = Ember.RSVP.Promise(function (resolve) {
-          Storage.setStorage(jsonData, resolve);
-        });
+        if (this.get('isValid') && !this.get('isEmpty')) {
+          var self = this;
+          var jsonObj = JSON.parse(this.get('textfield'));
+          var setStorage = Ember.RSVP.Promise(function (resolve) {
+            Storage.setStorage(jsonObj, resolve);
+          });
 
-        setStorage.then(function () {
-          self.set('storageData', '');
-          console.log('restored data!');
-        });
+          setStorage.then(function () {
+            self.set('textfield', '');
+          });
+        }
       },
-
-      openFileChooser: function () {
-        $('input[type=file]').click();
-      }
     }
   });
 

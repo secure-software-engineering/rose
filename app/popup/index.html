@@ -256,15 +256,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </div>
 </h3>
 <div class="ui form">
-    <div class="field">
-        {{textarea value=storageData}}
+    <div {{bind-attr class=":field isEmptyOrValid::error"}}>
+        {{textarea valueBinding='textfield'}}
     </div>
     <div class="fluid ui positive icon labeled right button" {{action backup}}>{{I18n 'backup'}}<i class="download disk icon"></i></div>
     <div class="ui horizontal divider">
         {{I18n 'or'}}
     </div>
-    <div class="fluid ui icon labeled button right" {{action restore}}>{{I18n 'restore'}}<i class="black upload disk icon"></i></div>
-    {{view App.UploadFileView fileContentBinding='fileContent'}}
+    {{#if isEmpty}}
+    <div class="fluid ui icon labled right button disabled">
+        {{I18n 'restore'}}
+        <i class="black upload disk icon"></i>
+    </div>
+    {{else}}
+    <div {{bind-attr class=':fluid :ui: :icon :labled :right :button isValid::disabled'}} {{action restore}}>
+        {{I18n 'restore'}}
+        <i class="black upload disk icon"></i>
+    </div>
+    {{/if}}
 </div>
 </script>
 

@@ -33,9 +33,67 @@ class @FacebookDeleteStatusObserver
         "click"
 
     getData: (obj) ->
-        # Return meta data.
+        # Is object on profile timeline?
+        if obj.parents(".timelineLayout").length
+            # Get event URL.
+            ajaxify = obj.attr("ajaxify")
+
+            # Extract status ID.
+            match = /unit_data%5Bhash%5D=(.+?)&/.exec ajaxify
+
+            # No match found?
+            if match == null
+                return
+
+            id = match[1]
+
+            # Get Facebook like observer.
+            likeObserver = new FacebookLikeObserver()
+
+            # Get result of like observer.
+            result = likeObserver.handleNode("#tl_unit_" + id + " div[role=article]", "timeline")
+
+            if not result['found']
+                return
+
+            # Return meta data.
+            return {
+                'object': result['record']['object'],
+                'type': "deletestatus"
+            }
+
+        # Is object on home timeline?
+        if obj.parents(".home").length
+            # Get event URL.
+            ajaxify = obj.attr("ajaxify")
+
+            # Extract status ID.
+            match = /identifier=S%3A_I.+?3A(.+?)&/.exec ajaxify
+
+            # No match found?
+            if match == null
+                return
+
+            id = match[1]
+
+            # Get Facebook like observer.
+            likeObserver = new FacebookLikeObserver()
+
+            # Get result of like observer.
+            result = likeObserver.handleNode("form[class*=\"" + id + "\"]", "status")
+
+            if not result['found']
+                return
+
+            # Return meta data.
+            return {
+                'object': result['record']['object'],
+                'type': "deletestatus"
+            }
+
+        # Still here?
         return {
-            'type': "deletestatus"
+            'type': 'error'
         }
     
     getObserverType: ->

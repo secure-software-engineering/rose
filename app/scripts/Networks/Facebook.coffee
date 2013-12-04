@@ -109,7 +109,7 @@ class @Facebook extends Network
                         'object':
                             'type': "comment"
                             'owner': FacebookUtilities.getUserID()
-                            'id': content
+                            'id': Utilities.hash(content)
 
                     # Save interaction.
                     Storage.addInteraction(interaction, name)

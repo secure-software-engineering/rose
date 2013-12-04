@@ -27,23 +27,74 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class @FacebookDeleteStatusObserver
     getIntegrationPatterns: ->
-        ["a[ajaxify*=remove_content]"]
+        ['a[ajaxify*="take_action_on_story"]', 'a[ajaxify*=delete]']
 
     getEventType: ->
         "click"
 
-    getID: (obj) ->
-        # Get Facebook like observer.
-        likeObserver = new FacebookLikeObserver()
+    getData: (obj) ->
+        # Is object on profile timeline?
+        if obj.parents(".timelineLayout").length
+            # Get event URL.
+            ajaxify = obj.attr("ajaxify")
 
-        # Use ID of like observer.
-        likeObserver.getID(obj)
+            # Extract status ID.
+            match = /unit_data%5Bhash%5D=(.+?)&/.exec ajaxify
 
-    getMetaData: (obj) ->
-        # Return meta data.
+            # No match found?
+            if match == null
+                return
+
+            id = match[1]
+
+            # Get Facebook like observer.
+            likeObserver = new FacebookLikeObserver()
+
+            # Get result of like observer.
+            result = likeObserver.handleNode("#tl_unit_" + id + " div[role=article]", "timeline")
+
+            if not result['found']
+                return
+
+            # Return meta data.
+            return {
+                'object': result['record']['object'],
+                'type': "deletestatus"
+            }
+
+        # Is object on home timeline?
+        if obj.parents(".home").length
+            # Get event URL.
+            ajaxify = obj.attr("ajaxify")
+
+            # Extract status ID.
+            match = /identifier=S%3A_I.+?3A(.+?)&/.exec ajaxify
+
+            # No match found?
+            if match == null
+                return
+
+            id = match[1]
+
+            # Get Facebook like observer.
+            likeObserver = new FacebookLikeObserver()
+
+            # Get result of like observer.
+            result = likeObserver.handleNode("form[class*=\"" + id + "\"]", "status")
+
+            if not result['found']
+                return
+
+            # Return meta data.
+            return {
+                'object': result['record']['object'],
+                'type': "deletestatus"
+            }
+
+        # Still here?
         return {
-            'interaction_type': "deletestatus"
+            'type': 'error'
         }
-
+    
     getObserverType: ->
         "classic"

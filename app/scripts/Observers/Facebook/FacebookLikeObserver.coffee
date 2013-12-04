@@ -54,7 +54,7 @@ class @FacebookLikeObserver
         "click"
     
     getIntegrationPatterns: ->
-        [".UFILikeLink", ".UFICommentActions > a", ".UFILikeThumb"]
+        [".UFILikeLink", ".UFILikeThumb"]
     
     sanitize: (record) ->
         for secretField in ["owner", "id"]
@@ -66,9 +66,9 @@ class @FacebookLikeObserver
         if container == null
             # Get container.
             container = "status"
-            if $(this).parents(".timelineUnitContainer").length
+            if $(node).parents(".fbTimelineFeedbackHeader").length
                 container = "timeline"
-            if $(this).parents(".UFIComment").length
+            if $(node).parents(".UFIComment").length
                 container = "comment"
 
         # Get parent container.
@@ -87,6 +87,9 @@ class @FacebookLikeObserver
         # Set interaction type (like, unlike, unknown).
         interactionType = interactionTypes[fieldContent]
         interactionType = "unknown/like/unlike" unless interactionType
+
+        # Check if thumbs up button has been clicked.
+        interactionType = "like" if $(node).hasClass("UFILikeThumb")
 
         # Traverse through patterns.
         records = []

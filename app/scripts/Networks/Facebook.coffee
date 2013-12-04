@@ -47,6 +47,7 @@ class @Facebook extends Network
         @observers.push new FacebookFriendAddObserver()
         @observers.push new FacebookUnfriendObserver()
         @observers.push new FacebookDeleteStatusObserver()
+        @observers.push new FacebookDeleteCommentObserver()
         @observers.push new FacebookChatTurnedOffObserver()
         @observers.push new FacebookChatActivatedObserver()
         @observers.push new FacebookHideActivityObserver()
@@ -63,6 +64,9 @@ class @Facebook extends Network
 
         # Chat Textarea Observer.
         @integrateChatTextareaObserver()
+
+        # General Message Observer.
+        @integrateGeneralMessageObserver()
 
     integrateCommentStatusObserver: ->
         # Get network name.
@@ -106,7 +110,7 @@ class @Facebook extends Network
                         'object':
                             'type': "comment"
                             'owner': FacebookUtilities.getUserID()
-                            'id': content
+                            'id': Utilities.hash(content)
 
                     # Save interaction.
                     Storage.addInteraction(interaction, name)
@@ -189,6 +193,37 @@ class @Facebook extends Network
             $(this).on "click", (e) ->
                 # Get recipient.
                 recipient = $(this).closest("#pagelet_web_messenger").find('h2#webMessengerHeaderName a').html()
+
+                # Create interaction.
+                interaction =
+                    'type': 'chat'
+                    'object':
+                        'type': 'message'
+                        'recipient': Utilities.hash(recipient)
+
+                # Save interaction.
+                Storage.addInteraction(interaction, name)
+
+    integrateGeneralMessageObserver: ->
+        # Get network name.
+        name = @getNetworkName()
+
+        # Set identifier.
+        identifier = "div[role=dialog] button.layerConfirm"
+
+        # Find all elements.
+        $(identifier).each ->
+            # Skip if already integrated.
+            return if $(this).hasClass("rose-integrated")
+
+            # Add integration class.
+            $(this).addClass("rose-integrated")
+
+            # Add event handler.
+            $(this).on "click", (e) ->
+                # Get recipient.
+                recipient = $(this).closest("div[role=dialog]").find('span.uiToken').html()
+                recipient = Utilities.stripTags(recipient)
 
                 # Create interaction.
                 interaction =

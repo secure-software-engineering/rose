@@ -301,11 +301,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <div class="date" title="{{unbound timeFormatted item.createdAt}}">
                 {{timeAgo item.createdAt}}
             </div>
-            <div class="summary">
-               {{I18n 'you'}} created a {{item.record.interaction_type}}
+            <div class="summary clickable">
+                {{I18n 'you'}} created a {{item.record.type}}
+                <i class="icon triangle down"></i>
             </div>
             <div class="extra text">
-            {{pretty item}}
+                {{pretty item}}
             </div>
             <div class="actions">
                 {{#if item.hidden}}

@@ -285,10 +285,25 @@ KangoAPI.onReady(function () {
   });
 
   App.FacebookInteractionsView = Ember.View.extend({
+    // controller: null,
+
     initPopups: function () {
-      this.$('.red.sign.icon')
-        .popup();
-    }.on('didInsertElement')
+      this.initAccordion();
+    }.on('didInsertElement'),
+
+    checker: function () {
+      Ember.run.scheduleOnce('afterRender', this, 'initAccordion');
+    }.observes('controller.@each.deleted'),
+
+    initAccordion: function () {
+      this.$('.ui.feed')
+        .accordion({
+          selector: {
+            title: '.summary',
+            content: '.extra.text'
+          }
+        });
+    }
   });
 
   App.Comment = Ember.Object.extend();

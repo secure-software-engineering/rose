@@ -90,3 +90,15 @@ input.hidden {
 .ui.feed .event .actions a:hover {
     color: rgba(0, 0, 0, 0.6);
 }
+
+.ui.feed .extra.text {
+    display: none;
+}
+
+.ui.feed .extra.text.active {
+    display: block;
+}
+
+.clickable {
+    cursor: pointer;
+}

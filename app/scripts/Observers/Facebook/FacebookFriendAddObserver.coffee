@@ -1,12 +1,12 @@
 ###
-ROSE is a browser extension researchers can use to capture in situ 
+ROSE is a browser extension researchers can use to capture in situ
 data on how users actually use the online social network Facebook.
 Copyright (C) 2013
 
     Fraunhofer Institute for Secure Information Technology
     Andreas Poller <andreas.poller@sit.fraunhofer.de>
 
-Authors  
+Authors
 
     Oliver Hoffmann <oliverh855@gmail.com>
     Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 require 'Utilities'
+require 'DOM'
 
 class @FacebookFriendAddObserver
     getIntegrationPatterns: ->
@@ -38,11 +39,11 @@ class @FacebookFriendAddObserver
         # Get name of friend.
         friend = Utilities.stripTags(DOM.findRelative(obj, '.friendBrowserListUnit': '.title a'))
         friend = Utilities.hash(friend)
-        
+
         return {
             'friend': friend,
             'type': "friendadded"
         }
-    
+
     getObserverType: ->
         "classic"

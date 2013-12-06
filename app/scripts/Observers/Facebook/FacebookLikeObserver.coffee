@@ -35,7 +35,8 @@ class @FacebookLikeObserver
             '<div><h5><div><a>{owner}</a></div></h5><div class="userContent"></div><a ajaxify="{id}"><div><img></img></div></a><form></form><div class="clearfix"></div></div>',
             '<div><h6><div><a>{owner}</a></div></h6><div class="userContent">{id}</div><form></form></div>',
             '<div><h6><div><a>{owner}</a></div></h6><div><div class="text_exposed_root">{id}</div></div><form></form></div>',
-            '<div><h5><div><a>{owner}</a></div></h5><h5><span><div><span>{id}</span></div></span></h5><form></form></div>'
+            '<div><h5><div><a>{owner}</a></div></h5><h5><span><div><span>{id}</span></div></span></h5><form></form></div>',
+            '<div><h5><a>{owner}</a></h5><div></div><form id="{id}"></form></div>'
         ],
         "comment": [
             '<div class="UFICommentContent"><a class="UFICommentActorName">{owner}</a><span><span><span>{id}</span></span></span></div>'
@@ -73,7 +74,9 @@ class @FacebookLikeObserver
                 container = "comment"
 
         # Get parent container.
-        parent = $(node).siblings().closest(@containers[container])
+        parent = $(node).closest(@containers[container])
+        if parent.length < 1
+            parent = $(node).siblings().closest(@containers[container])
 
         # Interaction types.
         interactionTypes =

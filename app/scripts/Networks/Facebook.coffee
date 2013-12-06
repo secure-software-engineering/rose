@@ -223,6 +223,10 @@ class @Facebook extends Network
             $(this).on "click", (e) ->
                 # Get recipient.
                 recipient = $(this).closest("div[role=dialog]").find('span.uiToken').html()
+
+                # If no recipient is found then it is not a message
+                return unless recipient?
+
                 recipient = Utilities.stripTags(recipient)
 
                 # Create interaction.

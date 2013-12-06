@@ -1,12 +1,12 @@
 ###
-ROSE is a browser extension researchers can use to capture in situ 
+ROSE is a browser extension researchers can use to capture in situ
 data on how users actually use the online social network Facebook.
 Copyright (C) 2013
 
     Fraunhofer Institute for Secure Information Technology
     Andreas Poller <andreas.poller@sit.fraunhofer.de>
 
-Authors  
+Authors
 
     Oliver Hoffmann <oliverh855@gmail.com>
     Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
@@ -36,27 +36,26 @@ class @FacebookUpdateStatusObserver
 
     getData: (obj) ->
         # Privacy types.
-        privacyTypes = {
+        privacyTypes =
             # German
-            'benutzerdefiniert': 'custom',
-            'nur ich':           'only me',
-            'freunde':           'friends',
-            'öffentlich':        'public',
+            'benutzerdefiniert': 'custom'
+            'nur ich':           'only me'
+            'freunde':           'friends'
+            'öffentlich':        'public'
             # English
-            'custom':  'custom',
-            'only me': 'only me',
-            'friends': 'friends',
+            'custom':  'custom'
+            'only me': 'only me'
+            'friends': 'friends'
             'public':  'public'
-        }
 
         # Get privacy.
-        privacy = obj.closest("form[action*=updatestatus]").find(".uiSelectorButton span").html()
+        privacy = obj.closest("form[action*=updatestatus]").find(".uiButton span").html()
 
         # Consider language.
-        if privacy == null
-            privacy = "privacyunknown"
-        else
+        if privacy?
             privacy = privacyTypes[privacy.toLowerCase()]
+        else
+            privacy = "privacyunknown"
 
         # Get ID.
         id = obj.closest("form[action*=updatestatus]").find("textarea[name=xhpc_message_text]").val()
@@ -71,6 +70,6 @@ class @FacebookUpdateStatusObserver
                 'id': id
             }
         }
-    
+
     getObserverType: ->
         "classic"

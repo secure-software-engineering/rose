@@ -310,23 +310,9 @@ KangoAPI.onReady(function () {
 
   App.FacebookCommentsRoute = Ember.Route.extend({
     model: function () {
-      return [{
-        createdAt: '2013-11-12T14:56:11.415Z',
-        hidden: false
-      }, {
-        createdAt: '2013-11-12T14:56:11.415Z',
-        hidden: false
-      }, {
-        createdAt: '2013-11-12T14:56:11.415Z',
-        hidden: false
-      }, {
-        createdAt: '2013-11-12T14:56:11.415Z',
-        hidden: false
-      }];
-
-      // return new Ember.RSVP.Promise(function (resolve, reject) {
-      //     Storage.getComments("Facebook", resolve);
-      // });
+      return new Ember.RSVP.Promise(function (resolve, reject) {
+          Storage.getComments("Facebook", resolve);
+      });
     },
 
     setupController: function (controller, response) {

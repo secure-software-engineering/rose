@@ -99,6 +99,10 @@ input.hidden {
     display: block;
 }
 
+.comments .ui.feed .extra.text {
+    display: block;
+}
+
 .clickable {
     cursor: pointer;
 }

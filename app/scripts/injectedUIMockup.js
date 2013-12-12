@@ -120,10 +120,15 @@ if (window.location.hostname.indexOf("www.facebook.com") > -1) {
         }
     });
 
-    // event handler
+    // EVENT HANDLER
+
+    var activeComment = null;
 
     // when user clicks rose comment sidebar should appear
     $('body').on('click', '.rose.comment', function (evt) {
+        var likeObserver = new FacebookLikeObserver();
+        var item = likeObserver.handleNode($(evt.target).siblings(), 'status');
+        activeComment = item.record.object;
         $('.ui.sidebar').sidebar('pushPage');
         $('.ui.sidebar').sidebar('show');
     });
@@ -139,8 +144,8 @@ if (window.location.hostname.indexOf("www.facebook.com") > -1) {
         $('.sidebar').sidebar('hide');
         var comment = $('.sidebar textarea').val() || "no comment";
         var rating = $('.ui.rating').rating("getRating") || 0;
-        console.log("Comment: " + comment);
-        console.log("Rating: " + rating);
+        activeComment.text = comment;
+        Storage.addComment(activeComment, 'Facebook');
     });
 
 }

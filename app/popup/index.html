@@ -340,43 +340,45 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div class="sub header">{{I18n 'commentsPage.subHeader'}}.</div>
     </div>
 </h3>
-<div class="ui small pilled feed">
-    {{#each}}
-    <div class="event">
-        <div class="label">
-            <i class="comment icon"></i>
-            {{#if hidden}}
-            <i class="minus red sign icon" title="Hello I am a popup" data-variation="inverted"></i>
-            {{/if}}
-        </div>
-        <div class="content">
-            <div class="date" title="{{unbound timeFormatted item.createdAt}}">
-                {{timeAgo createdAt}}
-            </div>
-            <div class="summary">
-               {{I18n 'you'}} created a comment
-            </div>
-            <div class="extra text">
-            Some bulk comment text
-            </div>
-            <div class="actions">
+<div class="comments">
+    <div class="ui small pilled feed">
+        {{#each}}
+        <div class="event">
+            <div class="label">
+                <i class="comment icon"></i>
                 {{#if hidden}}
-                <a class="hide" {{action show this}}>{{I18n 'include'}}</a>
-                {{else}}
-                <a class="hide" {{action hide this}}>{{I18n 'exclude'}}</a>
+                <i class="minus red sign icon" title="Hello I am a popup" data-variation="inverted"></i>
                 {{/if}}
-                <a class="delete" {{action delete this}}>{{I18n 'delete'}}</a>
+            </div>
+            <div class="content">
+                <div class="date" title="{{unbound timeFormatted item.createdAt}}">
+                    {{timeAgo createdAt}}
+                </div>
+                <div class="summary">
+                   {{I18n 'you'}} created a comment
+                </div>
+                <div class="extra text">
+                    {{record.text}}
+                </div>
+                <div class="actions">
+                    {{#if hidden}}
+                    <a class="hide" {{action show this}}>{{I18n 'include'}}</a>
+                    {{else}}
+                    <a class="hide" {{action hide this}}>{{I18n 'exclude'}}</a>
+                    {{/if}}
+                    <a class="delete" {{action delete this}}>{{I18n 'delete'}}</a>
+                </div>
             </div>
         </div>
-    </div>
-    {{else}}
-    <div class="ui info message">
-        <div class="header">
-            {{I18n 'commentsPage.messageHeader'}}
+        {{else}}
+        <div class="ui info message">
+            <div class="header">
+                {{I18n 'commentsPage.messageHeader'}}
+            </div>
+            {{I18n 'commentsPage.messageContent'}}.
         </div>
-        {{I18n 'commentsPage.messageContent'}}.
+        {{/each}}
     </div>
-    {{/each}}
 </div>
 </script>
 

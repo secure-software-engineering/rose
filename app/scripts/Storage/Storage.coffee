@@ -173,19 +173,27 @@ class @Storage
             
             callback(meta)
     
-    @setMetaInformation: (meta) ->
+    @getStaticInformation: (platformName, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
             
-            roseData.setPrivacyEntry(entry, platformName)
+            static = roseData.getStaticInformation(platformName)
             
-            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
+            callback(static)
     
-    @appendMetaInformation: (meta) ->
+    @getStaticInformationEntry: (platformName, informationName, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
             
-            roseData.setMeta(meta)
+            staticEntry = roseData.getStaticInformationEntry(platformName, informationName)
+            
+            callback(staticEntry)
+    
+    @setStaticInformationEntry: (entry, platformName, informationName) ->
+        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+            roseData = new RoseData(roseStorage)
+            
+            roseData.setStaticInformationEntry(entry, platformName, informationName)
             
             kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
 

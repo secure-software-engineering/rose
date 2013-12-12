@@ -53,7 +53,7 @@ class @RoseData
             name: platformName
             interactions: []
             comments: []
-            privacy: {}
+            static: {}
         @data['platforms'].push platform
     
     hasPlatform: (platformName) ->
@@ -167,14 +167,21 @@ class @RoseData
     getDiaryEntries: ->
         return @data['diary']
     
-    getPrivacyEntry: (platformName) ->
+    getStaticInformation: (platformName) ->
         @addPlatform(platformName) unless @hasPlatform(platformName)
         for platform in @data['platforms']
-            return platform['privacy'] if platform['name'] == platformName
+            return platform['static'] if platform['name'] is platformName
         return null
     
-    setPrivacyEntry: (entry, platformName) ->
+    getStaticInformationEntry: (platformName, informationName) ->
         @addPlatform(platformName) unless @hasPlatform(platformName)
         for platform in @data['platforms']
-           platform['privacy'] = entry if platform['name'] == platformName
+            if platform['name'] is platformName and platform['static'].hasKey(informationName)
+                return platform['static']['informationName']
+        return null
+    
+    setStaticInformationEntry: (entry, platformName, informationName) ->
+        @addPlatform(platformName) unless @hasPlatform(platformName)
+        for platform in @data['platforms']
+            platform['static'][informationName] = entry if platform['name'] is platformName
  

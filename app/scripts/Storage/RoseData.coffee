@@ -173,15 +173,20 @@ class @RoseData
             return platform['static'] if platform['name'] is platformName
         return null
     
-    getStaticInformationEntry: (platformName, informationName) ->
+    getStaticInformationEntries: (platformName, informationName) ->
         @addPlatform(platformName) unless @hasPlatform(platformName)
         for platform in @data['platforms']
             if platform['name'] is platformName and platform['static'].hasKey(informationName)
                 return platform['static']['informationName']
         return null
     
-    setStaticInformationEntry: (entry, platformName, informationName) ->
+    addStaticInformationEntry: (record, platformName, informationName) ->
         @addPlatform(platformName) unless @hasPlatform(platformName)
         for platform in @data['platforms']
-            platform['static'][informationName] = entry if platform['name'] is platformName
+            if platform['name'] is platformName
+                entry =
+                    createdAt: new Date().toJSON()
+                    record: record
+                platform['static'][informationName] = [] unless platform['static'][informationName]
+                platform['static'][informationName].push(entry)
  

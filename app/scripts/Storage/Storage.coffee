@@ -181,19 +181,19 @@ class @Storage
             
             callback(static)
     
-    @getStaticInformationEntry: (platformName, informationName, callback) ->
+    @getStaticInformationEntries: (platformName, informationName, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
             
-            staticEntry = roseData.getStaticInformationEntry(platformName, informationName)
+            staticEntry = roseData.getStaticInformationEntries(platformName, informationName)
             
             callback(staticEntry)
     
-    @setStaticInformationEntry: (entry, platformName, informationName) ->
+    @addStaticInformationEntry: (entry, platformName, informationName) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
             
-            roseData.setStaticInformationEntry(entry, platformName, informationName)
+            roseData.addStaticInformationEntry(entry, platformName, informationName)
             
             kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
 

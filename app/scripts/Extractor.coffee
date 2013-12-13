@@ -26,8 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 class @Extractor
-    extractorName: ->
+    getNetworkName: ->
+    
+    getExtractorName: ->
 
     extractInformation: ->
-
-    extractionTime: ->

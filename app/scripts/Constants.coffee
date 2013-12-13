@@ -34,3 +34,8 @@ class window.Constants
 
     @getSalt: ->
         "ROSE"
+    
+    # In milliseconds.
+    @getExtractionInterval: ->
+        # 2 days in milliseconds.
+        172800000

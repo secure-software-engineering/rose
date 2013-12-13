@@ -34,6 +34,9 @@ class @Facebook extends Network
 
     # List of observers.
     observers: []
+    
+    # List of extractors.
+    extractors: []
 
     constructor: ->
         # Add observers.
@@ -51,6 +54,9 @@ class @Facebook extends Network
         @observers.push new FacebookChatTurnedOffObserver()
         @observers.push new FacebookChatActivatedObserver()
         @observers.push new FacebookHideActivityObserver()
+        
+        # Add extractors.
+        # TODO: Implement extractors.
 
     isOnNetwork: ->
         (window.location + "").indexOf("facebook.com") >= 0

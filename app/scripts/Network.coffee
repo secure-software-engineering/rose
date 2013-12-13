@@ -34,6 +34,9 @@ class @Network
 
     # List of observers.
     observers: []
+    
+    # List of extractors.
+    extractors: []
 
     isOnNetwork: ->
         # Stub.
@@ -43,6 +46,11 @@ class @Network
         # Integrate observers.
         for observer in @observers
             @integrateObserver observer
+    
+    applyExtractors: ->
+        # Integrate extractors.
+        for extractor in @extractors
+            @executeExtractor extractor
 
     integrateObserver: (observer) ->
         # Get network name.
@@ -81,6 +89,19 @@ class @Network
     
                     # Add interaction.
                     Storage.addInteraction(data, name)
+    
+    executeExtractor: (extractor) ->
+        Storage.getLastExtractionTime extractor.getNetworkName(), extractor.getExtractorName(), (extractionTime) ->
+            # Wrap in Date class.
+            extractionTime = new Date(extractionTime)
+            
+            # Check if extraction should be performed.
+            if new Date() - extractionTime > Constants.getExtractionInterval()
+                # Execute extractor.
+                extractor.extractInformation()
+                
+                # Set extraction time.
+                Storage.setLastExtractionTime extractor.getNetworkName(), extractor.getExtractorName(), (new Date()).toJSON()
 
     integrateIntoDOM: ->
         # Stub.

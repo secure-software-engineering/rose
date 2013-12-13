@@ -59,6 +59,9 @@ class @Rose
 
             # Apply observers.
             network.applyObservers()
+            
+            # Apply extractors.
+            network.applyExtractors()
 
             # Integrate into DOM.
             network.integrateIntoDOM()

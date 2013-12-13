@@ -215,3 +215,16 @@ class @Storage
             roseStorage.settings[key] = settings
 
             kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseStorage
+    
+    @getLastExtractionTime: (network, extractorName, callback) ->
+        kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
+            if extractorTime[network] and extractorTime[network][extractorName]
+                callback(extractorTime[network][extractorName])
+            callback(null)
+    
+    @setLastExtractionTime: (network, extractorName, time) ->
+        kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
+            extractorTimes[network] = {} unless extractorTimes[network]
+            extractorTimes[network][extractorName] = time
+            
+            kango.invokeAsync 'kango.storage.setItem', 'extractorTimes', extractorTimes

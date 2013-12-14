@@ -50,7 +50,7 @@ class @Network
     applyExtractors: ->
         # Integrate extractors.
         for extractor in @extractors
-            @executeExtractor extractor
+            @integrateExtractor extractor
 
     integrateObserver: (observer) ->
         # Get network name.
@@ -90,18 +90,22 @@ class @Network
                     # Add interaction.
                     Storage.addInteraction(data, name)
     
-    executeExtractor: (extractor) ->
-        Storage.getLastExtractionTime extractor.getNetworkName(), extractor.getExtractorName(), (extractionTime) ->
-            # Wrap in Date class.
-            extractionTime = new Date(extractionTime)
-            
-            # Check if extraction should be performed.
-            if new Date() - extractionTime > Constants.getExtractionInterval()
-                # Execute extractor.
-                extractor.extractInformation()
+    integrateExtractor: (extractor) ->
+        action = () ->
+            Storage.getLastExtractionTime extractor.getNetworkName(), extractor.getExtractorName(), (extractionTime) ->
+                # Wrap in Date class.
+                extractionTime = new Date(extractionTime)
                 
-                # Set extraction time.
-                Storage.setLastExtractionTime extractor.getNetworkName(), extractor.getExtractorName(), (new Date()).toJSON()
+                console.log("Timelapse: " + (new Date() - extractionTime));
+                # Check if extraction should be performed.
+                if (new Date() - extractionTime) > Constants.getExtractionInterval()
+                    # Execute extractor.
+                    extractor.extractInformation()
+                    
+                    # Set extraction time.
+                    Storage.setLastExtractionTime extractor.getNetworkName(), extractor.getExtractorName(), (new Date()).toJSON()
+        
+        setInterval action, 5000
 
     integrateIntoDOM: ->
         # Stub.

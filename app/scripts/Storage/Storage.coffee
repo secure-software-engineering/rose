@@ -220,7 +220,8 @@ class @Storage
         kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
             if extractorTimes and extractorTimes[network]
                 callback(extractorTimes[network][extractorName])
-            callback(null)
+            else
+                callback(null)
     
     @setLastExtractionTime: (network, extractorName, time) ->
         kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->

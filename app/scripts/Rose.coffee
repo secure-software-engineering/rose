@@ -44,6 +44,13 @@ class @Rose
             childList:     true,
             characterData: true
         }
+        
+        # Get list of networks.
+        networks = Management.getListOfNetworks()
+        
+        # Apply extractors for each network.
+        for network in networks
+            network.applyExtractors()
 
         # Integrate into site.
         Rose.integrate()
@@ -59,9 +66,6 @@ class @Rose
 
             # Apply observers.
             network.applyObservers()
-            
-            # Apply extractors.
-            network.applyExtractors()
 
             # Integrate into DOM.
             network.integrateIntoDOM()

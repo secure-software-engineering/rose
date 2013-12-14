@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 require 'Network'
 require 'Observers/**/*'
+require 'Extractors/**/*'
 
 class @Facebook extends Network
     # Network name.
@@ -56,7 +57,7 @@ class @Facebook extends Network
         @observers.push new FacebookHideActivityObserver()
         
         # Add extractors.
-        # TODO: Implement extractors.
+        @extractors.push new PrivacyExtractor()
 
     isOnNetwork: ->
         (window.location + "").indexOf("facebook.com") >= 0

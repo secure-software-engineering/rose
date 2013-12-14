@@ -104,7 +104,7 @@ class @Network
                     # Set extraction time.
                     Storage.setLastExtractionTime extractor.getNetworkName(), extractor.getExtractorName(), (new Date()).toJSON()
         
-        setInterval action, 5000
+        setInterval action, Constants.getExtractionCheckInterval()
 
     integrateIntoDOM: ->
         # Stub.

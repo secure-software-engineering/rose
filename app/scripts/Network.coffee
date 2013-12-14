@@ -96,7 +96,6 @@ class @Network
                 # Wrap in Date class.
                 extractionTime = new Date(extractionTime)
                 
-                console.log("Timelapse: " + (new Date() - extractionTime));
                 # Check if extraction should be performed.
                 if (new Date() - extractionTime) > Constants.getExtractionInterval()
                     # Execute extractor.

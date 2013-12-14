@@ -36,6 +36,12 @@ class @FacebookPrivacyExtractor
         # Set information URL.
         informationUrl = "https://www.facebook.com/settings/?tab=privacy&privacy_source=privacy_lite"
         
+        # Set network name.
+        networkName = @getNetworkName()
+        
+        # Set extractor name.
+        extractorName = @getExtractorName()
+        
         # Retrieve information.
         $.get informationUrl, (data) ->
             # Wrap data.
@@ -64,4 +70,4 @@ class @FacebookPrivacyExtractor
                     entry[section][key] = value
             
             # Write entry to storage.
-            Storage.addStaticInformationEntry entry, @getNetworkName(), @getExtractorName()
+            Storage.addStaticInformationEntry entry, networkName, extractorName

@@ -25,49 +25,49 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-class @FacebookPrivacyExtractor
+class @FacebookTimelineExtractor
     getNetworkName: ->
         "Facebook"
-    
+
     getExtractorName: ->
-        "privacy-settings"
-    
+        "timeline-settings"
+
     extractInformation: ->
         # Set information URL.
-        informationUrl = "https://www.facebook.com/settings/?tab=privacy"
-        
+        informationUrl = "https://www.facebook.com/settings/?tab=timeline"
+
         # Set network name.
         networkName = @getNetworkName()
-        
+
         # Set extractor name.
         extractorName = @getExtractorName()
-        
+
         # Retrieve information.
         $.get informationUrl, (data) ->
             # Wrap data.
             $data = $(data)
-            
+
             # Initialize entry.
             entry = {}
-            
+
             # Extract information.
             $data.find(".fbSettingsSectionsItem").each () ->
                 # Get section name.
                 section = $(this).find(".fbSettingsSectionsItemName").html()
-                
+
                 # Initialize section in entry.
                 entry[section] = {}
-                
+
                 # Get items.
                 $(this).find(".fbSettingsListItemContent").each () ->
                     # Get key.
                     key = $(this).find("div:nth-child(1)").html()
-                    
+
                     # Get value.
                     value = $(this).find("div:nth-child(2)").html()
-                    
+
                     # Set entry.
                     entry[section][key] = value
-            
+
             # Write entry to storage.
             Storage.addStaticInformationEntry entry, networkName, extractorName

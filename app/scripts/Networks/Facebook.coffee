@@ -58,6 +58,7 @@ class @Facebook extends Network
         
         # Add extractors.
         @extractors.push new FacebookPrivacyExtractor()
+        @extractors.push new FacebookTimelineExtractor()
 
     isOnNetwork: ->
         (window.location + "").indexOf("facebook.com") >= 0

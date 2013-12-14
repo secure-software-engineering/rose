@@ -177,9 +177,9 @@ class @Storage
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
             
-            static = roseData.getStaticInformation(platformName)
+            staticInformation = roseData.getStaticInformation(platformName)
             
-            callback(static)
+            callback(staticInformation)
     
     @getStaticInformationEntries: (platformName, informationName, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
@@ -218,12 +218,13 @@ class @Storage
     
     @getLastExtractionTime: (network, extractorName, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
-            if extractorTime[network] and extractorTime[network][extractorName]
-                callback(extractorTime[network][extractorName])
+            if extractorTimes and extractorTimes[network]
+                callback(extractorTimes[network][extractorName])
             callback(null)
     
     @setLastExtractionTime: (network, extractorName, time) ->
         kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
+            extractorTimes = {} unless extractorTimes
             extractorTimes[network] = {} unless extractorTimes[network]
             extractorTimes[network][extractorName] = time
             

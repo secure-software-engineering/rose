@@ -57,7 +57,7 @@ class @Facebook extends Network
         @observers.push new FacebookHideActivityObserver()
         
         # Add extractors.
-        @extractors.push new PrivacyExtractor()
+        @extractors.push new FacebookPrivacyExtractor()
 
     isOnNetwork: ->
         (window.location + "").indexOf("facebook.com") >= 0

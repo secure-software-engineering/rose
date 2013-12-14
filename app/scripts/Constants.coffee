@@ -39,9 +39,6 @@ class window.Constants
     @getExtractionInterval: ->
         # 2 days in milliseconds.
         172800000
-        
-        # But for now, use 10 seconds.
-        return 10000
     
     # In milliseconds.
     @getExtractionCheckInterval: ->

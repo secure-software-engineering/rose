@@ -33,4 +33,35 @@ class @FacebookPrivacyExtractor
         "privacy-settings"
     
     extractInformation: ->
-        console.log("PRIVACY EXTRACTOR")
+        # Set information URL.
+        informationUrl = "https://www.facebook.com/settings/?tab=privacy&privacy_source=privacy_lite"
+        
+        # Retrieve information.
+        $.get informationUrl, (data) ->
+            # Wrap data.
+            $data = $(data)
+            
+            # Initialize entry.
+            entry = {}
+            
+            # Extract information.
+            $data.find(".fbSettingsSectionsItem").each () ->
+                # Get section name.
+                section = $(this).find(".fbSettingsSectionsItemName").html()
+                
+                # Initialize section in entry.
+                entry[section] = {}
+                
+                # Get items.
+                $(this).find(".fbSettingsListItemContent").each () ->
+                    # Get key.
+                    key = $(this).find("div:nth-child(1)").html()
+                    
+                    # Get value.
+                    value = $(this).find("div:nth-child(2)").html()
+                    
+                    # Set entry.
+                    entry[section][key] = value
+            
+            # Write entry to storage.
+            Storage.addStaticInformationEntry entry, @getNetworkName(), @getExtractorName()

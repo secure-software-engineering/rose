@@ -25,9 +25,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-class @FacebookPageLikeObserver
+class @FacebookPageUnlikeObserver
     getIntegrationPatterns: ->
-        [".PageLikeButton input[type=submit]"]
+        ["li[data-label=Unlike] a"]
 
     getEventType: ->
         "click"
@@ -36,11 +36,11 @@ class @FacebookPageLikeObserver
         # Get name of page.
         page = $("#contentArea").find("div.name h2 span").html()
         page = Utilities.hash(page)
-        
+
         return {
             'page': page,
-            'type': 'pagelike'
+            'type': 'pageunlike'
         }
-    
+
     getObserverType: ->
         "classic"

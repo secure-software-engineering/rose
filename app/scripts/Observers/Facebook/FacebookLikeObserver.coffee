@@ -59,6 +59,14 @@ class @FacebookLikeObserver
         [".UFILikeLink", ".UFILikeThumb"]
 
     sanitize: (record) ->
+        # Check id for fbid URL and extract it, if possible.
+        if /photo\.php/.test(record['object']['id'])
+            match = record['object']['id'].match(/fbid=(.+?)&/)
+            
+            # Set id to fbid.
+            record['object']['id'] = match[1]
+        
+        # Hash secret fields.
         for secretField in ["owner", "id"]
             record['object'][secretField] = Utilities.hash(record['object'][secretField]) if record['object'][secretField]
 

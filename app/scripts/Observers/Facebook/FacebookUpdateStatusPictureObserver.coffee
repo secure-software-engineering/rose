@@ -36,7 +36,14 @@ class @FacebookUpdateStatusPictureObserver
 
     getData: (obj) ->
         # Generate ID.
-        id = Utilities.hash(obj.closest("form[action*=photos]").find("textarea.mentionsTextarea").val())
+        id = obj.closest("form[action*=photos]").find("textarea.mentionsTextarea").val()
+        
+        # If ID is empty, use fbid of picture container.
+        if id == ""
+            id = obj.closest("form[action*=photos]").find(".fbVaultGridItem").attr("data-fbid")
+        
+        # Hash ID.
+        id = Utilities.hash(id)
 
         return {
             'type': "updatestatuspicture"

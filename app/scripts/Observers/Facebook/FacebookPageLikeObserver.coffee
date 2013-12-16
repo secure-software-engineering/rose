@@ -34,7 +34,7 @@ class @FacebookPageLikeObserver
 
     getData: (obj) ->
         # Get name of page.
-        page = $("#fbProfileCover").find("span[itemprop=name]").html()
+        page = $("#contentArea").find("div.name h2 span").html()
         page = Utilities.hash(page)
         
         return {
@@ -43,4 +43,4 @@ class @FacebookPageLikeObserver
         }
     
     getObserverType: ->
-        "classic"            
+        "classic"

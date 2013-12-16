@@ -39,6 +39,7 @@ class @Facebook extends Network
         # Add observers.
         @observers.push new FacebookLikeObserver()
         @observers.push new FacebookPageLikeObserver()
+        @observers.push new FacebookPageUnlikeObserver()
         @observers.push new FacebookShareObserver()
         @observers.push new FacebookUpdateStatusObserver()
         @observers.push new FacebookUpdateStatusPictureObserver()

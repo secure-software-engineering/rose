@@ -25,33 +25,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-require 'Utilities'
-
-class @FacebookUpdateStatusPictureObserver
+class @FacebookPageUnlikeObserver
     getIntegrationPatterns: ->
-        ["form[action*=photos] button[type=submit]", "form[action*=photos] input[type=submit]"]
+        ["li[data-label=Unlike] a"]
 
     getEventType: ->
         "click"
 
     getData: (obj) ->
-        # Generate ID.
-        id = obj.closest("form[action*=photos]").find("textarea.mentionsTextarea").val()
-        
-        # If ID is empty, use fbid of picture container.
-        if id == ""
-            id = obj.closest("form[action*=photos]").find(".fbVaultGridItem").attr("data-fbid")
-        
-        # Hash ID.
-        id = Utilities.hash(id)
+        # Get name of page.
+        page = $("#contentArea").find("div.name h2 span").html()
+        page = Utilities.hash(page)
 
         return {
-            'type': "updatestatuspicture"
-            'object': {
-                'type': "status"
-                'id': id
-            }
+            'page': page,
+            'type': 'pageunlike'
         }
-    
+
     getObserverType: ->
         "classic"

@@ -31,11 +31,11 @@ require 'Extractors/**/*'
 
 class @Facebook extends Network
     # Network name.
-    network:   "Facebook"
+    network:   'Facebook'
 
     # List of observers.
     observers: []
-    
+
     # List of extractors.
     extractors: []
 
@@ -55,13 +55,13 @@ class @Facebook extends Network
         @observers.push new FacebookChatTurnedOffObserver()
         @observers.push new FacebookChatActivatedObserver()
         @observers.push new FacebookHideActivityObserver()
-        
+
         # Add extractors.
         @extractors.push new FacebookPrivacyExtractor()
         @extractors.push new FacebookTimelineExtractor()
 
     isOnNetwork: ->
-        (window.location + "").indexOf("facebook.com") >= 0
+        (window.location + '').indexOf('facebook.com') >= 0
 
     integrateIntoDOM: ->
         # Comment Status Observer.
@@ -81,26 +81,26 @@ class @Facebook extends Network
         name = @getNetworkName()
 
         # Set identifier.
-        identifier = "textarea.UFIAddCommentInput"
+        identifier = 'textarea.UFIAddCommentInput'
 
         # Find all elements.
         $(identifier).each ->
             # Skip if already integrated.
-            return if $(this).hasClass("rose-integrated")
+            return if $(this).hasClass('rose-integrated')
 
             # Add integration class.
-            $(this).addClass("rose-integrated")
+            $(this).addClass('rose-integrated')
 
             # Add event handler.
-            $(this).on "keydown", (e) ->
+            $(this).on 'keydown', (e) ->
                 if e.which is 13 or e.keyCode is 13
                     # Get comment text.
                     content = $(this).val()
 
                     # Get container.
-                    container = "status"
-                    if $(this).parents(".timelineUnitContainer").length
-                        container = "timeline"
+                    container = 'status'
+                    if $(this).parents('.timelineUnitContainer').length
+                        container = 'timeline'
 
                     # Get Facebook like observer.
                     likeObserver = new FacebookLikeObserver()
@@ -108,15 +108,14 @@ class @Facebook extends Network
                     # Get result of like observer.
                     result = likeObserver.handleNode(this, container)
 
-                    if not result['found']
-                        return
+                    return unless result.found is true
 
                     # Create interaction.
                     interaction =
                         'type': 'commentstatus'
-                        'target': result['record']['object']
+                        'target': result.record.object
                         'object':
-                            'type': "comment"
+                            'type': 'comment'
                             'owner': FacebookUtilities.getUserID()
                             'id': Utilities.hash(content)
 
@@ -128,28 +127,28 @@ class @Facebook extends Network
         name = @getNetworkName()
 
         # Set identifier.
-        identifier = ".fbDockChatTabFlyout textarea, #pagelet_web_messenger textarea"
+        identifier = '.fbDockChatTabFlyout textarea, #pagelet_web_messenger textarea'
 
         # Find all elements.
         $(identifier).each ->
             # Skip if already integrated.
-            return if $(this).hasClass("rose-integrated")
+            return if $(this).hasClass('rose-integrated')
 
             # Add integration class.
-            $(this).addClass("rose-integrated")
+            $(this).addClass('rose-integrated')
 
             # Add event handler.
-            $(this).on "keydown", (e) ->
+            $(this).on 'keydown', (e) ->
                 # Get parent container.
-                parent = ""
-                if $(this).parents(".fbDockChatTabFlyout").length
-                    parent = "sidechat"
-                if $(this).parents("#pagelet_web_messenger").length
-                    parent = "mainchat"
+                parent = ''
+                if $(this).parents('.fbDockChatTabFlyout').length
+                    parent = 'sidechat'
+                if $(this).parents('#pagelet_web_messenger').length
+                    parent = 'mainchat'
 
-                if parent is "sidechat" and e.keyCode is 13
+                if parent is 'sidechat' and e.keyCode is 13
                     # Get recipient.
-                    recipient = $(this).closest(".fbDockChatTabFlyout").find('h4.titlebarTextWrapper a').html()
+                    recipient = $(this).closest('.fbDockChatTabFlyout').find('h4.titlebarTextWrapper a').html()
 
                     # Create interaction.
                     interaction =
@@ -160,17 +159,17 @@ class @Facebook extends Network
 
                     # Save interaction.
                     Storage.addInteraction(interaction, name)
-                if parent is "mainchat"
-                    # Get "Press Enter to send" checkbox
-                    checkbox = $(this).closest("#pagelet_web_messenger").find("a[role=checkbox]")
+                if parent is 'mainchat'
+                    # Get 'Press Enter to send' checkbox
+                    checkbox = $(this).closest('#pagelet_web_messenger').find('a[role=checkbox]')
 
-                    if checkbox.attr("aria-checked") is "false"
+                    if checkbox.attr('aria-checked') is 'false'
                         # Chat Submit Button observer handles this chat message, so...
                         return
                     else
                         if e.keyCode is 13
                             # Get recipient.
-                            recipient = $(this).closest("#pagelet_web_messenger").find('h2#webMessengerHeaderName a').html()
+                            recipient = $(this).closest('#pagelet_web_messenger').find('h2#webMessengerHeaderName a').html()
 
                             # Create interaction.
                             interaction =
@@ -187,20 +186,20 @@ class @Facebook extends Network
         name = @getNetworkName()
 
         # Set identifier.
-        identifier = "#pagelet_web_messenger .uiButtonConfirm input"
+        identifier = '#pagelet_web_messenger .uiButtonConfirm input'
 
         # Find all elements.
         $(identifier).each ->
             # Skip if already integrated.
-            return if $(this).hasClass("rose-integrated")
+            return if $(this).hasClass('rose-integrated')
 
             # Add integration class.
-            $(this).addClass("rose-integrated")
+            $(this).addClass('rose-integrated')
 
             # Add event handler.
-            $(this).on "click", (e) ->
+            $(this).on 'click', (e) ->
                 # Get recipient.
-                recipient = $(this).closest("#pagelet_web_messenger").find('h2#webMessengerHeaderName a').html()
+                recipient = $(this).closest('#pagelet_web_messenger').find('h2#webMessengerHeaderName a').html()
 
                 # Create interaction.
                 interaction =
@@ -217,20 +216,20 @@ class @Facebook extends Network
         name = @getNetworkName()
 
         # Set identifier.
-        identifier = "div[role=dialog] button.layerConfirm"
+        identifier = 'div[role=dialog] button.layerConfirm'
 
         # Find all elements.
         $(identifier).each ->
             # Skip if already integrated.
-            return if $(this).hasClass("rose-integrated")
+            return if $(this).hasClass('rose-integrated')
 
             # Add integration class.
-            $(this).addClass("rose-integrated")
+            $(this).addClass('rose-integrated')
 
             # Add event handler.
-            $(this).on "click", (e) ->
+            $(this).on 'click', (e) ->
                 # Get recipient.
-                recipient = $(this).closest("div[role=dialog]").find('span.uiToken').html()
+                recipient = $(this).closest('div[role=dialog]').find('span.uiToken').html()
                 recipient = Utilities.stripTags(recipient)
 
                 # Create interaction.

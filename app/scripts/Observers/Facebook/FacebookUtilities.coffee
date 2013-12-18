@@ -47,4 +47,4 @@ class @FacebookUtilities
             return storyClasses[className] if $(className).find(obj).length > 0
 
         # Still here? Story type not known.
-        return "unknown"
+        return 'unknown'

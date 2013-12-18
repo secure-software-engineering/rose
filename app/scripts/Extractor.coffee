@@ -25,22 +25,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-class @Constants
-    @getContentLength: ->
-        30
+class @Extractor
+    getNetworkName: ->
 
-    @getHashLength: ->
-        8
+    getExtractorName: ->
 
-    @getSalt: ->
-        "ROSE"
-
-    # In milliseconds.
-    @getExtractionInterval: ->
-        # 2 days in milliseconds.
-        172800000
-
-    # In milliseconds.
-    @getExtractionCheckInterval: ->
-        # 10 minutes.
-        600000
+    extractInformation: ->

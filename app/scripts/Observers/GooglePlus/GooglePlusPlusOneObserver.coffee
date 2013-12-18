@@ -1,12 +1,12 @@
 ###
-ROSE is a browser extension researchers can use to capture in situ 
+ROSE is a browser extension researchers can use to capture in situ
 data on how users actually use the online social network Facebook.
 Copyright (C) 2013
 
     Fraunhofer Institute for Secure Information Technology
     Andreas Poller <andreas.poller@sit.fraunhofer.de>
 
-Authors  
+Authors
 
     Oliver Hoffmann <oliverh855@gmail.com>
     Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
@@ -28,16 +28,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 require 'Observer'
 
 class @GooglePlusPlusOneObserver extends Observer
-	getIntegrationPatterns: ->
-		['div[guidedhelpid="actionblock"] div:first', 'button.esw']
+    getIntegrationPatterns: ->
+        ['div[guidedhelpid="actionblock"] div:first', 'button.esw']
 
-	getEventType: ->
-		"click"
+    getEventType: ->
+        "click"
 
-	getID: (obj) ->
-		""
+    getID: (obj) ->
+        ""
 
-	getMetaData: (obj) ->
-		return {
-			"interaction_type": "+1"
-		}
+    getMetaData: (obj) ->
+        return {
+            "interaction_type": "+1"
+        }

@@ -1,12 +1,12 @@
 ###
-ROSE is a browser extension researchers can use to capture in situ 
+ROSE is a browser extension researchers can use to capture in situ
 data on how users actually use the online social network Facebook.
 Copyright (C) 2013
 
     Fraunhofer Institute for Secure Information Technology
     Andreas Poller <andreas.poller@sit.fraunhofer.de>
 
-Authors  
+Authors
 
     Oliver Hoffmann <oliverh855@gmail.com>
     Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
@@ -28,21 +28,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 require 'Utilities'
 
 class @FacebookUtilities
-	# FIXME: THIS ID COULD CHANGE WHEN USER CHANGES HIS NAME
-	@getUserID: ->
-		Utilities.hash $(".fbxWelcomeBoxName").text()
+    # FIXME: THIS ID COULD CHANGE WHEN USER CHANGES HIS NAME
+    @getUserID: ->
+        Utilities.hash $('.fbxWelcomeBoxName').text()
 
-	@getStoryType: (obj) ->
-		# Story classes.
-		storyClasses =
-			'.UFIComment': 'comment',
-			'div[role=article]': 'status',
-			'.photoUfiContainer': 'photo',
-			'.timelineUnitContainer': 'status'
+    @getStoryType: (obj) ->
+        # Story classes.
+        storyClasses =
+            '.UFIComment': 'comment',
+            'div[role=article]': 'status',
+            '.photoUfiContainer': 'photo',
+            '.timelineUnitContainer': 'status'
 
-		# Find story type.
-		for className of storyClasses
-			return storyClasses[className] if $(className).find(obj).length > 0
+        # Find story type.
+        for className of storyClasses
+            return storyClasses[className] if $(className).find(obj).length > 0
 
-		# Still here? Story type not known.
-		return "unknown"
+        # Still here? Story type not known.
+        return 'unknown'

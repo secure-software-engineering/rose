@@ -112,9 +112,9 @@ class @RoseData
             record: record
         @getComments(platformName).push comment
 
-    getComment: (index, platformName) ->
+    getComment: (id, platformName) ->
         for comment in @getComments(platformName)
-            return comment if comment['index'] is index
+            return comment if comment.record.id is id
         return null
 
     removeComment: (index, platformName) ->

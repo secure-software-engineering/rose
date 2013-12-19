@@ -92,11 +92,11 @@ class @Storage
 
             kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
 
-    @getComment: (index, platformName, callback) ->
+    @getComment: (id, platformName, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
-            comment = roseData.getComment(index, platformName)
+            comment = roseData.getComment(id, platformName)
 
             callback(comment)
 

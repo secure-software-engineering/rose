@@ -143,8 +143,12 @@ if (window.location.hostname.indexOf('www.facebook.com') > -1) {
     getComment(activeComment.id).then(function (comment) {
       if (comment == null) {
         $('.ui.form textarea').val('');
+        $('.ui.rating').rating('set rating', 0);
       } else {
         $('.ui.form textarea').val(comment.record.text);
+        for (var i = 0; i < comment.record.rating.length; i++) {
+          $('.ui.rating:eq(' + i + ')').rating('set rating', comment.record.rating[i]);
+        }
       }
     }).then(function () {
       $('.ui.sidebar').sidebar('pushPage');
@@ -162,8 +166,9 @@ if (window.location.hostname.indexOf('www.facebook.com') > -1) {
     evt.stopPropagation();
     $('.sidebar').sidebar('hide');
     var comment = $('.sidebar textarea').val() || 'no comment';
-    var rating = $('.ui.rating').rating('getRating') || 0;
+    var rating = $('.ui.rating').rating('get rating') || 0;
     activeComment.text = comment;
+    activeComment.rating = rating;
     Storage.addComment(activeComment, 'Facebook');
   });
 

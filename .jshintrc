@@ -18,7 +18,9 @@
     "moment": true,
     "Ember": true,
     "Storage": true,
-    "Handlebars": true
+    "Handlebars": true,
+    "RSVP": true,
+    "kango": true
   },
 
   /*

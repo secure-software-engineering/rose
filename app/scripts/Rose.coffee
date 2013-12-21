@@ -25,12 +25,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
+require 'FacebookUI'
 require 'Management'
 
 class @Rose
     @mutationObserver: null
+    @facebookUI: null
 
     @startRose: ->
+        @facebookUI = new FacebookUI()
+
         # Initialize Management.
         Management.initialize()
 
@@ -62,3 +66,5 @@ class @Rose
 
             # Integrate into DOM.
             network.integrateIntoDOM()
+
+        @facebookUI.redrawUI()

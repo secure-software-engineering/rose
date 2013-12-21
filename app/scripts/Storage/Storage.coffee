@@ -45,6 +45,7 @@ class @Storage
             callback(hasPlatform)
 
     @addInteraction: (record, platformName) ->
+        console.log('[INTERACTION] ' + JSON.stringify(record))
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
@@ -172,19 +173,27 @@ class @Storage
 
             callback(meta)
 
-    @setMetaInformation: (meta) ->
+    @getStaticInformation: (platformName, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
-            roseData.setPrivacyEntry(entry, platformName)
+            staticInformation = roseData.getStaticInformation(platformName)
 
-            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
+            callback(staticInformation)
 
-    @appendMetaInformation: (meta) ->
+    @getStaticInformationEntries: (platformName, informationName, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
-            roseData.setMeta(meta)
+            staticEntry = roseData.getStaticInformationEntries(platformName, informationName)
+
+            callback(staticEntry)
+
+    @addStaticInformationEntry: (entry, platformName, informationName) ->
+        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+            roseData = new RoseData(roseStorage)
+
+            roseData.addStaticInformationEntry(entry, platformName, informationName)
 
             kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
 
@@ -205,3 +214,21 @@ class @Storage
             roseStorage.settings[key] = settings
 
             kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseStorage
+
+    @getLastExtractionTime: (network, extractorName, callback) ->
+        kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
+            if extractorTimes and extractorTimes[network] and extractorTimes[network][extractorName]
+                callback(extractorTimes[network][extractorName])
+            else
+                callback(null)
+
+    @setLastExtractionTime: (network, extractorName, time) ->
+        kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
+            # Set up storage field.
+            extractorTimes = {} unless extractorTimes
+            extractorTimes[network] = {} unless extractorTimes[network]
+
+            # Set timestamp.
+            extractorTimes[network][extractorName] = time
+
+            kango.invokeAsync 'kango.storage.setItem', 'extractorTimes', extractorTimes

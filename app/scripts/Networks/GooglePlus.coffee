@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class @GooglePlus extends Network
     # Network name.
-    network:   "GooglePlus"
+    network:   'GooglePlus'
 
     # List of observers.
     observers: []
@@ -39,7 +39,7 @@ class @GooglePlus extends Network
         # @observers.push new GooglePlusShareObserver
 
     isOnNetwork: ->
-        (window.location + "").indexOf("plus.google.com") >= 0
+        (window.location + '').indexOf('plus.google.com') >= 0
 
     integrateIntoDOM: ->
         # Stub.

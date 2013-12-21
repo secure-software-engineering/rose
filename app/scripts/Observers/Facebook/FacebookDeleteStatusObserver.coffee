@@ -42,7 +42,7 @@ class @FacebookDeleteStatusObserver
             match = /unit_data%5Bhash%5D=(.+?)&/.exec ajaxify
 
             # No match found?
-            if match == null
+            if match is null
                 return
 
             id = match[1]
@@ -68,13 +68,15 @@ class @FacebookDeleteStatusObserver
             ajaxify = obj.attr("ajaxify")
 
             # Extract status ID.
-            match = /identifier=S%3A_I.+?3A(.+?)&/.exec ajaxify
+            match = /identifier=S%3A_I.+?3A(.+?)&|message_id=([0-9]{16})&/.exec ajaxify
 
             # No match found?
-            if match == null
+            if match[1]?
+                id = match[1]
+            else if match[2]?
+                id = match[2]
+            else
                 return
-
-            id = match[1]
 
             # Get Facebook like observer.
             likeObserver = new FacebookLikeObserver()

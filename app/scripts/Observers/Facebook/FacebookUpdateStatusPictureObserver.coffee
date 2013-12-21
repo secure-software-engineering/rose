@@ -25,6 +25,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
+require 'Utilities'
+
 class @FacebookUpdateStatusPictureObserver
     getIntegrationPatterns: ->
         ["form[action*=photos] button[type=submit]", "form[action*=photos] input[type=submit]"]
@@ -32,14 +34,23 @@ class @FacebookUpdateStatusPictureObserver
     getEventType: ->
         "click"
 
-    getID: (obj) ->
-        obj.closest("form[action*=photos]").find("textarea.mentionsTextarea").val()
+    getData: (obj) ->
+        # Generate ID.
+        id = obj.closest("form[action*=photos]").find("textarea.mentionsTextarea").val()
 
-    getMetaData: (obj) ->
-        # Return meta data.
+        # If ID is empty, use fbid of picture container.
+        if id == ""
+            id = obj.closest("form[action*=photos]").find(".fbVaultGridItem").attr("data-fbid")
+
+        # Hash ID.
+        id = Utilities.hash(id)
+
         return {
-            'interaction_type': "updatestatuspicture",
-            'object_type':      "status"
+            'type': "updatestatuspicture"
+            'object': {
+                'type': "status"
+                'id': id
+            }
         }
 
     getObserverType: ->

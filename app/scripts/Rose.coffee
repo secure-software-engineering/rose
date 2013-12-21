@@ -49,6 +49,13 @@ class @Rose
             characterData: true
         }
 
+        # Get list of networks.
+        networks = Management.getListOfNetworks()
+
+        # Apply extractors for each network.
+        for network in networks
+            network.applyExtractors()
+
         # Integrate into site.
         Rose.integrate()
 

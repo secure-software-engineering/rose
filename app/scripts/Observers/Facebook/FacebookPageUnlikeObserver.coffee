@@ -25,22 +25,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-class @Constants
-    @getContentLength: ->
-        30
+class @FacebookPageUnlikeObserver
+    getIntegrationPatterns: ->
+        ["li[data-label=Unlike] a"]
 
-    @getHashLength: ->
-        8
+    getEventType: ->
+        "click"
 
-    @getSalt: ->
-        "ROSE"
+    getData: (obj) ->
+        # Get name of page.
+        page = $("#contentArea").find("div.name h2 span").html()
+        page = Utilities.hash(page)
 
-    # In milliseconds.
-    @getExtractionInterval: ->
-        # 2 days in milliseconds.
-        172800000
+        return {
+            'page': page,
+            'type': 'pageunlike'
+        }
 
-    # In milliseconds.
-    @getExtractionCheckInterval: ->
-        # 10 minutes.
-        600000
+    getObserverType: ->
+        "classic"

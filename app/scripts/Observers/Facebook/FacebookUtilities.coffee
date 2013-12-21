@@ -28,9 +28,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 require 'Utilities'
 
 class @FacebookUtilities
-    # FIXME: THIS ID COULD CHANGE WHEN USER CHANGES HIS NAME
     @getUserID: ->
-        Utilities.hash $(".fbxWelcomeBoxName").text()
+        link = $("#navTimeline a").attr('href')
+        pathArray = link.split('/')
+        pathArray = pathArray.reverse()
+        Utilities.hash pathArray[0]
 
     @getStoryType: (obj) ->
         # Story classes.
@@ -45,4 +47,4 @@ class @FacebookUtilities
             return storyClasses[className] if $(className).find(obj).length > 0
 
         # Still here? Story type not known.
-        return "unknown"
+        return 'unknown'

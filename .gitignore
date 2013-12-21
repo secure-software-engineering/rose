@@ -5,3 +5,4 @@ dist
 packages
 app/main.js
 app/scripts/app.js
+.DS_Store

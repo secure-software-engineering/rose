@@ -25,6 +25,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
+require 'Utilities'
+require 'DOM'
+
 class @FacebookFriendAddObserver
     getIntegrationPatterns: ->
         [".FriendRequestAdd input[type=button]"]
@@ -32,13 +35,14 @@ class @FacebookFriendAddObserver
     getEventType: ->
         "click"
 
-    getID: (obj) ->
-        Utilities.stripTags DOM.findRelative(obj, '.friendBrowserListUnit': '.title a')
+    getData: (obj) ->
+        # Get name of friend.
+        friend = Utilities.stripTags(DOM.findRelative(obj, '.friendBrowserListUnit': '.title a'))
+        friend = Utilities.hash(friend)
 
-    getMetaData: (obj) ->
-        # Return meta data.
         return {
-            'interaction_type': "friendadded"
+            'friend': friend,
+            'type': "friendadded"
         }
 
     getObserverType: ->

@@ -34,7 +34,9 @@ class @FacebookLikeObserver
             '<div><h5><div><a>{owner}</a></div></h5><div class="userContent">{id}</div><form></form></div>',
             '<div><h5><div><a>{owner}</a></div></h5><div class="userContent"></div><a ajaxify="{id}"><div><img></img></div></a><form></form><div class="clearfix"></div></div>',
             '<div><h6><div><a>{owner}</a></div></h6><div class="userContent">{id}</div><form></form></div>',
-            '<div><h6><div><a>{owner}</a></div></h6><div><div class="text_exposed_root">{id}</div></div><form></form></div>'
+            '<div><h6><div><a>{owner}</a></div></h6><div><div class="text_exposed_root">{id}</div></div><form></form></div>',
+            '<div><h5><div><a>{owner}</a></div></h5><h5><span><div><span>{id}</span></div></span></h5><form></form></div>',
+            '<div><h5><a>{owner}</a></h5><div></div><form id="{id}"></form></div>'
         ],
         "comment": [
             '<div class="UFICommentContent"><a class="UFICommentActorName">{owner}</a><span><span><span>{id}</span></span></span></div>'
@@ -45,7 +47,7 @@ class @FacebookLikeObserver
     }
 
     containers: {
-        "status": ".userContentWrapper",
+        "status": ".mainWrapper, .userContentWrapper",
         "comment": ".UFIComment",
         "timeline": ".fbTimelineUnit"
     }
@@ -57,6 +59,14 @@ class @FacebookLikeObserver
         [".UFILikeLink", ".UFILikeThumb"]
 
     sanitize: (record) ->
+        # Check id for fbid URL and extract it, if possible.
+        if /photo\.php/.test(record['object']['id'])
+            match = record['object']['id'].match(/fbid=(.+?)&/)
+
+            # Set id to fbid.
+            record['object']['id'] = match[1]
+
+        # Hash secret fields.
         for secretField in ["owner", "id"]
             record['object'][secretField] = Utilities.hash(record['object'][secretField]) if record['object'][secretField]
 
@@ -73,6 +83,8 @@ class @FacebookLikeObserver
 
         # Get parent container.
         parent = $(node).closest(@containers[container])
+        if parent.length < 1
+            parent = $(node).siblings().closest(@containers[container])
 
         # Interaction types.
         interactionTypes =
@@ -86,6 +98,7 @@ class @FacebookLikeObserver
 
         # Set interaction type (like, unlike, unknown).
         interactionType = interactionTypes[fieldContent]
+
         interactionType = "unknown/like/unlike" unless interactionType
 
         # Check if thumbs up button has been clicked.

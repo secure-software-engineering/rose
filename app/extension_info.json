@@ -8,7 +8,6 @@
         "bower_components/handlebars/handlebars.js",
         "bower_components/i18next/release/i18next-1.7.1.js",
         "scripts/app.js",
-        "scripts/injectedUIMockup.js",
         "scripts/jquery.patterns.js"
     ],
     "homepage_url": "http://www.sit.fraunhofer.de/",

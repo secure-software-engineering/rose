@@ -50,12 +50,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
 .rose.comment {
+    margin: -5px 0 5px 0 !important;
     opacity: 0.25;
     -webkit-transition: opacity 0.3s;
     -moz-transition: opacity 0.3s;
     -o-transition: opacity 0.3s;
     -ms-transition: opacity 0.3s;
     transition: opacity 0.3s;
+}
+
+.rose.comment.timeline {
+    margin: 0 0 5px 6px !important;
 }
 
 .rose.comment:hover {

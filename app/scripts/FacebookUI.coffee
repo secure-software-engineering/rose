@@ -131,20 +131,21 @@ class @FacebookUI
             Storage.addComment @_activeItem, 'Facebook'
 
         $('body').on 'click', '.rose.comment', (evt) =>
-            item = @_likeObserver.handleNode $(evt.target).siblings(), 'status'
-            @_activeItem = item.record.object
+            if $('.fbxWelcomeBoxName').length > 0
+                item = @_likeObserver.handleNode $(evt.target).siblings(), 'status'
+            else
+                debugger
+                item = @_likeObserver.handleNode $(evt.target), 'timeline'
 
-            debugger
+            @_activeItem = item.record.object
 
             @_getComment(@_activeItem.id)
             .then((comment) ->
-                debugger
-                if commet?
+                if comment?
                     activeComment = comment.record
                     $('.ui.form textarea').val(activeComment.text);
-                    for rating in activeComment.rating
-                        # $().rating 'set rating', rating
-                        console.log rating
+                    for rating, i in activeComment.rating
+                        $('.ui.rating:eq(' + i + ')').rating 'set rating', rating
                 else
                     $('.ui.form textarea').val ''
                     $('.ui.rating').rating 'set rating', 0

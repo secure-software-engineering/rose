@@ -103,7 +103,11 @@ class @RoseData
         return null
 
     addComment: (record, platformName) ->
-        # TODO: Override previos stored comments with changed data
+        comment = @getComment record.id, platformName
+        if comment?
+            @updateComment comment.index, record, platformName
+            return
+
         index = @getComments(platformName).length
         comment =
             index: index
@@ -114,8 +118,7 @@ class @RoseData
         @getComments(platformName).push comment
 
     getComment: (id, platformName) ->
-        # TODO: Override previos stored comments with changed data
-        for comment in @getComments(platformName).reverse()
+        for comment in @getComments(platformName)
             return comment if comment.record.id is id
         return null
 
@@ -123,6 +126,10 @@ class @RoseData
         comments = @getComments(platformName).filter (comment) ->
             comment.index isnt index
         @setComments(comments, platformName)
+
+    updateComment: (index, record, platformName) ->
+        comments = @getComments(platformName)
+        comments[index].record = record
 
     setComments: (comments, platformName) ->
         @addPlatform(platformName) unless @hasPlatform(platformName)
@@ -181,7 +188,7 @@ class @RoseData
             if platform.name is platformName and platform.static.hasKey(informationName)
                 return platform.static.informationName
         return null
- 
+
     addStaticInformationEntry: (record, platformName, informationName) ->
         @addPlatform(platformName) unless @hasPlatform(platformName)
         for platform in @data.platforms

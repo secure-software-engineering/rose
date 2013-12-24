@@ -109,6 +109,14 @@ class @Storage
 
             callback(comments)
 
+    @hideComment: (index, hide, platformName, callback) ->
+        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+            roseData = new RoseData(roseStorage)
+
+            roseData.hideComment(index, hide, platformName)
+
+            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData(), callback
+
     @removeComment: (index, platformName) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)

@@ -310,8 +310,8 @@ KangoAPI.onReady(function () {
 
   App.FacebookCommentsRoute = Ember.Route.extend({
     model: function () {
-      return new Ember.RSVP.Promise(function (resolve, reject) {
-          Storage.getComments("Facebook", resolve);
+      return new Ember.RSVP.Promise(function (resolve) {
+        Storage.getComments('Facebook', resolve);
       });
     },
 
@@ -325,19 +325,26 @@ KangoAPI.onReady(function () {
   });
 
   App.FacebookCommentsController = Ember.ArrayController.extend({
+    platform: 'Facebook',
+
+    activeComments: function () {
+      var model = this.get('model');
+      return model.filterBy('deleted', false);
+    }.property('model.@each.deleted'),
+
     actions: {
       delete: function (comment) {
         var model = this.get('model');
         model.removeObject(comment);
-        // TODO
+        Storage.removeComment(comment.get('index'), this.get('platform'));
       },
       hide: function (comment) {
         comment.set('hidden', true);
-        // TODO
+        Storage.hideComment(comment.get('index'), true, this.get('platform'));
       },
       show: function (comment) {
         comment.set('hidden', false);
-        // TODO
+        Storage.hideComment(comment.get('index'), false, this.get('platform'));
       }
     }
   });

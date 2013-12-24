@@ -119,12 +119,22 @@ class @RoseData
 
     getComment: (id, platformName) ->
         for comment in @getComments(platformName)
-            return comment if comment.record.id is id
+            return comment if comment.record?.id is id
         return null
 
+    hideComment: (index, hide, platformName) ->
+        comments = @getComments(platformName)
+
+        comments[index].hidden = hide
+
+        @setComments(comments, platformName)
+
     removeComment: (index, platformName) ->
-        comments = @getComments(platformName).filter (comment) ->
-            comment.index isnt index
+        comments = @getComments(platformName)
+
+        comments[index].deleted = true
+        comments[index].record = null
+
         @setComments(comments, platformName)
 
     updateComment: (index, record, platformName) ->

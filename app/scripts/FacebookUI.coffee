@@ -134,7 +134,6 @@ class @FacebookUI
             if $('.fbxWelcomeBoxName').length > 0
                 item = @_likeObserver.handleNode $(evt.target).siblings(), 'status'
             else
-                debugger
                 item = @_likeObserver.handleNode $(evt.target), 'timeline'
 
             @_activeItem = item.record.object
@@ -143,7 +142,7 @@ class @FacebookUI
             .then((comment) ->
                 if comment?
                     activeComment = comment.record
-                    $('.ui.form textarea').val(activeComment.text);
+                    $('.ui.form textarea').val(activeComment.text)
                     for rating, i in activeComment.rating
                         $('.ui.rating:eq(' + i + ')').rating 'set rating', rating
                 else

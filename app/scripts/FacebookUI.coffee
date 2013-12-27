@@ -96,7 +96,7 @@ class @FacebookUI
         )
         .then((template) ->
             $('body').append template()
-            $('#rose-reminder').nag
+            $('.ui.nag').nag
                 easing: 'swing'
         )
 

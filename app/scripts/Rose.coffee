@@ -27,12 +27,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 require 'FacebookUI'
 require 'Management'
+require 'Networks/Facebook'
+require 'Networks/GooglePlus'
 
 class @Rose
     @mutationObserver: null
     @facebookUI: null
 
     @startRose: ->
+        facebook = new Facebook()
+        googleplus = new GooglePlus()
+
+        return unless facebook.isOnNetwork() or googleplus.isOnNetwork()
+
         @facebookUI = new FacebookUI()
 
         # Initialize Management.

@@ -42,8 +42,8 @@
 
     "privacyPage": {
         "subHeader": "Lassen Sie hier bitte Ihre Privatsphäreneinstellungen auslesen",
-        "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
-        "messageContent": "Schreib etwas"
+        "messageHeader": "Es sind keine Privatsphäreneinstellungen vorhanden",
+        "messageContent": "Warten Sie, bis ROSE die Einstellungen ausgelesen hat"
     },
 
     "backupPage": {

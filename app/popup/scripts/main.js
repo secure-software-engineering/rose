@@ -91,7 +91,7 @@ KangoAPI.onReady(function () {
         this.set('isEmpty', false);
       } else {
         this.set('isEmpty', true);
-      };
+      }
     }.observes('textfield'),
 
     isEmptyOrValid: function () {
@@ -285,8 +285,6 @@ KangoAPI.onReady(function () {
   });
 
   App.FacebookInteractionsView = Ember.View.extend({
-    // controller: null,
-
     initPopups: function () {
       this.initAccordion();
     }.on('didInsertElement'),
@@ -373,8 +371,83 @@ KangoAPI.onReady(function () {
       };
 
       Storage.setSettings('reminder', reminder);
-      console.log(this.get('reminder'));
     }.observes('showReminder'),
+  });
+
+  App.FacebookPrivacyController = Ember.Controller.extend({
+    notAvailable: function () {
+      var model = this.get('model');
+      return Ember.isEmpty(model.timeline) && Ember.isEmpty(model.privacy);
+    }.property('model.timeline', 'model.privacy'),
+
+    privacy: function () {
+      var name, privacy, privacyArr, secSettings, section, settings, value;
+
+      privacy = this.get('model.privacy');
+
+      privacyArr = [];
+
+      for (section in privacy) {
+        settings = privacy[section];
+        secSettings = [];
+        for (name in settings) {
+          value = settings[name];
+          secSettings.push({
+            name: name,
+            value: value
+          });
+        }
+        privacyArr.push({
+          sectionName: section,
+          settings: secSettings
+        });
+      }
+
+      return privacyArr;
+    }.property('model'),
+
+    timeline: function () {
+      var name, privacy, privacyArr, secSettings, section, settings, value;
+
+      privacy = this.get('model.timeline');
+
+      privacyArr = [];
+
+      for (section in privacy) {
+        settings = privacy[section];
+        secSettings = [];
+        for (name in settings) {
+          value = settings[name];
+          secSettings.push({
+            name: name,
+            value: value
+          });
+        }
+        privacyArr.push({
+          sectionName: section,
+          settings: secSettings
+        });
+      }
+
+      return privacyArr;
+    }.property('model')
+  });
+
+  App.FacebookPrivacyRoute = Ember.Route.extend({
+    model: function () {
+      return new Ember.RSVP.Promise(function (resolve) {
+        Storage.getStaticInformation('Facebook', resolve);
+      });
+    },
+
+    setupController: function (controller, response) {
+      var model = {};
+      var timeline = response['timeline-settings'].pop().record || null;
+      var privacy = response['privacy-settings'].pop().record || null;
+      model.timeline = timeline;
+      model.privacy = privacy;
+      controller.set('model', model);
+    }
   });
 
   App.SettingsRoute = Ember.Route.extend({

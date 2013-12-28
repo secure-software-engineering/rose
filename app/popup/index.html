@@ -393,6 +393,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div class="sub header">{{I18n 'privacyPage.subHeader'}}.</div>
     </div>
 </h3>
+
+{{#if notAvailable}}
+<div class="ui small info message">
+    <div class="header">
+        {{I18n 'privacyPage.messageHeader'}}
+    </div>
+    {{I18n 'privacyPage.messageContent'}}.
+</div>
+{{else}}
+{{#each privacy}}
+<table class="ui small padded table segment">
+  <thead>
+    <tr><th colspan="2">{{sectionName}}</th></tr>
+  </thead>
+  <tbody>
+  {{#each settings}}
+  <tr>
+      <td>{{name}}</td>
+      <td>{{value}}</td>
+    </tr>
+  {{/each}}
+  </tbody>
+</table>
+{{/each}}
+
+{{#each timeline}}
+<table class="ui small padded table segment">
+  <thead>
+    <tr><th colspan="2">{{sectionName}}</th></tr>
+  </thead>
+  <tbody>
+  {{#each settings}}
+  <tr>
+      <td>{{name}}</td>
+      <td>{{value}}</td>
+    </tr>
+  {{/each}}
+  </tbody>
+</table>
+{{/each}}
+{{/if}}
+
 </script>
 
 
@@ -505,10 +547,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- build:js scripts/components.js -->
     <script src="../bower_components/jquery/jquery.js"></script>
     <script src="../bower_components/handlebars/handlebars.js"></script>
-    <script src="../bower_components/ember/ember.prod.js"></script>
+    <script src="../bower_components/ember/ember.js"></script>
     <script src="../bower_components/i18next/release/i18next-1.7.1.js"></script>
-    <script src="../bower_components/momentjs/moment.js"></script>
-    <script src="../bower_components/momentjs/lang/de.js"></script>
+    <script src="../bower_components/moment/moment.js"></script>
+    <script src="../bower_components/moment/lang/de.js"></script>
     <script src="../bower_components/semantic/build/packaged/javascript/semantic.js"></script>
     <!-- endbuild -->
 

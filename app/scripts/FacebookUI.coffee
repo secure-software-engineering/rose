@@ -48,7 +48,7 @@ class @FacebookUI
         i18n.init options
 
         # inject css into DOM
-        Utilities.loadCss 'res/semantic/build/packaged/css/semantic.css'
+        Utilities.loadCss 'res/semantic/build/packaged/css/semantic.min.css'
         Utilities.loadCss 'res/main.css'
 
         @_registerEventHandlers()
@@ -131,6 +131,10 @@ class @FacebookUI
             Storage.addComment @_activeItem, 'Facebook'
 
         $('body').on 'click', '.rose.comment', (evt) =>
+            $('.ui.sidebar').dimmer('show')
+            $('.ui.sidebar').sidebar 'push page'
+            $('.ui.sidebar').sidebar 'show'
+
             if $('.fbxWelcomeBoxName').length > 0
                 item = @_likeObserver.handleNode $(evt.target).siblings(), 'status'
             else
@@ -150,6 +154,5 @@ class @FacebookUI
                     $('.ui.rating').rating 'set rating', 0
             )
             .then(() ->
-                $('.ui.sidebar').sidebar 'push page'
-                $('.ui.sidebar').sidebar 'show'
+                $('.ui.sidebar').dimmer('hide')
             )

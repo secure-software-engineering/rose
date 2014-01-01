@@ -2,7 +2,7 @@
     "content_scripts": [
         "bower_components/jquery/jquery.js",
         "bower_components/jquery.cookie/jquery.cookie.js",
-        "bower_components/semantic/build/packaged/javascript/semantic.js",
+        "bower_components/semantic/build/packaged/javascript/semantic.min.js",
         "bower_components/jssha/src/sha.js",
         "bower_components/rsvp/rsvp.js",
         "bower_components/handlebars/handlebars.js",

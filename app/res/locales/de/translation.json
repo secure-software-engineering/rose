@@ -5,14 +5,14 @@ resources.de.translation = {
   "backup": "Datensicherung",
   "restore": "Wiederherstellen",
   "comment": "Kommentar",
-  "ROSE comments": "Kommentare",
+  "comments": "Kommentare",
   "diary": "Tagebuch",
   "documentation": "Dokumentation",
   "help": "Hilfe",
   "interactions": "Interaktionen",
   "networks": "Netzwerke",
-  "privacy settings": "Privatsphäreneinstellungen",
-  "ROSE settings": "ROSE Einstellungen",
+  "privacy-settings": "Privatsphäreneinstellungen",
+  "settings": "Einstellungen",
   "test": "test",
 
   "cancel": "Abbrechen",
@@ -44,9 +44,9 @@ resources.de.translation = {
   },
 
   "privacyPage": {
-    "subHeader": ,
+    "subHeader": "Lassen Sie hier bitte Ihre Privatsphäreneinstellungen auslesen",
     "messageHeader": "Es sind keine Privatsphäreneinstellungen vorhanden",
-    "messageContent": 
+    "messageContent": "Warten Sie, bis ROSE die Einstellungen ausgelesen hat"
   },
 
   "backupPage": {

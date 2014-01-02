@@ -376,8 +376,7 @@ KangoAPI.onReady(function () {
 
   App.FacebookPrivacyController = Ember.Controller.extend({
     notAvailable: function () {
-      var model = this.get('model');
-      return Ember.isEmpty(model.timeline) && Ember.isEmpty(model.privacy);
+      return Ember.isEmpty(this.get('timeline')) && Ember.isEmpty(this.get('privacy'));
     }.property('model.timeline', 'model.privacy'),
 
     privacy: function () {
@@ -442,8 +441,14 @@ KangoAPI.onReady(function () {
 
     setupController: function (controller, response) {
       var model = {};
-      var timeline = response['timeline-settings'].pop().record || null;
-      var privacy = response['privacy-settings'].pop().record || null;
+      var timeline = {};
+      var privacy = {};
+      if (response['timeline-settings'] != null) {
+        timeline = response['timeline-settings'].pop().record || null;
+      }
+      if (response['privacy-settings'] != null) {
+        privacy = response['privacy-settings'].pop().record || null;
+      }
       model.timeline = timeline;
       model.privacy = privacy;
       controller.set('model', model);

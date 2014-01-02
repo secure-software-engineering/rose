@@ -33,7 +33,7 @@ KangoAPI.onReady(function () {
   var options = {
     getAsync: false,
     fallbackLng: 'en',
-    resGetPath: '../res/locales/__lng__/__ns__.json'
+    resStore: resources
   };
   i18n.init(options);
 

@@ -40,9 +40,10 @@ class @FacebookUI
             return new Handlebars.SafeString result
 
         options =
+            debug: true
             getAsync: false
             fallbackLng: 'en'
-            resGetPath: kango.io.getResourceUrl 'res/locales/__lng__/__ns__.json'
+            resStore: resources
 
         # init i18next module
         i18n.init options
@@ -109,9 +110,16 @@ class @FacebookUI
 
     _getTempalte: (template) ->
         promise = new RSVP.Promise (resolve, reject) ->
-            resource = kango.io.getResourceUrl '/res/templates/' + template + '.hbs'
-            $.get resource, (source) ->
-                resolve source
+            resource = 'res/templates/' + template + '.hbs'
+
+            details =
+                url: resource
+                method: 'GET'
+                async: false
+                contentType: 'text'
+
+            kango.xhr.send details, (data) ->
+                resolve data.response
 
         return promise
 

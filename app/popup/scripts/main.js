@@ -109,7 +109,9 @@ KangoAPI.onReady(function () {
         });
 
         getStorage.then(function (data) {
-          self.set('textfield', data);
+          var dataObj = JSON.parse(data);
+          dataObj.meta['export-date'] = new Date().toJSON();
+          self.set('textfield', JSON.stringify(dataObj, undefined, 2));
         }).then(function () {
           $('textarea').select();
         });
@@ -128,24 +130,6 @@ KangoAPI.onReady(function () {
           });
         }
       },
-    }
-  });
-
-  App.UploadFileView = Ember.TextField.extend({
-    type: 'file',
-    classNames: ['hidden'],
-
-    change: function (evt) {
-      var self = this;
-      var input = evt.target;
-      if (input.files && input.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-          var fileContent = e.srcElement.result;
-          self.set('fileContent', fileContent);
-        };
-        reader.readAsText(input.files[0]);
-      }
     }
   });
 

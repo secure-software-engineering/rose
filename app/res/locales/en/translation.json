@@ -4,7 +4,7 @@ resources.en.translation = {
   "backup": "Data Backup",
   "restore": "Restore",
   "comment": "Comments",
-  "comments": "Comments",
+  "ROSE comments": "ROSE Comments",
   "diary": "Diary",
   "documentation": "Usage notes",
   "help": "Help",
@@ -71,6 +71,6 @@ resources.en.translation = {
   },
 
   "reminder": {
-    "prompt": "Don't forget to commet"
+    "prompt": "Don't forget to comment"
   }
 };

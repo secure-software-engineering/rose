@@ -12,7 +12,7 @@
   "devDependencies": {},
   "dependencies": {
     "handlebars": "~1.2.0",
-    "jquery": "~2.0.3",
+    "jquery": "~1.10.2",
     "i18next": "~1.7.1",
     "jssha": "*",
     "open-sans-fontface": "~1.0.3",

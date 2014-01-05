@@ -44,3 +44,9 @@ class @Constants
     @getExtractionCheckInterval: ->
         # 10 minutes.
         600000
+    
+    @getOpenCloseInterval: ->
+        10
+    
+    @getHeartbeatDelay: ->
+        5000

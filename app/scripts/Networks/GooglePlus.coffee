@@ -40,6 +40,8 @@ class @GooglePlus extends Network
 
     isOnNetwork: ->
         (window.location + '').indexOf('plus.google.com') >= 0
+    
+    checkHeartbeat: ->
 
     integrateIntoDOM: ->
         # Stub.

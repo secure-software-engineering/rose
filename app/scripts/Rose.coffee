@@ -63,9 +63,15 @@ class @Rose
         for network in networks
             # Continue unless applicable.
             continue unless network.isOnNetwork()
-
+            
+            # Activate heartbeat.
+            network.activateHeartbeat()
+            
             # Apply observers.
             network.applyObservers()
 
             # Integrate into DOM.
             network.integrateIntoDOM()
+            
+            # Check open/close heartbeat interaction.
+            network.checkHeartbeat()

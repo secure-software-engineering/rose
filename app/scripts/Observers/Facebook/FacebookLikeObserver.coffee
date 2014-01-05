@@ -43,7 +43,8 @@ class @FacebookLikeObserver
             '<div class="UFICommentContent"><a class="UFICommentActorName">{owner}</a><span><span><span>{id}</span></span></span></div>'
         ],
         "timeline": [
-            '<div role="article"><div><h5><span><span><a>{owner}</a></span></span></h5></div><div class="userContentWrapper"><span>{id}</span></div></div>'
+            '<div role="article"><div><h5><span><span><a>{owner}</a></span></span></h5></div><div class="userContentWrapper"><span>{id}</span></div></div>',
+            '<div class="timelineUnitContainer"><h5><span><span><a>{owner}</a></span></span></h5><div class="photoUnit"><a ajaxify="{id}"><div><img></img></div></a></div></div>'
         ]
     }
 

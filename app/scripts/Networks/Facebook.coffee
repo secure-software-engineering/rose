@@ -110,22 +110,6 @@ class @Facebook extends Network
             
             # Update heartbeat.
             Heartbeat.setHeartbeat(name)
-    
-    activateHeartbeat: ->
-        # Set pointer to this network.
-        net = this
-        
-        # Activate heartbeat, if not already done.
-        unless @isHeartbeatActive
-            @isHeartbeatActive = true
-            
-            setter = ->
-                console.log("SETTING HEARTBEAT")
-                if net.isOnNetwork()
-                    console.log("INDEED")
-                    Heartbeat.setHeartbeat(net.getNetworkName())
-            
-            setInterval(setter, Constants.getHeartbeatDelay())
 
     integrateIntoDOM: ->
         # Comment Status Observer.

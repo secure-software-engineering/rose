@@ -29,6 +29,8 @@ require 'Management'
 
 class @Rose
     @mutationObserver: null
+    
+    @startedHeartbeats: []
 
     @startRose: ->
         # Initialize Management.
@@ -54,6 +56,69 @@ class @Rose
 
         # Integrate into site.
         Rose.integrate()
+    
+    @startHeartbeat: (network) ->
+        if network.getNetworkName() in @startedHeartbeats
+            return
+        
+        @startedHeartbeats.push network.getNetworkName()
+        
+        # Create ticker function.
+        ticker = ->
+            if network.isOnNetwork()
+                Heartbeat.setHeartbeat(network.getNetworkName())
+        
+        # Create checker function.
+        checker = ->
+            # Set network name.
+            name = network.getNetworkName()
+            
+            # Get last open/close interaction type from storage.
+            Storage.getLastOpenCloseInteractionType name, (lastInteractionType) ->
+                # If last open/close interaction was 'open'...
+                if lastInteractionType is "open"
+                    # Get last heartbeat.
+                    heartbeat = Heartbeat.getHeartbeat(name)
+                    
+                    # Return, if heartbeat is invalid.
+                    if heartbeat is null
+                        return
+                    
+                    console.log("HEARTBEAT: " + heartbeat)
+                    
+                    if Utilities.dateDiffSeconds(heartbeat, new Date()) < Constants.getOpenCloseInterval()
+                        # If last heartbeat is in interval...
+                        console.log("RETURN")
+                        return
+                    else
+                        # Otherwise, add close interaction.
+                        
+                        # Add heartbeat delay to heartbeat.
+                        heartbeat.setMilliseconds(heartbeat.getMilliseconds() + Constants.getHeartbeatDelay())
+                        
+                        # Save close interaction retroactively.
+                        interaction =
+                            'type': 'close'
+                            'time': heartbeat.toJSON()
+                        Storage.addInteraction(interaction, name)
+                
+                # Still here? Save open interaction.
+                interaction =
+                    'type': 'open'
+                    'time': new Date().toJSON()
+                Storage.addInteraction(interaction, name)
+                
+                # Update heartbeat.
+                Heartbeat.setHeartbeat(name)
+            
+            # Set timeout to call checker function again.
+            setTimeout checker, 100
+        
+        # Set interval for ticker.
+        setInterval(ticker, Constants.getHeartbeatDelay())
+        
+        # Call checker.
+        checker()
 
     @integrate: ->
         # Get list of networks.
@@ -61,17 +126,14 @@ class @Rose
 
         # Integrate networks, if possible.
         for network in networks
+            # Start heartbeat for network, if necessary.
+            @startHeartbeat(network)
+            
             # Continue unless applicable.
             continue unless network.isOnNetwork()
-            
-            # Activate heartbeat.
-            network.activateHeartbeat()
             
             # Apply observers.
             network.applyObservers()
 
             # Integrate into DOM.
             network.integrateIntoDOM()
-            
-            # Check open/close heartbeat interaction.
-            network.checkHeartbeat()

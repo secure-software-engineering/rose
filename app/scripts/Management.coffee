@@ -50,4 +50,3 @@ class @Management
 
     @add: (network) ->
         Management.networks.push network
-

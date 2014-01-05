@@ -49,6 +49,7 @@ class @Facebook extends Network
         @observers.push new FacebookUpdateStatusPictureObserver()
         @observers.push new FacebookFriendAcceptObserver()
         @observers.push new FacebookFriendIgnoreObserver()
+        @observers.push new FacebookFriendNotNowObserver()
         @observers.push new FacebookFriendAddObserver()
         @observers.push new FacebookUnfriendObserver()
         @observers.push new FacebookDeleteStatusObserver()

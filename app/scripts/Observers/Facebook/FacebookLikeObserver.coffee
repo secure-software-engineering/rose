@@ -36,13 +36,15 @@ class @FacebookLikeObserver
             '<div><h6><div><a>{owner}</a></div></h6><div class="userContent">{id}</div><form></form></div>',
             '<div><h6><div><a>{owner}</a></div></h6><div><div class="text_exposed_root">{id}</div></div><form></form></div>',
             '<div><h5><div><a>{owner}</a></div></h5><h5><span><div><span>{id}</span></div></span></h5><form></form></div>',
-            '<div><h5><a>{owner}</a></h5><div></div><form id="{id}"></form></div>'
+            '<div><h5><a>{owner}</a></h5><div></div><form id="{id}"></form></div>',
+            '<div><h6><a>{owner}</a></h6><div><div><a ajaxify="{id}"><div><img></img></div></a></div></div></div>'
         ],
         "comment": [
             '<div class="UFICommentContent"><a class="UFICommentActorName">{owner}</a><span><span><span>{id}</span></span></span></div>'
         ],
         "timeline": [
-            '<div role="article"><div><h5><span><span><a>{owner}</a></span></span></h5></div><div class="userContentWrapper"><span>{id}</span></div></div>'
+            '<div role="article"><div><h5><span><span><a>{owner}</a></span></span></h5></div><div class="userContentWrapper"><span>{id}</span></div></div>',
+            '<div class="timelineUnitContainer"><h5><span><span><a>{owner}</a></span></span></h5><div class="photoUnit"><a ajaxify="{id}"><div><img></img></div></a></div></div>'
         ]
     }
 
@@ -85,6 +87,10 @@ class @FacebookLikeObserver
         parent = $(node).closest(@containers[container])
         if parent.length < 1
             parent = $(node).siblings().closest(@containers[container])
+        if container is "status"
+            # Fix for boxed statuses.
+            if parent.parents(".userContentWrapper").length
+                parent = parent.parent()
 
         # Interaction types.
         interactionTypes =

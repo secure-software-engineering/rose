@@ -46,3 +46,7 @@ class @Utilities
 
     @stripTags: (code) ->
         code.replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?>|<\/\w+>/gi, '')
+    
+    @dateDiffSeconds: (date1, date2) ->
+        difference = date1.getTime() - date2.getTime()
+        return Math.abs(difference / 1000)

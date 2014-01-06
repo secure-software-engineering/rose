@@ -34,9 +34,6 @@ class @Management
     @isInitialized: false
 
     @initialize: ->
-        # Update heartbeat.
-        Heartbeat.initialize()
-        
         if not Management.isInitialized
             # Add networks to Management.
             Management.add new Facebook()

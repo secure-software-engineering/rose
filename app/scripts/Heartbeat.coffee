@@ -26,36 +26,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 class @Heartbeat
-    @_heartbeat: {}
-    
-    @isInitialized: false
-    
-    @initialize: ->
-        # Set flag.
-        @isInitialized = true
-        
-        # Set reference.
-        ref = this
-        
-        # Load heartbeat data.
-        kango.invokeAsync 'kango.storage.getItem', 'heartbeat', (data) ->
-            ref.setHeartbeatData(data)
-    
     @getHeartbeat: (name, callback) ->
-        # Return heartbeat, if it contains a valid Date object.
-        return @_heartbeat[name] if @_heartbeat[name] instanceof Date
-        
-        # Otherwise...
-        return null
+        kango.invokeAsync 'kango.storage.getItem', 'heartbeat', (heartbeat) ->
+            # Initialize heartbeat, if necessary.
+            heartbeat = {} if heartbeat == null
+            
+            # Use heartbeat, if it contains a valid date.
+            if heartbeat[name] isnt null
+                callback(new Date(heartbeat[name]))
+            else
+                callback(null)
     
     @setHeartbeat: (name) ->
-        # Set heartbeat to current timestamp.
-        @_heartbeat[name] = new Date()
-        
-        # Save heartbeat data.
-        kango.invokeAsync 'kango.storage.setItem', 'heartbeat', @_heartbeat
-    
-    @setHeartbeatData: (data) ->
-        return if data is null
-        
-        @_heartbeat = data
+        kango.invokeAsync 'kango.storage.getItem', 'heartbeat', (heartbeat) ->
+            # Initialize heartbeat, if necessary.
+            heartbeat = {} if heartbeat == null
+            
+            # Set heartbeat.
+            heartbeat[name] = new Date().toJSON()
+            
+            # Write heartbeat back to storage.
+            kango.invokeAsync 'kango.storage.setItem', 'heartbeat', heartbeat

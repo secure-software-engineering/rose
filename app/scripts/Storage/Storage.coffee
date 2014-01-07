@@ -233,16 +233,16 @@ class @Storage
             extractorTimes[network][extractorName] = time
 
             kango.invokeAsync 'kango.storage.setItem', 'extractorTimes', extractorTimes
-    
+
     @getLastOpenCloseInteractionType: (network, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
-            
+
             # Find last 'open' or 'close' interaction.
             lastType = null
-            
+
             # Iterate through network interactions.
             for interaction in roseData.getInteractions(network)
                 lastType = interaction['record']['type'] if interaction['record']['type'] in ['open', 'close']
-            
+
             callback(lastType)

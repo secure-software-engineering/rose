@@ -30,20 +30,20 @@ class @Heartbeat
         kango.invokeAsync 'kango.storage.getItem', 'heartbeat', (heartbeat) ->
             # Initialize heartbeat, if necessary.
             heartbeat = {} if heartbeat == null
-            
+
             # Use heartbeat, if it contains a valid date.
             if heartbeat[name] isnt null
                 callback(new Date(heartbeat[name]))
             else
                 callback(null)
-    
+
     @setHeartbeat: (name) ->
         kango.invokeAsync 'kango.storage.getItem', 'heartbeat', (heartbeat) ->
             # Initialize heartbeat, if necessary.
             heartbeat = {} if heartbeat == null
-            
+
             # Set heartbeat.
             heartbeat[name] = new Date().toJSON()
-            
+
             # Write heartbeat back to storage.
             kango.invokeAsync 'kango.storage.setItem', 'heartbeat', heartbeat

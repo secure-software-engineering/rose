@@ -25,6 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
+require 'Heartbeat'
 require 'Network'
 require 'Observers/**/*'
 require 'Extractors/**/*'
@@ -39,6 +40,9 @@ class @Facebook extends Network
     # List of extractors.
     extractors: []
 
+    # Heartbeat flag.
+    isHeartbeatActive: false
+
     constructor: ->
         # Add observers.
         @observers.push new FacebookLikeObserver()
@@ -49,6 +53,7 @@ class @Facebook extends Network
         @observers.push new FacebookUpdateStatusPictureObserver()
         @observers.push new FacebookFriendAcceptObserver()
         @observers.push new FacebookFriendIgnoreObserver()
+        @observers.push new FacebookFriendNotNowObserver()
         @observers.push new FacebookFriendAddObserver()
         @observers.push new FacebookUnfriendObserver()
         @observers.push new FacebookDeleteStatusObserver()
@@ -63,6 +68,48 @@ class @Facebook extends Network
 
     isOnNetwork: ->
         (window.location + '').indexOf('facebook.com') >= 0
+
+    checkHeartbeat: ->
+        # Set network name.
+        name = @network
+
+        # Get last open/close interaction type from storage.
+        Storage.getLastOpenCloseInteractionType @network, (lastInteractionType) ->
+            # If last open/close interaction was 'open'...
+            if lastInteractionType is "open"
+                # Get last heartbeat.
+                heartbeat = Heartbeat.getHeartbeat(name)
+
+                # Return, if heartbeat is invalid.
+                if heartbeat is null
+                    return
+
+                console.log("HEARTBEAT: " + heartbeat)
+
+                if Utilities.dateDiffSeconds(heartbeat, new Date()) < Constants.getOpenCloseInterval()
+                    # If last heartbeat is in interval...
+                    console.log("RETURN")
+                    return
+                else
+                    # Otherwise, add close interaction.
+
+                    # Add heartbeat delay to heartbeat.
+                    heartbeat.setMilliseconds(heartbeat.getMilliseconds() + Constants.getHeartbeatDelay())
+
+                    # Save close interaction retroactively.
+                    interaction =
+                        'type': 'close'
+                        'time': heartbeat.toJSON()
+                    Storage.addInteraction(interaction, name)
+
+            # Still here? Save open interaction.
+            interaction =
+                'type': 'open'
+                'time': new Date().toJSON()
+            Storage.addInteraction(interaction, name)
+
+            # Update heartbeat.
+            Heartbeat.setHeartbeat(name)
 
     integrateIntoDOM: ->
         # Comment Status Observer.

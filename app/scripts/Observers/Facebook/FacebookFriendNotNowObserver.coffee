@@ -25,25 +25,24 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-require 'Networks/Facebook'
-require 'Networks/GooglePlus'
+require 'Utilities'
 
-class @Management
-    @networks: []
+class @FacebookFriendNotNowObserver
+    getIntegrationPatterns: ->
+        [".uiButton input[name*=hide]"]
 
-    @isInitialized: false
+    getEventType: ->
+        "click"
 
-    @initialize: ->
-        if not Management.isInitialized
-            # Add networks to Management.
-            Management.add new Facebook()
-            Management.add new GooglePlus()
+    getData: (obj) ->
+        # Get name of friend.
+        friend = Utilities.stripTags(DOM.findRelative(obj, '.clearfix': '.title a'))
+        friend = Utilities.hash(friend)
 
-            # Set initialized flag.
-            Management.isInitialized = true
+        return {
+            'friend': friend,
+            'type': "friendnotnow"
+        }
 
-    @getListOfNetworks: ->
-        Management.networks
-
-    @add: (network) ->
-        Management.networks.push network
+    getObserverType: ->
+        "classic"

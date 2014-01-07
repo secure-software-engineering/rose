@@ -25,25 +25,29 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-require 'Networks/Facebook'
-require 'Networks/GooglePlus'
+class @Heartbeat
+    @getHeartbeat: (name, callback) ->
+        kango.invokeAsync 'kango.storage.getItem', 'heartbeat', (heartbeat) ->
+            # Initialize heartbeat, if necessary.
+            heartbeat = {} unless heartbeat?
 
-class @Management
-    @networks: []
+            # Use heartbeat, if it contains a valid date.
+            if heartbeat[name] isnt null
+                d = new Date heartbeat[name]
+                if isNaN d.getDate()
+                    callback null
+                else
+                    callback d
+            else
+                callback null
 
-    @isInitialized: false
+    @setHeartbeat: (name) ->
+        kango.invokeAsync 'kango.storage.getItem', 'heartbeat', (heartbeat) ->
+            # Initialize heartbeat, if necessary.
+            heartbeat = {} unless heartbeat?
 
-    @initialize: ->
-        if not Management.isInitialized
-            # Add networks to Management.
-            Management.add new Facebook()
-            Management.add new GooglePlus()
+            # Set heartbeat.
+            heartbeat[name] = new Date().toJSON()
 
-            # Set initialized flag.
-            Management.isInitialized = true
-
-    @getListOfNetworks: ->
-        Management.networks
-
-    @add: (network) ->
-        Management.networks.push network
+            # Write heartbeat back to storage.
+            kango.invokeAsync 'kango.storage.setItem', 'heartbeat', heartbeat

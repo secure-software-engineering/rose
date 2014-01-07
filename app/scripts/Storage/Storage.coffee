@@ -248,8 +248,14 @@ class @Storage
             # Find last 'open' or 'close' interaction.
             lastType = null
 
+            interactions = roseData.getInteractions network
+            interactions.reverse()
+
             # Iterate through network interactions.
-            for interaction in roseData.getInteractions(network)
-                lastType = interaction['record']['type'] if interaction['record']['type'] in ['open', 'close']
+            for interaction in interactions
+                if interaction.record?.type?
+                    if interaction.record.type in ['open', 'close']
+                        lastType = interaction.record.type
+                        break
 
             callback(lastType)

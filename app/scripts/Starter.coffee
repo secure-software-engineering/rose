@@ -27,7 +27,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 require 'Rose'
 
-RSVP.on 'error', (event) ->
-  console.assert false, event.detail
-
 Rose.startRose()

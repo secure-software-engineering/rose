@@ -27,6 +27,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* global KangoAPI, kango */
 
+// Add reference because RSVP is used in Storage class
+window.RSVP = Ember.RSVP;
+
 KangoAPI.onReady(function () {
 
   // Initialization of i18next
@@ -41,10 +44,7 @@ KangoAPI.onReady(function () {
   moment.lang(i18n.lng());
 
   // Initialization of ROSE app
-  var App = window.App = Ember.Application.create({
-    LOG_TRANSITIONS: true,
-    debugMode: true
-  });
+  var App = window.App = Ember.Application.create();
 
   App.Router.map(function () {
     this.route('about');
@@ -95,10 +95,7 @@ KangoAPI.onReady(function () {
     }.observes('textfield'),
 
     isEmptyOrValid: function () {
-      if (this.get('isValid') || this.get('isEmpty')) {
-        return true;
-      }
-      return false;
+      return (this.get('isValid') || this.get('isEmpty'));
     }.property('isValid', 'isEmpty'),
 
     actions: {

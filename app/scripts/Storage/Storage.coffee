@@ -261,3 +261,11 @@ class @Storage
                             break
 
                 resolve(lastType)
+
+    @setParticipantID: (id, network) ->
+        return new RSVP.Promise (resolve) ->
+            kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+                roseData = new RoseData roseStorage
+                roseData.setParticipantID id, network
+
+                kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData(), resolve

@@ -40,9 +40,6 @@ class @Facebook extends Network
     # List of extractors.
     extractors: []
 
-    # Heartbeat flag.
-    isHeartbeatActive: false
-
     constructor: ->
         # Add observers.
         @observers.push new FacebookLikeObserver()
@@ -65,6 +62,7 @@ class @Facebook extends Network
         # Add extractors.
         @extractors.push new FacebookPrivacyExtractor()
         @extractors.push new FacebookTimelineExtractor()
+        @extractors.push new FacebookUserIDExtractor()
 
     isOnNetwork: ->
         (window.location + '').indexOf('facebook.com') >= 0

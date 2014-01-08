@@ -209,3 +209,9 @@ class @RoseData
                     record: record
                 platform.static[informationName] = [] unless platform.static[informationName]
                 platform.static[informationName].push(entry)
+
+    setParticipantID: (id, network) ->
+        unless @data.meta.participant?
+            @data.meta.participant = {}
+
+        @data.meta.participant[network] = id

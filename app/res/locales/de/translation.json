@@ -46,7 +46,7 @@ resources.de.translation = {
   "privacyPage": {
     "subHeader": "Lassen Sie hier bitte Ihre Privatsphäreneinstellungen auslesen",
     "messageHeader": "Es sind keine Privatsphäreneinstellungen vorhanden",
-    "messageContent": "Warten Sie, bis ROSE die Einstellungen ausgelesen hat"
+    "messageContent": "Warten Sie, bis ROSE die Einstellungen ausgelesen hat."
   },
 
   "backupPage": {

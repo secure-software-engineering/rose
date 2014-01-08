@@ -45,10 +45,10 @@ class @Constants
         # 10 minutes.
         600000
 
-    # In seconds.
+    # In milliseconds.
     @getOpenCloseInterval: ->
         # 60 seconds.
-        60
+        60000
 
     # In milliseconds.
     @getHeartbeatDelay: ->

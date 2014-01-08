@@ -45,13 +45,14 @@ class @Storage
             callback(hasPlatform)
 
     @addInteraction: (record, platformName) ->
-        console.log('[INTERACTION] ' + JSON.stringify(record))
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new RoseData(roseStorage)
+        return new RSVP.Promise (resolve, reject) ->
+            console.log('[INTERACTION] ' + JSON.stringify(record))
+            kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+                roseData = new RoseData(roseStorage)
 
-            roseData.addInteraction(record, platformName)
+                roseData.addInteraction(record, platformName)
 
-            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
+                kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData(), resolve
 
     @getInteraction: (index, platformName, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
@@ -242,20 +243,21 @@ class @Storage
             kango.invokeAsync 'kango.storage.setItem', 'extractorTimes', extractorTimes
 
     @getLastOpenCloseInteractionType: (network, callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new RoseData(roseStorage)
+        return new RSVP.Promise (resolve, reject) ->
+            kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+                roseData = new RoseData(roseStorage)
 
-            # Find last 'open' or 'close' interaction.
-            lastType = null
+                # Find last 'open' or 'close' interaction.
+                lastType = null
 
-            interactions = roseData.getInteractions network
-            interactions.reverse()
+                interactions = roseData.getInteractions network
+                interactions.reverse()
 
-            # Iterate through network interactions.
-            for interaction in interactions
-                if interaction.record?.type?
-                    if interaction.record.type in ['open', 'close']
-                        lastType = interaction.record.type
-                        break
+                # Iterate through network interactions.
+                for interaction in interactions
+                    if interaction.record?.type?
+                        if interaction.record.type in ['open', 'close']
+                            lastType = interaction.record.type
+                            break
 
-            callback(lastType)
+                resolve(lastType)

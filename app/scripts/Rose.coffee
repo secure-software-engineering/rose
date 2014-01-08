@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 require 'FacebookUI'
+require 'Heartbeat'
 require 'Management'
 require 'Networks/Facebook'
 require 'Networks/GooglePlus'
@@ -73,67 +74,47 @@ class @Rose
         Rose.integrate()
 
     @startHeartbeat: (network) ->
-        if network.getNetworkName() in @startedHeartbeats
-            return
+        return unless network.isOnNetwork()
 
-        @startedHeartbeats.push network.getNetworkName()
+        name = network.getNetworkName()
 
         # Create ticker function.
         ticker = ->
-            if network.isOnNetwork()
-                Heartbeat.setHeartbeat(network.getNetworkName())
+            Heartbeat.setHeartbeat(name)
 
-        # Create checker function.
-        checker = ->
-            # Check if user is on network and otherwise return.
-            if not network.isOnNetwork()
-                return
-
-            # Set network name.
-            name = network.getNetworkName()
-
-            # Get last open/close interaction type from storage.
-            Storage.getLastOpenCloseInteractionType name, (lastInteractionType) ->
-                # Get heartbeat.
-                Heartbeat.getHeartbeat name, (heartbeat) ->
-                    # If last open/close interaction was 'open'...
-                    if lastInteractionType is "open"
-                        # Return, if heartbeat is invalid.
-                        if heartbeat is null
-                            return
-
-                        if Utilities.dateDiffSeconds(heartbeat, new Date()) < Constants.getOpenCloseInterval()
-                            # If last heartbeat is in interval...
-                            return
-                        else
-                            # Otherwise, add close interaction.
-
-                            # Add heartbeat delay to heartbeat.
-                            heartbeat.setMilliseconds(heartbeat.getMilliseconds() + Constants.getHeartbeatDelay())
-
-                            # Save close interaction retroactively.
-                            interaction =
-                                'type': 'close'
-                                'time': heartbeat.toJSON()
-                            Storage.addInteraction(interaction, name)
-
-                    # Still here? Save open interaction.
+        Storage.getLastOpenCloseInteractionType(name)
+        .then((type) ->
+            switch type
+                when null
                     interaction =
-                        'type': 'open'
-                        'time': new Date().toJSON()
-                    Storage.addInteraction(interaction, name)
+                        type: 'open'
+                        time: new Date().toJSON()
+                    Storage.addInteraction interaction, name
+                when 'open'
+                    Heartbeat.getHeartbeat(name)
+                    .then((time) ->
+                        return unless time?
+                        return if time.getTime() + Constants.getOpenCloseInterval() > new Date().getTime()
 
-                    # Update heartbeat.
-                    Heartbeat.setHeartbeat(name)
+                        interaction =
+                            type: 'close'
+                            time: new Date(time.getTime() + Constants.getOpenCloseInterval()).toJSON()
+                        Storage.addInteraction(interaction, name)
+                        .then(->
+                            interaction =
+                                type: 'open'
+                                time: new Date().toJSON()
+                            Storage.addInteraction interaction, name
+                        )
+                    )
+                when 'close'
+                    interaction =
+                        type: 'open'
+                        time: new Date().toJSON()
+                    Storage.addInteraction interaction, name
+        )
 
-            # Set timeout to call checker function again.
-            setTimeout checker, 1000
-
-        # Set interval for ticker.
         setInterval(ticker, Constants.getHeartbeatDelay())
-
-        # Call checker.
-        checker()
 
     @integrate: ->
         # Get list of networks.

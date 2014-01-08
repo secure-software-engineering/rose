@@ -32,11 +32,11 @@ class @FacebookUnfriendObserver
     getEventType: ->
         "click"
 
-    getID: (obj) ->
+    getID: ->
         # Stub.
         ""
 
-    getMetaData: (obj) ->
+    getMetaData: ->
         # Return meta data.
         return {
             'interaction_type': "unfriend"

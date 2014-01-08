@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class @Heartbeat
     @getHeartbeat: (name) ->
-        return new RSVP.Promise (resolve, reject) ->
+        return new RSVP.Promise (resolve) ->
             kango.invokeAsync 'kango.storage.getItem', 'heartbeat', (heartbeat) ->
                 # Initialize heartbeat, if necessary.
                 heartbeat = {} unless heartbeat?
@@ -43,7 +43,7 @@ class @Heartbeat
                     resolve null
 
     @setHeartbeat: (name) ->
-        return new RSVP.Promise (resolve, reject) ->
+        return new RSVP.Promise (resolve) ->
             kango.invokeAsync 'kango.storage.getItem', 'heartbeat', (heartbeat) ->
                 # Initialize heartbeat, if necessary.
                 heartbeat = {} unless heartbeat?

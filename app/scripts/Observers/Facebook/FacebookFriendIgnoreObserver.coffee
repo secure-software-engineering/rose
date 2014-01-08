@@ -25,6 +25,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
+require 'DOM'
+require 'Utilities'
+
 class @FacebookFriendIgnoreObserver
     getIntegrationPatterns: ->
         [".uiButton input[name*=reject]"]
@@ -35,7 +38,7 @@ class @FacebookFriendIgnoreObserver
     getID: (obj) ->
         Utilities.stripTags DOM.findRelative(obj, '.clearfix': '.title a')
 
-    getMetaData: (obj) ->
+    getMetaData: ->
         # Return meta data.
         return {
             'interaction_type': "friendignored"

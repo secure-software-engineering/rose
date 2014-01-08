@@ -203,7 +203,7 @@ class @Facebook extends Network
             $(this).addClass('rose-integrated')
 
             # Add event handler.
-            $(this).on 'click', (e) ->
+            $(this).on 'click', ->
                 # Get recipient.
                 recipient = $(this).closest('#pagelet_web_messenger').find('h2#webMessengerHeaderName a').html()
 
@@ -233,7 +233,7 @@ class @Facebook extends Network
             $(this).addClass('rose-integrated')
 
             # Add event handler.
-            $(this).on 'click', (e) ->
+            $(this).on 'click', ->
                 # Get recipient.
                 recipient = $(this).closest('div[role=dialog]').find('span.uiToken').html()
                 # If no recipient is found then it is not a message

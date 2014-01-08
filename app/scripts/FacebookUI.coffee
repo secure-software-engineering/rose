@@ -102,14 +102,14 @@ class @FacebookUI
         )
 
     _getComment: (id) ->
-        promise = new RSVP.Promise (resolve, reject) ->
+        promise = new RSVP.Promise (resolve) ->
             Storage.getComment id, 'Facebook', resolve
 
         return promise
 
 
     _getTempalte: (template) ->
-        promise = new RSVP.Promise (resolve, reject) ->
+        promise = new RSVP.Promise (resolve) ->
             resource = 'res/templates/' + template + '.hbs'
 
             details =

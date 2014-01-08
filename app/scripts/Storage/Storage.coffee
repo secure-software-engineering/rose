@@ -45,7 +45,7 @@ class @Storage
             callback(hasPlatform)
 
     @addInteraction: (record, platformName) ->
-        return new RSVP.Promise (resolve, reject) ->
+        return new RSVP.Promise (resolve) ->
             console.log('[INTERACTION] ' + JSON.stringify(record))
             kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
                 roseData = new RoseData(roseStorage)
@@ -242,8 +242,8 @@ class @Storage
 
             kango.invokeAsync 'kango.storage.setItem', 'extractorTimes', extractorTimes
 
-    @getLastOpenCloseInteractionType: (network, callback) ->
-        return new RSVP.Promise (resolve, reject) ->
+    @getLastOpenCloseInteractionType: (network) ->
+        return new RSVP.Promise (resolve) ->
             kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
                 roseData = new RoseData(roseStorage)
 

@@ -30,6 +30,6 @@ class @Observer
 
     getEventType: ->
 
-    getID: (obj) ->
+    getID: ->
 
-    getMetaData: (obj) ->
+    getMetaData: ->

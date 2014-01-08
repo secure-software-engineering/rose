@@ -32,11 +32,11 @@ class @FacebookChatActivatedObserver
     getEventType: ->
         "click"
 
-    getID: (obj) ->
+    getID: ->
         # No token necessary.
         ""
 
-    getMetaData: (obj) ->
+    getMetaData: ->
         # Return meta data.
         return {
             'interaction_type': "chatactivated"

@@ -65,7 +65,7 @@ class @Network
                 # Add integration class.
                 $(this).addClass("rose-integrated")
 
-                $(this).on observer.getEventType(), (e) ->
+                $(this).on observer.getEventType(), ->
                     # Get parsed information, if possible.
                     parsed = observer.handleNode(this)
 
@@ -83,7 +83,7 @@ class @Network
                 $(this).addClass("rose-integrated")
 
                 # Add functionality.
-                $(this).on observer.getEventType(), (e) ->
+                $(this).on observer.getEventType(), ->
                     # Get data.
                     data = observer.getData($(this))
 

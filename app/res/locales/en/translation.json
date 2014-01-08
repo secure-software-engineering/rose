@@ -41,7 +41,7 @@ resources.en.translation = {
   "privacyPage": {
     "subHeader": "Have a look at your privacy settings",
     "messageHeader": "Privacy settings not captured yet",
-    "messageContent": "Schreib etwas"
+    "messageContent": "The privacy settings are automatically captured after being logged in in Facebook for a certain time period."
   },
 
   "backupPage": {
@@ -50,20 +50,20 @@ resources.en.translation = {
 
   "aboutPage": {
     "subHeader": "Information about ROSE",
-    "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
-    "messageContent": "Drop me a line"
+    "messageHeader": "",
+    "messageContent": ""
   },
 
   "interactionsPage": {
     "subHeader": "All your recent interactions",
     "messageHeader": "No interactions recorded so far",
-    "messageContent": "Drop me a line"
+    "messageContent": ""
   },
 
   "commentsPage": {
     "subHeader": "Have a look at all your comments",
     "messageHeader": "No comments created",
-    "messageContent": "Drop me a line"
+    "messageContent": ""
   },
 
   "documentationPage": {

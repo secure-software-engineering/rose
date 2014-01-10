@@ -57,5 +57,4 @@ class @FacebookUserIDExtractor
             id = Utilities.hash pathArray[0]
 
             # Write entry to storage.
-            # Storage.addStaticInformationEntry entry, networkName, extractorName
             Storage.setParticipantID id, networkName

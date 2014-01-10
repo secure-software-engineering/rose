@@ -72,5 +72,10 @@ resources.en.translation = {
 
   "reminder": {
     "prompt": "Don't forget to comment"
+  },
+
+  "sidebar": {
+    "rating1": "Do you think it is appropriate to show this content on Facebook",
+    "rating2": "How entertaining is this content to you"
   }
 };

@@ -224,23 +224,26 @@ class @Storage
 
             kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseStorage
 
-    @getLastExtractionTime: (network, extractorName, callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
-            if extractorTimes and extractorTimes[network] and extractorTimes[network][extractorName]
-                callback(extractorTimes[network][extractorName])
-            else
-                callback(null)
+    @getLastExtractionTime: (network, extractorName) ->
+        return new RSVP.Promise (resolve) ->
+            kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
+                data = $.extend true, {}, extractorTimes
+                if data?[network]?[extractorName]?
+                    resolve data[network][extractorName]
+                else
+                    resolve null
 
     @setLastExtractionTime: (network, extractorName, time) ->
-        kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
-            # Set up storage field.
-            extractorTimes = {} unless extractorTimes
-            extractorTimes[network] = {} unless extractorTimes[network]
+        return new RSVP.Promise (resolve) ->
+            kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
+                # Set up storage field.
+                extractorTimes = {} unless extractorTimes
+                extractorTimes[network] = {} unless extractorTimes[network]
 
-            # Set timestamp.
-            extractorTimes[network][extractorName] = time
+                # Set timestamp.
+                extractorTimes[network][extractorName] = time
 
-            kango.invokeAsync 'kango.storage.setItem', 'extractorTimes', extractorTimes
+                kango.invokeAsync 'kango.storage.setItem', 'extractorTimes', extractorTimes, resolve
 
     @getLastOpenCloseInteractionType: (network) ->
         return new RSVP.Promise (resolve) ->

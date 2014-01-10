@@ -77,10 +77,5 @@ resources.de.translation = {
 
   "reminder": {
     "prompt": "Vergiss nicht zu kommentieren"
-  },
-
-  "sidebar": {
-    "rating1": "Für wie angemessen halten Sie es diesen Inhalt auf Facebook zu zeigen",
-    "rating2": "Wie unterhaltsam ist dieser Inhalt für Sie"
   }
 };

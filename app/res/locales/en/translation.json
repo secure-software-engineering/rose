@@ -4,7 +4,7 @@ resources.en.translation = {
   "backup": "Data Backup",
   "restore": "Restore",
   "comment": "Comments",
-  "comments": "ROSE Comments",
+  "comments": "Comments",
   "diary": "Diary",
   "documentation": "Usage notes",
   "help": "Help",

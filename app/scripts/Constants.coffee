@@ -37,7 +37,7 @@ class @Constants
 
     # In milliseconds.
     @getExtractionInterval: ->
-        # 2 days in milliseconds.
+        # 2 days.
         172800000
 
     # In milliseconds.
@@ -47,7 +47,7 @@ class @Constants
 
     # In milliseconds.
     @getOpenCloseInterval: ->
-        # 60 seconds.
+        # 1 minute.
         60000
 
     # In milliseconds.

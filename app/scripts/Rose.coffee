@@ -38,15 +38,19 @@ class @Rose
     @startedHeartbeats: []
 
     @startRose: ->
-        facebook = new Facebook()
-        googleplus = new GooglePlus()
-
-        return unless facebook.isOnNetwork() or googleplus.isOnNetwork()
-
-        @facebookUI = new FacebookUI()
-
         # Initialize Management.
         Management.initialize()
+
+        # Get list of networks.
+        networks = Management.getListOfNetworks()
+
+        startRose = false
+        for network in networks
+            startRose = true if network.isOnNetwork()
+
+        return unless startRose
+
+        @facebookUI = new FacebookUI()
 
         # Set event handling.
         Rose.mutationObserver = new MutationObserver () ->
@@ -59,11 +63,9 @@ class @Rose
             characterData: true
         }
 
-        # Get list of networks.
-        networks = Management.getListOfNetworks()
-
         # Apply extractors for each network.
         for network in networks
+            return unless network.isOnNetwork()
             # Start heartbeat for network, if necessary.
             @startHeartbeat(network)
 

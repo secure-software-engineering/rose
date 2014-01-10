@@ -107,6 +107,18 @@ KangoAPI.onReady(function () {
 
         getStorage.then(function (data) {
           var dataObj = JSON.parse(data);
+
+          var hiddenDeletedFilter = function (item) {
+            if (!(item.hidden || item.deleted)) {
+              return item;
+            }
+          };
+
+          dataObj.platforms.forEach(function (platform) {
+            platform.interactions = platform.interactions.filter(hiddenDeletedFilter);
+            platform.comments = platform.comments.filter(hiddenDeletedFilter);
+          });
+
           dataObj.meta['export-date'] = new Date().toJSON();
           self.set('textfield', JSON.stringify(dataObj, undefined, 2));
         }).then(function () {

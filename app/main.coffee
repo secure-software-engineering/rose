@@ -36,6 +36,7 @@ class MyExtension
                 settings:
                     reminder:
                         isActive: true
+                    language: 'auto'
                 meta:
                     version: info.version
                     'install-date': new Date().toJSON()

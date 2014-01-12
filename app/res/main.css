@@ -44,9 +44,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 }
 
-.ui.star.rating.right {
-    padding-left: 5px;
-    float: right;
+.ui.star.rating {
+    padding-top: 10px;
+    padding-bottom: 5px;
 }
 
 .rose.comment {

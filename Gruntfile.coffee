@@ -54,6 +54,15 @@ module.exports = (grunt) ->
                 files:
                     '<%= yeoman.app %>/main.js': '<%= yeoman.app %>/main.coffee'
 
+        coffeelint:
+            options:
+                configFile: 'coffeelint.json'
+            app: [
+                'Gruntfile.coffee'
+                'app/*.coffee'
+                'app/scripts/**/*.coffee'
+            ]
+
         useminPrepare:
             html: '<%= yeoman.app %>/popup/index.html'
             options:
@@ -142,6 +151,18 @@ module.exports = (grunt) ->
             kangoBuild:
                 command: 'kango.py build --output-directory <%= yeoman.package %> <%= yeoman.dist %>'
 
+        jshint:
+            all: [
+                'Gruntfile.js'
+                '<%= yeoman.app %>/popup/scripts/**/*.js'
+                'test/**/*.js'
+            ]
+
+    grunt.registerTask 'test', [
+        'jshint'
+        'coffeelint'
+    ]
+
     grunt.registerTask 'livereload', [
         'kangoManifest:dev'
         'concat'
@@ -157,6 +178,7 @@ module.exports = (grunt) ->
     ]
 
     grunt.registerTask 'build', [
+        'test'
         'clean'
         'coffee'
         'neuter'

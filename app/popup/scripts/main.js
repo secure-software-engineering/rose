@@ -436,10 +436,10 @@ KangoAPI.onReady(function () {
       var model = {};
       var timeline = {};
       var privacy = {};
-      if (response['timeline-settings'] != null) {
+      if (response['timeline-settings'] !== null) {
         timeline = response['timeline-settings'].pop().record || null;
       }
-      if (response['privacy-settings'] != null) {
+      if (response['privacy-settings'] !== null) {
         privacy = response['privacy-settings'].pop().record || null;
       }
       model.timeline = timeline;

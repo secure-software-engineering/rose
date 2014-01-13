@@ -48,9 +48,25 @@ class @Network
             @integrateObserver observer
 
     applyExtractors: ->
-        # Integrate extractors.
-        for extractor in @extractors
-            @integrateExtractor extractor
+        runExtractors= =>
+            @extractors.reduce (sequence, extractor) ->
+                now = new Date()
+                return sequence.then(->
+                    return Storage.getLastExtractionTime(extractor.getNetworkName(), extractor.getExtractorName())
+                )
+                .then((date) ->
+                    extractionTime = new Date(date)
+                    # Check if extraction should be performed.
+                    if (now - extractionTime) > Constants.getExtractionInterval()
+                        # Execute extractor.
+                        extractor.extractInformation()
+                        .then(->
+                            Storage.setLastExtractionTime extractor.getNetworkName(), extractor.getExtractorName(), now.toJSON()
+                        )
+                )
+            , RSVP.resolve()
+
+        setInterval runExtractors, Constants.getExtractionCheckInterval()
 
     integrateObserver: (observer) ->
         # Get network name.
@@ -65,7 +81,7 @@ class @Network
                 # Add integration class.
                 $(this).addClass("rose-integrated")
 
-                $(this).on observer.getEventType(), (e) ->
+                $(this).on observer.getEventType(), ->
                     # Get parsed information, if possible.
                     parsed = observer.handleNode(this)
 
@@ -83,28 +99,12 @@ class @Network
                 $(this).addClass("rose-integrated")
 
                 # Add functionality.
-                $(this).on observer.getEventType(), (e) ->
+                $(this).on observer.getEventType(), ->
                     # Get data.
                     data = observer.getData($(this))
 
                     # Add interaction.
                     Storage.addInteraction(data, name)
-
-    integrateExtractor: (extractor) ->
-        action = () ->
-            Storage.getLastExtractionTime extractor.getNetworkName(), extractor.getExtractorName(), (extractionTime) ->
-                # Wrap in Date class.
-                extractionTime = new Date(extractionTime)
-
-                # Check if extraction should be performed.
-                if (new Date() - extractionTime) > Constants.getExtractionInterval()
-                    # Execute extractor.
-                    extractor.extractInformation()
-
-                    # Set extraction time.
-                    Storage.setLastExtractionTime extractor.getNetworkName(), extractor.getExtractorName(), (new Date()).toJSON()
-
-        setInterval action, Constants.getExtractionCheckInterval()
 
     integrateIntoDOM: ->
         # Stub.

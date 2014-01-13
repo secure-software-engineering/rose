@@ -45,13 +45,14 @@ class @Storage
             callback(hasPlatform)
 
     @addInteraction: (record, platformName) ->
-        console.log('[INTERACTION] ' + JSON.stringify(record))
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new RoseData(roseStorage)
+        return new RSVP.Promise (resolve) ->
+            console.log('[INTERACTION] ' + JSON.stringify(record))
+            kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+                roseData = new RoseData(roseStorage)
 
-            roseData.addInteraction(record, platformName)
+                roseData.addInteraction(record, platformName)
 
-            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
+                kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData(), resolve
 
     @getInteraction: (index, platformName, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
@@ -93,11 +94,11 @@ class @Storage
 
             kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
 
-    @getComment: (index, platformName, callback) ->
+    @getComment: (id, platformName, callback) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
-            comment = roseData.getComment(index, platformName)
+            comment = roseData.getComment(id, platformName)
 
             callback(comment)
 
@@ -108,6 +109,14 @@ class @Storage
             comments = roseData.getComments(platformName)
 
             callback(comments)
+
+    @hideComment: (index, hide, platformName, callback) ->
+        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+            roseData = new RoseData(roseStorage)
+
+            roseData.hideComment(index, hide, platformName)
+
+            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData(), callback
 
     @removeComment: (index, platformName) ->
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
@@ -201,8 +210,7 @@ class @Storage
         kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
             callback JSON.stringify roseStorage, undefined, 2
 
-    @setStorage: (json, callback) ->
-        store = JSON.parse(json)
+    @setStorage: (store, callback) ->
         kango.invokeAsync 'kango.storage.setItem', 'roseStorage', store, callback
 
     @getSettings: (callback) ->
@@ -216,33 +224,51 @@ class @Storage
 
             kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseStorage
 
-    @getLastExtractionTime: (network, extractorName, callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
-            if extractorTimes and extractorTimes[network] and extractorTimes[network][extractorName]
-                callback(extractorTimes[network][extractorName])
-            else
-                callback(null)
+    @getLastExtractionTime: (network, extractorName) ->
+        return new RSVP.Promise (resolve) ->
+            kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
+                data = $.extend true, {}, extractorTimes
+                if data?[network]?[extractorName]?
+                    resolve data[network][extractorName]
+                else
+                    resolve null
 
     @setLastExtractionTime: (network, extractorName, time) ->
-        kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
-            # Set up storage field.
-            extractorTimes = {} unless extractorTimes
-            extractorTimes[network] = {} unless extractorTimes[network]
+        return new RSVP.Promise (resolve) ->
+            kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
+                # Set up storage field.
+                extractorTimes = {} unless extractorTimes
+                extractorTimes[network] = {} unless extractorTimes[network]
 
-            # Set timestamp.
-            extractorTimes[network][extractorName] = time
+                # Set timestamp.
+                extractorTimes[network][extractorName] = time
 
-            kango.invokeAsync 'kango.storage.setItem', 'extractorTimes', extractorTimes
+                kango.invokeAsync 'kango.storage.setItem', 'extractorTimes', extractorTimes, resolve
 
-    @getLastOpenCloseInteractionType: (network, callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
-            roseData = new RoseData(roseStorage)
+    @getLastOpenCloseInteractionType: (network) ->
+        return new RSVP.Promise (resolve) ->
+            kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+                roseData = new RoseData(roseStorage)
 
-            # Find last 'open' or 'close' interaction.
-            lastType = null
+                # Find last 'open' or 'close' interaction.
+                lastType = null
 
-            # Iterate through network interactions.
-            for interaction in roseData.getInteractions(network)
-                lastType = interaction['record']['type'] if interaction['record']['type'] in ['open', 'close']
+                interactions = roseData.getInteractions network
+                interactions.reverse()
 
-            callback(lastType)
+                # Iterate through network interactions.
+                for interaction in interactions
+                    if interaction.record?.type?
+                        if interaction.record.type in ['open', 'close']
+                            lastType = interaction.record.type
+                            break
+
+                resolve(lastType)
+
+    @setParticipantID: (id, network) ->
+        return new RSVP.Promise (resolve) ->
+            kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+                roseData = new RoseData roseStorage
+                roseData.setParticipantID id, network
+
+                kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData(), resolve

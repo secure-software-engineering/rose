@@ -40,9 +40,6 @@ class @Facebook extends Network
     # List of extractors.
     extractors: []
 
-    # Heartbeat flag.
-    isHeartbeatActive: false
-
     constructor: ->
         # Add observers.
         @observers.push new FacebookLikeObserver()
@@ -65,51 +62,10 @@ class @Facebook extends Network
         # Add extractors.
         @extractors.push new FacebookPrivacyExtractor()
         @extractors.push new FacebookTimelineExtractor()
+        @extractors.push new FacebookUserIDExtractor()
 
     isOnNetwork: ->
         (window.location + '').indexOf('facebook.com') >= 0
-
-    checkHeartbeat: ->
-        # Set network name.
-        name = @network
-
-        # Get last open/close interaction type from storage.
-        Storage.getLastOpenCloseInteractionType @network, (lastInteractionType) ->
-            # If last open/close interaction was 'open'...
-            if lastInteractionType is "open"
-                # Get last heartbeat.
-                heartbeat = Heartbeat.getHeartbeat(name)
-
-                # Return, if heartbeat is invalid.
-                if heartbeat is null
-                    return
-
-                console.log("HEARTBEAT: " + heartbeat)
-
-                if Utilities.dateDiffSeconds(heartbeat, new Date()) < Constants.getOpenCloseInterval()
-                    # If last heartbeat is in interval...
-                    console.log("RETURN")
-                    return
-                else
-                    # Otherwise, add close interaction.
-
-                    # Add heartbeat delay to heartbeat.
-                    heartbeat.setMilliseconds(heartbeat.getMilliseconds() + Constants.getHeartbeatDelay())
-
-                    # Save close interaction retroactively.
-                    interaction =
-                        'type': 'close'
-                        'time': heartbeat.toJSON()
-                    Storage.addInteraction(interaction, name)
-
-            # Still here? Save open interaction.
-            interaction =
-                'type': 'open'
-                'time': new Date().toJSON()
-            Storage.addInteraction(interaction, name)
-
-            # Update heartbeat.
-            Heartbeat.setHeartbeat(name)
 
     integrateIntoDOM: ->
         # Comment Status Observer.
@@ -245,7 +201,7 @@ class @Facebook extends Network
             $(this).addClass('rose-integrated')
 
             # Add event handler.
-            $(this).on 'click', (e) ->
+            $(this).on 'click', ->
                 # Get recipient.
                 recipient = $(this).closest('#pagelet_web_messenger').find('h2#webMessengerHeaderName a').html()
 
@@ -275,7 +231,7 @@ class @Facebook extends Network
             $(this).addClass('rose-integrated')
 
             # Add event handler.
-            $(this).on 'click', (e) ->
+            $(this).on 'click', ->
                 # Get recipient.
                 recipient = $(this).closest('div[role=dialog]').find('span.uiToken').html()
                 # If no recipient is found then it is not a message

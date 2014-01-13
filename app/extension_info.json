@@ -2,13 +2,14 @@
     "content_scripts": [
         "bower_components/jquery/jquery.js",
         "bower_components/jquery.cookie/jquery.cookie.js",
-        "bower_components/semantic/build/packaged/javascript/semantic.js",
+        "bower_components/semantic/build/packaged/javascript/semantic.min.js",
         "bower_components/jssha/src/sha.js",
         "bower_components/rsvp/rsvp.js",
         "bower_components/handlebars/handlebars.js",
         "bower_components/i18next/release/i18next-1.7.1.js",
+        "res/locales/de/translation.json",
+        "res/locales/en/translation.json",
         "scripts/app.js",
-        "scripts/injectedUIMockup.js",
         "scripts/jquery.patterns.js"
     ],
     "homepage_url": "http://www.sit.fraunhofer.de/",
@@ -17,11 +18,11 @@
     "background_scripts": [
         "main.js"
     ],
-    "version": "2.0.2",
+    "version": "2.0.9",
     "browser_button": {
         "caption": "ROSE",
         "tooltipText": "ROSE Browser Plugin",
-        "icon": "icons/rose-icon.png",
+        "icon": "icons/button.png",
         "popup": {
             "url": "popup/index.html",
             "width": 800,

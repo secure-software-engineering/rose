@@ -26,7 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 class @RoseData
-    constructor: (@data) ->
+    constructor: (data) ->
+        @data = $.extend true, {}, data
         @initializeMeta()
 
     getData: ->
@@ -103,6 +104,11 @@ class @RoseData
         return null
 
     addComment: (record, platformName) ->
+        comment = @getComment record.id, platformName
+        if comment?
+            @updateComment comment.index, record, platformName
+            return
+
         index = @getComments(platformName).length
         comment =
             index: index
@@ -112,15 +118,29 @@ class @RoseData
             record: record
         @getComments(platformName).push comment
 
-    getComment: (index, platformName) ->
+    getComment: (id, platformName) ->
         for comment in @getComments(platformName)
-            return comment if comment.index is index
+            return comment if comment.record?.id is id
         return null
 
-    removeComment: (index, platformName) ->
-        comments = @getComments(platformName).filter (comment) ->
-            comment.index isnt index
+    hideComment: (index, hide, platformName) ->
+        comments = @getComments(platformName)
+
+        comments[index].hidden = hide
+
         @setComments(comments, platformName)
+
+    removeComment: (index, platformName) ->
+        comments = @getComments(platformName)
+
+        comments[index].deleted = true
+        comments[index].record = null
+
+        @setComments(comments, platformName)
+
+    updateComment: (index, record, platformName) ->
+        comments = @getComments(platformName)
+        comments[index].record = record
 
     setComments: (comments, platformName) ->
         @addPlatform(platformName) unless @hasPlatform(platformName)
@@ -189,3 +209,9 @@ class @RoseData
                     record: record
                 platform.static[informationName] = [] unless platform.static[informationName]
                 platform.static[informationName].push(entry)
+
+    setParticipantID: (id, network) ->
+        unless @data.meta.participant?
+            @data.meta.participant = {}
+
+        @data.meta.participant[network] = id

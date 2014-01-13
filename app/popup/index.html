@@ -1,47 +1,569 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    
-    <!-- build:css styles/main.css -->
-    <link rel="stylesheet" href="../bower_components/bootstrap.css/css/bootstrap.css">
-    <!-- <link rel="stylesheet" href="styles/style.css"> -->
-    <!-- endbuild -->
+<!--
+ROSE is a browser extension researchers can use to capture in situ
+data on how users actually use the online social network Facebook.
+Copyright (C) 2013
 
+    Fraunhofer Institute for Secure Information Technology
+    Andreas Poller <andreas.poller@sit.fraunhofer.de>
+
+Authors
+
+    Oliver Hoffmann <oliverh855@gmail.com>
+    Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="../bower_components/normalize-css/normalize.css">
+    <link rel="stylesheet" href="../bower_components/semantic/build/packaged/css/semantic.css">
+    <link rel="stylesheet" href="styles/open-sans.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <script>window.html5 || document.write('<script src="js/vendor/html5shiv.js"><\/script>')</script>
+    <![endif]-->
 </head>
-<body style="width: 750px;">
-    <div class="container-fluid" style="margin-top: 20px;">
-        <div class="row-fluid">
-            <div class="span4">
-                <ul id="rose-navigation" class="nav nav-list">
-                    <li class="nav-header">ROSE</li>
-                    <li><a href="#" class="navigation-link" action="page" page-name="home" data-i18n="navigation.home"></a></li>
-                    <li><a href="#" class="navigation-link" action="page" page-name="backup" data-i18n="navigation.backup"></a></li>
-                    <li><a href="#" class="navigation-link" action="page" page-name="help" data-i18n="navigation.help"></a></li>
-                    <li><a href="#" class="navigation-link" action="page" page-name="about" data-i18n="navigation.about"></a></li>
-                    <li class="nav-header" data-i18n="navigation.diary"></li>
-                    <li><a href="#" class="navigation-link" action="diary" data-i18n="navigation.diary"></a></li>
-                </ul>
+<body>
+    <!--[if lt IE 7]>
+    <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+    <![endif]-->
+
+<script type="text/x-handlebars" data-template-name="application">
+<div class="container">
+    <div class="ui page grid">
+        <div class="fluid five wide column">
+            <div class="ui red fluid vertical small menu">
+                <div class="header item">
+                    <i class="home icon"></i>
+                    ROSE
+                </div>
+                {{#linkTo 'diary' classNames='item'}}
+                {{I18n 'diary'}}<i class="book icon"></i>
+                {{/linkTo}}
+                {{#linkTo 'backup' classNames='item'}}
+                {{I18n 'backup'}}<i class="download disk icon"></i>
+                {{/linkTo}}
+                {{#linkTo 'settings' classNames='item'}}
+                {{I18n 'settings'}}<i class="settings icon"></i>
+                {{/linkTo}}
+                <div class="header item">
+                    <i class="user icon"></i>
+                    {{I18n 'networks'}}
+                </div>
+                <div class="item">
+                    Facebook
+                    <i class="facebook icon"></i>
+                    <div class="menu">
+                        {{#linkTo 'facebook.interactions' classNames='item'}}
+                        {{I18n 'interactions'}}
+                        {{/linkTo}}
+                        {{#linkTo 'facebook.comments' classNames='item'}}
+                        {{I18n "comments"}}
+                        {{/linkTo}}
+                        {{#linkTo 'facebook.privacy' classNames='item'}}
+                        {{I18n 'privacy-settings'}}
+                        {{/linkTo}}
+                    </div>
+                </div>
+                <div class="item">
+                    Google+
+                    <i class="google plus icon"></i>
+                    <div class="menu">
+                        {{#linkTo 'google.interactions' classNames='item'}}
+                        {{I18n 'interactions'}}
+                        {{/linkTo}}
+                        {{#linkTo 'google.comments' classNames='item'}}
+                        {{I18n "comments"}}
+                        {{/linkTo}}
+                        {{#linkTo 'google.privacy' classNames='item'}}
+                        {{I18n 'privacy-settings'}}
+                        {{/linkTo}}
+                    </div>
+                </div>
+                <div class="header item">
+                    <i class="help icon"></i>
+                    {{I18n 'help'}}
+                </div>
+                {{#linkTo 'about' classNames='item'}}
+                {{I18n 'about'}}<i class="info letter icon"></i>
+                {{/linkTo}}
+                {{#linkTo 'documentation' classNames='item'}}
+                {{I18n 'documentation'}}<i class="text file icon"></i>
+                {{/linkTo}}
             </div>
-            <div id="rose-content-field" class="span8">
+        </div>
+        <div class="fluid eleven wide column">
+            <div id="outlet" class="ui segment">
+                {{outlet}}
             </div>
         </div>
     </div>
+</div>
+</script>
+
+
+
+
+<script type="text/x-handlebars" data-template-name="index">
+<h3 class="ui header">
+    <i class="home icon"></i>
+    <div class="content">
+        {{I18n "ROSE"}}
+        <div class="sub header">{{I18n 'version'}}: {{version}}</div>
+    </div>
+</h3>
+</script>
+
+
+
+
+<script type="text/x-handlebars" data-template-name="about">
+<h3 class="ui header">
+    <i class="info letter icon"></i>
+    <div class="content">
+        {{I18n "about"}}
+        <div class="sub header">{{I18n 'aboutPage.subHeader'}}.</div>
+    </div>
+</h3>
+<div class="ui basic segment">
+    ROSE is a browser extension to support empirical Field studies by recording users' interactions with the social network Facebook for a limited period of time. Please consider the help page for further information on ROSE's functioning.</p>
+    <div class="ui divider"></div>
+    ROSE has been developed by
+
+    <p>Oliver Hoffmann and Sebastian Ruhleder</p>
+
+    <div class="ui basic segment">
+        <address><strong>Fraunhofer Institute for Secure Information Technology SIT</strong><br/> Rheinstrasse 75<br/> 64295 Darmstadt<br/> Germany </address>
+    </div>
+    <p> For questions about ROSE feel free to contact <a href="mailto:andreas.poller@sit.fraunhofer.de">Andreas Poller, andreas.poller@sit.fraunhofer.de</a></p>
+    <div class="ui divider"></div>
+    <div class="ui basic vertical disabled segment">
+        This program is free software;you can redistribute it and/or modify it under the terms of the GNU General Public License version as published by the Free Software Foundation;either version 3 of the License, or (at your option) any later version. </p>
+    </div>
+</div>
+</script>
+
+
+
+
+<script type="text/x-handlebars" data-template-name="settings">
+<h3 class="ui header">
+    <i class="settings icon"></i>
+    <div class="content">
+        {{I18n 'settings'}}
+        <div class="sub header">{{I18n 'settingsPage.subHeader'}}.</div>
+    </div>
+</h3>
+<div class="ui toggle checkbox">
+    {{view Ember.Checkbox checkedBinding='showReminder' id="reminder-checkbox"}}
+    <label for="reminder-checkbox">Comment reminder:
+    <b>{{#if showReminder}}
+        {{I18n 'enabled'}}
+    {{else}}
+        {{I18n 'disabled'}}
+    {{/if}}</b>
+    </label>
+</div>
+</script>
+
+
+
+
+<script type="text/x-handlebars" data-template-name="diary">
+<h3 class="ui header">
+    <i class="book icon"></i>
+    <div class="content">
+        {{I18n 'diary'}}
+        <div class="sub header">{{I18n 'diaryPage.subHeader'}}.</div>
+    </div>
+</h3>
+<div class="ui form">
+    <div class="field">
+        {{textarea value=diaryText}}
+    </div>
+    <div class="two fluid ui buttons">
+        <div class="ui button" {{action cancel}}>{{I18n 'cancel'}}</div>
+        <div class="ui positive button" {{action saveEntry}}>{{I18n 'save'}}</div>
+    </div>
+</div>
+<div class="ui divider"></div>
+<div class="ui small comments">
+    {{#each}}
+    <div class="comment">
+        <a class="avatar">
+        <i class="large circular file icon"></i>
+        </a>
+        <div class="content">
+            <a class="author">{{I18n 'you'}}</a>
+            <div class="metadata">
+                <div class="date" title="{{unbound timeFormatted createdAt}}">{{timeAgo createdAt}}</div>
+            </div>
+            <div class="text">
+                {{content}}
+            </div>
+            <div class="actions">
+                <a class="edit"{{action editEntry this}}>{{I18n 'edit'}}</a>
+                <a class="delete"{{action deleteEntry this}}>{{I18n 'delete'}}</a>
+            </div>
+        </div>
+    </div>
+    {{else}}
+    <div class="ui info message">
+        <div class="content">
+            <div class="header">
+                {{I18n 'diaryPage.messageHeader'}}
+            </div>
+            <p>{{I18n 'diaryPage.messageContent'}}!</p>
+        </div>
+    </div>
+    {{/each}}
+</div>
+</script>
+
+
+
+
+<script type="text/x-handlebars" data-template-name="backup">
+<h3 class="ui header">
+    <i class="download disk icon"></i>
+    <div class="content">
+        {{I18n 'backup'}}
+        <div class="sub header">{{I18n 'backupPage.subHeader'}}.</div>
+    </div>
+</h3>
+<div class="ui form">
+    <div {{bind-attr class=":field isEmptyOrValid::error"}}>
+        {{textarea valueBinding='textfield'}}
+    </div>
+    <div class="fluid ui positive icon labeled right button" {{action backup}}>{{I18n 'backup'}}<i class="download disk icon"></i></div>
+    <div class="ui horizontal divider">
+        {{I18n 'or'}}
+    </div>
+    {{#if isEmpty}}
+    <div class="fluid ui icon labled right button disabled">
+        {{I18n 'restore'}}
+        <i class="black upload disk icon"></i>
+    </div>
+    {{else}}
+    <div {{bind-attr class=':fluid :ui: :icon :labled :right :button isValid::disabled'}} {{action restore}}>
+        {{I18n 'restore'}}
+        <i class="black upload disk icon"></i>
+    </div>
+    {{/if}}
+</div>
+</script>
+
+
+
+
+<script type="text/x-handlebars" data-template-name="facebook/interactions">
+<h3 class="ui header">
+    <i class="star icon"></i>
+    <div class="content">
+        {{I18n 'interactions'}}
+        <div class="sub header">{{I18n 'interactionsPage.subHeader'}}</div>
+    </div>
+</h3>
+<div class="ui small pilled feed">
+    {{#each item in activeInteractions}}
+    <div class="event">
+        <div class="label">
+            <i class="user icon"></i>
+            {{#if item.hidden}}
+            <i class="minus red sign icon" title="Hello I am a popup" data-variation="inverted"></i>
+            {{/if}}
+        </div>
+        <div class="content">
+            <div class="date" title="{{unbound timeFormatted item.createdAt}}">
+                {{timeAgo item.createdAt}}
+            </div>
+            <div class="summary clickable">
+                {{I18n 'you'}} created a {{item.record.type}}
+                <i class="icon triangle down"></i>
+            </div>
+            <div class="extra text">
+                {{pretty item}}
+            </div>
+            <div class="actions">
+                {{#if item.hidden}}
+                <a class="hide" {{action show item}}>{{I18n 'include'}}</a>
+                {{else}}
+                <a class="hide" {{action hide item}}>{{I18n 'exclude'}}</a>
+                {{/if}}
+                <a class="delete" {{action delete item}}>{{I18n 'delete'}}</a>
+            </div>
+        </div>
+    </div>
+    {{else}}
+    <div class="ui info message">
+        <div class="header">
+            {{I18n 'interactionsPage.messageHeader'}}
+        </div>
+        {{I18n 'interactionsPage.messageHeader'}}.
+    </div>
+    {{/each}}
+</div>
+</script>
+
+
+
+
+<script type="text/x-handlebars" data-template-name="facebook/comments">
+<h3 class="ui header">
+    <i class="comment icon"></i>
+    <div class="content">
+        {{I18n 'comments'}}
+        <div class="sub header">{{I18n 'commentsPage.subHeader'}}.</div>
+    </div>
+</h3>
+<div class="comments">
+    <div class="ui small pilled feed">
+        {{#each item in activeComments}}
+        <div class="event">
+            <div class="label">
+                <i class="comment icon"></i>
+                {{#if item.hidden}}
+                <i class="minus red sign icon" title="Hello I am a popup" data-variation="inverted"></i>
+                {{/if}}
+            </div>
+            <div class="content">
+                <div class="date" title="{{unbound timeFormatted item.createdAt}}">
+                    {{timeAgo item.createdAt}}
+                </div>
+                <div class="summary">
+                   {{I18n 'you'}} created a comment
+                </div>
+                <div class="extra text">
+                    {{item.record.text}}
+                </div>
+                <div class="actions">
+                    {{#if item.hidden}}
+                    <a class="hide" {{action show item}}>{{I18n 'include'}}</a>
+                    {{else}}
+                    <a class="hide" {{action hide item}}>{{I18n 'exclude'}}</a>
+                    {{/if}}
+                    <a class="delete" {{action delete item}}>{{I18n 'delete'}}</a>
+                </div>
+            </div>
+        </div>
+        {{else}}
+        <div class="ui info message">
+            <div class="header">
+                {{I18n 'commentsPage.messageHeader'}}
+            </div>
+            {{I18n 'commentsPage.messageContent'}}.
+        </div>
+        {{/each}}
+    </div>
+</div>
+</script>
+
+
+
+
+<script type="text/x-handlebars" data-template-name="facebook/privacy">
+<h3 class="ui header">
+    <i class="lock icon"></i>
+    <div class="content">
+        {{I18n 'privacy-settings'}}
+        <div class="sub header">{{I18n 'privacyPage.subHeader'}}.</div>
+    </div>
+</h3>
+
+{{#if notAvailable}}
+<div class="ui small info message">
+    <div class="header">
+        {{I18n 'privacyPage.messageHeader'}}
+    </div>
+    {{I18n 'privacyPage.messageContent'}}.
+</div>
+{{else}}
+{{#each privacy}}
+<table class="ui small padded table segment">
+  <thead>
+    <tr><th colspan="2">{{sectionName}}</th></tr>
+  </thead>
+  <tbody>
+  {{#each settings}}
+  <tr>
+      <td>{{name}}</td>
+      <td>{{value}}</td>
+    </tr>
+  {{/each}}
+  </tbody>
+</table>
+{{/each}}
+
+{{#each timeline}}
+<table class="ui small padded table segment">
+  <thead>
+    <tr><th colspan="2">{{sectionName}}</th></tr>
+  </thead>
+  <tbody>
+  {{#each settings}}
+  <tr>
+      <td>{{name}}</td>
+      <td>{{value}}</td>
+    </tr>
+  {{/each}}
+  </tbody>
+</table>
+{{/each}}
+{{/if}}
+
+</script>
+
+
+
+
+<script type="text/x-handlebars" data-template-name="google/interactions">
+<h3 class="ui header">
+    <i class="star icon"></i>
+    <div class="content">
+        Interactions
+        <div class="sub header">All your recent interactions.</div>
+    </div>
+</h3>
+</script>
+
+
+
+<script type="text/x-handlebars" data-template-name="google/comments">
+<h3 class="ui header">
+    <i class="comment icon"></i>
+    <div class="content">
+        Comments
+        <div class="sub header">Have a look at all your comments.</div>
+    </div>
+</h3>
+</script>
+
+
+
+<script type="text/x-handlebars" data-template-name="google/privacy">
+<h3 class="ui header">
+    <i class="lock icon"></i>
+    <div class="content">
+        Privacy Settings
+        <div class="sub header">Have a look at all your settings.</div>
+    </div>
+</h3>
+</script>
+
+
+
+
+<script type="text/x-handlebars" data-template-name="documentation">
+<h3 class="ui header">
+    <i class="text file icon"></i>
+    <div class="content">
+        {{I18n 'documentation'}}
+        <div class="sub header">{{I18n 'documentationPage.subHeader'}}.</div>
+    </div>
+</h3>
+<h4>Where does ROSE collect the data about my Facebook usage and my inserted comments?</h4>
+<p>
+    Rose exclusively collects data in your web browser. ROSE can provide a pre-assembled Mail which you can use to transmit your data to the study advisor. ROSE does not transmit data to Facebook; Facebook can not detect your usage of ROSE with their computer systems. ROSE neither transmits data itself to the study advisor nor receives them.
+</p>
+<p>
+    There is a disadvantage of this privacy aware concept of ROSE, though: ROSE data can be lost in case system bugs emerge on your computer. With the deletion of ROSE from your web browser all stored data is irretrievably lost.
+</p>
+<div class="ui divider"></div>
+<h4>Are my ROSE study comments visible for other study participants or Facebook users?</h4>
+<p>
+    No, this is impossible for technical reasons. The distribution and therefore visibility for other study participants or Facebook users is impossible because ROSE does not transmit data to Facebook computer systems or to the study advisory. ROSE does not receive data either. Furthermore, Facebook can not even find out about whether you are using ROSE or not.
+    Even though ROSE has a close integration in your web browser and the Facebook interface and therefore is much alike to the &quot;real&quot; Facebook functions this &quot;illusion of an extended Facebook&quot; completely and exclusively takes place in your web browser with ROSE.
+</p>
+<div class="ui divider"></div>
+<h4>Which data is being recorded by ROSE?</h4>
+<p>
+    ROSE records the following data:
+</p>
+<ul class="ui list">
+    <li><b>Date and time of interactions in Facebook</b>, e.g., the time the study participant publishes a story item on his/her Timeline.</li>
+    <li><b>Type of interaction</b>, e.g., &quot;creating a story item&quot;.</li>
+    <li><b>Unique identifiers</b>, which mark the context of interactions. Identifiers are an eight-digit   combination of letters and numbers, e.g., &quot;2a2d6fc3&quot;. With commenting on a picture the identifiers correspond to the picture you commented on. Thereby the study advisory can detect if multiple study participants commented on the same picture without ever learning about the content of this picture.</li>
+    <li><b>Privacy settings concerning interactions</b>, e.g. whether a story item is visible for &quot;Friends&quot; only or for &quot;Everyone&quot;.</li>
+    <li><b>Diary entries.</b></li>
+    <li><b>ROSE study comments.</b></li>
+    <li><b>Privacy settings in general.</b></li>
+</ul>
+<div class="ui divider"></div>
+<h4>Does ROSE collect data which I am sharing with my friends on Facebook?</h4>
+<p>
+    No. ROSE does not collect any data which you are sharing with your friends on Facebook. ROSE does not collect any content-related information, e.g., pictures, links, messages on Timelines, chat messages, or the names of groups you attended.
+    ROSE only collects data about the usage of a type of action, e.g. if you are commenting on a picture. In the analysis the study advisors are only able to see that you made use of an action. The study advisors only asses that you made use of a type of action, but does not see if you are commenting on a picture of a polar bear or if you are commenting on a picture showing a friend of yours who is at a party. If you like to record information on the content of an action in order to explain why you made use of a specific action, please use the ROSE comments or your diary.
+</p>
+<div class="ui divider"></div>
+<h4>How do I control which interaction data ROSE collected?</h4>
+<p>
+    You may easily check this by using the user interface (menu item &quot;interaction tracking&quot;).
+    Moreover you may read which data was collected by ROSE, when you are transferring your data to the study advisors. Even though it is a compact text-based data format, you may easily check that no personal data is transmitted.
+</p>
+<div class="ui divider"></div>
+<h4>How can I be sure that ROSE makes my data anonymous?</h4>
+<p>
+    ROSE data does not contain any information which refers to the Facebook user who created this data. ROSE does not save any Facebook user names or pictures’ and videos’ URLs provided by users. Thus ROSE data does not differ from ethnographically elicited and anonymised data, such as interviews. Anyways, saving content-related information would no be very sufficient as it does no allow contextual analysis
+</p>
+<div class="ui divider"></div>
+<h4>May I review the source code to check previous declarations?</h4>
+<p>
+    Yes. ROSE is a free, open-source software under GPL-license (General Public License). You may review the source code and you may change and process it on the conditions of the GPL. In favor of needing assistance, please contact the study advisors.
+</p>
+<div class="ui divider"></div>
+<h4>May I use ROSE for personal purposes after the study ended?</h4>
+<p>
+    Yes. You may continue using ROSE and process it without hesitation as it does not send any information to the study advisors automatically. Thereto please note the GPL license’s conditions. However, after the study ended we are not able to endorse you by using the software, e.g. providing ROSE updates.
+</p>
+</script>
+
+
+    <script type="text/javascript" src="../kango-ui/kango_api.js"></script>
 
     <!-- build:js scripts/components.js -->
     <script src="../bower_components/jquery/jquery.js"></script>
-    <script src="../bower_components/bootstrap.css/js/bootstrap.js"></script>
-    <script src="../bower_components/doT/doT.js"></script>
-    <script src="../bower_components/i18next/release/i18next-1.6.3.js"></script>
+    <script src="../bower_components/handlebars/handlebars.js"></script>
+    <script src="../bower_components/ember/ember.js"></script>
+    <script src="../bower_components/i18next/release/i18next-1.7.1.js"></script>
+    <script src="../bower_components/moment/moment.js"></script>
+    <script src="../bower_components/moment/lang/de.js"></script>
+    <script src="../bower_components/semantic/build/packaged/javascript/semantic.js"></script>
     <!-- endbuild -->
 
-    <script src="../scripts/app.js"></script>
+    <!-- build:js scripts/languages.js -->
+    <script src="../res/locales/de/translation.json"></script>
+    <script src="../res/locales/en/translation.json"></script>
+    <!-- endbuild -->
 
     <!-- build:js scripts/app.js -->
-    <script src="ui.js"></script>
-    <script src="language.js"></script>
+    <script src="scripts/main.js"></script>
     <!-- endbuild -->
 
-    <script type="text/javascript" src="../kango-ui/kango_api.js"></script>
+    <script type="text/javascript" src="../scripts/app.js"></script>
+
 </body>
 </html>

@@ -3,16 +3,16 @@
 module.exports = (grunt) ->
     require('matchdep').filterDev('grunt-*').forEach grunt.loadNpmTasks
 
-    yeomanConfig = 
+    yeomanConfig =
         app: 'app'
         dist: 'dist'
         kangoDist: 'dist/src/common'
         package: 'packages'
 
-    grunt.initConfig 
+    grunt.initConfig
         yeoman: yeomanConfig
-        watch: 
-            coffee: 
+        watch:
+            coffee:
                 files: [
                     '<%= yeoman.app %>/scripts/{,**/}*.coffee'
                     '<%= yeoman.app %>/main.coffee'
@@ -24,16 +24,16 @@ module.exports = (grunt) ->
                     '.tmp/scripts/{,**/}*.js'
                 ]
                 tasks: ['neuter', 'livereload']
-            locales: 
+            locales:
                 files: '<%= yeoman.app %>/popup/locales/**'
                 tasks: ['copy', 'livereload']
-            pages: 
+            pages:
                 files: '<%= yeoman.app %>/popup/pages/*.html'
                 tasks: ['copy', 'livereload']
             templates:
                 files: '<%= yeoman.app %>/res/templates/*.hbs'
                 tasks: ['copy', 'livereload']
-            htmlmin: 
+            htmlmin:
                 files: [
                     '<%= yeoman.app %>/popup/{,**/}*.{html,js}'
                     '<%= yeoman.app %>/popup/styles/*.css'
@@ -51,22 +51,22 @@ module.exports = (grunt) ->
                     ext: '.js'
                 ]
             main:
-                files: 
+                files:
                     '<%= yeoman.app %>/main.js': '<%= yeoman.app %>/main.coffee'
 
         useminPrepare:
             html: '<%= yeoman.app %>/popup/index.html'
-            options: 
+            options:
                 dest: '<%= yeoman.kangoDist %>/popup/'
-            
+
         usemin:
             html: ['<%= yeoman.kangoDist %>/{,*/}*.html']
             css: ['<%= yeoman.kangoDist %>/styles/{,*/}*.css']
-            options: 
+            options:
                 dirs: ['<%= yeoman.kangoDist %>']
 
-        htmlmin: 
-            dist: 
+        htmlmin:
+            dist:
                 files: [
                     expand: true,
                     cwd: '<%= yeoman.app %>/popup/'
@@ -76,13 +76,13 @@ module.exports = (grunt) ->
 
         kangoManifest:
             dev:
-                options: 
+                options:
                     buildnumber: false
                     background: 'background.js'
                 src: '<%= yeoman.app %>'
                 dest: '<%= yeoman.kangoDist %>'
             dist:
-                options: 
+                options:
                     buildnumber: true
                     background: 'background.js'
                 src: '<%= yeoman.app %>'
@@ -95,9 +95,9 @@ module.exports = (grunt) ->
                     return '.tmp/scripts/' + filepath
             app:
                 src: '.tmp/scripts/Starter.js'
-                dest: '<%= yeoman.app %>/scripts/app.js' 
+                dest: '<%= yeoman.app %>/scripts/app.js'
 
-        copy: 
+        copy:
             dist:
                 files: [
                     expand: true
@@ -138,7 +138,7 @@ module.exports = (grunt) ->
                     ]
                 ]
 
-        shell: 
+        shell:
             kangoBuild:
                 command: 'kango.py build --output-directory <%= yeoman.package %> <%= yeoman.dist %>'
 

@@ -34,10 +34,10 @@ class @GooglePlusPlusOneObserver extends Observer
     getEventType: ->
         "click"
 
-    getID: (obj) ->
+    getID: ->
         ""
 
-    getMetaData: (obj) ->
+    getMetaData: ->
         return {
             "interaction_type": "+1"
         }

@@ -17,7 +17,7 @@ References
 ----
 In the following paper we describe how we use ROSE in our empirical field studies:
 
-> Andreas Poller, Petra Ilyes, Andreas Kramm: Designing privacy-aware online social networks - A reflective socio-technical approach. CSCW ’13 Measuring Networked Social Privacy Workshop, February 23-27, 2013, San Antonio, Texas, USA. 
+> Andreas Poller, Petra Ilyes, Andreas Kramm: Designing privacy-aware online social networks - A reflective socio-technical approach. CSCW ’13 Measuring Networked Social Privacy Workshop, February 23-27, 2013, San Antonio, Texas, USA.
 >
 > [[PDF]](http://testlab.sit.fraunhofer.de/downloads/Publications/poller_osn_design_cscw13_workshop_camera_ready_rot.pdf)
 

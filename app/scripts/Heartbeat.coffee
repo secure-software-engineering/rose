@@ -26,28 +26,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
 class @Heartbeat
-    @getHeartbeat: (name, callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'heartbeat', (heartbeat) ->
-            # Initialize heartbeat, if necessary.
-            heartbeat = {} unless heartbeat?
+    @getHeartbeat: (name) ->
+        return new RSVP.Promise (resolve) ->
+            kango.invokeAsync 'kango.storage.getItem', 'heartbeat', (heartbeat) ->
+                # Initialize heartbeat, if necessary.
+                heartbeat = {} unless heartbeat?
 
-            # Use heartbeat, if it contains a valid date.
-            if heartbeat[name] isnt null
-                d = new Date heartbeat[name]
-                if isNaN d.getDate()
-                    callback null
+                # Use heartbeat, if it contains a valid date.
+                if heartbeat[name] isnt null
+                    d = new Date heartbeat[name]
+                    if isNaN d.getDate()
+                        resolve null
+                    else
+                        resolve d
                 else
-                    callback d
-            else
-                callback null
+                    resolve null
 
     @setHeartbeat: (name) ->
-        kango.invokeAsync 'kango.storage.getItem', 'heartbeat', (heartbeat) ->
-            # Initialize heartbeat, if necessary.
-            heartbeat = {} unless heartbeat?
+        return new RSVP.Promise (resolve) ->
+            kango.invokeAsync 'kango.storage.getItem', 'heartbeat', (heartbeat) ->
+                # Initialize heartbeat, if necessary.
+                heartbeat = {} unless heartbeat?
 
-            # Set heartbeat.
-            heartbeat[name] = new Date().toJSON()
+                # Set heartbeat.
+                heartbeat[name] = new Date().toJSON()
 
-            # Write heartbeat back to storage.
-            kango.invokeAsync 'kango.storage.setItem', 'heartbeat', heartbeat
+                # Write heartbeat back to storage.
+                kango.invokeAsync 'kango.storage.setItem', 'heartbeat', heartbeat, resolve

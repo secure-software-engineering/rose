@@ -43,7 +43,7 @@ class @Management
             Management.isInitialized = true
 
     @getListOfNetworks: ->
-        Management.networks
+        @networks
 
     @add: (network) ->
-        Management.networks.push network
+        @networks.push network

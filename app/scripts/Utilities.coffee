@@ -47,6 +47,14 @@ class @Utilities
     @stripTags: (code) ->
         code.replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?>|<\/\w+>/gi, '')
 
+    @loadCss: (link) ->
+        cssLink = $('<link>')
+        $('head').append cssLink
+        cssLink.attr
+            rel: 'stylesheet'
+            type: 'text/css'
+            href: kango.io.getResourceUrl link
+
     @dateDiffSeconds: (date1, date2) ->
         difference = date1.getTime() - date2.getTime()
         return Math.abs(difference / 1000)

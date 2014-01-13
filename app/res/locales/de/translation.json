@@ -1,0 +1,86 @@
+resources = {};
+resources.de = {};
+resources.de.translation = {
+  "about": "Über",
+  "backup": "Datensicherung",
+  "restore": "Wiederherstellen",
+  "comment": "Kommentar",
+  "comments": "Kommentare",
+  "diary": "Tagebuch",
+  "documentation": "Dokumentation",
+  "help": "Hilfe",
+  "interactions": "Interaktionen",
+  "networks": "Netzwerke",
+  "privacy-settings": "Privatsphäreneinstellungen",
+  "settings": "Einstellungen",
+  "test": "test",
+
+  "cancel": "Abbrechen",
+  "save": "Speichern",
+  "or": "oder",
+
+  "delete": "Löschen",
+  "edit": "Bearbeiten",
+  "exclude": "Ausschließen",
+  "include": "Einschließen",
+  "loading": "Laden",
+
+  "you": "Du",
+  "version": "Version",
+
+  "enabled": "Aktiviert",
+  "disabled": "Deaktiviert",
+
+  "settingsPage": {
+    "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+    "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
+    "messageContent": "Schreib etwas"
+  },
+
+  "diaryPage": {
+    "subHeader": "Hier können Sie alles Weitere notieren, was Ihnen bei Ihrer Nutzung aufgefallen ist",
+    "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
+    "messageContent": "Schreib etwas"
+  },
+
+  "privacyPage": {
+    "subHeader": "Dies sind Ihre von ROSE ausgelesenen Privatsphäreneinstellungen",
+    "messageHeader": "Es sind keine Privatsphäreneinstellungen vorhanden",
+    "messageContent": "Warten Sie, bis ROSE die Einstellungen ausgelesen hat."
+  },
+
+  "backupPage": {
+    "subHeader": "Hier können Sie alle eingegebenen und aufgezeichneten Daten nochmal einsehen, speichern oder wiederherstellen"
+  },
+
+  "aboutPage": {
+    "subHeader": "Informationen zu ROSE",
+    "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
+    "messageContent": "Schreib etwas"
+  },
+
+  "interactionsPage": {
+    "subHeader": "Alle von ROSE aufgezeichneten Interaktionen",
+    "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
+    "messageContent": "Schreib etwas"
+  },
+
+  "commentsPage": {
+    "subHeader": "Hier können Sie alle Kommentare einsehen",
+    "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
+    "messageContent": "Schreib etwas"
+  },
+
+  "documentationPage": {
+    "subHeader": "Häufig gestellte Fragen zu ROSE"
+  },
+
+  "reminder": {
+    "prompt": "Vergiss nicht zu kommentieren"
+  },
+
+  "sidebar": {
+    "rating1": "Für wie angemessen halten Sie es diesen Inhalt auf Facebook zu zeigen",
+    "rating2": "Wie unterhaltsam ist dieser Inhalt für Sie"
+  }
+};

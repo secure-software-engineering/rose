@@ -1,0 +1,81 @@
+resources.en = {};
+resources.en.translation = {
+  "about": "About",
+  "backup": "Data Backup",
+  "restore": "Restore",
+  "comment": "Comments",
+  "comments": "Comments",
+  "diary": "Diary",
+  "documentation": "Usage notes",
+  "help": "Help",
+  "interactions": "Interactions",
+  "networks": "Networks",
+  "privacy-settings": "Privacy Settings",
+  "settings": "Settings",
+  "test": "test",
+
+  "cancel": "Cancel",
+  "save": "Save",
+  "or": "or",
+
+  "delete": "Delete",
+  "edit": "Edit",
+  "exclude": "Exclude",
+  "include": "Include",
+  "loading": "Loading",
+
+  "you": "You",
+
+  "settingsPage": {
+    "subHeader": "Here you can manage your ROSE settings",
+    "messageHeader": "No diary entries availabe",
+    "messageContent": "Drop me a line"
+  },
+
+  "diaryPage": {
+    "subHeader": "Here you can make a note of everything else that attracted your attention",
+    "messageHeader": "No diary entries available",
+    "messageContent": "Drop me a line"
+  },
+
+  "privacyPage": {
+    "subHeader": "Have a look at your privacy settings",
+    "messageHeader": "Privacy settings not captured yet",
+    "messageContent": "The privacy settings are automatically captured after being logged in in Facebook for a certain time period."
+  },
+
+  "backupPage": {
+    "subHeader": "Here you can review, save or restore all data you supplied or which was recorded by ROSE"
+  },
+
+  "aboutPage": {
+    "subHeader": "Information about ROSE",
+    "messageHeader": "",
+    "messageContent": ""
+  },
+
+  "interactionsPage": {
+    "subHeader": "All your recent interactions",
+    "messageHeader": "No interactions recorded so far",
+    "messageContent": ""
+  },
+
+  "commentsPage": {
+    "subHeader": "Have a look at all your comments",
+    "messageHeader": "No comments created",
+    "messageContent": ""
+  },
+
+  "documentationPage": {
+    "subHeader": "Frequently asked questions about ROSE"
+  },
+
+  "reminder": {
+    "prompt": "Don't forget to comment"
+  },
+
+  "sidebar": {
+    "rating1": "Do you think it is appropriate to show this content on Facebook",
+    "rating2": "How entertaining is this content to you"
+  }
+};

@@ -134,7 +134,7 @@ class @FacebookLikeObserver
                 record['type'] = interactionType
 
                 records.push(record)
-        
+
         # Nothing found? Return failure.
         if records.length is 0
             return {

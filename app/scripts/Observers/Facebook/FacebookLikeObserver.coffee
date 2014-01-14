@@ -44,6 +44,7 @@ class @FacebookLikeObserver
         ],
         "timeline": [
             '<div role="article"><div><h5><span><span><a>{owner}</a></span></span></h5></div><div class="userContentWrapper"><span>{id}</span></div></div>',
+            '<div><div role="article"><div><div><h5><span><span><a>{owner}</a></span></span></h5></div></div><ul><span class="userContent">{id}</span></ul></div></div>',
             '<div class="timelineUnitContainer"><h5><span><span><a>{owner}</a></span></span></h5><div class="photoUnit"><a ajaxify="{id}"><div><img></img></div></a></div></div>'
         ]
     }
@@ -51,7 +52,7 @@ class @FacebookLikeObserver
     containers: {
         "status": ".mainWrapper, .userContentWrapper",
         "comment": ".UFIComment",
-        "timeline": ".fbTimelineUnit"
+        "timeline": ".fbTimelineUnit, .timelineUnitContainer"
     }
 
     getEventType: ->
@@ -133,7 +134,7 @@ class @FacebookLikeObserver
                 record['type'] = interactionType
 
                 records.push(record)
-
+        
         # Nothing found? Return failure.
         if records.length is 0
             return {

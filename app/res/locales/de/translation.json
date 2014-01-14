@@ -14,10 +14,13 @@ resources.de.translation = {
   "privacy-settings": "Privatsphäreneinstellungen",
   "settings": "Einstellungen",
   "test": "test",
+  "developedBy": "wurde entwickelt von",
+  "sitAddress": "<address><strong>Fraunhofer-Institut für Sichere Informationstechnologie SIT</strong><br/> Rheinstraße 75<br/> 64295 Darmstadt<br/> Deutschland </address>",
 
   "cancel": "Abbrechen",
   "save": "Speichern",
   "or": "oder",
+  "and": "und",
 
   "delete": "Löschen",
   "edit": "Bearbeiten",
@@ -56,7 +59,9 @@ resources.de.translation = {
   "aboutPage": {
     "subHeader": "Informationen zu ROSE",
     "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
-    "messageContent": "Schreib etwas"
+    "messageContent": "Schreib etwas",
+    "infoText": "ROSE ist eine Browser-Erweiterung, welche im Rahmen von empirischen Feldstudien über einen begrenzten Zeitraum aufzeichnet, wie Nutzer mit dem sozialen Netzwerk Facebook interagieren. Zusätzlich können Nutzer mit ROSE ihre Interaktionen auch kommentieren. Die von ROSE gesammelten Daten ermöglichen zusammen mit anderen qualitativen Daten, z.B. aus Einzel- oder Gruppeninterviews, Einblicke in Nutzungsgewohnheiten der Nutzer, und Konflikten an der Schnittstelle zwischen Nutzer und Software.",
+    "furtherQuestions": "Bei weiteren Fragen zu ROSE kontaktieren Sie bitte <a href=\"mailto:andreas.poller@sit.fraunhofer.de\">Andreas Poller, andreas.poller@sit.fraunhofer.de</a>"
   },
 
   "interactionsPage": {
@@ -96,6 +101,7 @@ resources.de.translation = {
   },
 
   "sidebar": {
+    "infoText": "Erzähl uns was Du kommentierst (Bild, Link, Status,...). Erzähl uns wer das gepostet/geshared hat (Du selbst, ein Freund, ein anderer Nutzer, eine Seite, ...). Erzähl uns warum Du dich entschieden hast einen Post, ein Bild etc. nur mit bestimmten \"Freunden\" zu teilen.",
     "rating1": "Für wie angemessen halten Sie es diesen Inhalt auf Facebook zu zeigen",
     "rating2": "Wie unterhaltsam ist dieser Inhalt für Sie"
   }

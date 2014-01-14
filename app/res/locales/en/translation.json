@@ -13,10 +13,13 @@ resources.en.translation = {
   "privacy-settings": "Privacy Settings",
   "settings": "Settings",
   "test": "test",
+  "developedBy": "has been developed by",
+  "sitAddress": "<address><strong>Fraunhofer Institute for Secure Information Technology SIT</strong><br/> Rheinstrasse 75<br/> 64295 Darmstadt<br/> Germany </address>",
 
   "cancel": "Cancel",
   "save": "Save",
   "or": "or",
+  "and": "and",
 
   "delete": "Delete",
   "edit": "Edit",
@@ -51,7 +54,9 @@ resources.en.translation = {
   "aboutPage": {
     "subHeader": "Information about ROSE",
     "messageHeader": "",
-    "messageContent": ""
+    "messageContent": "",
+    "infoText": "ROSE is a browser extension to support empirical Field studies by recording users' interactions with the social network Facebook for a limited period of time. Please consider the help page for further information on ROSE's functioning.",
+    "furtherQuestions": "For questions about ROSE feel free to contact <a href=\"mailto: andreas.poller@ sit.fraunhofer.de \">Andreas Poller, andreas.poller@sit.fraunhofer.de</a>"
   },
 
   "interactionsPage": {
@@ -91,6 +96,7 @@ resources.en.translation = {
   },
 
   "sidebar": {
+    "infoText": "Tell us what you are commenting on (picture, link, status update, ...) Tell us who posted/shared it (you, a friend, a user who is not your friend, a page, ...) Tell us why you decided to share something with a certain audience.",
     "rating1": "Do you think it is appropriate to show this content on Facebook",
     "rating2": "How entertaining is this content to you"
   }

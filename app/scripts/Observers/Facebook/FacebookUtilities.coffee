@@ -33,11 +33,11 @@ class @FacebookUtilities
         # Look for populated alternative names in .UFIActorImage containers.
         $("img.UFIActorImage").each ->
             alt = $(this).attr("alt")
-            
+
             # If it's not empty, use it.
             if not not alt
                 id = alt
-        
+
         # Hash the ID and return it.
         Utilities.hash id
 

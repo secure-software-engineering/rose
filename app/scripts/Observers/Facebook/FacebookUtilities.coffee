@@ -29,10 +29,17 @@ require 'Utilities'
 
 class @FacebookUtilities
     @getUserID: ->
-        link = $("#navTimeline a").attr('href')
-        pathArray = link.split('/')
-        pathArray = pathArray.reverse()
-        Utilities.hash pathArray[0]
+        id = "notknown"
+        # Look for populated alternative names in .UFIActorImage containers.
+        $("img.UFIActorImage").each ->
+            alt = $(this).attr("alt")
+            
+            # If it's not empty, use it.
+            if not not alt
+                id = alt
+        
+        # Hash the ID and return it.
+        Utilities.hash id
 
     @getStoryType: (obj) ->
         # Story classes.

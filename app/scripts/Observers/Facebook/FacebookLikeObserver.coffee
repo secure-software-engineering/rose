@@ -110,6 +110,20 @@ class @FacebookLikeObserver
 
         # Check if thumbs up button has been clicked.
         interactionType = "like" if $(node).hasClass("UFILikeThumb")
+        
+        # Determine location of interaction.
+        location = "newsfeed"
+        if $("body").find("div[itemtype*=Person]").length > 0
+            location = "profile"
+            # Get profile owner and compare to user ID.
+            profileOwner = $("#fbProfileCover div[class=cover] div h2 a").html()
+            profileOwner = Utilities.hash profileOwner
+            if profileOwner == FacebookUtilities.getUserID()
+                location = "own-profile"
+        if $("body").find("div[itemtype*=Organization]").length > 0
+            location = "page"
+        if $("body").find("div.groupsJumpBarContainer").length > 0
+            location = "group"
 
         # Traverse through patterns.
         records = []
@@ -124,6 +138,9 @@ class @FacebookLikeObserver
             result = $(parent).applyPattern(args)
 
             if result['success']
+                # Add location.
+                record['location'] = location
+                
                 # Successful? Sanitize and return record.
                 record['object'] = result['data'][0]
 

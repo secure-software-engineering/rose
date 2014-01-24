@@ -96,7 +96,9 @@ resources.en.translation = {
   },
 
   "sidebar": {
-    "infoText": "Tell us what you are commenting on (picture, link, status update, ...) Tell us who posted/shared it (you, a friend, a user who is not your friend, a page, ...) Tell us why you decided to share something with a certain audience.",
+    "infoText1": "Here is the place for everything you ever wanted to take out. What is interesting, what annoys you, what do you like? On others and your own postings.",
+    "infoText2": "Tell us why you rated the posting that way? Why do you like it? Why not?",
+    "infoText3": "Tell us what you are commenting on (picture, link, status update, ...) Tell us who posted/shared it (you, a friend, a user who is not your friend, a page, ...) Tell us why you decided to share something with a certain audience. How appropriate do you find the audience others chose?",
     "rating1": "Do you think it is appropriate to show this content on Facebook",
     "rating2": "How entertaining is this content to you"
   }

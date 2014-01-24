@@ -101,7 +101,9 @@ resources.de.translation = {
   },
 
   "sidebar": {
-    "infoText": "Erzähl uns was Du kommentierst (Bild, Link, Status,...). Erzähl uns wer das gepostet/geshared hat (Du selbst, ein Freund, ein anderer Nutzer, eine Seite, ...). Erzähl uns warum Du dich entschieden hast einen Post, ein Bild etc. nur mit bestimmten \"Freunden\" zu teilen.",
+    "infoText1": "Hier ist Platz für alles was euch interessiert, freut oder ärgert. Bei anderen und bei euch selbst.",
+    "infoText2": "Sagt uns, warum ihr einen Post so beurteilt, warum er euch gefällt oder missfällt.",
+    "infoText3": "Erzähl uns was Du kommentierst (Bild, Link, Status,...). Erzähl uns wer das gepostet/geshared hat (Du selbst, ein Freund, ein anderer Nutzer, eine Seite, ...). Erzähl uns warum Du dich entschieden hast einen Post, ein Bild etc. nur mit bestimmten \"Freunden\" zu teilen. Wie angemessen fandest du die Auswahl des Publikums?",
     "rating1": "Für wie angemessen halten Sie es diesen Inhalt auf Facebook zu zeigen",
     "rating2": "Wie unterhaltsam ist dieser Inhalt für Sie"
   }

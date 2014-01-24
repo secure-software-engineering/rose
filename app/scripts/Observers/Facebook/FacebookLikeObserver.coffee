@@ -110,7 +110,7 @@ class @FacebookLikeObserver
 
         # Check if thumbs up button has been clicked.
         interactionType = "like" if $(node).hasClass("UFILikeThumb")
-        
+
         # Determine location of interaction.
         location = "newsfeed"
         if $("body").find("div[itemtype*=Person]").length > 0
@@ -140,7 +140,7 @@ class @FacebookLikeObserver
             if result['success']
                 # Add location.
                 record['location'] = location
-                
+
                 # Successful? Sanitize and return record.
                 record['object'] = result['data'][0]
 

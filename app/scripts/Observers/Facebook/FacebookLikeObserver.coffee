@@ -118,7 +118,7 @@ class @FacebookLikeObserver
             # Get profile owner and compare to user ID.
             profileOwner = $("#fbProfileCover div[class=cover] div h2 a").html()
             profileOwner = Utilities.hash profileOwner
-            if profileOwner == FacebookUtilities.getUserID()
+            if profileOwner is FacebookUtilities.getUserID()
                 location = "own-profile"
         if $("body").find("div[itemtype*=Organization]").length > 0
             location = "page"

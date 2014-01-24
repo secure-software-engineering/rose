@@ -83,6 +83,9 @@ class @FacebookUI
         .then((template) ->
             if $('.fbxWelcomeBoxName').length > 0
                 $("*[data-timestamp]").not($('*[data-timestamp] .rose.comment').parent()).prepend template()
+
+                if ($("*[data-timestamp]").length <= 0)
+                    $('.userContentWrapper').not($('.userContentWrapper .rose.comment').parent()).prepend(template())
             else
                 $(".timelineUnitContainer").has(".fbTimelineFeedbackActions").not($(".timelineUnitContainer .rose.comment").parent()).prepend(template()).addClass('timeline')
                 $('.rose.comment').addClass('timeline')

@@ -59,6 +59,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     transition: opacity 0.3s;
 }
 
+.ui.ribbon.label {
+    left: -1.6rem;
+}
+
 .rose.comment.timeline {
     margin: 0 0 5px 6px !important;
 }

@@ -132,7 +132,7 @@ class @FacebookUI
 
     _getSettings: () ->
         promise = new RSVP.Promise (resolve) ->
-            Storage.getSettings(resolve);
+            Storage.getSettings(resolve)
 
         return promise
 

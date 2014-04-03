@@ -167,6 +167,7 @@ module.exports = (grunt) ->
         'kangoManifest:dev'
         'concat'
         'uglify'
+        'cssmin'
         'shell'
         'open'
     ]
@@ -188,6 +189,7 @@ module.exports = (grunt) ->
         'usemin'
         'concat'
         'uglify'
+        'cssmin'
         'copy'
         'shell'
     ]
@@ -202,6 +204,7 @@ module.exports = (grunt) ->
         'usemin'
         'concat'
         'uglify'
+        'cssmin'
         'copy'
         'shell'
     ]

@@ -1,3 +1,5 @@
+[![devDependency Status](https://david-dm.org/oliverh855/rose/dev-status.png)](https://david-dm.org/oliverh855/rose#info=devDependencies)
+
 Synopsis
 ----
 ROSE is a browser extension researchers can use to capture in situ data on how users actually use the online social network Facebook.

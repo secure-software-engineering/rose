@@ -61,15 +61,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <i class="home icon"></i>
                     ROSE
                 </div>
-                {{#linkTo 'diary' classNames='item'}}
+                {{#link-to 'diary' classNames='item'}}
                 {{I18n 'diary'}}<i class="book icon"></i>
-                {{/linkTo}}
-                {{#linkTo 'backup' classNames='item'}}
+                {{/link-to}}
+                {{#link-to 'backup' classNames='item'}}
                 {{I18n 'backup'}}<i class="download disk icon"></i>
-                {{/linkTo}}
-                {{#linkTo 'settings' classNames='item'}}
+                {{/link-to}}
+                {{#link-to 'settings' classNames='item'}}
                 {{I18n 'settings'}}<i class="settings icon"></i>
-                {{/linkTo}}
+                {{/link-to}}
                 <div class="header item">
                     <i class="user icon"></i>
                     {{I18n 'networks'}}
@@ -78,42 +78,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     Facebook
                     <i class="facebook icon"></i>
                     <div class="menu">
-                        {{#linkTo 'facebook.interactions' classNames='item'}}
+                        {{#link-to 'facebook.interactions' classNames='item'}}
                         {{I18n 'interactions'}}
-                        {{/linkTo}}
-                        {{#linkTo 'facebook.comments' classNames='item'}}
+                        {{/link-to}}
+                        {{#link-to 'facebook.comments' classNames='item'}}
                         {{I18n "comments"}}
-                        {{/linkTo}}
-                        {{#linkTo 'facebook.privacy' classNames='item'}}
+                        {{/link-to}}
+                        {{#link-to 'facebook.privacy' classNames='item'}}
                         {{I18n 'privacy-settings'}}
-                        {{/linkTo}}
+                        {{/link-to}}
                     </div>
                 </div>
                 <div class="item">
                     Google+
                     <i class="google plus icon"></i>
                     <div class="menu">
-                        {{#linkTo 'google.interactions' classNames='item'}}
+                        {{#link-to 'google.interactions' classNames='item'}}
                         {{I18n 'interactions'}}
-                        {{/linkTo}}
-                        {{#linkTo 'google.comments' classNames='item'}}
+                        {{/link-to}}
+                        {{#link-to 'google.comments' classNames='item'}}
                         {{I18n "comments"}}
-                        {{/linkTo}}
-                        {{#linkTo 'google.privacy' classNames='item'}}
+                        {{/link-to}}
+                        {{#link-to 'google.privacy' classNames='item'}}
                         {{I18n 'privacy-settings'}}
-                        {{/linkTo}}
+                        {{/link-to}}
                     </div>
                 </div>
                 <div class="header item">
                     <i class="help icon"></i>
                     {{I18n 'help'}}
                 </div>
-                {{#linkTo 'about' classNames='item'}}
+                {{#link-to 'about' classNames='item'}}
                 {{I18n 'about'}}<i class="info letter icon"></i>
-                {{/linkTo}}
-                {{#linkTo 'documentation' classNames='item'}}
+                {{/link-to}}
+                {{#link-to 'documentation' classNames='item'}}
                 {{I18n 'documentation'}}<i class="text file icon"></i>
-                {{/linkTo}}
+                {{/link-to}}
             </div>
         </div>
         <div class="fluid eleven wide column">
@@ -206,8 +206,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         {{textarea value=diaryText}}
     </div>
     <div class="two fluid ui buttons">
-        <div class="ui button" {{action cancel}}>{{I18n 'cancel'}}</div>
-        <div class="ui positive button" {{action saveEntry}}>{{I18n 'save'}}</div>
+        <div class="ui button" {{action 'cancel'}}>{{I18n 'cancel'}}</div>
+        <div class="ui positive button" {{action 'saveEntry'}}>{{I18n 'save'}}</div>
     </div>
 </div>
 <div class="ui divider"></div>
@@ -226,8 +226,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 {{content}}
             </div>
             <div class="actions">
-                <a class="edit"{{action editEntry this}}>{{I18n 'edit'}}</a>
-                <a class="delete"{{action deleteEntry this}}>{{I18n 'delete'}}</a>
+                <a class="edit"{{action 'editEntry' this}}>{{I18n 'edit'}}</a>
+                <a class="delete"{{action 'deleteEntry' this}}>{{I18n 'delete'}}</a>
             </div>
         </div>
     </div>
@@ -259,7 +259,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <div {{bind-attr class=":field isEmptyOrValid::error"}}>
         {{textarea valueBinding='textfield'}}
     </div>
-    <div class="fluid ui positive icon labeled right button" {{action backup}}>{{I18n 'backup'}}<i class="download disk icon"></i></div>
+    <div class="fluid ui positive icon labeled right button" {{action 'backup'}}>{{I18n 'backup'}}<i class="download disk icon"></i></div>
     <div class="ui horizontal divider">
         {{I18n 'or'}}
     </div>
@@ -269,7 +269,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <i class="black upload disk icon"></i>
     </div>
     {{else}}
-    <div {{bind-attr class=':fluid :ui: :icon :labled :right :button isValid::disabled'}} {{action restore}}>
+    <div {{bind-attr class=':fluid :ui: :icon :labled :right :button isValid::disabled'}} {{action 'restore'}}>
         {{I18n 'restore'}}
         <i class="black upload disk icon"></i>
     </div>
@@ -310,11 +310,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div>
             <div class="actions">
                 {{#if item.hidden}}
-                <a class="hide" {{action show item}}>{{I18n 'include'}}</a>
+                <a class="hide" {{action 'show' item}}>{{I18n 'include'}}</a>
                 {{else}}
-                <a class="hide" {{action hide item}}>{{I18n 'exclude'}}</a>
+                <a class="hide" {{action 'hide' item}}>{{I18n 'exclude'}}</a>
                 {{/if}}
-                <a class="delete" {{action delete item}}>{{I18n 'delete'}}</a>
+                <a class="delete" {{action 'delete' item}}>{{I18n 'delete'}}</a>
             </div>
         </div>
     </div>
@@ -362,11 +362,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </div>
                 <div class="actions">
                     {{#if item.hidden}}
-                    <a class="hide" {{action show item}}>{{I18n 'include'}}</a>
+                    <a class="hide" {{action 'show' item}}>{{I18n 'include'}}</a>
                     {{else}}
-                    <a class="hide" {{action hide item}}>{{I18n 'exclude'}}</a>
+                    <a class="hide" {{action 'hide' item}}>{{I18n 'exclude'}}</a>
                     {{/if}}
-                    <a class="delete" {{action delete item}}>{{I18n 'delete'}}</a>
+                    <a class="delete" {{action 'delete' item}}>{{I18n 'delete'}}</a>
                 </div>
             </div>
         </div>
@@ -517,7 +517,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <script src="../bower_components/jquery/jquery.js"></script>
     <script src="../bower_components/handlebars/handlebars.js"></script>
     <script src="../bower_components/ember/ember.js"></script>
-    <script src="../bower_components/i18next/release/i18next-1.7.1.js"></script>
+    <script src="../bower_components/i18next/i18next.js"></script>
     <script src="../bower_components/moment/moment.js"></script>
     <script src="../bower_components/moment/lang/de.js"></script>
     <script src="../bower_components/semantic/build/packaged/javascript/semantic.js"></script>

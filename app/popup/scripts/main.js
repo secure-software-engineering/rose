@@ -101,7 +101,7 @@ KangoAPI.onReady(function () {
     actions: {
       backup: function () {
         var self = this;
-        var getStorage = Ember.RSVP.Promise(function (resolve) {
+        var getStorage = new Ember.RSVP.Promise(function (resolve) {
           Storage.getStorageAsJson(resolve);
         });
 
@@ -130,7 +130,7 @@ KangoAPI.onReady(function () {
         if (this.get('isValid') && !this.get('isEmpty')) {
           var self = this;
           var jsonObj = JSON.parse(this.get('textfield'));
-          var setStorage = Ember.RSVP.Promise(function (resolve) {
+          var setStorage = new Ember.RSVP.Promise(function (resolve) {
             Storage.setStorage(jsonObj, resolve);
           });
 
@@ -203,7 +203,7 @@ KangoAPI.onReady(function () {
         Ember.run.later(this, function () {
           var self = this;
 
-          var promise = Ember.RSVP.Promise(function (resolve) {
+          var promise = new Ember.RSVP.Promise(function (resolve) {
             Storage.getDiaryEntries(resolve);
           });
 

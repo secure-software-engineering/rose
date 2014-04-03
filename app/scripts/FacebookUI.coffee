@@ -94,7 +94,11 @@ class @FacebookUI
     _injectReminder: () ->
         return if $('.ui.nag').length > 0
 
-        @_getTempalte('reminder')
+        @_getSettings()
+        .then((settings) =>
+            if settings.reminder.isActive
+                return @_getTempalte('reminder')
+        )
         .then((source) ->
             template = Handlebars.compile source
         )
@@ -127,6 +131,10 @@ class @FacebookUI
         return promise
 
     _getSettings: () ->
+        promise = new RSVP.Promise (resolve) ->
+            Storage.getSettings(resolve)
+
+        return promise
 
     _registerEventHandlers: () ->
 

@@ -237,13 +237,13 @@ class @Storage
         return new RSVP.Promise (resolve) ->
             kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
                 # Set up storage field.
-                extractorTimes = {} unless extractorTimes
-                extractorTimes[network] = {} unless extractorTimes[network]
+                extractorTimesTemp = $.extend true, {}, extractorTimes
+                extractorTimesTemp[network] = {} unless extractorTimesTemp[network]
 
                 # Set timestamp.
-                extractorTimes[network][extractorName] = time
+                extractorTimesTemp[network][extractorName] = time
 
-                kango.invokeAsync 'kango.storage.setItem', 'extractorTimes', extractorTimes, resolve
+                kango.invokeAsync 'kango.storage.setItem', 'extractorTimes', extractorTimesTemp, resolve
 
     @getLastOpenCloseInteractionType: (network) ->
         return new RSVP.Promise (resolve) ->

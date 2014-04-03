@@ -1,4 +1,4 @@
-[![devDependency Status](https://david-dm.org/oliverh855/rose/dev-status.png)](https://david-dm.org/oliverh855/rose#info=devDependencies)
+[![devDependency Status](https://david-dm.org/oliverh855/rose/dev-status.svg?theme=shields.io)](https://david-dm.org/oliverh855/rose#info=devDependencies)
 
 Synopsis
 ----

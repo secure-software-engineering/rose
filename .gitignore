@@ -1,8 +1,7 @@
+.DS_Store
 node_modules
 bower_components
-.tmp
-dist
+build
 packages
-app/main.js
-app/scripts/app.js
-.DS_Store
+dist/src/common/rose.js
+dist/src/common/rose.min.js

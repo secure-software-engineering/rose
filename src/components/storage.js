@@ -1,0 +1,4 @@
+/**
+* @module Core
+* @submodule Storage
+*/

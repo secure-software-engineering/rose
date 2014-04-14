@@ -1,0 +1,50 @@
+<h3 class="ui header">
+    <i class="lock icon"></i>
+    <div class="content">
+        {{I18n 'privacy-settings'}}
+        <div class="sub header">{{I18n 'privacyPage.subHeader'}}.</div>
+    </div>
+</h3>
+{{#if notAvailable}}
+<div class="ui small info message">
+    <div class="header">
+        {{I18n 'privacyPage.messageHeader'}}
+    </div>
+    {{I18n 'privacyPage.messageContent'}}.
+</div>
+{{else}}
+{{#each privacy}}
+<table class="ui small padded table segment">
+    <thead>
+        <tr>
+            <th colspan="2">{{sectionName}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each settings}}
+        <tr>
+            <td>{{name}}</td>
+            <td>{{value}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+{{/each}}
+{{#each timeline}}
+<table class="ui small padded table segment">
+    <thead>
+        <tr>
+            <th colspan="2">{{sectionName}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each settings}}
+        <tr>
+            <td>{{name}}</td>
+            <td>{{value}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+{{/each}}
+{{/if}}

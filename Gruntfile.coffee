@@ -64,7 +64,7 @@ module.exports = (grunt) ->
             ]
 
         useminPrepare:
-            html: '<%= yeoman.app %>/popup/index.html'
+            html: '.tmp/popup/index.html'
             options:
                 dest: '<%= yeoman.kangoDist %>/popup/'
 
@@ -119,6 +119,7 @@ module.exports = (grunt) ->
                         'popup/templates/*.hbs'
                         'popup/styles/font/**'
                         'popup/locales/**'
+                        'popup/fonts/**'
                     ]
                 ]
 
@@ -158,6 +159,60 @@ module.exports = (grunt) ->
                 'test/**/*.js'
             ]
 
+        replace:
+            dist:
+                options:
+                    patterns: [
+                        {
+                            match: 'ember'
+                            replacement: '../bower_components/ember/ember.prod.js'
+                        }
+                        {
+                            match: 'handlebars'
+                            replacement: '../bower_components/handlebars/handlebars.runtime.js'
+                        }
+                    ]
+                files: [
+                    {
+                        src: 'app/popup/index.html'
+                        dest: '.tmp/popup/index.html'
+                    }
+                ]
+            debug:
+                options:
+                    patterns: [
+                        {
+                            match: 'ember'
+                            replacement: '../bower_components/ember/ember.js'
+                        }
+                        {
+                            match: 'handlebars'
+                            replacement: '../bower_components/handlebars/handlebars.js'
+                        }
+                    ]
+                files: [
+                    {
+                        src: ['app/popup/index.html']
+                        dest: '.tmp/popup/index.html'
+                    }
+                ]
+
+        emberTemplates:
+            options:
+                templateBasePath: /app\/popup\/templates\//
+            debug:
+                options:
+                    precompile: false
+                files:
+                    '.tmp/popup/scripts/templates.js': 'app/popup/templates/**/*.hbs'
+            dist:
+                options:
+                    precompile: true
+                files:
+                    '.tmp/popup/scripts/templates.js': 'app/popup/templates/**/*.hbs'
+
+
+
     grunt.registerTask 'test', [
         'jshint'
         'coffeelint'
@@ -184,6 +239,8 @@ module.exports = (grunt) ->
         'coffee'
         'neuter'
         'kangoManifest:dev'
+        'replace:debug'
+        'emberTemplates:debug'
         'useminPrepare'
         'htmlmin'
         'usemin'
@@ -199,6 +256,8 @@ module.exports = (grunt) ->
         'coffee'
         'neuter'
         'kangoManifest:dist'
+        'replace:dist'
+        'emberTemplates:dist'
         'useminPrepare'
         'htmlmin'
         'usemin'

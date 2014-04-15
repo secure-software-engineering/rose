@@ -36,9 +36,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <title></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
-    <!-- build:css styles/main.css -->
+    <!-- build:css(app/popup) styles/main.css -->
     <link rel="stylesheet" href="../bower_components/normalize-css/normalize.css">
-    <link rel="stylesheet" href="../bower_components/semantic/build/packaged/css/semantic.css">
+    <link rel="stylesheet" href="../bower_components/semantic-ui/build/packaged/css/semantic.css">
     <link rel="stylesheet" href="styles/open-sans.css">
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
@@ -46,33 +46,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <script>window.html5 || document.write('<script src="js/vendor/html5shiv.js"><\/script>')</script>
     <![endif]-->
+
+    <script src="../kango-ui/kango_api.js"></script>
+
+    <!-- build:js(app/popup) scripts/components.js -->
+    <script src="../bower_components/jquery/jquery.js"></script>
+    <script src="@@handlebars"></script>
+    <script src="@@ember"></script>
+    <script src="../bower_components/i18next/i18next.js"></script>
+    <script src="../bower_components/moment/moment.js"></script>
+    <script src="../bower_components/moment/lang/de.js"></script>
+    <script src="../bower_components/semantic-ui/build/packaged/javascript/semantic.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:js(app/popup) scripts/languages.js -->
+    <script src="../res/locales/de/translation.json"></script>
+    <script src="../res/locales/en/translation.json"></script>
+    <!-- endbuild -->
+
+    <!-- build:js(app/popup) scripts/app.js -->
+    <script src="scripts/main.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:js scripts/templates.js -->
+    <script src="scripts/templates.js"></script>
+    <!-- endbuild -->
 </head>
 <body>
     <!--[if lt IE 7]>
     <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
     <![endif]-->
 
-    <script src="../kango-ui/kango_api.js"></script>
 
-    <!-- build:js scripts/components.js -->
-    <script src="../bower_components/jquery/jquery.js"></script>
-    <script src="../bower_components/handlebars/handlebars.js"></script>
-    <script src="../bower_components/ember/ember.js"></script>
-    <script src="../bower_components/i18next/i18next.js"></script>
-    <script src="../bower_components/moment/moment.js"></script>
-    <script src="../bower_components/moment/lang/de.js"></script>
-    <script src="../bower_components/semantic/build/packaged/javascript/semantic.js"></script>
-    <!-- endbuild -->
-
-    <!-- build:js scripts/languages.js -->
-    <script src="../res/locales/de/translation.json"></script>
-    <script src="../res/locales/en/translation.json"></script>
-    <!-- endbuild -->
-
-    <!-- build:js scripts/app.js -->
-    <script src="scripts/app.js"></script>
-    <script src="scripts/templates.js"></script>
-    <!-- endbuild -->
 
     <script src="../scripts/app.js"></script>
 

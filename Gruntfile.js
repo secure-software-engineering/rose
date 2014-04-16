@@ -9,22 +9,13 @@ module.exports = function(grunt) {
         kangoscript: 'dist/src/common'
       }
     },
-    concat: {
-      options: {
-        separator: ';'
-      },
-      dist: {
-        src: ['src/**/*.js', '!src/app.js', 'src/app.js'],
-        dest: 'build/<%= pkg.name %>.js'
-      }
-    },
     uglify: {
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy HH:MM") %> */\n'
       },
       dist: {
         files: {
-          'build/<%= pkg.name %>.min.js': ['<%= concat.dist.dest %>']
+          'build/<%= pkg.name %>.min.js': ['build/<%= pkg.name %>.js']
         }
       }
     },
@@ -56,11 +47,19 @@ module.exports = function(grunt) {
     },
     browserify: {
       dist: {
+        options: {
+          require: [
+            './bower_components/jquery/dist/jquery.min.js',
+            './dependencies/jquery.patterns.shim.js'
+          ],
+          alias: [
+            './bower_components/jquery/dist/jquery.min.js:jquery',
+            './dependencies/jquery.patterns.shim.js:jquery-patterns'
+          ],
+          shit: {}
+        },
         files: {
           'build/<%= pkg.name %>.js': ['src/**/*.js', '!src/app.js', 'src/app.js']
-        },
-        options: {
-          transform: ['debowerify']
         }
       }
     },

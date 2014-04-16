@@ -1,4 +1,4 @@
-var jQuery = require('jquery');
+var $ = require('jquery-patterns');
 
 var Storage = require('./storage');
 
@@ -94,6 +94,6 @@ var ObserverEngine = (function($) {
     };
 
     return ObserverEngine;
-})(jQuery);
+})($);
 
 module.exports = ObserverEngine;

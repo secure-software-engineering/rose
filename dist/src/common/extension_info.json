@@ -8,6 +8,11 @@
         "main.js"
     ],
     "homepage_url": "http://www.sit.fraunhofer.de/",
-    "version": "3.0.1",
-    "name": "rose"
+    "version": "3.0.0",
+    "browser_button": {
+        "caption": "Kango",
+        "icon": "icons/button.png",
+        "tooltipText": "Kango"
+    },
+    "name": "ROSE"
 }

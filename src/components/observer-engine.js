@@ -45,16 +45,20 @@ var ObserverEngine = (function($) {
             for (var i in observers) {
                 var observer = observers[i];
 
+                // Flag if pattern matches
                 var found = false;
 
+                // Data container
                 var data = null;
 
                 // Only apply pattern observers at this point
                 if (observer.type === 'pattern') {
                     // Go through DOM tree and try to apply pattern
-                    for (var node = $(this); node.prop('tagName').toLowerCase !== 'body'; node = node.parent()) {
+                    for (var node = $(target); node.prop('tagName').toLowerCase() !== 'body'; node = node.parent()) {
                         // Use every pattern
-                        for (var entry in observer.patterns) {
+                        for (var j in observer.patterns) {
+                            var entry = observer.patterns[j];
+
                             // Apply pattern
                             var result = node.applyPattern({
                                 structure: entry.pattern
@@ -63,18 +67,18 @@ var ObserverEngine = (function($) {
                             // If result found...
                             if (result.success) {
                                 // ... store it
-                                data = result.data;
+                                data = entry.process(result.data);
+
+                                // Set flag and break
+                                found = true;
+                                break;
                             }
                         }
 
+                        // Something found? Break.
                         if (found) {
                             break;
                         }
-                    }
-
-                    // Apply process function, if data has been found
-                    if (data !== null) {
-                        data = observer.process(data);
                     }
                 }
 

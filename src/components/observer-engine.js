@@ -29,6 +29,29 @@ var ObserverEngine = (function($) {
     * @method register
     */
     ObserverEngine.register = function register() {
+        // Network identifiers
+        var identifiers = {
+            facebook: 'facebook.com',
+            gplus: 'plus.google.com'
+        };
+
+        // Determine if user is on network
+        var network = null;
+        for (var name in identifiers) {
+            var url = identifiers[name];
+
+            if ((window.location + '').indexOf(url) >= 0) {
+                // Set network and break
+                network = name;
+                break;
+            }
+        }
+
+        // If no network has been detected...
+        if (network === null) {
+            return;
+        }
+
         // Register global click event listener
         $(document).on('click', function(event) {
             // Get event target
@@ -44,6 +67,11 @@ var ObserverEngine = (function($) {
             // Apply observers
             for (var i in observers) {
                 var observer = observers[i];
+
+                // Continue if observer belongs to wrong network
+                if (observer.network !== network) {
+                    continue;
+                }
 
                 // Flag if pattern matches
                 var found = false;

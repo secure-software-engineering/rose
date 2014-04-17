@@ -181,7 +181,7 @@ var $ = (function($) {
     var pattern = compilePattern($(preprocess(options['structure'])));
 
     // Wrap node in container
-    var node = $("<div></div>").append(this);
+    var node = $("<div></div>").append(this.clone());
 
     return findPattern(pattern, node, options['events'], 0);
   };

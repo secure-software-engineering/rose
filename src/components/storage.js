@@ -1,4 +1,5 @@
 var RSVP = require('rsvp');
+var $ = require('jquery');
 
 /**
  * @module Core
@@ -9,6 +10,8 @@ var Storage = (function() {
 
     var init = function init(data) {
         var platforms = ['facebook'];
+
+        data = $.extend({}, true, data);
 
         if (data === null || data === undefined) {
             data = {};

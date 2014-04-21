@@ -43,6 +43,7 @@ class @FacebookLikeObserver
         ],
         "timeline": [
             '<div role="article"><div><h5><span><span><a>{owner}</a></span></span></h5></div><div><span class="userContent">{id}</span></div></div>',
+            '<div role="article"><div><h5><span><a class="fwb">{owner}</a><img></img><a>{id}</a></span></h5></div></div>',
             '<div><div role="article"><div><div><h5><span><span><a>{owner}</a></span></span></h5></div></div><ul><span class="userContent">{id}</span></ul></div></div>',
             '<div class="timelineUnitContainer"><h5><span><span><a>{owner}</a></span></span></h5><div class="photoUnit"><a ajaxify="{id}"><div><img></img></div></a></div></div>'
         ]

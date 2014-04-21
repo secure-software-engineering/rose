@@ -31,13 +31,7 @@ class @FacebookLikeObserver
     # text_exposed_root
     patterns: {
         "status": [
-            '<div><h5><div><a>{owner}</a></div></h5><div class="userContent">{id}</div><form></form></div>',
-            '<div><h5><div><a>{owner}</a></div></h5><div class="userContent"></div><a ajaxify="{id}"><div><img></img></div></a><form></form><div class="clearfix"></div></div>',
-            '<div><h6><div><a>{owner}</a></div></h6><div class="userContent">{id}</div><form></form></div>',
-            '<div><h6><div><a>{owner}</a></div></h6><div><div class="text_exposed_root">{id}</div></div><form></form></div>',
-            '<div><h5><div><a>{owner}</a></div></h5><h5><span><div><span>{id}</span></div></span></h5><form></form></div>',
-            '<div><h5><a>{owner}</a></h5><div></div><form id="{id}"></form></div>',
-            '<div><h6><a>{owner}</a></h6><div><div><a ajaxify="{id}"><div><img></img></div></a></div></div></div>'
+            '<div class="userContentWrapper"><div><h5><div><span><a>{owner}</></span></div></h5></div><div class="userContent">{id}</div></div>'
         ],
         "comment": [
             '<div class="UFICommentContent"><a class="UFICommentActorName">{owner}</a><span class="UFICommentBody"><span>{id}</span></span></div>'

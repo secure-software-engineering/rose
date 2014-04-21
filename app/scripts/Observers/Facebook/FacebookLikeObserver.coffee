@@ -33,7 +33,8 @@ class @FacebookLikeObserver
         "status": [
             '<div class="userContentWrapper"><div><h5><span><a>{owner}</a></span></h5></div><div><a ajaxify="{id}"><div><img></img></div></a></div></div>',
             '<div class="userContentWrapper"><div><h5><div><span><a>{owner}</></span></div></h5></div><div class="userContent">{id}</div></div>',
-            '<div class="userContentWrapper"><div><h5><span><a class="profileLink">{sharer}</a></span></h5></div><div><a ajaxify="{id}"><div><img></img></div></a></div></div>'
+            '<div class="userContentWrapper"><div><h5><span><a class="profileLink">{sharer}</a></span></h5></div><div><a ajaxify="{id}"><div><img></img></div></a></div></div>',
+            '<div class="userContentWrapper"><div><div><h6><span><a class="profileLink">{sharer}</a></span></h6></div></div><div><a href="{id}"><img></img></a></div></div>'
         ],
         "comment": [
             '<div class="UFICommentContent"><a class="UFICommentActorName">{owner}</a><span class="UFICommentBody"><span>{id}</span></span></div>'
@@ -60,7 +61,10 @@ class @FacebookLikeObserver
     sanitize: (record) ->
         # Check id for fbid URL and extract it, if possible.
         if /photo\.php/.test(record['object']['id'])
-            match = record['object']['id'].match(/fbid=(.+?)&/)
+            if /fbid/.test(record['object']['id'])
+                match = record['object']['id'].match(/fbid=(.+?)&/)
+            else
+                match = record['object']['id'].match(/v=(.+?)/)
 
             # Set id to fbid.
             record['object']['id'] = match[1]
@@ -84,10 +88,6 @@ class @FacebookLikeObserver
         parent = $(node).closest(@containers[container])
         if parent.length < 1
             parent = $(node).siblings().closest(@containers[container])
-        if container is "status"
-            # Fix for boxed statuses.
-            if parent.parents(".userContentWrapper").length
-                parent = parent.parent()
 
         # Interaction types.
         interactionTypes =

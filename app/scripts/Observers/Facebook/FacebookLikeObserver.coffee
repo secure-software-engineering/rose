@@ -31,6 +31,7 @@ class @FacebookLikeObserver
     # text_exposed_root
     patterns: {
         "status": [
+            '<div class="userContentWrapper"><div><h5><span><a>{owner}</a></span></h5></div><div><a ajaxify="{id}"><div><img></img></div></a></div></div>',
             '<div class="userContentWrapper"><div><h5><div><span><a>{owner}</></span></div></h5></div><div class="userContent">{id}</div></div>',
             '<div class="userContentWrapper"><div><h5><span><a class="profileLink">{sharer}</a></span></h5></div><div><a ajaxify="{id}"><div><img></img></div></a></div></div>'
         ],

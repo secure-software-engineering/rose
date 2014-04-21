@@ -31,7 +31,8 @@ class @FacebookLikeObserver
     # text_exposed_root
     patterns: {
         "status": [
-            '<div class="userContentWrapper"><div><h5><div><span><a>{owner}</></span></div></h5></div><div class="userContent">{id}</div></div>'
+            '<div class="userContentWrapper"><div><h5><div><span><a>{owner}</></span></div></h5></div><div class="userContent">{id}</div></div>',
+            '<div class="userContentWrapper"><div><h5><span><a class="profileLink">{sharer}</a></span></h5></div><div><a ajaxify="{id}"><div><img></img></div></a></div></div>'
         ],
         "comment": [
             '<div class="UFICommentContent"><a class="UFICommentActorName">{owner}</a><span class="UFICommentBody"><span>{id}</span></span></div>'
@@ -64,7 +65,7 @@ class @FacebookLikeObserver
             record['object']['id'] = match[1]
 
         # Hash secret fields.
-        for secretField in ["owner", "id"]
+        for secretField in ["owner", "id", "sharer"]
             record['object'][secretField] = Utilities.hash(record['object'][secretField]) if record['object'][secretField]
 
         return record

@@ -32,7 +32,9 @@ class @FacebookLikeObserver
     patterns: {
         "status": [
             '<div class="userContentWrapper"><div><h5><span><a>{owner}</a></span></h5></div><div><a ajaxify="{id}"><div><img></img></div></a></div></div>',
-            '<div class="userContentWrapper"><div><h5><div><span><a>{owner}</></span></div></h5></div><div class="userContent">{id}</div></div>',
+            '<div class="userContentWrapper"><div><h5><div><span><a>{owner}</a></span></div></h5></div><div class="userContent">{id}</div></div>',
+            '<div class="userContentWrapper"><div><h5><div><span><a>{owner}</a></span></div></h5></div><div class="userContent"><div>{id}</div></div></div>',
+            '<div class="userContentWrapper"><div><h6><div><span><a>{owner}</a></span></div></h6></div><div class="userContent">{id}</div></div>',
             '<div class="userContentWrapper"><div><h5><span><a class="profileLink">{sharer}</a></span></h5></div><div><a ajaxify="{id}"><div><img></img></div></a></div></div>',
             '<div class="userContentWrapper"><div><div><h6><span><a class="profileLink">{sharer}</a></span></h6></div></div><div><a href="{id}"><img></img></a></div></div>'
         ],
@@ -40,7 +42,7 @@ class @FacebookLikeObserver
             '<div class="UFICommentContent"><a class="UFICommentActorName">{owner}</a><span class="UFICommentBody"><span>{id}</span></span></div>'
         ],
         "timeline": [
-            '<div role="article"><div><h5><span><span><a>{owner}</a></span></span></h5></div><div class="userContentWrapper"><span>{id}</span></div></div>',
+            '<div role="article"><div><h5><span><span><a>{owner}</a></span></span></h5></div><div><span class="userContent">{id}</span></div></div>',
             '<div><div role="article"><div><div><h5><span><span><a>{owner}</a></span></span></h5></div></div><ul><span class="userContent">{id}</span></ul></div></div>',
             '<div class="timelineUnitContainer"><h5><span><span><a>{owner}</a></span></span></h5><div class="photoUnit"><a ajaxify="{id}"><div><img></img></div></a></div></div>'
         ]

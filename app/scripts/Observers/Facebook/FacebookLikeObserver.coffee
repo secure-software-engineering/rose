@@ -40,7 +40,7 @@ class @FacebookLikeObserver
             '<div><h6><a>{owner}</a></h6><div><div><a ajaxify="{id}"><div><img></img></div></a></div></div></div>'
         ],
         "comment": [
-            '<div class="UFICommentContent"><a class="UFICommentActorName">{owner}</a><span><span><span>{id}</span></span></span></div>'
+            '<div class="UFICommentContent"><a class="UFICommentActorName">{owner}</a><span class="UFICommentBody"><span>{id}</span></span></div>'
         ],
         "timeline": [
             '<div role="article"><div><h5><span><span><a>{owner}</a></span></span></h5></div><div class="userContentWrapper"><span>{id}</span></div></div>',
@@ -50,7 +50,7 @@ class @FacebookLikeObserver
     }
 
     containers: {
-        "status": ".mainWrapper, .userContentWrapper",
+        "status": ".userContentWrapper",
         "comment": ".UFIComment",
         "timeline": ".fbTimelineUnit, .timelineUnitContainer"
     }

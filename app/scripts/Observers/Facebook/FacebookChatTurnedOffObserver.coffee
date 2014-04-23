@@ -27,19 +27,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class @FacebookChatTurnedOffObserver
     getIntegrationPatterns: ->
-        ["li.fbChatGoOfflineItem a"]
+        ["div.uiLayer ul[role=menu] li:last-child a"]
 
     getEventType: ->
         "click"
 
-    getID: ->
-        # No token necessary.
-        ""
-
-    getMetaData: ->
-        # Return meta data.
+    getData: ->
         return {
-            'interaction_type': "chatturnoff"
+            'type': "chatturnoff"
         }
 
     getObserverType: ->

@@ -1,5 +1,5 @@
-var Core = require('./core');
-var log = require('./log');
+var Core = require('./core'),
+    log = require('./log');
 
 /**
 * @module Core
@@ -40,6 +40,8 @@ var Heartbeat = (function() {
     * @method start
     */
     Heartbeat.start = function start() {
+        log('Heartbeat', 'Load configuration from storage and set up heartbeat');
+
         // Load tasks from storage
         kango.invokeAsync('kango.storage.getItem', 'heartbeat', function(data) {
             // Load tasks
@@ -62,6 +64,8 @@ var Heartbeat = (function() {
     * @method store
     */
     Heartbeat.store = function store() {
+        log('Heartbeat', 'Store configuration in storage');
+
         // Prepare tasks for storage
         var _tasks = {};
         for (var name in tasks) {
@@ -88,6 +92,8 @@ var Heartbeat = (function() {
     * @param {Function} task Function performing the task.
     */
     Heartbeat.schedule = function schedule(name, interval, data, task) {
+        log('Heartbeat', 'Schedule new task: ' + name);
+
         if (tasks[name] === undefined) {
             // Add new task
             tasks[name] = {

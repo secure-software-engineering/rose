@@ -18,6 +18,8 @@ var ObserverEngine = (function($) {
     * @param {Object} observer The observer to be added
     */
     ObserverEngine.add = function add(observer) {
+        log('ObserverEngine', 'Add observer: ' + observer.name);
+
         // Push to observers list
         observers.push(observer);
     };
@@ -29,6 +31,8 @@ var ObserverEngine = (function($) {
     * @method register
     */
     ObserverEngine.register = function register() {
+        log('ObserverEngine', 'Register in document');
+
         // Network identifiers
         var identifiers = {
             facebook: 'facebook.com',
@@ -51,6 +55,8 @@ var ObserverEngine = (function($) {
         if (network === null) {
             return;
         }
+
+        log('ObserverEngine', 'Integrate into network: ' + network);
 
         // Register global click event listener
         $(document).on('click', function(event) {

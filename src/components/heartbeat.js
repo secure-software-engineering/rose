@@ -1,4 +1,5 @@
 var Core = require('./core');
+var log = require('./log');
 
 /**
 * @module Core
@@ -28,10 +29,10 @@ var Heartbeat = (function() {
             storage: 60000
         }
     };
-    
+
     var tasks = {},
         time = 0;
-    
+
     /**
     * Loads existing information on tasks from storage and starts
     * the heartbeat.
@@ -43,18 +44,18 @@ var Heartbeat = (function() {
         kango.invokeAsync('kango.storage.getItem', 'heartbeat', function(data) {
             // Load tasks
             tasks = data.tasks || {};
-            
+
             // Schedule store task
             Heartbeat.schedule('store', Heartbeat.intervals.storage, {}, function() {
                 // Save changes to storage
                 Heartbeat.store();
             });
-            
+
             // Start heartbeat
             Heartbeat.beat();
         });
     };
-    
+
     /**
     * Saves information on tasks to storage.
     *
@@ -65,18 +66,18 @@ var Heartbeat = (function() {
         var _tasks = {};
         for (var name in tasks) {
             _tasks[name] = {};
-            
+
             _tasks[name].interval = tasks[name].interval;
             _tasks[name].last = tasks[name].last;
             _tasks[name].data = tasks[name].data;
         }
-        
+
         // Save tasks to storage
         kango.invokeAsync('kango.storage.setItem', 'heartbeat', {
             'tasks': _tasks
         });
     };
-    
+
     /**
     * Schedules a task to be executed in a certain interval.
     *
@@ -95,22 +96,22 @@ var Heartbeat = (function() {
                 'data': data,
                 'task': task
             };
-            
-            Core.log('Heartbeat', 'Task added: ' + name);
+
+            log('Heartbeat', 'Task added: ' + name);
         } else {
             // Update existing task's interval...
             tasks[name].interval = interval;
-            
+
             // ... data...
             tasks[name].data = data;
-            
+
             // ... and task
             tasks[name].task = task;
-            
-            Core.log('Heartbeat', 'Task updated: ' + name);
+
+            log('Heartbeat', 'Task updated: ' + name);
         }
     };
-    
+
     /**
     * Triggers execution of tasks and updates timestamp.
     *
@@ -119,14 +120,14 @@ var Heartbeat = (function() {
     Heartbeat.beat = function beat() {
         // Evaluate and execute tasks
         Heartbeat.execute();
-        
+
         // Update timestamp
         time = (new Date()).getTime();
-        
+
         // Schedule next beat
         setTimeout(Heartbeat.beat, Heartbeat.intervals.beat);
     };
-    
+
     /**
     * Checks all tasks and executes those that are due.
     *
@@ -135,31 +136,31 @@ var Heartbeat = (function() {
     Heartbeat.execute = function execute() {
         // Keeps track of all executed tasks
         var fired = [];
-        
+
         // Current timestamp
         var now = (new Date()).getTime();
-        
+
         // Check all tasks
         for (var name in tasks) {
             var context = tasks[name];
-            
+
             if (now - context.last > context.interval) {
                 // Set timestamp of last execution to now
                 context.last = now;
-                
+
                 // Execute task
                 context.task(context.data);
-                
+
                 // Save name for logging
                 fired.push(name);
             }
         }
-        
+
         if (fired.length > 0) {
-            Core.log('Heartbeat', 'Tasks executed: ' + fired.join(', '));
+            log('Heartbeat', 'Tasks executed: ' + fired.join(', '));
         }
     };
-    
+
     return Heartbeat;
 })();
 

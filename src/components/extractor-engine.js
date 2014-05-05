@@ -19,7 +19,7 @@ var ExtractorEngine = (function($) {
 
     var apply = function apply(extractor) {
         log('ExtractorEngine', 'Apply extractor: ' + extractor.name);
-        
+
         // Schedule extractor task
         Heartbeat.schedule(extractor.name, extractor.interval, {}, function() {
             // Iterate through extracts and execute them
@@ -39,7 +39,7 @@ var ExtractorEngine = (function($) {
     * @param {Object} extractor The extractor to be added
     */
     ExtractorEngine.add = function add(extractor) {
-        log('ExtractorEngine', 'Add extractor: ' extractor.name);
+        log('ExtractorEngine', 'Add extractor: ' + extractor.name);
 
         // Push to extractors list
         extractors.push(extractor);

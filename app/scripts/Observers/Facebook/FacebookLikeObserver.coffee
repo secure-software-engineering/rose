@@ -31,26 +31,26 @@ class @FacebookLikeObserver
     # text_exposed_root
     patterns: {
         "status": [
-            '<div><h5><div><a>{owner}</a></div></h5><div class="userContent">{id}</div><form></form></div>',
-            '<div><h5><div><a>{owner}</a></div></h5><div class="userContent"></div><a ajaxify="{id}"><div><img></img></div></a><form></form><div class="clearfix"></div></div>',
-            '<div><h6><div><a>{owner}</a></div></h6><div class="userContent">{id}</div><form></form></div>',
-            '<div><h6><div><a>{owner}</a></div></h6><div><div class="text_exposed_root">{id}</div></div><form></form></div>',
-            '<div><h5><div><a>{owner}</a></div></h5><h5><span><div><span>{id}</span></div></span></h5><form></form></div>',
-            '<div><h5><a>{owner}</a></h5><div></div><form id="{id}"></form></div>',
-            '<div><h6><a>{owner}</a></h6><div><div><a ajaxify="{id}"><div><img></img></div></a></div></div></div>'
+            '<div class="userContentWrapper"><div><h5><span><a>{owner}</a></span></h5></div><div><a ajaxify="{id}"><div><img></img></div></a></div></div>',
+            '<div class="userContentWrapper"><div><h5><div><span><a>{owner}</a></span></div></h5></div><div class="userContent">{id}</div></div>',
+            '<div class="userContentWrapper"><div><h5><div><span><a>{owner}</a></span></div></h5></div><div class="userContent"><div>{id}</div></div></div>',
+            '<div class="userContentWrapper"><div><h6><div><span><a>{owner}</a></span></div></h6></div><div class="userContent">{id}</div></div>',
+            '<div class="userContentWrapper"><div><h5><span><a class="profileLink">{sharer}</a></span></h5></div><div><a ajaxify="{id}"><div><img></img></div></a></div></div>',
+            '<div class="userContentWrapper"><div><div><h6><span><a class="profileLink">{sharer}</a></span></h6></div></div><div><a href="{id}"><img></img></a></div></div>'
         ],
         "comment": [
-            '<div class="UFICommentContent"><a class="UFICommentActorName">{owner}</a><span><span><span>{id}</span></span></span></div>'
+            '<div class="UFICommentContent"><a class="UFICommentActorName">{owner}</a><span class="UFICommentBody"><span>{id}</span></span></div>'
         ],
         "timeline": [
-            '<div role="article"><div><h5><span><span><a>{owner}</a></span></span></h5></div><div class="userContentWrapper"><span>{id}</span></div></div>',
+            '<div role="article"><div><h5><span><span><a>{owner}</a></span></span></h5></div><div><span class="userContent">{id}</span></div></div>',
+            '<div role="article"><div><h5><span><a class="fwb">{owner}</a><img></img><a>{id}</a></span></h5></div></div>',
             '<div><div role="article"><div><div><h5><span><span><a>{owner}</a></span></span></h5></div></div><ul><span class="userContent">{id}</span></ul></div></div>',
             '<div class="timelineUnitContainer"><h5><span><span><a>{owner}</a></span></span></h5><div class="photoUnit"><a ajaxify="{id}"><div><img></img></div></a></div></div>'
         ]
     }
 
     containers: {
-        "status": ".mainWrapper, .userContentWrapper",
+        "status": ".userContentWrapper",
         "comment": ".UFIComment",
         "timeline": ".fbTimelineUnit, .timelineUnitContainer"
     }
@@ -64,13 +64,16 @@ class @FacebookLikeObserver
     sanitize: (record) ->
         # Check id for fbid URL and extract it, if possible.
         if /photo\.php/.test(record['object']['id'])
-            match = record['object']['id'].match(/fbid=(.+?)&/)
+            if /fbid/.test(record['object']['id'])
+                match = record['object']['id'].match(/fbid=(.+?)&/)
+            else
+                match = record['object']['id'].match(/v=(.+?)/)
 
             # Set id to fbid.
             record['object']['id'] = match[1]
 
         # Hash secret fields.
-        for secretField in ["owner", "id"]
+        for secretField in ["owner", "id", "sharer"]
             record['object'][secretField] = Utilities.hash(record['object'][secretField]) if record['object'][secretField]
 
         return record
@@ -88,10 +91,6 @@ class @FacebookLikeObserver
         parent = $(node).closest(@containers[container])
         if parent.length < 1
             parent = $(node).siblings().closest(@containers[container])
-        if container is "status"
-            # Fix for boxed statuses.
-            if parent.parents(".userContentWrapper").length
-                parent = parent.parent()
 
         # Interaction types.
         interactionTypes =

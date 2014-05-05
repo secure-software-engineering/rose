@@ -114,9 +114,17 @@ class @Facebook extends Network
 
                     return unless result.found is true
 
+                    # Determine interaction type.
+                    interactionType = 'commentstatus'
+
+                    # Check if user is in comment-edit modus.
+                    parent = $(this).closest('li.UFIAddComment')
+                    if parent.attr('data-reactid').indexOf('comment') > -1
+                        interactionType = 'editcommentstatus'
+
                     # Create interaction.
                     interaction =
-                        'type': 'commentstatus'
+                        'type': interactionType
                         'target': result.record.object
                         'object':
                             'type': 'comment'

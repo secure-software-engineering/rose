@@ -61,9 +61,36 @@ class @FacebookDeleteStatusObserver
                 'object': result['record']['object'],
                 'type': "deletestatus"
             }
+        # Is object on group timeline?
+        else if $(document).find("#pagelet_group_").length
+            # Get event URL.
+            ajaxify = obj.attr("ajaxify")
 
+            # Extract status ID.
+            match = /message_id=(.+?)&/.exec ajaxify
+
+            # No match found?
+            if match is null
+                return
+
+            id = match[1]
+
+            # Get Facebook like observer.
+            likeObserver = new FacebookLikeObserver()
+
+            # Get result of like observer.
+            result = likeObserver.handleNode("div[id*=\"" + id + "\"] div.userContentWrapper", "status")
+
+            if not result['found']
+                return
+
+            # Return meta data.
+            return {
+                'object': result['record']['object'],
+                'type': "deletestatus"
+            }
         # Is object on home timeline?
-        if obj.parents(".home").length
+        else if obj.parents(".home").length
             # Get event URL.
             ajaxify = obj.attr("ajaxify")
 

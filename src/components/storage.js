@@ -13,7 +13,7 @@ var Storage = function() {
         return Storage.prototype._singleton;
     }
     Storage.prototype._singleton = this;
-    
+
     var init = function init(data) {
         var platforms = ['facebook'];
 
@@ -39,9 +39,13 @@ var Storage = function() {
             }
         }
 
+        if (data.diary === null || data.diary === undefined) {
+            data.diary = [];
+        }
+
         return data;
     };
-    
+
     /**
      * Collects all new data items to be written to storage
      *
@@ -49,14 +53,14 @@ var Storage = function() {
      * @type Array
      */
     var data = [];
-    
+
     /**
      * Dirty flag: Indiciates whether the data array has been updated
      * @property dirty
      * @type Boolean
      */
     var dirty = false;
-    
+
     /**
      * Writing flag: Indicates whether a the storage is being updated
      *
@@ -64,24 +68,23 @@ var Storage = function() {
      * @type Boolean
      */
     var writing = false;
-    
+
     /**
      * Checks regularly whether data has to be written to storage
      */
-    setInterval(function () {
+    setInterval(function() {
         if (dirty && !writing) {
-            this._write();
+            write();
         }
     }.bind(this), 100);
-    
-    var store = function (item) {
-        return new RSVP.Promise(function (resolve, reject) {
-            setTimeout(function() {
-                kango.invokeAsync('kango.storage.getItem', 'rose-data', function (rosedata) {
-                    // Make sure data object is well-formed
-                    rosedata = init(rosedata);
-                    
-                    switch (item.action) {
+
+    var store = function(item) {
+        return new RSVP.Promise(function(resolve, reject) {
+            kango.invokeAsync('kango.storage.getItem', 'rose-data', function(rosedata) {
+                // Make sure data object is well-formed
+                rosedata = init(rosedata);
+
+                switch (item.action) {
                     case 'add':
                         // Create standard storage entry
                         var entry = {
@@ -91,39 +94,39 @@ var Storage = function() {
                             createdAt: new Date().toJSON(),
                             record: item.object
                         };
-                        
+
                         // Container
                         var container = null;
-                        
+
                         switch (item.object.type) {
-                        case 'interaction':
-                            // Set container to interactions array
-                            container = rosedata.platforms[item.object.platform].interactions;
-                            break;
-                        case 'comment':
-                            // Set container to comments array
-                            container = rosedata.platforms[item.object.platform].comments;
-                            break;
-                        case 'diary':
-                            // Set container to diary array
-                            container = rosedata.diary;
-                            break;
+                            case 'interaction':
+                                // Set container to interactions array
+                                container = rosedata.platforms[item.object.platform].interactions;
+                                break;
+                            case 'comment':
+                                // Set container to comments array
+                                container = rosedata.platforms[item.object.platform].comments;
+                                break;
+                            case 'diary':
+                                // Set container to diary array
+                                container = rosedata.diary;
+                                break;
                         }
-                        
+
                         // Update index
-                        entry.index = container.length + 1;
-                        
+                        entry.index = container.length;
+
                         // Add entry
                         container.push(entry);
                         break;
                     case 'update':
                         // Set container
                         var container = rosedata.platforms[item.selector.platform][item.selector.container];
-                        
+
                         // Find entry
                         for (var i in container) {
                             var entry = container[i];
-                        
+
                             // If entry matches selector...
                             if (entry.index === item.selector.index) {
                                 // Apply changes
@@ -136,41 +139,40 @@ var Storage = function() {
                     case 'remove':
                         // Set container
                         var container = rosedata.platforms[item.selector.platform][item.selector.container];
-                        
+
                         // Find entry
                         for (var i in container) {
                             var entry = container[i];
-                        
+
                             // If entry matches selector...
                             if (entry.index === item.selector.index) {
                                 // ... remove record...
                                 entry.record = null;
-                        
+
                                 // ... and set deleted flag
                                 entry.deleted = true;
                             }
                         }
                         break;
-                    }
-                    
-                    // Write changes back to storage
-                    kango.invokeAsync('kango.storage.setItem', 'rose-data', rosedata, resolve);
-                });
-            }, item.delay);
+                }
+
+                // Write changes back to storage
+                kango.invokeAsync('kango.storage.setItem', 'rose-data', rosedata, resolve);
+            });
         });
     };
-    
-    this._write = function () {
+
+    var write = function() {
         writing = true;
         var dataCopy = $.extend(true, [], data);
         data = [];
         dirty = false;
-        
-        dataCopy.reduce(function (current, next) {
-            return current.then(function () {
+
+        dataCopy.reduce(function(current, next) {
+            return current.then(function() {
                 return store(next);
             });
-        }, RSVP.resolve()).then(function () {
+        }, RSVP.resolve()).then(function() {
             writing = false;
         }.bind(this));
     };
@@ -183,10 +185,9 @@ var Storage = function() {
     this.add = function add(object) {
         data.push({
             action: 'add',
-            object: object,
-            delay: 100
+            object: object
         });
-        
+
         dirty = true;
     };
 
@@ -201,10 +202,9 @@ var Storage = function() {
         data.push({
             action: 'update',
             selector: selector,
-            changes: changes,
-            delay: 100
+            changes: changes
         });
-        
+
         dirty = true;
     };
 
@@ -217,10 +217,9 @@ var Storage = function() {
     this.remove = function remove(selector) {
         data.push({
             action: 'remove',
-            selector: selector,
-            delay: 100
+            selector: selector
         });
-        
+
         dirty = true;
     };
 
@@ -228,11 +227,12 @@ var Storage = function() {
      * Dumps the rose data.
      *
      * @method dump
-     * @param {Function} callback Function that is called with the rose data dump as the first parameter
      */
-    this.dump = function dump(callback) {
+    this.dump = function dump() {
         return new RSVP.Promise(function(resolve, reject) {
-            kango.invokeAsync('kango.storage.getItem', 'rose-data', resolve(data));
+            kango.invokeAsync('kango.storage.getItem', 'rose-data', function(roseData) {
+                resolve(roseData);
+            });
         });
     };
 };

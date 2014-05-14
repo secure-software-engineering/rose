@@ -76,7 +76,7 @@ var Storage = function() {
         if (dirty && !writing) {
             write();
         }
-    }.bind(this), 100);
+    }, 100);
 
     var store = function(item) {
         return new RSVP.Promise(function(resolve, reject) {
@@ -174,7 +174,7 @@ var Storage = function() {
             });
         }, RSVP.resolve()).then(function() {
             writing = false;
-        }.bind(this));
+        });
     };
 
     /**

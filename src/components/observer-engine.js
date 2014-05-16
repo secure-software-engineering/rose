@@ -10,6 +10,90 @@ var ObserverEngine = (function($) {
     var ObserverEngine = {};
 
     var observers = [];
+    
+    /**
+     * Returns only those observers which are associated to the given
+     * network and have the given type
+     */
+    function filterObservers(network, type) {
+        var result = [];
+        
+        for (var i in observers) {
+            var observer = observers[i];
+            
+            if (observer.network === network && observer.type === type) {
+                result.push(observer);
+            }
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Handles the integration of pattern observers on click events
+     */
+    function handleClick(event) {
+        // Get event target
+        var target = event.target;
+    
+        // Build path to node
+        var path = [target.nodeName];
+        $(target).parents().each(function() {
+            path.unshift($(this)[0].nodeName);
+        });
+        path = path.join(' > ');
+    
+        // Apply observers
+        for (var i in filterObservers(network, 'pattern')) {
+            var observer = observers[i];
+    
+            // Flag if pattern matches
+            var found = false;
+    
+            // Data container
+            var data = null;
+    
+            // Go through DOM tree and try to apply pattern
+            for (var node = $(target); node.prop('tagName').toLowerCase() !== 'body'; node = node.parent()) {
+                // Use every pattern
+                for (var j in observer.patterns) {
+                    var entry = observer.patterns[j];
+
+                    // Apply pattern
+                    var result = node.applyPattern({
+                        structure: entry.pattern
+                    });
+
+                    // If result found...
+                    if (result.success) {
+                        // ... store it
+                        data = entry.process(result.data);
+
+                        // Set flag and break
+                        found = true;
+                        break;
+                    }
+                }
+
+                // Something found? Break.
+                if (found) {
+                    break;
+                }
+            }
+    
+            if (found && data !== null) {
+                // Save interaction to storage
+                Storage.add({
+                    type: 'interaction',
+                    name: observer.name,
+                    network: observer.network,
+                    record: data
+                });
+    
+                break;
+            }
+        }
+    }
 
     /**
     * Adds an observer to the engine.
@@ -60,74 +144,7 @@ var ObserverEngine = (function($) {
 
         // Register global click event listener
         $(document).on('click', function(event) {
-            // Get event target
-            var target = event.target;
-
-            // Build path to node
-            var path = [target.nodeName];
-            $(target).parents().each(function() {
-                path.unshift($(this)[0].nodeName);
-            });
-            path = path.join(' > ');
-
-            // Apply observers
-            for (var i in observers) {
-                var observer = observers[i];
-
-                // Continue if observer belongs to wrong network
-                if (observer.network !== network) {
-                    continue;
-                }
-
-                // Flag if pattern matches
-                var found = false;
-
-                // Data container
-                var data = null;
-
-                // Only apply pattern observers at this point
-                if (observer.type === 'pattern') {
-                    // Go through DOM tree and try to apply pattern
-                    for (var node = $(target); node.prop('tagName').toLowerCase() !== 'body'; node = node.parent()) {
-                        // Use every pattern
-                        for (var j in observer.patterns) {
-                            var entry = observer.patterns[j];
-
-                            // Apply pattern
-                            var result = node.applyPattern({
-                                structure: entry.pattern
-                            });
-
-                            // If result found...
-                            if (result.success) {
-                                // ... store it
-                                data = entry.process(result.data);
-
-                                // Set flag and break
-                                found = true;
-                                break;
-                            }
-                        }
-
-                        // Something found? Break.
-                        if (found) {
-                            break;
-                        }
-                    }
-                }
-
-                if (found && data !== null) {
-                    // Save interaction to storage
-                    Storage.add({
-                        type: 'interaction',
-                        name: observer.name,
-                        network: observer.network,
-                        record: data
-                    });
-
-                    break;
-                }
-            }
+            handleClick(event);
         });
     };
 

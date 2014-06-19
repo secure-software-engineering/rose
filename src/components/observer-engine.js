@@ -1,5 +1,7 @@
 var $ = require('jquery-patterns');
 
+var _ = require('underscore');
+
 var Storage = require('./storage');
 
 /**
@@ -32,67 +34,34 @@ var ObserverEngine = (function($) {
     /**
      * Handles the integration of pattern observers on click events
      */
-    function handleClick(event) {
-        // Get event target
-        var target = event.target;
-    
-        // Build path to node
-        var path = [target.nodeName];
-        $(target).parents().each(function() {
-            path.unshift($(this)[0].nodeName);
+    function handleClick(event, network) {
+        var clickObservers = _.where(observers, {
+            type: 'click',
+            network: network
         });
-        path = path.join(' > ');
-    
-        // Apply observers
-        for (var i in filterObservers(network, 'pattern')) {
-            var observer = observers[i];
-    
-            // Flag if pattern matches
-            var found = false;
-    
-            // Data container
-            var data = null;
-    
-            // Go through DOM tree and try to apply pattern
-            for (var node = $(target); node.prop('tagName').toLowerCase() !== 'body'; node = node.parent()) {
-                // Use every pattern
-                for (var j in observer.patterns) {
-                    var entry = observer.patterns[j];
-
-                    // Apply pattern
-                    var result = node.applyPattern({
-                        structure: entry.pattern
+        
+        clickObservers.forEach(function (observer) {
+            observer.patterns.forEach(function (pattern) {
+                if (_.contains($(pattern.selector), event.target)) {
+                    var parents = $(event.target).parents();
+                    var found = false;
+                    
+                    parents.each(function (i, n) {
+                        if (found) {
+                            return;
+                        }
+                        
+                        var search = $(n).find(pattern.lookup);
+                        
+                        if (search.length > 0) {
+                            found = true;
+                            
+                            // TODO: Process output/save interaction
+                        }
                     });
-
-                    // If result found...
-                    if (result.success) {
-                        // ... store it
-                        data = entry.process(result.data);
-
-                        // Set flag and break
-                        found = true;
-                        break;
-                    }
                 }
-
-                // Something found? Break.
-                if (found) {
-                    break;
-                }
-            }
-    
-            if (found && data !== null) {
-                // Save interaction to storage
-                Storage.add({
-                    type: 'interaction',
-                    name: observer.name,
-                    network: observer.network,
-                    record: data
-                });
-    
-                break;
-            }
-        }
+            });
+        });
     }
 
     /**
@@ -144,7 +113,7 @@ var ObserverEngine = (function($) {
 
         // Register global click event listener
         $(document).on('click', function(event) {
-            handleClick(event);
+            handleClick(event, network);
         });
     };
 

@@ -50,11 +50,13 @@ module.exports = function(grunt) {
         options: {
           require: [
             './bower_components/jquery/dist/jquery.min.js',
-            './dependencies/jquery.patterns.shim.js'
+            './dependencies/jquery.patterns.shim.js',
+            './bower_components/underscore/underscore.js'
           ],
           alias: [
             './bower_components/jquery/dist/jquery.min.js:jquery',
-            './dependencies/jquery.patterns.shim.js:jquery-patterns'
+            './dependencies/jquery.patterns.shim.js:jquery-patterns',
+            './bower_components/underscore/underscore.js:underscore'
           ],
           shit: {}
         },

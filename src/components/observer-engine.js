@@ -76,6 +76,18 @@ var ObserverEngine = (function($) {
         // Push to observers list
         observers.push(observer);
     };
+    
+    /**
+    * Removes all observers.
+    *
+    * @method removeAll
+    */
+    ObserverEngine.removeAll = function removeAll() {
+        log('ObserverEngine', 'Remove all observers');
+        
+        // Empty observers list
+        observers = [];
+    };
 
     /**
     * Sets up event listeners and integrates observers

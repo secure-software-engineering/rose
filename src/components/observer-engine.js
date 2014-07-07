@@ -4,6 +4,8 @@ var _ = require('underscore');
 
 var Storage = require('./storage');
 
+var log = require('./log');
+
 /**
 * @module Core
 * @submodule Observer Engine

@@ -1,5 +1,6 @@
 var ObserverEngine = require('./observer-engine'),
     ExtractorEngine = require('./extractor-engine'),
+    Heartbeat = require('./heartbeat'),
     log = require('./log');
 
 /**

@@ -83,20 +83,23 @@ var Storage = function() {
             kango.invokeAsync('kango.storage.getItem', 'rose-data', function(rosedata) {
                 // Make sure data object is well-formed
                 rosedata = init(rosedata);
-
+                
+                // Declare container and entry
+                var container = null;
+                var entry = null;
+                
+                var i;
+                
                 switch (item.action) {
                     case 'add':
                         // Create standard storage entry
-                        var entry = {
+                        entry = {
                             index: 0,
                             deleted: false,
                             hidden: false,
                             createdAt: new Date().toJSON(),
                             record: item.object
                         };
-
-                        // Container
-                        var container = null;
 
                         switch (item.object.type) {
                             case 'interaction':
@@ -121,11 +124,11 @@ var Storage = function() {
                         break;
                     case 'update':
                         // Set container
-                        var container = rosedata.platforms[item.selector.platform][item.selector.container];
+                        container = rosedata.platforms[item.selector.platform][item.selector.container];
 
                         // Find entry
-                        for (var i in container) {
-                            var entry = container[i];
+                        for (i in container) {
+                            entry = container[i];
 
                             // If entry matches selector...
                             if (entry.index === item.selector.index) {
@@ -138,11 +141,11 @@ var Storage = function() {
                         break;
                     case 'remove':
                         // Set container
-                        var container = rosedata.platforms[item.selector.platform][item.selector.container];
+                        container = rosedata.platforms[item.selector.platform][item.selector.container];
 
                         // Find entry
-                        for (var i in container) {
-                            var entry = container[i];
+                        for (i in container) {
+                            entry = container[i];
 
                             // If entry matches selector...
                             if (entry.index === item.selector.index) {

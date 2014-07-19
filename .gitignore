@@ -3,6 +3,5 @@ node_modules
 bower_components
 build
 packages
-dist/src/common/rose.js
-dist/src/common/rose.min.js
+dist/src/common/rose*js
 *.log

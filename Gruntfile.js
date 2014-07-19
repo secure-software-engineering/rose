@@ -15,7 +15,8 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'build/<%= pkg.name %>.min.js': ['build/<%= pkg.name %>.js']
+          'build/<%= pkg.name %>.content.min.js': ['build/<%= pkg.name %>.content.js'],
+          'build/<%= pkg.name %>.background.min.js': ['build/<%= pkg.name %>.background.js']
         }
       }
     },
@@ -40,7 +41,8 @@ module.exports = function(grunt) {
           cwd: '<%= config.directories.build %>',
           dest: '<%= config.directories.kangoscript %>',
           src: [
-            'rose.min.js'
+            'rose.content.min.js',
+            'rose.background.min.js'
           ]
         }]
       }
@@ -63,7 +65,8 @@ module.exports = function(grunt) {
           shit: {}
         },
         files: {
-          'build/<%= pkg.name %>.js': ['src/**/*.js', '!src/app.js', 'src/app.js']
+          'build/<%= pkg.name %>.content.js': ['src/components/**/*.js', '!src/components/background/*.js', 'src/app-content.js'],
+          'build/<%= pkg.name %>.background.js': ['src/components/**/*.js', '!src/components/content/*.js', 'src/app-background.js']
         }
       }
     },

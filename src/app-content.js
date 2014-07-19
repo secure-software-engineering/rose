@@ -1,6 +1,6 @@
 /**
 * ROSE
 */
-var Core = require('./components/core');
+var Core = require('./components/content/core');
 
 Core.start();

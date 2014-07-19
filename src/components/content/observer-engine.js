@@ -2,9 +2,9 @@ var $ = require('jquery-patterns');
 
 var _ = require('underscore');
 
-var Storage = require('./storage');
+var Storage = require('./../storage');
 
-var log = require('./log');
+var log = require('./../log');
 
 /**
 * @module Core

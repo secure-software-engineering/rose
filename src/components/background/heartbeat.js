@@ -1,5 +1,4 @@
-var Core = require('./core'),
-    log = require('./log');
+var log = require('./../log');
 
 /**
 * @module Core

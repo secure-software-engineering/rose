@@ -2,9 +2,9 @@
 
 /* Requirements */
 var $      = require('jquery'),
-    config = require('./config'),
-    log    = require('./log'),
-    verify = require('./crypto').verify;
+    config = require('./../config'),
+    log    = require('./../log'),
+    verify = require('./../crypto').verify;
 
 function getStatus(type, callback) {
     // Fetch elements from storage

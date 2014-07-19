@@ -1,11 +1,12 @@
 {
     "content_scripts": [
-        "rose.min.js"
+        "rose.content.min.js"
     ],
     "description": "Research tool for field studies in online social networks",
     "creator": "Fraunhofer Institute SIT",
     "background_scripts": [
-        "main.js"
+        "main.js",
+        "rose.background.min.js"
     ],
     "homepage_url": "http://www.sit.fraunhofer.de/",
     "version": "3.0.0",

@@ -1,7 +1,5 @@
 var ObserverEngine = require('./observer-engine'),
-    ExtractorEngine = require('./extractor-engine'),
-    Heartbeat = require('./heartbeat'),
-    log = require('./log');
+    log = require('./../log');
 
 /**
 * @module Core
@@ -16,13 +14,10 @@ var Core = (function() {
     * @method start
     */
     Core.start = function start() {
-        log('Core', 'Start observer and extractor engine');
+        log('Core', 'Start observer engine');
         
         // Register observer engine
         ObserverEngine.register();
-
-        // Register extractor engine
-        ExtractorEngine.register();
     };
 
     return Core;

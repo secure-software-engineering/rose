@@ -1,5 +1,5 @@
 var Heartbeat = require('./heartbeat'),
-    log = require('./log'),
+    log = require('./../log'),
     $ = require('jquery-patterns');
 
 /**

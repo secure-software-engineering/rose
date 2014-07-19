@@ -51,12 +51,14 @@ module.exports = function(grunt) {
           require: [
             './bower_components/jquery/dist/jquery.min.js',
             './dependencies/jquery.patterns.shim.js',
-            './bower_components/underscore/underscore.js'
+            './bower_components/underscore/underscore.js',
+            './bower_components/jsrsasign/jsrsasign-4.7.0-all-min.js'
           ],
           alias: [
             './bower_components/jquery/dist/jquery.min.js:jquery',
             './dependencies/jquery.patterns.shim.js:jquery-patterns',
-            './bower_components/underscore/underscore.js:underscore'
+            './bower_components/underscore/underscore.js:underscore',
+            './bower_components/jsrsasign/jsrsasign-4.7.0-all-min.js:jsrsasign'
           ],
           shit: {}
         },

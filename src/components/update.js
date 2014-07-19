@@ -1,6 +1,10 @@
+/** @module update */
+
+/* Requirements */
 var $      = require('jquery'),
     config = require('./config'),
-    log    = require('./log');
+    log    = require('./log'),
+    verify = require('./crypto').verify;
 
 function getStatus(type, callback) {
     // Fetch elements from storage
@@ -40,7 +44,13 @@ function update(type, updates) {
             return;
         }
         
-        // TODO: Check observer for validity.
+        // Verify signature
+        if (!verify(element, current.signature, config.cert)) {
+            // Signature is invalid - update remaining observers
+            update(type, updates);
+            
+            return;
+        }
         
         // Get observers from storage
         kango.invokeAsync('kango.storage.getItem', type, function (elements) {
@@ -58,7 +68,7 @@ function update(type, updates) {
 function check(type, repository) {
     getStatus(type, function (status) {
         // List of elements to update
-        var update = {};
+        var updates = {};
         
         // Determine type of update
         var container = null;
@@ -84,14 +94,17 @@ function check(type, repository) {
             }
             
             // Otherwise: add element to update list
-            update[element.name] = element.url;
+            updates[element.name] = {
+                url: element.url,
+                signature: element.signature
+            };
         });
         
-        update(type, update);
+        update(type, updates);
     });
 }
 
-var Updater = {
+var update = {
     sync: function sync() {
         // Fetch repository information
         $.get(config.repositoryUrl, function (repository) {
@@ -112,4 +125,4 @@ var Updater = {
     }
 };
 
-module.exports = Updater;
+module.exports = update;

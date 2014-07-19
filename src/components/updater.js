@@ -16,14 +16,14 @@ function getStatus(type, callback) {
     });
 }
 
-function update(type, update) {
-    // Return if update list is empty
-    if (update.length == 0) {
+function update(type, updates) {
+    // Return if updates list is empty
+    if (updates.length === 0) {
         return;
     }
     
     // Get first update element (and unshift)
-    var current = update.unshift();
+    var current = updates.unshift();
     
     // Load file
     $.get(current.url, function (element) {
@@ -35,7 +35,7 @@ function update(type, update) {
             log('Updater', 'Malformed ' + type + ' file for element ' + current.name + '.');
             
             // Update remaining observers (remember: update list has been unshifted)
-            update(type, update);
+            update(type, updates);
             
             return;
         }
@@ -49,7 +49,7 @@ function update(type, update) {
             
             kango.invokeAsync('kango.storage.setItem', type, elements, function next() {
                 // Update remaining elements (remember: update list has been unshifted)
-                update(type, update);
+                update(type, updates);
             });
         });
     });
@@ -72,7 +72,7 @@ function check(type, repository) {
         }
         
         // If no container found, return
-        if (container == null) {
+        if (container === null) {
             return;
         }
         

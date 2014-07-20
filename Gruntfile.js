@@ -39,7 +39,7 @@ module.exports = function(grunt) {
           expand: true,
           dot: true,
           cwd: '<%= config.directories.build %>',
-          dest: '<%= config.directories.kangoscript %>',
+          dest: '<%= config.directories.kangoscript %>/scripts',
           src: [
             'rose.content.min.js',
             'rose.background.min.js'

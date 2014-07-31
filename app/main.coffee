@@ -28,19 +28,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class MyExtension
     constructor: ->
         info = kango.getExtensionInfo()
-        roseStorage = kango.storage.getItem 'roseStorage'
-        unless roseStorage?
-            roseStorage =
-                platforms: []
-                diary: []
-                settings:
-                    reminder:
-                        isActive: true
-                    language: 'auto'
-                meta:
-                    version: info.version
-                    'install-date': new Date().toJSON()
+        localforage.getItem 'roseStorage', (roseStorage) ->
+            unless roseStorage?
+                roseStorage =
+                    platforms: []
+                    diary: []
+                    settings:
+                        reminder:
+                            isActive: true
+                        language: 'auto'
+                    meta:
+                        version: info.version
+                        'install-date': new Date().toJSON()
 
-            kango.storage.setItem 'roseStorage', roseStorage
+                localforage.setItem 'roseStorage', roseStorage
 
 extension = new MyExtension()

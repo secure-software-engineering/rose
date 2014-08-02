@@ -1,15 +1,15 @@
 // ROSE Content Script
 // -------------------
 
-var Core = require('./components/content/core');
+var ObserverEngine = require('./components/content/observer-engine');
 
 (function() {
   /*
-   * Core
-   * ----
+   * Observer Engine
+   * ---------------
    *
-   * Start the content core.
+   * Start observer engine and register to document.
    */
   
-  Core.start();
+  ObserverEngine.register();
 })();

@@ -1,7 +1,8 @@
 /** @module crypto */
 
 /* Requirements */
-var jsrsasign = require('jsrsasign');
+var jsrsasign = require('jsrsasign'),
+    config    = require('./config');
 
 module.exports = {
     /**

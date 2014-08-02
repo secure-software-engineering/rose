@@ -1,5 +1,4 @@
-var Heartbeat = require('./heartbeat'),
-    log = require('./../log'),
+var log = require('./../log'),
     $ = require('jquery-patterns');
 
 /**
@@ -10,6 +9,8 @@ var ExtractorEngine = (function($) {
     var ExtractorEngine = {};
 
     var extractors = [];
+    
+    var Heartbeat = null;
 
     var handle = function handle(extract) {
         $.get(extract.url, function handleResponse(content) {
@@ -31,7 +32,17 @@ var ExtractorEngine = (function($) {
             }
         });
     };
-
+    
+    /**
+    * Sets the Heartbeat instance.
+    *
+    * @method useHeartbeat
+    * @param {Object} instance The heartbeat instance to be used.
+    */
+    ExtractorEngine.useHeartbeat = function useHeartbeat(instance) {
+        Heartbeat = instance;
+    };
+    
     /**
     * Adds an extractor to the engine.
     *

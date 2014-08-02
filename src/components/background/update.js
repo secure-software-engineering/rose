@@ -45,7 +45,7 @@ function update(type, updates) {
         }
         
         // Verify signature
-        if (!verify(element, current.signature, config.cert)) {
+        if (!verify(element, current.signature, config('certificate'))) {
             // Signature is invalid - update remaining observers
             update(type, updates);
             
@@ -107,7 +107,7 @@ function check(type, repository) {
 var update = {
     sync: function sync() {
         // Fetch repository information
-        $.get(config.repositoryUrl, function (repository) {
+        $.get(config('repository'), function (repository) {
             try {
                 // Parse raw data into JSON
                 repository = JSON.parse(repository);

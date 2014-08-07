@@ -21,9 +21,9 @@ var _config = {
   repository: "http://-/-/repository.json",
   
   /**
-   * Certificate.
+   * Fingerprint of the repository's certificate.
    */
-  certificate: null,
+  fingerprint: null,
   
   /**
    * Interval in which ROSE synchronizes with the repository.

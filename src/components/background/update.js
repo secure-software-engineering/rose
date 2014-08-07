@@ -1,10 +1,11 @@
 /** @module update */
 
-/* Requirements */
+/** Requirements */
 var $      = require('jquery'),
     config = require('./../config'),
     log    = require('./../log'),
-    verify = require('./../crypto').verify;
+    verify = require('./../crypto').verify,
+    hash   = require('./../crypto').sha1;
 
 function getStatus(type, callback) {
     // Fetch elements from storage
@@ -45,7 +46,7 @@ function update(type, updates) {
         }
         
         // Verify signature
-        if (!verify(element, current.signature, config('certificate'))) {
+        if (hash(element) !== current.signature) {
             // Signature is invalid - update remaining observers
             update(type, updates);
             
@@ -108,6 +109,9 @@ var update = {
     sync: function sync() {
         // Fetch repository information
         $.get(config('repository'), function (repository) {
+            // Save raw data for verification
+            var data = repository;
+            
             try {
                 // Parse raw data into JSON
                 repository = JSON.parse(repository);
@@ -118,9 +122,26 @@ var update = {
                 return;
             }
             
-            // Check observers and extractors for updates
-            check('observers',  repository);
-            check('extractors', repository);
+            // Verify certificate
+            if (hash(repository.certificate) !== config('fingerprint')) {
+                log('Updater', 'Certificate of repository is invalid');
+                
+                return;
+            }
+            
+            // Fetch signature of repository
+            $.get(config('repository') + '.signed', function (signature) {
+                // Verify signature
+                if (!verify(data, signature, repository.certificate)) {
+                    log('Updater', 'Signature of repository is invalid');
+                    
+                    return;
+                }
+                
+                // Check observers and extractors for updates
+                check('observers',  repository);
+                check('extractors', repository);
+            });
         });
     }
 };

@@ -1,137 +1,107 @@
-var $ = require('jquery-patterns');
+/** @module observer-engine */
 
-var _ = require('underscore');
-
-var Storage = require('./../storage');
-
-var log = require('./../log');
+/** Requirements */
+var Storage = require('../storage'),
+    log     = require('../log'),
+    $       = require('jquery-patterns'),
+    Storage = require('../storage');
 
 /**
-* @module Core
-* @submodule Observer Engine
-*/
-var ObserverEngine = (function($) {
-    var ObserverEngine = {};
+ * URL identifiers of social networks.
+ */
+var identifiers = {
+  facebook: 'facebook.com',
+  googleplus: 'plus.google.com'
+};
 
-    var observers = [];
-    
-    /**
-     * Returns only those observers which are associated to the given
-     * network and have the given type
-     */
-    function filterObservers(network, type) {
-        var result = [];
+/**
+ * Stores an interaction in storage.
+ * @param {string} name - The interaction's name.
+ * @param {string} network - The network in which the interaction took place.
+ * @param {object} data - The interaction's data.
+ */
+function storeInteraction(name, network, data) {
+  // Set type for storage
+  data.type = 'interaction';
+  
+  // Add data
+  Storage.add(data);
+}
+
+/**
+ * Handles click events and uses the supplied observers to apply
+ * patterns.
+ * @param {object} event - An event object.
+ * @param {array} observers - A set of observers.
+ */
+function handleClick(event, observers) {
+  // Wrap event target
+  var $node = $(event.target);
+  
+  // Apply observers
+  observers.forEach(function(observer) {
+    // Apply patterns
+    observer.patterns.forEach(function(entry) {
+      // Only continue if parent container can be found
+      if ($node.parents(entry.container).length > 0) {
+        var container = $node.closest(entry.container);
         
-        for (var i in observers) {
-            var observer = observers[i];
-            
-            if (observer.network === network && observer.type === type) {
-                result.push(observer);
-            }
+        // Extract information
+        var result = $(container).applyPattern({
+          structure: entry.pattern
+        });
+        
+        // Store the extracted information if something is found
+        if (result.success) {
+          // Process data
+          var extract = entry.process(result['data'][0]);
+          
+          // Store interaction
+          storeInteraction(observer.name, observer.network, extract);
         }
+      }
+    });
+  });
+}
+
+/**
+ * Integrates a set of observers into the DOM of the page.
+ * @param {array} observers - A set of observers.
+ */
+function integrate(observers) {
+  // Register global 'click' event
+  $(document).on('click', function(event) {
+    // Filter observers for correct event type and defer event handling
+    handleClick(event, observers.filter(function(observer) {
+      return observer.type === 'click';
+    }));
+  });
+}
+
+module.exports = {
+  register: function() {
+    // Detect network, if possible
+    var network = null;
+    for (var name in identifiers) {
+      var pattern = identifiers[name];
+      
+      if (window.location.indexOf(pattern) > -1) {
+        network = name;
         
-        return result;
+        break;
+      }
     }
     
-    /**
-     * Handles the integration of pattern observers on click events
-     */
-    function handleClick(event, network) {
-        var clickObservers = _.where(observers, {
-            type: 'click',
-            network: network
-        });
-        
-        clickObservers.forEach(function (observer) {
-            observer.patterns.forEach(function (pattern) {
-                if (_.contains($(pattern.selector), event.target)) {
-                    var parents = $(event.target).parents();
-                    var found = false;
-                    
-                    parents.each(function (i, n) {
-                        if (found) {
-                            return;
-                        }
-                        
-                        var search = $(n).find(pattern.lookup);
-                        
-                        if (search.length > 0) {
-                            found = true;
-                            
-                            // TODO: Process output/save interaction
-                        }
-                    });
-                }
-            });
-        });
+    // Stop if no network has been found
+    if (network === null) {
+      return;
     }
-
-    /**
-    * Adds an observer to the engine.
-    *
-    * @method add
-    * @param {Object} observer The observer to be added
-    */
-    ObserverEngine.add = function add(observer) {
-        log('ObserverEngine', 'Add observer: ' + observer.name);
-
-        // Push to observers list
-        observers.push(observer);
-    };
     
-    /**
-    * Removes all observers.
-    *
-    * @method removeAll
-    */
-    ObserverEngine.removeAll = function removeAll() {
-        log('ObserverEngine', 'Remove all observers');
-        
-        // Empty observers list
-        observers = [];
-    };
-
-    /**
-    * Sets up event listeners and integrates observers
-    * into the document.
-    *
-    * @method register
-    */
-    ObserverEngine.register = function register() {
-        log('ObserverEngine', 'Register in document');
-
-        // Network identifiers
-        var identifiers = {
-            facebook: 'facebook.com',
-            gplus: 'plus.google.com'
-        };
-
-        // Determine if user is on network
-        var network = null;
-        for (var name in identifiers) {
-            var url = identifiers[name];
-
-            if ((window.location + '').indexOf(url) >= 0) {
-                // Set network and break
-                network = name;
-                break;
-            }
-        }
-
-        // If no network has been detected...
-        if (network === null) {
-            return;
-        }
-
-        log('ObserverEngine', 'Integrate into network: ' + network);
-
-        // Register global click event listener
-        $(document).on('click', function(event) {
-            handleClick(event, network);
-        });
-    };
-
-    return ObserverEngine;
-})($);
-
-module.exports = ObserverEngine;
+    kango.invokeAsync('kango.storaget.getItem', 'observers', function(observers) {      
+      // Filter observers and integrate into DOM
+      integrate(observers.filter(function(observer) {
+        return observer.network === network;
+      }));
+    });
+  }
+};

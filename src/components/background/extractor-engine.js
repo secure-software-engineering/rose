@@ -5,7 +5,7 @@ var log = require('./../log'),
 * @module Core
 * @submodule Extractor Engine
 */
-var ExtractorEngine = (function($) {
+module.exports = (function($) {
     var ExtractorEngine = {};
 
     var extractors = [];
@@ -76,5 +76,3 @@ var ExtractorEngine = (function($) {
 
     return ExtractorEngine;
 })($);
-
-module.exports = ExtractorEngine;

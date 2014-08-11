@@ -1,11 +1,11 @@
-var RSVP = require('rsvp');
-var $ = require('jquery');
+var RSVP = require('rsvp'),
+    $    = require('jquery');
 
 /**
  * @module Core
  * @submodule Storage
  */
-var Storage = function() {
+module.exports = function() {
     /**
      * Singleton
      */
@@ -239,5 +239,3 @@ var Storage = function() {
         });
     };
 };
-
-module.exports = Storage;

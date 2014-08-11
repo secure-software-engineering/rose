@@ -54,7 +54,7 @@ function handleClick(event, observers) {
         // Store the extracted information if something is found
         if (result.success) {
           // Process data
-          var extract = entry.process(result['data'][0]);
+          var extract = entry.process(result.data[0]);
           
           // Store interaction
           storeInteraction(observer.name, observer.network, extract);
@@ -97,7 +97,7 @@ module.exports = {
       return;
     }
     
-    kango.invokeAsync('kango.storaget.getItem', 'observers', function(observers) {      
+    kango.invokeAsync('kango.storaget.getItem', 'observers', function(observers) {
       // Filter observers and integrate into DOM
       integrate(observers.filter(function(observer) {
         return observer.network === network;

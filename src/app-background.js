@@ -30,7 +30,5 @@ var Heartbeat       = require('./components/background/heartbeat'),
    * Start extractor engine and integrate with Heartbeat.
    */
   
-  ExtractorEngine.useHeartbeat(Heartbeat);
-  
   ExtractorEngine.register();
 })();

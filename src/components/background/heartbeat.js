@@ -4,7 +4,7 @@ var log = require('./../log');
 * @module Core
 * @submodule Heartbeat
 */
-module.exports = (function() {
+var Heartbeat = (function() {
     var Heartbeat = {
         intervals: {
             /**
@@ -168,3 +168,5 @@ module.exports = (function() {
 
     return Heartbeat;
 })();
+
+module.exports = Heartbeat;

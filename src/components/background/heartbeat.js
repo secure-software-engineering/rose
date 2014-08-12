@@ -43,6 +43,9 @@ var Heartbeat = (function() {
 
         // Load tasks from storage
         kango.invokeAsync('kango.storage.getItem', 'heartbeat', function(data) {
+            // Create data field, if necessary
+            data = data || {};
+            
             // Load tasks
             tasks = data.tasks || {};
 

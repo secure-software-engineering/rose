@@ -4,4 +4,5 @@ bower_components
 build
 packages
 dist/src/common/scripts/*
+dist/src/common/popup/components/*
 *.log

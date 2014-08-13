@@ -1,0 +1,46 @@
+<h3 class="ui header">
+    <i class="star icon"></i>
+    <div class="content">
+        {{I18n 'interactions'}}
+        <div class="sub header">{{I18n 'interactionsPage.subHeader'}}</div>
+    </div>
+</h3>
+<div class="ui small pilled feed">
+    {{#each item in activeInteractions}}
+    <div class="event">
+        <div class="label">
+            <i class="user icon"></i>
+            {{#if item.hidden}}
+            <i class="minus red sign icon" title="Hello I am a popup" data-variation="inverted"></i>
+            {{/if}}
+        </div>
+        <div class="content">
+            <div class="date" title="{{unbound timeFormatted item.createdAt}}">
+                {{timeAgo item.createdAt}}
+            </div>
+            <div class="summary clickable">
+                {{I18n 'you'}} created a {{item.record.type}}
+                <i class="icon triangle down"></i>
+            </div>
+            <div class="extra text">
+                {{pretty item}}
+            </div>
+            <div class="actions">
+                {{#if item.hidden}}
+                <a class="hide" {{action 'show' item}}>{{I18n 'include'}}</a>
+                {{else}}
+                <a class="hide" {{action 'hide' item}}>{{I18n 'exclude'}}</a>
+                {{/if}}
+                <a class="delete" {{action 'delete' item}}>{{I18n 'delete'}}</a>
+            </div>
+        </div>
+    </div>
+    {{else}}
+    <div class="ui info message">
+        <div class="header">
+            {{I18n 'interactionsPage.messageHeader'}}
+        </div>
+        {{I18n 'interactionsPage.messageHeader'}}.
+    </div>
+    {{/each}}
+</div>

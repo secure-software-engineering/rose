@@ -1,0 +1,48 @@
+<h3 class="ui header">
+    <i class="book icon"></i>
+    <div class="content">
+        {{I18n 'diary'}}
+        <div class="sub header">{{I18n 'diaryPage.subHeader'}}.</div>
+    </div>
+</h3>
+<div class="ui form">
+    <div class="field">
+        {{textarea value=diaryText}}
+    </div>
+    <div class="two fluid ui buttons">
+        <div class="ui button" {{action 'cancel'}}>{{I18n 'cancel'}}</div>
+        <div class="ui positive button" {{action 'saveEntry'}}>{{I18n 'save'}}</div>
+    </div>
+</div>
+<div class="ui divider"></div>
+<div class="ui small comments">
+    {{#each}}
+    <div class="comment">
+        <a class="avatar">
+        <i class="large circular file icon"></i>
+        </a>
+        <div class="content">
+            <a class="author">{{I18n 'you'}}</a>
+            <div class="metadata">
+                <div class="date" title="{{unbound timeFormatted createdAt}}">{{timeAgo createdAt}}</div>
+            </div>
+            <div class="text">
+                {{content}}
+            </div>
+            <div class="actions">
+                <a class="edit"{{action 'editEntry' this}}>{{I18n 'edit'}}</a>
+                <a class="delete"{{action 'deleteEntry' this}}>{{I18n 'delete'}}</a>
+            </div>
+        </div>
+    </div>
+    {{else}}
+    <div class="ui info message">
+        <div class="content">
+            <div class="header">
+                {{I18n 'diaryPage.messageHeader'}}
+            </div>
+            <p>{{I18n 'diaryPage.messageContent'}}!</p>
+        </div>
+    </div>
+    {{/each}}
+</div>

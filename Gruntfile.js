@@ -72,7 +72,41 @@ module.exports = function(grunt) {
     },
     shell: {
       kango: {
-        command: 'kango.py build --output-directory <%= config.directories.packages %> <%= config.directories.stage %>'
+        command: 'kango/kango.py build --output-directory <%= config.directories.packages %> <%= config.directories.stage %>'
+      }
+    },
+    emberTemplates: {
+      options: {
+        templateBasePath: /dist\/src\/common\/popup\/templates\//
+      },
+      dist: {
+        options: {
+          precompile: true
+        },
+        files: {
+          "dist/src/common/popup/scripts/templates.js": "dist/src/common/popup/templates/**/*.hbs"
+        }
+      }
+    },
+    bowercopy: {
+      options: {
+        clean: false
+      },
+      main: {
+        options: {
+          destPrefix: "dist/src/common/popup/components"
+        },
+        files: {
+          "normalize-css/normalize.css": "normalize-css/normalize.css",
+          "semantic-ui/build/packaged/css/semantic.css": "semantic-ui/build/packaged/css/semantic.css",
+          "jquery/jquery.js": "jquery/jquery.js",
+          "handlebars/handlebars.js": "handlebars/handlebars.js",
+          "ember/ember.js": "ember/ember.js",
+          "i18next/i18next.js": "i18next/i18next.js",
+          "moment/moment.js": "moment/moment.js",
+          "moment/lang/de.js": "moment/lang/de.js",
+          "semantic-ui/build/packaged/javascript/semantic.js": "semantic-ui/build/packaged/javascript/semantic.js"
+        }
       }
     }
   });
@@ -84,7 +118,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-ember-templates');
+  grunt.loadNpmTasks('grunt-bowercopy');
 
   grunt.registerTask('test', ['jshint']);
-  grunt.registerTask('default', ['jshint', 'browserify', 'uglify', 'copy', 'shell']);
+  grunt.registerTask('default', ['jshint', 'emberTemplates:dist', 'bowercopy', 'browserify', 'uglify', 'copy', 'shell']);
 };

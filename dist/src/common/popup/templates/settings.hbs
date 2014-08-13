@@ -1,0 +1,17 @@
+<h3 class="ui header">
+    <i class="settings icon"></i>
+    <div class="content">
+        {{I18n 'settings'}}
+        <div class="sub header">{{I18n 'settingsPage.subHeader'}}.</div>
+    </div>
+</h3>
+<div class="ui toggle checkbox">
+    {{view Ember.Checkbox checkedBinding='showReminder' id="reminder-checkbox"}}
+    <label for="reminder-checkbox">Comment reminder:
+    <b>{{#if showReminder}}
+        {{I18n 'enabled'}}
+    {{else}}
+        {{I18n 'disabled'}}
+    {{/if}}</b>
+    </label>
+</div>

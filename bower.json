@@ -10,6 +10,16 @@
   "dependencies": {
     "jquery": "~1.11.0",
     "jsrsasign": "~4.7.0",
-    "underscore": null
+    "underscore": null,
+    "handlebars": "~1.3.0",
+    "i18next": "~1.7.1",
+    "jssha": "*",
+    "open-sans-fontface": "~1.0.3",
+    "normalize-css": "~2.1.3",
+    "ember": "~1.5.0",
+    "semantic-ui": "~0.15.1",
+    "jquery.cookie": "~1.4.0",
+    "rsvp": "~3.0.1",
+    "moment": "~2.4.0"
   }
 }

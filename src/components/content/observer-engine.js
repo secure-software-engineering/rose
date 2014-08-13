@@ -3,16 +3,7 @@
 /** Requirements */
 var Storage = require('../storage'),
     log     = require('../log'),
-    $       = require('jquery-patterns'),
-    Storage = require('../storage');
-
-/**
- * URL identifiers of social networks.
- */
-var identifiers = {
-  facebook: 'facebook.com',
-  googleplus: 'plus.google.com'
-};
+    $       = require('jquery-patterns');
 
 /**
  * Stores an interaction in storage.
@@ -69,6 +60,8 @@ function handleClick(event, observers) {
  * @param {array} observers - A set of observers.
  */
 function integrate(observers) {
+  log('ObserverEngine', 'Integrating observers');
+  
   // Register global 'click' event
   $(document).on('click', function(event) {
     // Filter observers for correct event type and defer event handling
@@ -80,12 +73,20 @@ function integrate(observers) {
 
 module.exports = {
   register: function() {
+    /**
+     * URL identifiers of social networks.
+     */
+    var identifiers = {
+      facebook: "facebook.com",
+      googleplus: "plus.google.com"
+    };
+        
     // Detect network, if possible
     var network = null;
     for (var name in identifiers) {
       var pattern = identifiers[name];
       
-      if (window.location.indexOf(pattern) > -1) {
+      if ((window.location + '').indexOf(pattern) >= 0) {
         network = name;
         
         break;
@@ -96,8 +97,11 @@ module.exports = {
     if (network === null) {
       return;
     }
-    
-    kango.invokeAsync('kango.storaget.getItem', 'observers', function(observers) {
+        
+    kango.invokeAsync('kango.storage.getItem', 'observers', function(observers) {      
+      // Create observers, if neccessary
+      observers = observers || [];
+            
       // Filter observers and integrate into DOM
       integrate(observers.filter(function(observer) {
         return observer.network === network;

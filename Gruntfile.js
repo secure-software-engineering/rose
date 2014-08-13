@@ -72,7 +72,7 @@ module.exports = function(grunt) {
     },
     shell: {
       kango: {
-        command: 'kango/kango.py build --output-directory <%= config.directories.packages %> <%= config.directories.stage %>'
+        command: 'kango.py build --output-directory <%= config.directories.packages %> <%= config.directories.stage %>'
       }
     },
     emberTemplates: {
@@ -99,7 +99,7 @@ module.exports = function(grunt) {
         files: {
           "normalize-css/normalize.css": "normalize-css/normalize.css",
           "semantic-ui/build/packaged/css/semantic.css": "semantic-ui/build/packaged/css/semantic.css",
-          "jquery/jquery.js": "jquery/jquery.js",
+          "jquery/jquery.js": "jquery/dist/jquery.js",
           "handlebars/handlebars.js": "handlebars/handlebars.js",
           "ember/ember.js": "ember/ember.js",
           "i18next/i18next.js": "i18next/i18next.js",

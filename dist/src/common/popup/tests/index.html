@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Popup</title>
+    <title>Popup Tests</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -11,16 +11,39 @@
 
     <link rel="stylesheet" href="assets/vendor.css">
     <link rel="stylesheet" href="assets/popup.css">
+    <link rel="stylesheet" href="assets/test-support.css">
+    <style>
+      #ember-testing-container {
+        position: absolute;
+        background: white;
+        bottom: 0;
+        right: 0;
+        width: 640px;
+        height: 384px;
+        overflow: auto;
+        z-index: 9999;
+        border: 1px solid #ccc;
+      }
+      #ember-testing {
+        zoom: 50%;
+      }
+    </style>
   </head>
   <body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+
     <script>
       window.PopupENV = {"environment":"development","baseURL":"/popup","locationType":"auto","EmberENV":{"FEATURES":{}},"APP":{"LOG_ACTIVE_GENERATION":true,"LOG_VIEW_LOOKUPS":true}};
       window.EmberENV = window.PopupENV.EmberENV;
     </script>
+    <script src="assets/test-support.js"></script>
     <script src="assets/vendor.js"></script>
     <script src="assets/popup.js"></script>
+    <script src="testem.js"></script>
     <script>
-      window.Popup = require('popup/app')['default'].create(PopupENV.APP);
+      require('popup/tests/test-helper');
     </script>
+    <script src="assets/test-loader.js"></script>
   </body>
 </html>

@@ -15,20 +15,20 @@ var Heartbeat       = require('./components/background/heartbeat'),
    *
    * Initialize Heartbeat and schedule update process.
    */
-  
+
   Heartbeat.start();
-  
+
   Heartbeat.schedule('update-rose', config('update-interval'), {}, function task_update() {
     // Sync with external repository.
     update.sync();
   });
-  
+
   /*
    * Extractor Engine
    * ----------------
    *
    * Start extractor engine and integrate with Heartbeat.
    */
-  
+
   ExtractorEngine.register();
 })();

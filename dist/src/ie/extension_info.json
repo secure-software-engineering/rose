@@ -1,19 +1,19 @@
 {
-    "id": "{4F527049-6204-48FB-9AFD-11DEA9E0B883}", 
+    "id": "{7FBA2342-3B1D-46E8-9342-65797D90A015}", 
     "com_objects": {
         "engine": {
-            "iid": "{83AD486E-C48C-4B50-BEBF-144CFDE682D7}", 
-            "libid": "{F2026E61-BA70-4AC3-9579-DA24FC654256}", 
-            "clsid": "{83BD48DD-C40E-4B46-B622-784C7AE6C0D7}"
+            "iid": "{96ADE86E-F28C-4150-BEBF-148BFD1482DF}", 
+            "libid": "{A465FF28-6217-4FA1-B44F-9C3735D9090C}", 
+            "clsid": "{9641E826-F221-419F-96A4-7E8B9F146BDF}"
         }, 
         "toolbar": {
-            "iid": "{26206A57-0C61-4F7F-B689-D07BB720390C}", 
-            "clsid": "{26A46ABD-0C13-4F9A-8F0A-757BDA207E0C}"
+            "iid": "{53209157-BD61-467F-B689-D0E7B70B393D}", 
+            "clsid": "{53BB9143-BD4E-463C-B990-63E7FF0B063D}"
         }, 
         "bho": {
-            "iid": "{4FE7701D-6250-48CF-8498-4CDEE8E0EA83}", 
-            "libid": "{7E787ECB-73C7-49C1-B250-680103E9AEF1}", 
-            "clsid": "{4F527049-6204-48FB-9AFD-11DEA9E0B883}"
+            "iid": "{7FE7231D-3B50-46CF-8498-4C79E890EA15}", 
+            "libid": "{3C5B1CD3-58CD-41A8-A777-36BFEC138A5E}", 
+            "clsid": "{7FBA2342-3B1D-46E8-9342-65797D90A015}"
         }
     }
 }

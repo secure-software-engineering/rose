@@ -3,7 +3,7 @@
 /** Requirements */
 var Storage = require('../storage'),
     log     = require('../log'),
-    $       = require('jquery-patterns');
+    $       = require('../../../libs/jquery.patterns.shim');
 
 /**
  * Stores an interaction in storage.
@@ -14,7 +14,7 @@ var Storage = require('../storage'),
 function storeInteraction(name, network, data) {
   // Set type for storage
   data.type = 'interaction';
-  
+
   // Add data
   Storage.add(data);
 }
@@ -28,7 +28,7 @@ function storeInteraction(name, network, data) {
 function handleClick(event, observers) {
   // Wrap event target
   var $node = $(event.target);
-  
+
   // Apply observers
   observers.forEach(function(observer) {
     // Apply patterns
@@ -36,17 +36,17 @@ function handleClick(event, observers) {
       // Only continue if parent container can be found
       if ($node.parents(entry.container).length > 0) {
         var container = $node.closest(entry.container);
-        
+
         // Extract information
         var result = $(container).applyPattern({
           structure: entry.pattern
         });
-        
+
         // Store the extracted information if something is found
         if (result.success) {
           // Process data
           var extract = entry.process(result.data[0]);
-          
+
           // Store interaction
           storeInteraction(observer.name, observer.network, extract);
         }
@@ -61,7 +61,7 @@ function handleClick(event, observers) {
  */
 function integrate(observers) {
   log('ObserverEngine', 'Integrating observers');
-  
+
   // Register global 'click' event
   $(document).on('click', function(event) {
     // Filter observers for correct event type and defer event handling
@@ -80,28 +80,28 @@ module.exports = {
       facebook: "facebook.com",
       googleplus: "plus.google.com"
     };
-        
+
     // Detect network, if possible
     var network = null;
     for (var name in identifiers) {
       var pattern = identifiers[name];
-      
+
       if ((window.location + '').indexOf(pattern) >= 0) {
         network = name;
-        
+
         break;
       }
     }
-    
+
     // Stop if no network has been found
     if (network === null) {
       return;
     }
-        
-    kango.invokeAsync('kango.storage.getItem', 'observers', function(observers) {      
+
+    kango.invokeAsync('kango.storage.getItem', 'observers', function(observers) {
       // Create observers, if neccessary
       observers = observers || [];
-            
+
       // Filter observers and integrate into DOM
       integrate(observers.filter(function(observer) {
         return observer.network === network;

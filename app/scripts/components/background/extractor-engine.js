@@ -1,11 +1,11 @@
 var log = require('./../log'),
-    $ = require('jquery-patterns'),
+    $ = require('../../../libs/jquery.patterns.shim'),
     Heartbeat = require('./heartbeat');
 
 /**
-* @module Core
-* @submodule Extractor Engine
-*/
+ * @module Core
+ * @submodule Extractor Engine
+ */
 module.exports = (function($) {
     var ExtractorEngine = {};
 
@@ -31,13 +31,13 @@ module.exports = (function($) {
             }
         });
     };
-    
+
     /**
-    * Adds an extractor to the engine.
-    *
-    * @method add
-    * @param {Object} extractor The extractor to be added
-    */
+     * Adds an extractor to the engine.
+     *
+     * @method add
+     * @param {Object} extractor The extractor to be added
+     */
     ExtractorEngine.add = function add(extractor) {
         log('ExtractorEngine', 'Add extractor: ' + extractor.name);
 
@@ -46,11 +46,11 @@ module.exports = (function($) {
     };
 
     /**
-    * Registers a new task for every extractor to the Heartbeat
-    * and sets up extraction process.
-    *
-    * @method register
-    */
+     * Registers a new task for every extractor to the Heartbeat
+     * and sets up extraction process.
+     *
+     * @method register
+     */
     ExtractorEngine.register = function register() {
         log('ExtractorEngine', 'Register to Heartbeat');
 

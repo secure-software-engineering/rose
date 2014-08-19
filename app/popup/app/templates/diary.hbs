@@ -1,0 +1,44 @@
+<div class="ui fluid form">
+    <div class="field">
+        {{textarea placeholder="Write a new diary entry..." value=newEntry autofocus=true}}
+    </div>
+    <div class="two fluid ui buttons">
+        <div class="ui button" {{action "cancel"}}>Cancel</div>
+        <div class="ui positive button" {{action "save"}}>Save</div>
+    </div>
+</div>
+{{#if failure}}
+    <div class="ui warning message">
+        <div class="header">Could you check something!</div>
+        <ul class="list">
+            <li>You forgot to write <b>text</b></li>
+        </ul>
+    </div>
+{{/if}}
+<div class="ui celled list">
+    {{#each entry in sortedDiary}}
+        {{#unless entry.deleted}}
+            <div class="item">
+                <i class="avatar large circular text file outline icon"></i>
+                <div class="content">
+                    <div class="header">
+                        <span {{bind-attr class="entry.hidden"}}>
+                            {{datetime-formatter entry.createdAt}}
+                        </span>
+                        {{#if entry.hidden}}
+                            <i class="hide icon"></i>
+                        {{/if}}
+                    </div>
+                    <p {{bind-attr class="entry.hidden"}}>
+                        {{entry.text}}
+                    </p>
+                </div>
+                <div class="actions">
+                    <a class="reply" {{action "hide" entry}}>Hide</a>
+                    &middot;
+                    <a class="delete" {{action "delete" entry}}>Delete</a>
+                </div>
+            </div>
+        {{/unless}}
+    {{/each}}
+</div>

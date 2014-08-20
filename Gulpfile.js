@@ -1,15 +1,30 @@
 var gulp = require('gulp');
 var browserify = require('gulp-browserify');
+var jshint = require('gulp-jshint');
 var shell = require('gulp-shell');
 var uglify = require('gulp-uglify');
 
 var del = require('del');
 var runSequence = require('run-sequence');
 
+var paths = {
+    scripts: [
+        'app/libs/**/*.js',
+        'app/scripts/**/*.js',
+        'app/main.js'
+    ]
+};
+
 gulp.task('clean', function() {
     del(['dist/src/common/**/*'], {
         force: "true"
     });
+});
+
+gulp.task('jshint', function() {
+    return gulp.src(paths.scripts)
+        .pipe(jshint())
+        .pipe(jshint.reporter('jshint-stylish'));
 });
 
 gulp.task('icons', function() {
@@ -55,7 +70,10 @@ gulp.task('scripts', function() {
 
 gulp.task('default', function() {
     runSequence(
-        'clean', [
+        [
+            'clean',
+            'jshint'
+        ], [
             'copy-res-folder',
             'icons',
             'kango-main',

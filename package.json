@@ -3,12 +3,14 @@
   "version": "3.0.1",
   "description": "ROSE is a browser extension researchers can use to capture in situ data on how users actually use online social networks",
   "devDependencies": {
+    "adm-zip": "^0.4.4",
     "del": "^0.1.2",
     "gulp": "^3.8.7",
     "gulp-browserify": "^0.5.0",
+    "gulp-jshint": "^1.8.4",
     "gulp-shell": "^0.2.9",
     "gulp-uglify": "^0.3.1",
-    "adm-zip": "^0.4.4",
+    "jshint-stylish": "^0.4.0",
     "request": "^2.40.0",
     "run-sequence": "^0.3.6"
   },

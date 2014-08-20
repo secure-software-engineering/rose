@@ -1,5 +1,5 @@
 bower_components
 node_modules
 packages
-dist/src/common/
+kango_workspace/src/common/
 kango

@@ -29,6 +29,6 @@
   },
   "scripts": {
     "download": "",
-    "install": "node scripts/downloader.js"
+    "install": "node scripts/downloader.js && cd app/popup && npm install && bower install"
   }
 }

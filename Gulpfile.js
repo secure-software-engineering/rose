@@ -27,6 +27,11 @@ gulp.task('kango-main', function() {
         .pipe(gulp.dest('dist/src/common'));
 });
 
+gulp.task('copy-res-folder', function() {
+    gulp.src('app/res/**/*')
+    .pipe(gulp.dest('dist/src/common/res'));
+});
+
 gulp.task('popup-build', shell.task([
     'ember build --output-path=../../dist/src/common/popup'
 ], {
@@ -51,6 +56,7 @@ gulp.task('scripts', function() {
 gulp.task('default', function() {
     runSequence(
         'clean', [
+            'copy-res-folder',
             'icons',
             'kango-main',
             'kango-manifest',

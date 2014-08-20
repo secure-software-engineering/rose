@@ -29,7 +29,7 @@ gulp.task('kango-main', function() {
 
 gulp.task('copy-res-folder', function() {
     gulp.src('app/res/**/*')
-    .pipe(gulp.dest('dist/src/common/res'));
+        .pipe(gulp.dest('dist/src/common/res'));
 });
 
 gulp.task('popup-build', shell.task([
@@ -40,7 +40,7 @@ gulp.task('popup-build', shell.task([
 }));
 
 gulp.task('kango-build', shell.task([
-    'kango.py build --output-directory packages dist'
+    'python kango/kango.py build --output-directory packages dist'
 ], {
     quiet: true
 }));

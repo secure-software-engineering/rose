@@ -32,7 +32,7 @@ var semanticFonts = pickFiles('vendor/semantic-ui/build/packaged/fonts', {
 
 var robotoFonts = pickFiles('vendor/roboto-fontface/fonts', {
     srcDir: '/',
-    files: ['**/Roboto-Regular.*'],
+    files: ['**/Roboto-Regular.*', '**/Roboto-Bold.*'],
     destDir: 'assets/fonts'
 });
 

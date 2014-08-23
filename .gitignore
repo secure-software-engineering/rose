@@ -1,8 +1,5 @@
-.DS_Store
-node_modules
 bower_components
-build
+node_modules
 packages
-dist/src/common/scripts/*
-dist/src/common/popup/components/*
-*.log
+kango_workspace/src/common/
+kango

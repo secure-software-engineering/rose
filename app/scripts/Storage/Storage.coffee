@@ -29,15 +29,15 @@ require 'Storage/RoseData'
 
 class @Storage
     @addPlatform: (platformName) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             roseData.addPlatform(platformName)
 
-            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
+            kango.invokeAsyncCallback 'localforage.setItem', 'roseStorage', roseData.getData()
 
     @hasPlatform: (platformName, callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             hasPlatform = roseData.hasPlatform(platformName)
@@ -47,15 +47,15 @@ class @Storage
     @addInteraction: (record, platformName) ->
         return new RSVP.Promise (resolve) ->
             console.log('[INTERACTION] ' + JSON.stringify(record))
-            kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+            kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
                 roseData = new RoseData(roseStorage)
 
                 roseData.addInteraction(record, platformName)
 
-                kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData(), resolve
+                kango.invokeAsyncCallback 'localforage.setItem', 'roseStorage', roseData.getData(), resolve
 
     @getInteraction: (index, platformName, callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             interaction = roseData.getInteraction(index, platformName)
@@ -63,7 +63,7 @@ class @Storage
             callback(interaction)
 
     @getInteractions: (platformName, callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             interactions = roseData.getInteractions(platformName)
@@ -71,31 +71,31 @@ class @Storage
             callback(interactions)
 
     @removeInteraction: (index, platformName, callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             roseData.removeInteraction(index, platformName)
 
-            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData(), callback
+            kango.invokeAsyncCallback 'localforage.setItem', 'roseStorage', roseData.getData(), callback
 
     @hideInteraction: (index, hide, platformName, callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             roseData.hideInteraction(index, hide, platformName)
 
-            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData(), callback
+            kango.invokeAsyncCallback 'localforage.setItem', 'roseStorage', roseData.getData(), callback
 
     @addComment: (comment, platformName) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             roseData.addComment(comment, platformName)
 
-            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
+            kango.invokeAsyncCallback 'localforage.setItem', 'roseStorage', roseData.getData()
 
     @getComment: (id, platformName, callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             comment = roseData.getComment(id, platformName)
@@ -103,7 +103,7 @@ class @Storage
             callback(comment)
 
     @getComments: (platformName, callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             comments = roseData.getComments(platformName)
@@ -111,47 +111,47 @@ class @Storage
             callback(comments)
 
     @hideComment: (index, hide, platformName, callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             roseData.hideComment(index, hide, platformName)
 
-            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData(), callback
+            kango.invokeAsyncCallback 'localforage.setItem', 'roseStorage', roseData.getData(), callback
 
     @removeComment: (index, platformName) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             roseData.removeComment(index, platformName)
 
-            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
+            kango.invokeAsyncCallback 'localforage.setItem', 'roseStorage', roseData.getData()
 
     @addDiaryEntry: (entry) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             roseData.addDiaryEntry(entry)
 
-            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
+            kango.invokeAsyncCallback 'localforage.setItem', 'roseStorage', roseData.getData()
 
     @removeDiaryEntry: (index) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             roseData.removeDiaryEntry(index)
 
-            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
+            kango.invokeAsyncCallback 'localforage.setItem', 'roseStorage', roseData.getData()
 
     @updateDiaryEntry: (index, text, callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             roseData.updateDiaryEntry(index, text)
 
-            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData(), callback
+            kango.invokeAsyncCallback 'localforage.setItem', 'roseStorage', roseData.getData(), callback
 
     @getDiaryEntries: (callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             entries = roseData.getDiaryEntries()
@@ -159,7 +159,7 @@ class @Storage
             callback(entries)
 
     @getPrivacyEntry: (platformName, callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             entry = roseData.getPrivacyEntry(platformName)
@@ -167,15 +167,15 @@ class @Storage
             callback(entry)
 
     @setPrivacyEntry: (entry, platformName) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             roseData.setPrivacyEntry(entry, platformName)
 
-            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
+            kango.invokeAsyncCallback 'localforage.setItem', 'roseStorage', roseData.getData()
 
     @getMetaInformation: (callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             meta = roseData.getMeta()
@@ -183,7 +183,7 @@ class @Storage
             callback(meta)
 
     @getStaticInformation: (platformName, callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             staticInformation = roseData.getStaticInformation(platformName)
@@ -191,7 +191,7 @@ class @Storage
             callback(staticInformation)
 
     @getStaticInformationEntries: (platformName, informationName, callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             staticEntry = roseData.getStaticInformationEntries(platformName, informationName)
@@ -199,34 +199,34 @@ class @Storage
             callback(staticEntry)
 
     @addStaticInformationEntry: (entry, platformName, informationName) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseData = new RoseData(roseStorage)
 
             roseData.addStaticInformationEntry(entry, platformName, informationName)
 
-            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData()
+            kango.invokeAsyncCallback 'localforage.setItem', 'roseStorage', roseData.getData()
 
     @getStorageAsJson: (callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             callback JSON.stringify roseStorage, undefined, 2
 
     @setStorage: (store, callback) ->
-        kango.invokeAsync 'kango.storage.setItem', 'roseStorage', store, callback
+        kango.invokeAsyncCallback 'localforage.setItem', 'roseStorage', store, callback
 
     @getSettings: (callback) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             settings = roseStorage.settings
             callback settings || {}
 
     @setSettings: (key, settings) ->
-        kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+        kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
             roseStorage.settings[key] = settings
 
-            kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseStorage
+            kango.invokeAsyncCallback 'localforage.setItem', 'roseStorage', roseStorage
 
     @getLastExtractionTime: (network, extractorName) ->
         return new RSVP.Promise (resolve) ->
-            kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
+            kango.invokeAsyncCallback 'localforage.getItem', 'extractorTimes', (extractorTimes) ->
                 data = $.extend true, {}, extractorTimes
                 if data?[network]?[extractorName]?
                     resolve data[network][extractorName]
@@ -235,7 +235,7 @@ class @Storage
 
     @setLastExtractionTime: (network, extractorName, time) ->
         return new RSVP.Promise (resolve) ->
-            kango.invokeAsync 'kango.storage.getItem', 'extractorTimes', (extractorTimes) ->
+            kango.invokeAsyncCallback 'localforage.getItem', 'extractorTimes', (extractorTimes) ->
                 # Set up storage field.
                 extractorTimesTemp = $.extend true, {}, extractorTimes
                 extractorTimesTemp[network] = {} unless extractorTimesTemp[network]
@@ -243,11 +243,11 @@ class @Storage
                 # Set timestamp.
                 extractorTimesTemp[network][extractorName] = time
 
-                kango.invokeAsync 'kango.storage.setItem', 'extractorTimes', extractorTimesTemp, resolve
+                kango.invokeAsyncCallback 'localforage.setItem', 'extractorTimes', extractorTimesTemp, resolve
 
     @getLastOpenCloseInteractionType: (network) ->
         return new RSVP.Promise (resolve) ->
-            kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+            kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
                 roseData = new RoseData(roseStorage)
 
                 # Find last 'open' or 'close' interaction.
@@ -267,8 +267,8 @@ class @Storage
 
     @setParticipantID: (id, network) ->
         return new RSVP.Promise (resolve) ->
-            kango.invokeAsync 'kango.storage.getItem', 'roseStorage', (roseStorage) ->
+            kango.invokeAsyncCallback 'localforage.getItem', 'roseStorage', (roseStorage) ->
                 roseData = new RoseData roseStorage
                 roseData.setParticipantID id, network
 
-                kango.invokeAsync 'kango.storage.setItem', 'roseStorage', roseData.getData(), resolve
+                kango.invokeAsyncCallback 'localforage.setItem', 'roseStorage', roseData.getData(), resolve

@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class @Heartbeat
     @getHeartbeat: (name) ->
         return new RSVP.Promise (resolve) ->
-            kango.invokeAsync 'kango.storage.getItem', 'heartbeat', (heartbeat) ->
+            kango.invokeAsyncCallback 'localforage.getItem', 'heartbeat', (heartbeat) ->
                 # Initialize heartbeat, if necessary.
                 heartbeat = {} unless heartbeat?
 
@@ -44,7 +44,7 @@ class @Heartbeat
 
     @setHeartbeat: (name) ->
         return new RSVP.Promise (resolve) ->
-            kango.invokeAsync 'kango.storage.getItem', 'heartbeat', (heartbeat) ->
+            kango.invokeAsyncCallback 'localforage.getItem', 'heartbeat', (heartbeat) ->
                 # Initialize heartbeat, if necessary.
                 heartbeat = {} unless heartbeat?
 
@@ -52,4 +52,4 @@ class @Heartbeat
                 heartbeat[name] = new Date().toJSON()
 
                 # Write heartbeat back to storage.
-                kango.invokeAsync 'kango.storage.setItem', 'heartbeat', heartbeat, resolve
+                kango.invokeAsyncCallback 'localforage.setItem', 'heartbeat', heartbeat, resolve

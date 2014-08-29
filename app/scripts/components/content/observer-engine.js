@@ -3,7 +3,8 @@
 /** Requirements */
 var Storage = require('../storage'),
     log     = require('../log'),
-    $       = require('../../../libs/jquery.patterns.shim');
+    $       = require('../../../libs/jquery.patterns.shim'),
+    _       = require('../../../../bower_components/underscore/underscore');
 
 /**
  * Stores an interaction in storage.
@@ -29,8 +30,11 @@ function handleClick(event, observers) {
   // Wrap event target
   var $node = $(event.target);
 
+  // Sort observers by priority
+  var sorted = _.sortBy(observers, function (a) { return a.priority; }).reverse();
+  
   // Apply observers
-  observers.forEach(function(observer) {
+  sorted.forEach(function(observer) {
     // Apply patterns
     observer.patterns.forEach(function(entry) {
       // Only continue if parent container can be found

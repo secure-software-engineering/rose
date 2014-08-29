@@ -12,9 +12,15 @@ var Storage = require('../storage'),
  * @param {string} network - The network in which the interaction took place.
  * @param {object} data - The interaction's data.
  */
-function storeInteraction(name, network, data) {
+function storeInteraction(name, network, version, data) {
   // Set type for storage
   data.type = 'interaction';
+  
+  // Save observer name and version
+  data.origin = {
+    observer: name,
+    version:  version
+  };
 
   // Add data
   Storage.add(data);
@@ -52,7 +58,7 @@ function handleClick(event, observers) {
           var extract = entry.process(result.data[0]);
 
           // Store interaction
-          storeInteraction(observer.name, observer.network, extract);
+          storeInteraction(observer.name, observer.network, observer.version, extract);
         }
       }
     });

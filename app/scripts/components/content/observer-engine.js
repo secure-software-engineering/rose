@@ -1,10 +1,10 @@
 /** @module observer-engine */
 
 /** Requirements */
-var Storage = require('../storage'),
-    log     = require('../log'),
-    $       = require('../../../libs/jquery.patterns.shim'),
-    _       = require('../../../../bower_components/underscore/underscore');
+var Storage = require('../storage');
+var log = require('../log');
+var $ = require('../../../libs/jquery.patterns.shim');
+var _ = require('lodash');
 
 /**
  * Stores an interaction in storage.
@@ -15,7 +15,7 @@ var Storage = require('../storage'),
 function storeInteraction(name, network, version, data) {
   // Set type for storage
   data.type = 'interaction';
-  
+
   // Save observer name and version
   data.origin = {
     observer: name,
@@ -38,7 +38,7 @@ function handleClick(event, observers) {
 
   // Sort observers by priority
   var sorted = _.sortBy(observers, function (a) { return a.priority; }).reverse();
-  
+
   // Apply observers
   sorted.forEach(function(observer) {
     // Apply patterns
@@ -111,14 +111,14 @@ module.exports = {
     kango.invokeAsync('kango.storage.getItem', 'observers', function(observers) {
       // Create observers, if neccessary
       observers = observers || [];
-      
+
       // Eval "process" functions
       for (var i = 0; i <= observers.length; i++) {
         var observer = observers[i];
-        
+
         for (var j = 0; j <= observer.patterns; j++) {
           var pattern = observer.patterns[j];
-          
+
           pattern.process = eval(pattern.process);
         }
       }

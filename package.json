@@ -17,6 +17,7 @@
   "dependencies": {
     "jquery": "^2.1.1",
     "jsrsasign": "0.0.3",
+    "lodash": "^2.4.1",
     "rsvp": "~3.0.6"
   },
   "scripts": {

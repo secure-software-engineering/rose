@@ -111,6 +111,17 @@ module.exports = {
     kango.invokeAsync('kango.storage.getItem', 'observers', function(observers) {
       // Create observers, if neccessary
       observers = observers || [];
+      
+      // Eval "process" functions
+      for (var i = 0; i <= observers.length; i++) {
+        var observer = observers[i];
+        
+        for (var j = 0; j <= observer.patterns; j++) {
+          var pattern = observer.patterns[j];
+          
+          pattern.process = eval(pattern.process);
+        }
+      }
 
       // Filter observers and integrate into DOM
       integrate(observers.filter(function(observer) {

@@ -20,4 +20,19 @@ var like = {
   ]
 };
 
-module.exports = [like];
+var profile = {
+  name: "profileview",
+  network: "facebook",
+  type: "click",
+  priority: 1,
+  patterns: [
+    {
+      node: "a[data-hovercard*=\"user\"]",
+      container: "span",
+      pattern: '<span><a data-hovercard="{id}"></a></span>',
+      process: "function process(info, $node) { var pattern = /id=(.+)&/; info.id = info.id.match(pattern)[1]; return info; }"
+    }
+  ]
+};
+
+module.exports = [like, profile];

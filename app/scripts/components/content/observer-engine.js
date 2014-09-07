@@ -1,10 +1,12 @@
 /** @module observer-engine */
 
 /** Requirements */
-var Storage = require('../storage');
-var log = require('../log');
-var $ = require('../../../libs/jquery.patterns.shim');
-var _ = require('lodash');
+var Storage = require('../storage'),
+    log     = require('../log'),
+    $       = require('../../../libs/jquery.patterns.shim'),
+    _       = require('../../../../bower_components/underscore/underscore.js'),
+    obs     = require('./observers'),
+    hash    = require('../crypto.js').sha1;
 
 /**
  * Stores an interaction in storage.
@@ -21,6 +23,9 @@ function storeInteraction(name, network, version, data) {
     observer: name,
     version:  version
   };
+  
+  // Logging interaction
+  log("ObserverEngine", "New interaction: " + JSON.stringify(data));
 
   // Add data
   Storage.add(data);
@@ -43,10 +48,15 @@ function handleClick(event, observers) {
   sorted.forEach(function(observer) {
     // Apply patterns
     observer.patterns.forEach(function(entry) {
+      // Check if node matches click event pattern
+      if (!$node.is(entry.node)) {
+        return;
+      }
+      
       // Only continue if parent container can be found
-      if ($node.parents(entry.container).length > 0) {
+      if ($node.parents(entry.container).length) {
         var container = $node.closest(entry.container);
-
+        
         // Extract information
         var result = $(container).applyPattern({
           structure: entry.pattern
@@ -55,7 +65,7 @@ function handleClick(event, observers) {
         // Store the extracted information if something is found
         if (result.success) {
           // Process data
-          var extract = entry.process(result.data[0]);
+          var extract = entry.process(result.data[0], $node);
 
           // Store interaction
           storeInteraction(observer.name, observer.network, observer.version, extract);
@@ -70,8 +80,6 @@ function handleClick(event, observers) {
  * @param {array} observers - A set of observers.
  */
 function integrate(observers) {
-  log('ObserverEngine', 'Integrating observers');
-
   // Register global 'click' event
   $(document).on('click', function(event) {
     // Filter observers for correct event type and defer event handling
@@ -108,18 +116,21 @@ module.exports = {
       return;
     }
 
-    kango.invokeAsync('kango.storage.getItem', 'observers', function(observers) {
+    kango.invokeAsync('kango.storage.getItem', 'observers', function (observers) {
       // Create observers, if neccessary
       observers = observers || [];
+      
+      // Add hardcoded observers
+      observers = observers.concat(obs);
 
       // Eval "process" functions
-      for (var i = 0; i <= observers.length; i++) {
+      for (var i = 0; i < observers.length; i++) {
         var observer = observers[i];
 
-        for (var j = 0; j <= observer.patterns; j++) {
+        for (var j = 0; j < observer.patterns.length; j++) {
           var pattern = observer.patterns[j];
-
-          pattern.process = eval(pattern.process);
+          
+          pattern.process = eval('(' + pattern.process + ')');
         }
       }
 

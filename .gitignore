@@ -3,3 +3,6 @@ node_modules
 packages
 kango_workspace/src/common/
 kango
+.tmp
+dist/
+*.sublime-*

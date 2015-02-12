@@ -6,10 +6,10 @@ var pickFiles = require('broccoli-static-compiler');
 
 var app = new EmberApp();
 
-app.import('vendor/semantic-ui/build/packaged/css/semantic.css');
-app.import('vendor/roboto-fontface/roboto-fontface.css');
+app.import('bower_components/semantic-ui/build/packaged/css/semantic.css');
+app.import('bower_components/roboto-fontface/roboto-fontface.css');
 
-app.import('vendor/momentjs/moment.js');
+app.import('bower_components/momentjs/moment.js');
 
 // Use `app.import` to add additional libraries to the generated
 // output files.
@@ -24,13 +24,13 @@ app.import('vendor/momentjs/moment.js');
 // please specify an object with the list of modules as keys
 // along with the exports of each module as its value.
 
-var semanticFonts = pickFiles('vendor/semantic-ui/build/packaged/fonts', {
+var semanticFonts = pickFiles('bower_components/semantic-ui/build/packaged/fonts', {
     srcDir: '/',
     files: ['**/*'],
     destDir: '/fonts'
 });
 
-var robotoFonts = pickFiles('vendor/roboto-fontface/fonts', {
+var robotoFonts = pickFiles('bower_components/roboto-fontface/fonts', {
     srcDir: '/',
     files: ['**/Roboto-Regular.*', '**/Roboto-Bold.*'],
     destDir: 'assets/fonts'

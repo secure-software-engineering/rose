@@ -3,6 +3,7 @@
     "description": "Extension description",
     "creator": "Kango",
     "background_scripts": [
+        "bower_components/localforage/dist/localforage.js",
         "background_app.js"
     ],
     "content_scripts": [

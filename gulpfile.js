@@ -1,18 +1,15 @@
 var gulp = require('gulp');
-var del = require('del');
+var gulpFilter = require('gulp-filter');
+var jeditor = require('gulp-json-editor');
 var shell = require('gulp-shell');
-
-var browserify = require("browserify");
-var to5ify = require("6to5ify");
 var uglify = require('gulp-uglify');
-var source = require('vinyl-source-stream');
+
+var to5ify = require('6to5ify');
+var browserify = require('browserify');
+var del = require('del');
+var multimatch = require('multimatch');
 var buffer = require('vinyl-buffer');
-
-var jeditor = require("gulp-json-editor");
-
-function clone(a) {
-   return JSON.parse(JSON.stringify(a));
-}
+var source = require('vinyl-source-stream');
 
 var ENV = {
   app: './app',
@@ -20,12 +17,15 @@ var ENV = {
   tmp: './kango-runtime/src/common',
   kangocli: './kango/kango.py',
   manifest: './app/extension_info.json'
-}
+};
 
 var manifest = require(ENV.manifest);
 
 gulp.task('build:contentscript', function() {
-  return browserify(manifest.content_scripts, { paths: [ ENV.app ]})
+  var noBowerFiles = multimatch(manifest.content_scripts, ['*', '!app/bower_components']);
+
+  return browserify(noBowerFiles, { paths: [ ENV.app ] })
+    .add(require.resolve('6to5/polyfill'))
     .transform(to5ify)
     .bundle()
     .pipe(source('contentscript.js'))
@@ -35,7 +35,10 @@ gulp.task('build:contentscript', function() {
 });
 
 gulp.task('build:backgroundscript', function() {
-  return browserify(manifest.background_scripts, { paths: [ ENV.app ] })
+  var noBowerFiles = multimatch(manifest.background_scripts, ['*', '!app/bower_components']);
+
+  return browserify(noBowerFiles, { paths: [ ENV.app ] })
+    .add(require.resolve('6to5/polyfill'))
     .transform(to5ify)
     .bundle()
     .pipe(source('backgroundscript.js'))
@@ -45,41 +48,61 @@ gulp.task('build:backgroundscript', function() {
 });
 
 gulp.task('build:manifest', function() {
-  gulp.src(ENV.app + '/extension_info.json')
+  var contentscripts = manifest.content_scripts.filter(function (element) { return /bower_components/.test(element); });
+  var backgroundscripts = manifest.background_scripts.filter(function (element) { return /bower_components/.test(element); });
+
+  contentscripts.push('contentscript.js');
+  backgroundscripts.push('backgroundscript.js');
+
+  return gulp.src(ENV.app + '/extension_info.json')
     .pipe(jeditor(function(json) {
-      json.content_scripts = ['contentscript.js'];
-      json.background_scripts = ['backgroundscript.js'];
+      json.content_scripts = contentscripts;
+      json.background_scripts = backgroundscripts;
       return json;
     }))
     .pipe(gulp.dest(ENV.tmp));
 });
 
-gulp.task('copy:staticfiles', function() {
-  gulp.src([
+gulp.task('copy:staticFiles', function() {
+  return gulp.src([
       './icons/**/*'
-    ], { cwd: ENV.app, base: 'app'})
-    .pipe(gulp.dest(ENV.tmp))
-})
+    ], { cwd: ENV.app, base: ENV.app})
+    .pipe(gulp.dest(ENV.tmp));
+});
+
+gulp.task('copy:bowerFiles', function() {
+  var filter = gulpFilter(function(file) {
+    return /bower_components/.test(file.path);
+  });
+
+  var allScripts = manifest.content_scripts.concat(manifest.background_scripts);
+
+  return gulp.src(allScripts, { cwd: ENV.app, base: ENV.app })
+    .pipe(filter)
+    .pipe(uglify())
+    .pipe(gulp.dest(ENV.tmp));
+});
 
 gulp.task('clean:dist', function(cb) {
-  del([ENV.dist], cb);
-})
+  return del([ENV.dist], cb);
+});
 
 gulp.task('clean:tmp', function(cb) {
-  del([ENV.tmp], cb);
-})
+  return del([ENV.tmp], cb);
+});
 
 gulp.task('kango:build', shell.task([
   'python ' + ENV.kangocli + ' build kango-runtime --output-directory dist'
-]))
+]));
 
 gulp.task('build', [
   'build:backgroundscript',
   'build:contentscript',
   'build:manifest',
-  'copy:staticfiles'
+  'copy:bowerFiles',
+  'copy:staticFiles'
 ], function() {
-  gulp.start('kango:build')
+  gulp.start('kango:build');
 });
 
 gulp.task('default', ['clean:dist', 'clean:tmp'], function() {

@@ -1,3 +1,1 @@
-import nr from './modules/updater';
-
-console.log(nr);
+kango.dispatchMessage('item.add', { text: 'asdf' });

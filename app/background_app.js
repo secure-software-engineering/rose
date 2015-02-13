@@ -1,8 +1,8 @@
-﻿class Test {
-  constructor() {
-    console.debug('test');
-  }
-}
+﻿require('6to5/polyfill');
 
-var c = new Test();
-debugger;
+// var localforage = require('localforage');
+
+kango.addMessageListener('item.add', (event) => {
+  console.log(event);
+  localforage.setItem('somekey', event.data);
+});

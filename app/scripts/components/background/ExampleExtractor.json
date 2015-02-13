@@ -1,0 +1,8 @@
+{
+    "network": "Facebook",
+    "name": "privacy-settings",
+    "version": 0.0,
+    "informationUrl" : "https://www.facebook.com/settings/?tab=privacy",
+    "interval" : 43200,
+    "process" : "var $data, entry;\r\n            $data = $(content);\r\n            entry = {};\r\n            $data.find(\".fbSettingsSectionsItem\").each(function() {\r\n              var section;\r\n              section = $(this).find(\".fbSettingsSectionsItemName\").html();\r\n              entry[section] = {};\r\n              $(this).find(\".fbSettingsListItemContent\").each(function() {\r\n                var key, value;\r\n                key = $(this).find(\"div:nth-child(1)\").html();\r\n                value = $(this).find(\"div:nth-child(2)\").html();\r\n                entry[section][key] = value;\r\n              });\r\n            });"
+}

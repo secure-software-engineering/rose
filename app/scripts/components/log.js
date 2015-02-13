@@ -8,16 +8,16 @@
 module.exports = function log(module, message) {
     var time = (function() {
         var now = new Date();
-        
+
         // Adds a preceding "0" to a number if it's below 10
         var format = function format(number) {
             return number < 10 ? "0" + number : number;
         };
-        
+
         // Construct date string
         var date = [
-            format(now.getDay()),
-            format(now.getMonth()),
+            format(now.getDate()),
+            format(1+now.getMonth()),
             now.getFullYear()
         ].join('.');
 

@@ -14,6 +14,10 @@ module.exports = (function($) {
     var handle = function handle(extract) {
         $.get(extract.url, function handleResponse(content) {
             // TODO: Execute process function or apply patterns of extractor
+            log("ExtractorEngine","processing");
+           var process = eval('(' + extract.process + ')');
+           var entry = process(content);
+           log("EngineExtractor", entry);
         });
     };
 
@@ -22,13 +26,14 @@ module.exports = (function($) {
 
         // Schedule extractor task
         Heartbeat.schedule(extractor.name, extractor.interval, {}, function() {
-            // Iterate through extracts and execute them
+            /*// Iterate through extracts and execute them
             for (var i in extractor.extracts) {
                 var extract = extractor.extracts[i];
 
                 // Handle extraction process
                 handle(extract);
-            }
+            }*/
+            handle(extractor);
         });
     };
 

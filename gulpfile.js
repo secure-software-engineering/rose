@@ -1,12 +1,13 @@
 var gulp = require('gulp');
+var connect = require('gulp-connect');
 var gulpFilter = require('gulp-filter');
 var jeditor = require('gulp-json-editor');
-var shell = require('gulp-shell');
-var uglify = require('gulp-uglify');
+// var uglify = require('gulp-uglify');
 
 var to5ify = require('6to5ify');
 var browserify = require('browserify');
 var del = require('del');
+var exec = require('child_process').exec;
 var multimatch = require('multimatch');
 var buffer = require('vinyl-buffer');
 var source = require('vinyl-source-stream');
@@ -22,7 +23,7 @@ var ENV = {
 var manifest = require(ENV.manifest);
 
 gulp.task('build:contentscript', function() {
-  var noBowerFiles = multimatch(manifest.content_scripts, ['*', '!app/bower_components']);
+  var noBowerFiles = multimatch(manifest.background_scripts, ['**', '!bower_components/{,**/}*.*']);
 
   return browserify(noBowerFiles, { paths: [ ENV.app ] })
     .add(require.resolve('6to5/polyfill'))
@@ -30,12 +31,12 @@ gulp.task('build:contentscript', function() {
     .bundle()
     .pipe(source('contentscript.js'))
     .pipe(buffer())
-    .pipe(uglify())
+    // .pipe(uglify())
     .pipe(gulp.dest(ENV.tmp));
 });
 
 gulp.task('build:backgroundscript', function() {
-  var noBowerFiles = multimatch(manifest.background_scripts, ['*', '!app/bower_components']);
+  var noBowerFiles = multimatch(manifest.background_scripts, ['**', '!bower_components/{,**/}*.*']);
 
   return browserify(noBowerFiles, { paths: [ ENV.app ] })
     .add(require.resolve('6to5/polyfill'))
@@ -43,7 +44,7 @@ gulp.task('build:backgroundscript', function() {
     .bundle()
     .pipe(source('backgroundscript.js'))
     .pipe(buffer())
-    .pipe(uglify())
+    // .pipe(uglify())
     .pipe(gulp.dest(ENV.tmp));
 });
 
@@ -79,7 +80,7 @@ gulp.task('copy:bowerFiles', function() {
 
   return gulp.src(allScripts, { cwd: ENV.app, base: ENV.app })
     .pipe(filter)
-    .pipe(uglify())
+    // .pipe(uglify())
     .pipe(gulp.dest(ENV.tmp));
 });
 
@@ -91,20 +92,35 @@ gulp.task('clean:tmp', function(cb) {
   return del([ENV.tmp], cb);
 });
 
-gulp.task('kango:build', shell.task([
-  'python ' + ENV.kangocli + ' build kango-runtime --output-directory dist'
-]));
-
-gulp.task('build', [
+gulp.task('kango:build', [
   'build:backgroundscript',
   'build:contentscript',
   'build:manifest',
   'copy:bowerFiles',
   'copy:staticFiles'
-], function() {
-  gulp.start('kango:build');
+], function(cb) {
+  exec('python ' + ENV.kangocli + ' build kango-runtime --output-directory dist', function(err) {
+    cb(err);
+  });
 });
 
-gulp.task('default', ['clean:dist', 'clean:tmp'], function() {
-  gulp.start('build');
+gulp.task('connect', function () {
+  connect.server({
+    root: ENV.app,
+    livereload: true
+  });
+});
+
+gulp.task('watch', function () {
+  return gulp.watch(ENV.app + '/**/*', ['reload']);
+});
+
+gulp.task('reload', ['kango:build'], function() {
+  return gulp.src(ENV.app + '/**/*')
+    .pipe(connect.reload());
+});
+
+gulp.task('default', ['clean:dist', 'clean:tmp', 'connect'], function() {
+  gulp.start('watch');
+  gulp.start('kango:build');
 });

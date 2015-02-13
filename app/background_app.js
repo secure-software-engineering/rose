@@ -1,8 +1,17 @@
-﻿require('6to5/polyfill');
+﻿class Heartbeat {
+  constructor(strategy) {
 
-// var localforage = require('localforage');
+  }
 
-kango.addMessageListener('item.add', (event) => {
-  console.log(event);
-  localforage.setItem('somekey', event.data);
-});
+  start() {
+    setInterval(() => {}, 5000);
+  }
+}
+
+export default Heartbeat;
+
+console.log('asdasdasdasd')
+
+
+
+

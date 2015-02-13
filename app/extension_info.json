@@ -3,6 +3,7 @@
     "description": "Extension description",
     "creator": "Kango",
     "background_scripts": [
+        "scripts/chromereload.js",
         "bower_components/localforage/dist/localforage.js",
         "background_app.js"
     ],
@@ -12,7 +13,7 @@
         "content_app2.js"
     ],
     "homepage_url": "http://kangoextensions.com/",
-    "version": "0.9.0",
+    "version": "0.9.1",
     "browser_button": {
         "caption": "Kango",
         "icon": "icons/button.png",

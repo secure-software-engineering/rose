@@ -1,8 +1,8 @@
 {
-    "content_scripts": [],
     "description": "Extension description",
     "creator": "Kango",
     "background_scripts": [
+        "bower_components/jquery/dist/jquery.js",
         "scripts/chromereload.js",
         "bower_components/localforage/dist/localforage.js",
         "background_app.js"

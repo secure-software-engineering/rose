@@ -23,7 +23,7 @@ var ENV = {
 var manifest = require(ENV.manifest);
 
 gulp.task('build:contentscript', function() {
-  var noBowerFiles = multimatch(manifest.background_scripts, ['**', '!bower_components/{,**/}*.*']);
+  var noBowerFiles = multimatch(manifest.content_scripts, ['**', '!bower_components/{,**/}*.*']);
 
   return browserify(noBowerFiles, { paths: [ ENV.app ] })
     .add(require.resolve('6to5/polyfill'))

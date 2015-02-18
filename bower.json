@@ -2,7 +2,8 @@
   "name": "ROSE",
   "version": "0.0.0",
   "authors": [
-    "Oliver Hoffmann <oliverh855@gmail.com>"
+    "Oliver Hoffmann <oliverh855@gmail.com>",
+    "Felix Epp <work@felixepp.de>"
   ],
   "license": "MIT",
   "ignore": [
@@ -15,6 +16,7 @@
   ],
   "dependencies": {
     "jquery": "~2.1.3",
-    "localforage": "~1.2.2"
+    "localforage": "~1.2.2",
+    "underscore": "~1.7.0"
   }
 }

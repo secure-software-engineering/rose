@@ -18,9 +18,9 @@ var obs = [{
   priority: 1,
   patterns: [
     {
-      node: ".UFILikeLink",
-      container: ".timelineUnitContainer",
-      pattern: '<div class="timelineUnitContainer"><div><div role="article"><div class="userContentWrapper"><div><span class="userContent">{id}</span></div></div></div></div></div>',
+      node: ".UFILikeLink span",
+      container: "._x72",
+      pattern: '<div class="._x72"><div class="userContentWrapper"><div class="userContent">{id}</div></div></div>',
       process: "function process(info, $node) { info.id = hash(info.id); return info; }"
     }
   ]
@@ -72,18 +72,17 @@ function storeInteraction(name, network, version, data) {
 function handleClick(event, observers) {
   // Wrap event target
   var $node = $(event.target);
-  debugger;
-  // Sort observers by priority
-  var sorted = _.sortBy(observers, function (a) { return a.priority; }).reverse();
 
   // Apply observers
-  sorted.forEach(function(observer) {
+  observers.forEach(function(observer) {
     // Apply patterns
     observer.patterns.forEach(function(entry) {
       // Check if node matches click event pattern
       if (!$node.is(entry.node)) {
         return;
       }
+
+      // debugger;
 
       // Only continue if parent container can be found
       if ($node.parents(entry.container).length) {
@@ -100,7 +99,8 @@ function handleClick(event, observers) {
           var extract = entry.process(result.data[0], $node);
 
           // Store interaction
-          storeInteraction(observer.name, observer.network, observer.version, extract);
+          // storeInteraction(observer.name, observer.network, observer.version, extract);
+          log('Store Interaction:'  + extract);
         }
       }
     });
@@ -113,12 +113,15 @@ function handleClick(event, observers) {
  */
 function integrate(observers) {
 
+  // Filter anbd prioritize observers for correct event type and defer event handling
+  observers = observers.filter(function(observer) {
+    return observer.type === 'click';
+  });
+  observers = _.sortBy(obs, function (a) { return a.priority; }).reverse();
+
   // Register global 'click' event
   $(document).on('click', function(event) {
-    // Filter observers for correct event type and defer event handling
-    handleClick(event, observers.filter(function(observer) {
-      return observer.type === 'click';
-    }));
+    handleClick(event, observers);
   });
 
 

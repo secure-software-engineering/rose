@@ -51,7 +51,8 @@ export default (function($) {
     var apply = function apply(extractor) {
         log('ExtractorEngine', 'Apply extractor: ' + extractor.name);
 
-        // Schedule extractor task
+        //FIXME: Schedule extractor task after login
+        //FIXME: Filter extractor by network
         //Heartbeat.schedule(extractor.name, extractor.interval, {}, function() {
             // Iterate through extracts and execute them
             // for (var i in extractor.extracts) {

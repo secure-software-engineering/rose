@@ -2,20 +2,16 @@
 
 /** Requirements */
 //import storage from 'rose/storage';
-// var $       = require('../scripts/jquery.patterns.js'),
-    // _       = require('../bower_components/underscore/underscore.js');
-//import crypto from 'rose/crypto';
-
 import log from 'rose/log';
+require('../scripts/jquery.patterns.js');
+//import crypto from 'rose/crypto';
 
 /**
  * Hard coded observers for testing
  * Should be removed when connected to settings module
  */
 
-var obs = {};
-
-obs.like = {
+var obs = [{
   name: "like",
   network: "facebook",
   type: "click",
@@ -28,9 +24,8 @@ obs.like = {
       process: "function process(info, $node) { info.id = hash(info.id); return info; }"
     }
   ]
-};
-
-obs.profile = {
+},
+{
   name: "profileview",
   network: "facebook",
   type: "click",
@@ -43,7 +38,7 @@ obs.profile = {
       process: "function process(info, $node) { var pattern = /id=(.+)&/; info.id = info.id.match(pattern)[1]; return info; }"
     }
   ]
-};
+}];
 
 /**
  * Stores an interaction in storage.
@@ -62,7 +57,7 @@ function storeInteraction(name, network, version, data) {
   };
 
   // Logging interaction
-  log("ObserverEngine", "New interaction: " + JSON.stringify(data));
+  log('ObserverEngine', 'New interaction: ' + JSON.stringify(data));
 
   // FIXME: Add data
   //Storage.add(data);
@@ -71,7 +66,7 @@ function storeInteraction(name, network, version, data) {
 /**
  * Handles click events and uses the supplied observers to apply
  * patterns.
- * @param {object} event - An event object.
+ * @param {object} event - An event object.
  * @param {array} observers - A set of observers.
  */
 function handleClick(event, observers) {
@@ -117,6 +112,7 @@ function handleClick(event, observers) {
  * @param {array} observers - A set of observers.
  */
 function integrate(observers) {
+
   // Register global 'click' event
   $(document).on('click', function(event) {
     // Filter observers for correct event type and defer event handling
@@ -169,6 +165,8 @@ export default {
 
       // Add hardcoded observers
       observers = observers.concat(obs);
+
+      console.log(observers);
 
       // Eval "process" functions
       for (var i = 0; i < observers.length; i++) {

@@ -1,5 +1,5 @@
-;(function($) {
-  // Sebastian Ruhleder, Felix Epp, v. 0.0.5
+(function($) {
+  // Sebastian Ruhleder, Felix Epp, v. 0.0.6
   'use strict';
 
   var preprocess = function(structure) {
@@ -174,13 +174,14 @@
     };
   };
 
-  $.fn.applyPattern = function(options) {
-    // Compile pattern
-    var pattern = compilePattern($(preprocess(options.structure)));
+  $.fn.extend({
+    applyPattern : function(options) {
+      // Compile pattern
+      var pattern = compilePattern($(preprocess(options.structure)));
 
-    // Wrap node in container
-    var node = $("<div></div>").append(this.clone());
+      // Wrap node in container
+      var node = $('<div></div>').append(this.clone());
 
-    return findPattern(pattern, node, options.events, 0);
-  };
+      return findPattern(pattern, node, options.events, 0);
+    }});
 })(jQuery);

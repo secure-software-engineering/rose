@@ -2,9 +2,11 @@
 
 /** Requirements */
 //import storage from 'rose/storage';
-var $       = require('../scripts/jquery.patterns.js'),
-    _       = require('../bower_components/underscore/underscore.js');
+// var $       = require('../scripts/jquery.patterns.js'),
+    // _       = require('../bower_components/underscore/underscore.js');
 //import crypto from 'rose/crypto';
+
+import log from 'rose/log';
 
 /**
  * Hard coded observers for testing

@@ -20,8 +20,8 @@ var obs = [{
     {
       node: ".UFILikeLink span",
       container: "._x72",
-      pattern: '<div class="._x72"><div class="userContentWrapper"><div class="userContent">{id}</div></div></div>',
-      process: "function process(info, $node) { info.id = hash(info.id); return info; }"
+      pattern: '<div class="_x72"><div class="userContentWrapper"><div class="userContent">{id}</div></div></div>',
+      process: "function process(info) { return hash(info.id) }"
     }
   ]
 },
@@ -82,8 +82,6 @@ function handleClick(event, observers) {
         return;
       }
 
-      // debugger;
-
       // Only continue if parent container can be found
       if ($node.parents(entry.container).length) {
         var container = $node.closest(entry.container);
@@ -95,12 +93,14 @@ function handleClick(event, observers) {
 
         // Store the extracted information if something is found
         if (result.success) {
+
+          console.log('Store Interaction:', result);
+
           // Process data
-          var extract = entry.process(result.data[0], $node);
+          // var extract = entry.process(result.data[0], $node);
 
           // Store interaction
           // storeInteraction(observer.name, observer.network, observer.version, extract);
-          log('Store Interaction:'  + extract);
         }
       }
     });

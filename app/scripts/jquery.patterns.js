@@ -1,8 +1,11 @@
 (function($) {
-  // Sebastian Ruhleder, Felix Epp, v. 0.0.6
+  // Sebastian Ruhleder, Felix Epp, v. 0.0.7
   'use strict';
-
+  /**
+   * Move innerHtml Fields to "content" attribute
+   */
   var preprocess = function(structure) {
+    //recursion is obsolete use replace
     for(;;) {
       var match = /<(.+)>\{(.+)\}<(.+)>/gi.exec(structure);
 
@@ -14,43 +17,37 @@
     }
   };
 
-  var findPattern = function(pattern, node, events, level) {
+  var findPattern = function(pattern, $node, events, level) {
     var data = [], hooks = [], success = false;
 
-    $(node).find('> ' + pattern.tag).each(function() {
-      var fields = {}, currentNode = this, found = true;
+    $node.find('> ' + pattern.tag).each(function() {
+      var fields = {}, $currentNode = $(this), found = true;
 
-      var conditionsSatisfied = true;
       for(var i in pattern.conditions) {
         var condition = pattern.conditions[i];
 
         if(condition.name === 'class') {
           var classes = condition.value.split(' ');
 
-          for(var j in classes) {
-            var c = classes[j];
-
-            if(!$(currentNode).hasClass(c)) {
-              conditionsSatisfied = false;
+          for (var j = classes.length - 1; j >= 0; j--) {
+            if(!$currentNode.hasClass(classes[j])) {
+              return;
             }
-          }
+          };
+
         } else {
-          if($(currentNode).attr(condition.name) !== condition.value) {
-            conditionsSatisfied = false;
+          if($currentNode.attr(condition.name) !== condition.value) {
+            return;
           }
         }
       }
 
-      if(!conditionsSatisfied) {
-        return;
-      }
-
-      $.each(pattern.children, function(i, child) {
-        var rec = findPattern(child, currentNode, events, level + 1);
+      pattern.children.forEach( function(child, i) {
+        var rec = findPattern(child, $currentNode, events, level + 1);
 
         found &= rec.success;
 
-        var merged = [].concat.apply([], rec.data);
+        var merged = [].concat.apply([], rec.data); //do not understand line?
         for(var n in merged) {
           var set = merged[n];
 
@@ -59,7 +56,7 @@
           }
         }
 
-        merged = [].concat.apply([], rec.hooks);
+        merged = [].concat.apply([], rec.hooks); //do not understand line?
         for(var m in merged) {
           var hook = merged[m];
 
@@ -74,9 +71,9 @@
           var field = pattern.fields[p];
 
           if(field.name === 'content') {
-            fields[field.value] = $(currentNode).html();
+            fields[field.value] = $currentNode.html();
           } else {
-            fields[field.value] = $(currentNode).attr(field.name);
+            fields[field.value] = $currentNode.attr(field.name);
           }
         }
 
@@ -86,7 +83,7 @@
           var event = pattern.events[q];
 
           var hook = {
-            'node': currentNode,
+            'node': $currentNode,
             'type': event.name,
             'event': event.value
           };
@@ -100,15 +97,13 @@
 
             var proceed = true;
             var registeredEvents = $._data(hooki.node, 'events');
-            if(registeredEvents !== undefined) {
-              if(registeredEvents.click !== undefined) {
-                for(var r in registeredEvents.click) {
-                  var registeredEvent = registeredEvents.click[r];
+            if(registeredEvents !== undefined && registeredEvents.click !== undefined) {
+              for(var r in registeredEvents.click) {
+                var registeredEvent = registeredEvents.click[r];
 
-                  if(registeredEvent.data !== undefined) {
-                    if(registeredEvent.data.pattern !== undefined) {
-                      proceed = false;
-                    }
+                if(registeredEvent.data !== undefined) {
+                  if(registeredEvent.data.pattern !== undefined) {
+                    proceed = false;
                   }
                 }
               }
@@ -135,23 +130,25 @@
     };
   };
 
+  /**
+   * FIXME: Why compiling the pattern with each click, that is ridonkoulus??? Maybe on importing observers
+   */
   var compilePattern = function(structure) {
     var name = structure.prop('tagName');
-
     var fields = [], conditions = [], events = [];
+
     $.each(structure[0].attributes, function(i, attr) {
       var entry = {
         'name': attr.name,
         'value': attr.value
       };
 
-      if(attr.value.match(/^\{.+\}$/gi)) {
-        entry.value = entry.value.replace(/[\{\}]/gi, "");
-
+      if(/^\{.+\}$/.test(attr.value)) {
+        entry.value = attr.value.slice(1,-1);
         fields.push(entry);
-      } else if(attr.value.match(/^\[.+\]$/gi)) {
-        entry.value = entry.value.replace(/[\[\]]/gi, "");
-
+      }
+      else if(/^\[.+\]$/.test(attr.value)) {
+        entry.value = attr.value.slice(1, -1);
         events.push(entry);
       } else {
         conditions.push(entry);
@@ -180,8 +177,8 @@
       var pattern = compilePattern($(preprocess(options.structure)));
 
       // Wrap node in container
-      var node = $('<div></div>').append(this.clone());
+      var $node = $('<div></div>').append(this.clone()); //.wrap() possible?
 
-      return findPattern(pattern, node, options.events, 0);
+      return findPattern(pattern, $node, options.events, 0);
     }});
 })(jQuery);

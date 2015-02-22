@@ -18,6 +18,7 @@
     "gulp-uglify": "^1.1.0",
     "lodash": "^3.3.1",
     "multimatch": "^2.0.0",
+    "node-forge": "^0.6.20",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0"
   },

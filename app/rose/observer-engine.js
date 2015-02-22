@@ -5,7 +5,7 @@
 import log from 'rose/log';
 require('../scripts/jquery.patterns.js');
 var sortBy = require('lodash/collection/sortBy');
-//import crypto from 'rose/crypto';
+// import {sha1 as hash} from 'rose/crypto'; //!Breaks due to strict mode: local deletion of variable
 
 /**
  * Hard coded observers for testing

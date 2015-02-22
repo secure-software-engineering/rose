@@ -1,5 +1,5 @@
 (function($) {
-  // Sebastian Ruhleder, Felix Epp, v. 0.0.7
+  // Sebastian Ruhleder, Felix Epp, v. 0.0.8
   'use strict';
   /**
    * Move innerHtml Fields to "content" attribute
@@ -33,7 +33,7 @@
             if(!$currentNode.hasClass(classes[j])) {
               return;
             }
-          };
+          }
 
         } else {
           if($currentNode.attr(condition.name) !== condition.value) {
@@ -42,7 +42,7 @@
         }
       }
 
-      pattern.children.forEach( function(child, i) {
+      pattern.children.forEach( function(child) {
         var rec = findPattern(child, $currentNode, events, level + 1);
 
         found &= rec.success;

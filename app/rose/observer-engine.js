@@ -4,6 +4,7 @@
 //import storage from 'rose/storage';
 import log from 'rose/log';
 require('../scripts/jquery.patterns.js');
+var sortBy = require('lodash/collection/sortBy');
 //import crypto from 'rose/crypto';
 
 /**
@@ -21,7 +22,7 @@ var obs = [{
       node: ".UFILikeLink span",
       container: "._x72",
       pattern: '<div class="_x72"><div class="userContentWrapper"><div class="userContent">{id}</div></div></div>',
-      process: "function process(info) { return hash(info.id) }"
+      process: "function process(info, $node) { info.id = hash(info.id); return info; }"
     }
   ]
 },
@@ -61,6 +62,7 @@ function storeInteraction(name, network, version, data) {
 
   // FIXME: Add data
   //Storage.add(data);
+  console.log(data);
 }
 
 /**
@@ -96,11 +98,13 @@ function handleClick(event, observers) {
 
           console.log('Store Interaction:', result);
 
+          //FIXME: use process function with hashing
           // Process data
           // var extract = entry.process(result.data[0], $node);
+          var extract = result.data[0];
 
           // Store interaction
-          // storeInteraction(observer.name, observer.network, observer.version, extract);
+          storeInteraction(observer.name, observer.network, observer.version, extract);
         }
       }
     });
@@ -117,7 +121,7 @@ function integrate(observers) {
   observers = observers.filter(function(observer) {
     return observer.type === 'click';
   });
-  observers = _.sortBy(obs, function (a) { return a.priority; }).reverse();
+  observers = sortBy(obs, function (a) { return a.priority; }).reverse();
 
   // Register global 'click' event
   $(document).on('click', function(event) {
@@ -169,7 +173,7 @@ export default {
       // Add hardcoded observers
       observers = observers.concat(obs);
 
-      console.log(observers);
+      console.log('Static Observers: ', observers);
 
       // Eval "process" functions
       for (var i = 0; i < observers.length; i++) {

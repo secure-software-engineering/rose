@@ -99,7 +99,7 @@ gulp.task('kango:build', [
   'copy:bowerFiles',
   'copy:staticFiles'
 ], function(cb) {
-  exec('python ' + ENV.kangocli + ' build kango-runtime --output-directory dist', function(err) {
+  exec('python ' + ENV.kangocli + ' build kango-runtime --output-directory ' + ENV.dist, function(err) {
     cb(err);
   });
 });

@@ -4,7 +4,7 @@ var gulpFilter = require('gulp-filter');
 var jeditor = require('gulp-json-editor');
 // var uglify = require('gulp-uglify');
 
-var to5ify = require('6to5ify');
+var babelify = require('babelify');
 var browserify = require('browserify');
 var del = require('del');
 var exec = require('child_process').exec;
@@ -26,8 +26,7 @@ gulp.task('build:contentscript', function() {
   var noBowerFiles = multimatch(manifest.content_scripts, ['**', '!bower_components/{,**/}*.*']);
 
   return browserify(noBowerFiles, { paths: [ ENV.app ] })
-    .add(require.resolve('6to5/polyfill'))
-    .transform(to5ify)
+    .transform(babelify)
     .bundle()
     .pipe(source('contentscript.js'))
     .pipe(buffer())
@@ -39,8 +38,7 @@ gulp.task('build:backgroundscript', function() {
   var noBowerFiles = multimatch(manifest.background_scripts, ['**', '!bower_components/{,**/}*.*']);
 
   return browserify(noBowerFiles, { paths: [ ENV.app ] })
-    .add(require.resolve('6to5/polyfill'))
-    .transform(to5ify)
+    .transform(babelify.configure({ experimental: true }))
     .bundle()
     .pipe(source('backgroundscript.js'))
     .pipe(buffer())
@@ -104,14 +102,14 @@ gulp.task('kango:build', [
   });
 });
 
-gulp.task('connect', function () {
+gulp.task('connect', function() {
   connect.server({
     root: ENV.app,
     livereload: true
   });
 });
 
-gulp.task('watch', function () {
+gulp.task('watch', function() {
   return gulp.watch(ENV.app + '/**/*', ['reload']);
 });
 

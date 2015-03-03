@@ -1,6 +1,9 @@
 {
-    "description": "Extension description",
-    "creator": "Kango",
+    "name": "ROSE",
+    "description": "Research tool for field studies in online social networks.",
+    "creator": "Fraunhofer Institute SIT",
+    "version": "3.0.0",
+    "homepage_url": "https://dipo.sit.fraunhofer.de/",
     "background_scripts": [
         "scripts/chromereload.js",
         "bower_components/jquery/dist/jquery.js",
@@ -12,12 +15,9 @@
         "bower_components/forge/js/forge.min.js",
         "content_app1.js"
     ],
-    "homepage_url": "http://kangoextensions.com/",
-    "version": "0.9.1",
     "browser_button": {
-        "caption": "Kango",
-        "icon": "icons/button.png",
-        "tooltipText": "Kango"
-    },
-    "name": "ROSE"
+        "caption": "ROSE",
+        "tooltipText": "ROSE Browser Plugin",
+        "icon": "icons/button.png"
+    }
 }

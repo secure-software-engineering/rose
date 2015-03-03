@@ -9,8 +9,7 @@
     ],
     "content_scripts": [
         "bower_components/jquery/dist/jquery.js",
-        "content_app1.js",
-        "content_app2.js"
+        "content_app1.js"
     ],
     "homepage_url": "http://kangoextensions.com/",
     "version": "0.9.1",

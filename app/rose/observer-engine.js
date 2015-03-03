@@ -133,35 +133,7 @@ function integrate(observers) {
 }
 
 export default {
-  register: function() {
-    /**
-     * URL identifiers of social networks.
-     * FIXME: identifiers should load from settings
-     */
-    var identifiers = {
-      facebook: 'facebook.com',
-      googleplus: 'plus.google.com'
-    };
-
-    // Detect network, if possible
-    var network = null;
-    for (var name in identifiers) {
-      var networkDomain = identifiers[name];
-
-      if ((new RegExp('^https:\/\/[\w\.\-]*(' + networkDomain.replace(/\./g, '\\$&') + ')$')).test(window.location.origin)) {
-        network = name;
-
-        log('ObserverEngine','Match Network ' + network);
-
-        break;
-      }
-    }
-
-    // Stop if no network has been found
-    if (network === null) {
-      log('ObserverEngine','Not tracked Site');
-      return;
-    }
+  register: function(network) {
 
     //retrieve Observers for current network from storage
     // kango.invokeAsync('kango.storage.getItem', 'observers', function (observers) {

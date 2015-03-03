@@ -64,7 +64,8 @@ gulp.task('build:manifest', function() {
 
 gulp.task('copy:staticFiles', function() {
   return gulp.src([
-      './icons/**/*'
+      './icons/**/*',
+      './res/**/*'
     ], { cwd: ENV.app, base: ENV.app})
     .pipe(gulp.dest(ENV.tmp));
 });

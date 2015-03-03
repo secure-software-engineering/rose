@@ -1,7 +1,11 @@
 {
   "name": "ROSE",
-  "version": "1.0.0",
-  "description": "",
+  "version": "3.0.0",
+  "description": "Research tool for field studies in online social networks.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iamolivinius/gulpicRose"
+  },
   "main": "Gulpfile.js",
   "dependencies": {
     "gulp": "^3.8.11"
@@ -26,6 +30,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "install" : "bower install && cd app/bower_components/forge && npm install && npm run minify"
   },
-  "author": "",
+  "author": "Fraunhofer SIT",
+  "contributors": [{
+    "name": "Felix Epp",
+    "email": "work@felixepp.de"
+  },{
+    "name": "Oliver Hoffmann",
+    "email": "oliverh855@gmail.com"
+  }],
   "license": "ISC"
 }

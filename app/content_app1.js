@@ -1,15 +1,39 @@
 import ObserverEngine from 'rose/observer-engine';
+import FacebookUI from 'rose/FacebookUI';
 
-/* Background Script */
+/* Content Script */
 (function() {
 
+//Check for network
+/**
+ * URL identifiers of social networks.
+ * FIXME: identifiers should load from settings
+ */
+var identifiers = {
+  facebook: 'facebook.com',
+  gplus: 'plus.google.com'
+};
 
-  /* Observer Engine
-   * ----------------
-   *
-   * Start observer engine.
-   */
+// Detect network, if possible
+for (var name in identifiers) {
+  var networkDomain = identifiers[name];
 
+  if ((new RegExp('^https:\/\/[\w\.\-]*(' + networkDomain.replace(/\./g, '\\$&') + ')$')).test(window.location.origin)) {
 
-  ObserverEngine.register();
+    /* Observer Engine
+     * ----------------
+     *
+     * Start observer engine.
+     */
+    ObserverEngine.register(name);
+
+    if (name === 'facebook') {
+      var facebookUI = new FacebookUI();
+      facebookUI.redrawUI();
+    }
+
+    break;
+  }
+}
+
 })();

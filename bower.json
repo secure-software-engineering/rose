@@ -21,7 +21,11 @@
     "forge": "~0.6.20",
     "backbone": "~1.1.2",
     "localforage-backbone": "~0.5.0",
-    "kango-localforage-backbone": "~0.4.1"
+    "kango-localforage-backbone": "~0.4.1",
+    "handlebars": "~3.0.0",
+    "i18next": "~1.7.7",
+    "rsvp": "~3.0.17",
+    "semantic-ui": "~1.10.4"
   },
   "resolutions": {
     "localforage": "~1.2.2"

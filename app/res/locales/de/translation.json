@@ -1,0 +1,108 @@
+resources = {};
+resources.de = {};
+resources.de.translation = {
+  "about": "Über",
+  "backup": "Datensicherung",
+  "restore": "Wiederherstellen",
+  "comment": "Kommentar",
+  "comments": "Kommentare",
+  "diary": "Tagebuch",
+  "documentation": "Dokumentation",
+  "help": "Hilfe",
+  "interactions": "Interaktionen",
+  "networks": "Netzwerke",
+  "privacy-settings": "Privatsphäreneinstellungen",
+  "settings": "Einstellungen",
+  "test": "test",
+  "developedBy": "wurde entwickelt von",
+  "sitAddress": "<address><strong>Fraunhofer-Institut für Sichere Informationstechnologie SIT</strong><br/> Rheinstraße 75<br/> 64295 Darmstadt<br/> Deutschland </address>",
+
+  "cancel": "Abbrechen",
+  "save": "Speichern",
+  "or": "oder",
+  "and": "und",
+
+  "delete": "Löschen",
+  "edit": "Bearbeiten",
+  "exclude": "Ausschließen",
+  "include": "Einschließen",
+  "loading": "Laden",
+
+  "you": "Du",
+  "version": "Version",
+
+  "enabled": "Aktiviert",
+  "disabled": "Deaktiviert",
+
+  "settingsPage": {
+    "subHeader": "Verwalten Sie Ihre ROSE Einstellungen",
+    "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
+    "messageContent": "Schreib etwas"
+  },
+
+  "diaryPage": {
+    "subHeader": "Hier können Sie alles Weitere notieren, was Ihnen bei Ihrer Nutzung aufgefallen ist",
+    "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
+    "messageContent": "Schreib etwas"
+  },
+
+  "privacyPage": {
+    "subHeader": "Dies sind Ihre von ROSE ausgelesenen Privatsphäreneinstellungen",
+    "messageHeader": "Es sind keine Privatsphäreneinstellungen vorhanden",
+    "messageContent": "Warten Sie, bis ROSE die Einstellungen ausgelesen hat."
+  },
+
+  "backupPage": {
+    "subHeader": "Hier können Sie alle eingegebenen und aufgezeichneten Daten nochmal einsehen, speichern oder wiederherstellen"
+  },
+
+  "aboutPage": {
+    "subHeader": "Informationen zu ROSE",
+    "messageHeader": "Es sind keine Tagebucheinträge vorhanden",
+    "messageContent": "Schreib etwas",
+    "infoText": "ROSE ist eine Browser-Erweiterung, welche im Rahmen von empirischen Feldstudien über einen begrenzten Zeitraum aufzeichnet, wie Nutzer mit dem sozialen Netzwerk Facebook interagieren. Zusätzlich können Nutzer mit ROSE ihre Interaktionen auch kommentieren. Die von ROSE gesammelten Daten ermöglichen zusammen mit anderen qualitativen Daten, z.B. aus Einzel- oder Gruppeninterviews, Einblicke in Nutzungsgewohnheiten der Nutzer, und Konflikten an der Schnittstelle zwischen Nutzer und Software.",
+    "furtherQuestions": "Bei weiteren Fragen zu ROSE kontaktieren Sie bitte <a href=\"mailto:andreas.poller@sit.fraunhofer.de\">Andreas Poller, andreas.poller@sit.fraunhofer.de</a>"
+  },
+
+  "interactionsPage": {
+    "subHeader": "Alle von ROSE aufgezeichneten Interaktionen",
+    "messageHeader": "Es sind keine Interaktionen vorhanden",
+    "messageContent": "Schreib etwas"
+  },
+
+  "commentsPage": {
+    "subHeader": "Hier können Sie alle Kommentare einsehen",
+    "messageHeader": "Es sind keine Kommentare vorhanden",
+    "messageContent": "Schreib etwas"
+  },
+
+  "documentationPage": {
+    "subHeader": "Häufig gestellte Fragen zu ROSE",
+    "question1": "Wo sammelt ROSE die Daten über meine Facebook-Nutzung und meine eingegebenen Kommentare?",
+    "answer1": "<p>ROSE sammelt die Daten ausschließlich in Ihrem Webbrowser. ROSE kann für Sie eine vorgefertigte E-Mail erstellen, mit der Sie Ihre Daten an die Studienbetreuung übermitteln können. ROSE sendet keine Daten an Facebook; Facebook kann auf seinen eigenen Computersystemen nicht feststellen, ob Sie ROSE verwenden oder nicht. ROSE sendet selbst auch keine Daten an die Studienleitung, und empfängt auch keine Daten. </p><p>Dieses privatsphärenfreundliche Konzept von ROSE hat jedoch den Nachteil, dass ROSE-Daten verloren gehen können, wenn Programmfehler auf Ihrem Rechner auftreten. Wenn Sie ROSE aus Ihrem Web-Browser löschen, sind alle gesammelten Daten unwiederbringlich verloren.</p>",
+    "question2": "Sind ROSE-Kommentare für andere Studienteilnehmer oder Facebook-Nutzer sichtbar?",
+    "answer2": "<p>Nein, das ist technisch ausgeschlossen. Da ROSE selbst keine Daten an Computersysteme bei Facebook oder Computersysteme der Studienbetreuung schickt, ist eine Verteilung, und damit eine Sichtbarkeit für andere Studienteilnehmer oder Facebook-Nutzer prinzipbedingt unmöglich. ROSE empfängt auch selbst keine Daten. Mehr noch, Facebook kann auf seinen eigenen Computersystemen nicht einmal feststellen, ob Sie ROSE verwenden oder nicht. </p><p>Auch wenn ROSE eine enge Integration in Ihren Browser und die Facebook-Nutzschnittstelle hat, und damit »echten« Facebook-Funktionen sehr ähnelt, so findet diese »Illusion eines erweiterten Facebooks« vollständig und ausschließlich in Ihrem Browser mit ROSE statt.</p>",
+    "question3": "Welche Daten protokolliert ROSE?",
+    "answer3": "<p>ROSE protokolliert folgende Daten:</p><ul><li><strong>Datum und Uhrzeit einer Interaktion mit Facebook</strong>, z.B. wann der Studienteilnehmer einen Beitrag für seine Pinnwand freigegeben hat</li><li><strong>Typ einer Interaktion</strong>, also z.B. »Erstellung eines Beitrags«</li><li><strong>Eindeutiger Identifikator</strong>, welcher den Kontext einer Interaktion kennzeichnet. Dabei handelt es sich um eine achtstellige Buchstaben- und Zahlenkombination, z.B. »2a2d6fc3«. Beim Kommentieren eines Bildes bezieht sich der Identifikator z.B. auf das kommentierte Bild. Damit kann die Studienbetreuung später herausfinden, dass mehrere Studienteilnehmer dasselbe Bild kommentiert haben - ohne das Bild selbst zu kennen.</li><li><strong>Privatsphäre-Einstellungen für Interaktionen</strong>, also z.B. ob ein Beitrag nur für »Freunde« oder »Alle« sichtbar war</li><li><strong>Tagebucheinträge</strong></li><li><strong>ROSE-Kommentare</strong></li><li><strong>Allgemeine Privatsphäre-Einstellungen</strong></li></ul>",
+    "question4": "Sammelt ROSE auch Daten, welche ich mit meinen Kontakten in Facebook austausche?",
+    "answer4": "<p>Nein. ROSE sammelt keinerlei Daten, welche Sie mit Ihren Freunden in Facebook austauschen, oder anderweitig eingeben. ROSE sammelt somit keinerlei inhaltsbezogene Informationen, wie z.B. Bilder, Links, Textnachrichten auf Pinnwänden, Chatnachrichten, oder auch Gruppennamen von Gruppen denen Sie angehören. Auch in Gruppenstudien werden die Daten der TeilnehmerInnen nur lokal gespeichert. Auch hier hat die Studienbetreuung keinen Zugriff auf Daten ihrer Freunde.</p><p>ROSE sammelt nur Daten darüber, ob Sie Aktionen eines bestimmten Typs zu einem bestimmten Zeitpunkt ausgeführt haben, also z.B. ob Sie ein Bild kommentieren. Die Studienleitung kann bei der Auswertung nur feststellen, dass Sie diese Interaktion ausgelöst haben, jedoch nicht, ob Sie z.B. das Bild eines Eisbären oder eines Freundes auf einer Party kommentierten. Möchten Sie für die Studie Informationen zu dem Inhalt einer Interaktion festhalten, um zu erläutern, wieso Sie eine bestimmte Aktion durchgeführt haben, dann benutzen Sie bitte die ROSE-Kommentarfunktion, oder Ihr Tagebuch.</p>",
+    "question5": "Wie kann ich kontrollieren, welche Daten ROSE gesammelt hat?",
+    "answer5": "<p>Dies ist zum einen komfortabel über die Nutzerschnittstelle möglich (Menüpunkt »Interaktionen«). Desweiteren sind die Daten beim Übermitteln an die Studienbetreuung im Klartext einsehbar. Auch wenn es sich dabei um ein sehr kompaktes textbasiertes Datenformat handelt, können Sie sich schnell, strichprobenartig vergewissern, dass keine Ihrer privaten Daten übermittelt werden.</p>",
+    "question6": "Wie ist sichergestellt, dass ROSE-Daten anonymisiert sind?",
+    "answer6": "<p>Die von ROSE gesammelten Daten enthalten keinerlei Hinweise anhand derer die Studienbetreuung im Nachhinein feststellen könnte, welcher Facebook-Nutzer diese Daten erzeugt hat. ROSE speichert keine Facebook-Nutzernamen oder URLs von Bildern und Videos der Nutzer. ROSE-Daten unterscheiden sich damit nicht von anderen qualitativ erhobenen, anonymisierten Daten, wie z.B. Interview-Mitschnitten. Sie können sich davon spätestens beim Übermitteln gesammelter Daten an die Studienbetreuung vergewissern. Ein Mitschneiden von Inhalten hätte darüber hinaus auch wenig Sinn, da eine kontextuelle Einordnung und Bewertung kaum möglich ist.</p>",
+    "question7": "Kann ich den Quellcode von ROSE einsehen, um mich über die gemachten Angaben zu vergewissern?",
+    "answer7": "<p>Ja. ROSE ist eine freie, quelloffene Software unter der GPL-Lizenz (General Public License). Sie können den Quellcode einsehen, und unter den Bedingungen der GPL verändern und weiterverbreiten. Wenn Sie dafür Hilfe benötigen, wenden Sie sich bitte an die Studienleitung.</p>",
+    "question8": "Kann ich ROSE nach Studienende für persönliche Zwecke weiterverwenden?",
+    "answer8": "<p>Ja. Da ROSE im Hintergrund keine Daten an die Studienleitung versendet, können Sie das Programm bedenkenlos weiterverwenden, und auch weiterverbreiten. Beachten Sie dazu bitte die Bedingungen der GPL-Lizenz. Wir können Ihnen jedoch außerhalb der Studie keine Unterstützung für die Software anbieten, wie z.B. Programmaktualisierungen.</p>"
+  },
+
+  "reminder": {
+    "prompt": "Vergiss nicht zu kommentieren"
+  },
+
+  "sidebar": {
+    "infoText": "Erzähl uns was Du kommentierst (Bild, Link, Status,...). Erzähl uns wer das gepostet/geshared hat (Du selbst, ein Freund, ein anderer Nutzer, eine Seite, ...). Erzähl uns warum Du dich entschieden hast einen Post, ein Bild etc. nur mit bestimmten \"Freunden\" zu teilen.",
+    "rating1": "Für wie angemessen halten Sie es diesen Inhalt auf Facebook zu zeigen",
+    "rating2": "Wie unterhaltsam ist dieser Inhalt für Sie"
+  }
+};

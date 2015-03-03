@@ -85,6 +85,7 @@
     // Custom Globals
     "globals"       : {
         "kango": true,
-        "localforage": true
+        "localforage": true,
+        "Backbone": true
     }
 }

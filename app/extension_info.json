@@ -7,12 +7,20 @@
     "background_scripts": [
         "scripts/chromereload.js",
         "bower_components/jquery/dist/jquery.js",
+        "bower_components/underscore/underscore.js",
+        "bower_components/backbone/backbone.js",
         "bower_components/localforage/dist/localforage.js",
+        "bower_components/kango-localforage-backbone/dist/localforage.backbone.js",
+        "bower_components/fetch/fetch.js",
         "background_app.js"
     ],
     "content_scripts": [
         "bower_components/jquery/dist/jquery.js",
         "bower_components/forge/js/forge.min.js",
+        "bower_components/underscore/underscore.js",
+        "bower_components/backbone/backbone.js",
+        "bower_components/localforage/dist/localforage.js",
+        "bower_components/kango-localforage-backbone/dist/localforage.backbone.js",
         "content_app1.js"
     ],
     "browser_button": {

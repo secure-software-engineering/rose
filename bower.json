@@ -18,6 +18,12 @@
     "jquery": "~2.1.3",
     "localforage": "~1.2.2",
     "fetch": "~0.7.0",
-    "forge": "~0.6.20"
+    "forge": "~0.6.20",
+    "backbone": "~1.1.2",
+    "localforage-backbone": "~0.5.0",
+    "kango-localforage-backbone": "~0.4.1"
+  },
+  "resolutions": {
+    "localforage": "~1.2.2"
   }
 }

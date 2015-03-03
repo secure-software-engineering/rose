@@ -1,7 +1,6 @@
 /** @module crypto */
 
 /* Requirements */
-var forge = require('node-forge'); //breaks, wontfix
 
 export default {
     /**
@@ -12,8 +11,8 @@ export default {
     sha1: function sha1(message) {
         var md = forge.md.sha1.create();
         var salt = "Rose"; //FIXME: Get from Configs
-
-        var hash = md.update(salt + message);
+        md.update(salt + message);
+        var hash = md.digest().toHex();
 
         // Slice and return hash
         // return hash.slice(0, configsFromStorage.getHashLength);

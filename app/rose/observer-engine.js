@@ -5,7 +5,7 @@
 import log from 'rose/log';
 require('../scripts/jquery.patterns.js');
 var sortBy = require('lodash/collection/sortBy');
-// import {sha1 as hash} from 'rose/crypto'; //!Breaks due to strict mode: local deletion of variable
+import {sha1 as hash} from 'rose/crypto';
 
 /**
  * Hard coded observers for testing
@@ -100,8 +100,8 @@ function handleClick(event, observers) {
 
           //FIXME: use process function with hashing
           // Process data
-          // var extract = entry.process(result.data[0], $node);
-          var extract = result.data[0];
+          var extract = entry.process(result.data[0], $node);
+          // var extract = result.data[0];
 
           // Store interaction
           storeInteraction(observer.name, observer.network, observer.version, extract);

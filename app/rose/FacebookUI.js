@@ -61,7 +61,7 @@ export default (function () {
       resStore: resources
     };
     i18n.init(options);
-    // loadCss('bower_components/semantic-ui/dist/semantic.min.css');
+    loadCss('res/semantic/semantic.min.css');
     loadCss('res/main.css');
     this._registerEventHandlers();
     this._injectCommentRibbon();

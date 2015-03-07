@@ -103,6 +103,18 @@ gulp.task('kango:build', [
   });
 });
 
+gulp.task('kango:devbuild', [
+  'build:backgroundscript',
+  'build:contentscript',
+  'build:manifest',
+  'copy:bowerFiles',
+  'copy:staticFiles'
+], function(cb) {
+  exec('python ' + ENV.kangocli + ' build kango-runtime --target chrome --no-pack --output-directory ' + ENV.dist, function(err) {
+    cb(err);
+  });
+});
+
 gulp.task('connect', function() {
   connect.server({
     root: ENV.app,
@@ -114,12 +126,12 @@ gulp.task('watch', function() {
   return gulp.watch(ENV.app + '/**/*', ['reload']);
 });
 
-gulp.task('reload', ['kango:build'], function() {
+gulp.task('reload', ['kango:devbuild'], function() {
   return gulp.src(ENV.app + '/**/*')
     .pipe(connect.reload());
 });
 
 gulp.task('default', ['clean:dist', 'clean:tmp', 'connect'], function() {
   gulp.start('watch');
-  gulp.start('kango:build');
+  gulp.start('kango:devbuild');
 });

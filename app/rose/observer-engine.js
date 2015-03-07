@@ -1,45 +1,12 @@
 /** @module observer-engine */
 
 /** Requirements */
-//import storage from 'rose/storage';
 import log from 'rose/log';
 require('../scripts/jquery.patterns.js');
 var sortBy = require('lodash/collection/sortBy');
 import {sha1 as hash} from 'rose/crypto';
 
-/**
- * Hard coded observers for testing
- * Should be removed when connected to settings module
- */
-
-var obs = [{
-  name: "like",
-  network: "facebook",
-  type: "click",
-  priority: 1,
-  patterns: [
-    {
-      node: ".UFILikeLink span",
-      container: "._x72",
-      pattern: '<div class="_x72"><div class="userContentWrapper"><div class="userContent">{id}</div></div></div>',
-      process: "function process(info, $node) { info.id = hash(info.id); return info; }"
-    }
-  ]
-},
-{
-  name: "profileview",
-  network: "facebook",
-  type: "click",
-  priority: 1,
-  patterns: [
-    {
-      node: "a[data-hovercard*=\"user\"]",
-      container: "span",
-      pattern: '<span><a data-hovercard="{id}"></a></span>',
-      process: "function process(info, $node) { var pattern = /id=(.+)&/; info.id = info.id.match(pattern)[1]; return info; }"
-    }
-  ]
-}];
+import observersCollection from 'rose/collections/observers';
 
 /**
  * Stores an interaction in storage.
@@ -135,17 +102,14 @@ function integrate(observers) {
 export default {
   register: function(network) {
 
-    //retrieve Observers for current network from storage
-    // kango.invokeAsync('kango.storage.getItem', 'observers', function (observers) {
-      // // Create observers, if neccessary
-      // observers = observers || [];
+    var observers = new observersCollection();
+    observers.fetch({reset: true});
 
-      var observers = [];
+    observers.once("sync", function (){
+      debugger;
+      observers = observers.where({network: network});
 
-      // Add hardcoded observers
-      observers = observers.concat(obs);
-
-      console.log('Static Observers: ', observers);
+      console.log('Stored Observers: ', observers.toJSON());
 
       // Eval "process" functions
       for (var i = 0; i < observers.length; i++) {
@@ -160,6 +124,6 @@ export default {
 
       //Integrate observers into DOM
       integrate(observers);
-    // });
+    });
   }
 };

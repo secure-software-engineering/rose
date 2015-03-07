@@ -1,12 +1,11 @@
-﻿import ExtractorEngine from 'rose/extractor-engine';
+﻿import log from 'rose/log';
+import ExtractorEngine from 'rose/extractor-engine';
 import observersCollection from 'rose/collections/observers';
-import observerModel from 'rose/models/observer';
 
 /**
  * Hard coded observers for testing
- * Should be removed when connected to settings module
+ * Should be removed when connected to updater
  */
-
 var obs = [{
   name: "like",
   network: "facebook",
@@ -39,23 +38,17 @@ var obs = [{
 /* Background Script */
 (function() {
 
-  //Broken: This creates new observers in db every reload
+  //Write test observe into storage
+  //FIX: Updater loads observers
   var observers = new observersCollection();
-  observers.fetch({reset: true, success: function(col, response, opt) {
-    console.log(col, response, opt, observers);
+  observers.fetch({ success: function() {
+    log('CoreBGScript', 'Observers loaded from storage');
     if (observers.length === 0) {
-      var observer;
       for (var i = 0; i < obs.length; i++) {
-        observer = new observerModel(obs[i]);
-        observers.create(observer);
-        // observer.save();
+        observers.create(obs[i]);
       }
     }
-
   }});
-
-  observers.once('sync', function() {
-  });
 
   /*
    * Extractor Engine
@@ -65,9 +58,9 @@ var obs = [{
    */
 
    ExtractorEngine.add({
-    network: "Facebook",
-    name: "privacy-settings",
-    informationUrl: "https://www.facebook.com/settings/?tab=privacy",
+    network: 'Facebook',
+    name: 'privacy-settings',
+    informationUrl: 'https://www.facebook.com/settings/?tab=privacy',
     interval : 5000
   });
 

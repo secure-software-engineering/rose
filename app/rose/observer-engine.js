@@ -103,8 +103,9 @@ export default {
   register: function(network) {
 
     var observers = new observersCollection();
-    observers.fetch({reset: true, success: function (){
+    observers.fetch({success: function (a){
 
+      //FIXME: Returns empty array
       observers = observers.where({network: network});
 
       console.log('Stored Observers: ', observers);

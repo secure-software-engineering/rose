@@ -88,7 +88,7 @@ function integrate(observers) {
   observers = observers.filter(function(observer) {
     return observer.type === 'click';
   });
-  observers = sortBy(obs, function (a) { return a.priority; }).reverse();
+  observers = sortBy(observers, function (a) { return a.priority; }).reverse();
 
   // Register global 'click' event
   $(document).on('click', function(event) {
@@ -103,13 +103,11 @@ export default {
   register: function(network) {
 
     var observers = new observersCollection();
-    observers.fetch({reset: true});
+    observers.fetch({reset: true, success: function (){
 
-    observers.once("sync", function (){
-      debugger;
       observers = observers.where({network: network});
 
-      console.log('Stored Observers: ', observers.toJSON());
+      console.log('Stored Observers: ', observers);
 
       // Eval "process" functions
       for (var i = 0; i < observers.length; i++) {
@@ -124,6 +122,6 @@ export default {
 
       //Integrate observers into DOM
       integrate(observers);
-    });
+    }});
   }
 };

@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var changed = require('gulp-changed');
 var connect = require('gulp-connect');
 var gulpFilter = require('gulp-filter');
 var jeditor = require('gulp-json-editor');
@@ -67,6 +68,7 @@ gulp.task('copy:staticFiles', function() {
       './icons/**/*',
       './res/**/*'
     ], { cwd: ENV.app, base: ENV.app})
+    .pipe(changed(ENV.tmp))
     .pipe(gulp.dest(ENV.tmp));
 });
 
@@ -79,6 +81,7 @@ gulp.task('copy:bowerFiles', function() {
 
   return gulp.src(allScripts, { cwd: ENV.app, base: ENV.app })
     .pipe(filter)
+    .pipe(changed(ENV.tmp))
     // .pipe(uglify())
     .pipe(gulp.dest(ENV.tmp));
 });

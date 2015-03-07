@@ -7,6 +7,7 @@ var jeditor = require('gulp-json-editor');
 
 var babelify = require('babelify');
 var browserify = require('browserify');
+var watchify = require('watchify');
 var del = require('del');
 var exec = require('child_process').exec;
 var multimatch = require('multimatch');
@@ -26,7 +27,7 @@ var manifest = require(ENV.manifest);
 gulp.task('build:contentscript', function() {
   var noBowerFiles = multimatch(manifest.content_scripts, ['**', '!bower_components/{,**/}*.*']);
 
-  return browserify(noBowerFiles, { paths: [ ENV.app ] })
+  return watchify(browserify(noBowerFiles, { paths: [ ENV.app ] }), watchify.args)
     .transform(babelify)
     .bundle()
     .pipe(source('contentscript.js'))
@@ -38,7 +39,7 @@ gulp.task('build:contentscript', function() {
 gulp.task('build:backgroundscript', function() {
   var noBowerFiles = multimatch(manifest.background_scripts, ['**', '!bower_components/{,**/}*.*']);
 
-  return browserify(noBowerFiles, { paths: [ ENV.app ] })
+  return watchify(browserify(noBowerFiles, { paths: [ ENV.app ] }), watchify.args)
     .transform(babelify.configure({ experimental: true }))
     .bundle()
     .pipe(source('backgroundscript.js'))

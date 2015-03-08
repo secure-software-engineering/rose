@@ -1,4 +1,4 @@
-﻿import log from 'rose/log';
+import log from 'rose/log';
 import ExtractorEngine from 'rose/extractor-engine';
 import observersCollection from 'rose/collections/observers';
 

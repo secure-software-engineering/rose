@@ -3092,6 +3092,7 @@
 ---------------*/
 
 .ui.header .ui.label {
+  font-size: 1.28em;
   margin: 0em 0em 0em 0.5rem;
   vertical-align: middle;
 }
@@ -3662,7 +3663,7 @@ a.ui.inverted.yellow.header:hover {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI - Icon
+ * # Semantic UI x.x - Icon
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -4040,17 +4041,6 @@ i.massive.icon {
   font-size: 8em;
   vertical-align: middle;
 }
-
-/*!
- * # Semantic UI x.x - Icon
- * http://github.com/semantic-org/semantic-ui/
- *
- *
- * Copyright 2014 Contributors
- * Released under the MIT license
- * http://opensource.org/licenses/MIT
- *
- */
 
 /*
  * Font Awesome 4.3.0 by @davegandy - http://fontawesome.io - @fontawesome

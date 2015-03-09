@@ -20,12 +20,10 @@
     "fetch": "~0.7.0",
     "forge": "~0.6.20",
     "backbone": "~1.1.2",
-    "localforage-backbone": "~0.5.0",
     "kango-localforage-backbone": "~0.4.2",
     "handlebars": "~3.0.0",
     "i18next": "~1.7.7",
-    "rsvp": "~3.0.17",
-    "semantic-ui": "~1.10.4"
+    "rsvp": "~3.0.17"
   },
   "resolutions": {
     "localforage": "0.9.2"

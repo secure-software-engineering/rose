@@ -3,10 +3,10 @@
 /** Requirements */
 import log from 'rose/log';
 require('../scripts/jquery.patterns.js');
-var sortBy = require('lodash/collection/sortBy');
-import {sha1 as hash} from 'rose/crypto';
 
 import observersCollection from 'rose/collections/observers';
+import interactionsCollection from 'rose/collections/interactions';
+var interactions;
 
 /**
  * Stores an interaction in storage.
@@ -26,10 +26,7 @@ function storeInteraction(name, network, version, data) {
 
   // Logging interaction
   log('ObserverEngine', 'New interaction: ' + JSON.stringify(data));
-
-  // FIXME: Add data
-  //Storage.add(data);
-  console.log(data);
+  interactions.create(data);
 }
 
 /**
@@ -45,30 +42,26 @@ function handleClick(event, observers) {
   // Apply observers
   observers.forEach(function(observer) {
     // Apply patterns
-    observer.patterns.forEach(function(entry) {
+    observer.get('patterns').forEach(function(pattern) {
       // Check if node matches click event pattern
-      if (!$node.is(entry.node)) {
+      if (!$node.is(pattern.node)) {
         return;
       }
 
       // Only continue if parent container can be found
-      if ($node.parents(entry.container).length) {
-        var container = $node.closest(entry.container);
+      if ($node.parents(pattern.container).length) {
+        var container = $node.closest(pattern.container);
 
         // Extract information
         var result = $(container).applyPattern({
-          structure: entry.pattern
+          structure: pattern.structure
         });
 
         // Store the extracted information if something is found
         if (result.success) {
 
-          console.log('Store Interaction:', result);
-
-          //FIXME: use process function with hashing
           // Process data
-          var extract = entry.process(result.data[0], $node);
-          // var extract = result.data[0];
+          var extract = pattern.process(result.data[0], $node);
 
           // Store interaction
           storeInteraction(observer.name, observer.network, observer.version, extract);
@@ -86,43 +79,31 @@ function integrate(observers) {
 
   // Filter anbd prioritize observers for correct event type and defer event handling
   observers = observers.filter(function(observer) {
-    return observer.type === 'click';
+    return observer.get('type') === 'click';
   });
-  observers = sortBy(observers, function (a) { return a.priority; }).reverse();
 
   // Register global 'click' event
-  $(document).on('click', function(event) {
-    handleClick(event, observers);
-  });
+  if (observers.length) {
+    interactions = new interactionsCollection();
+    interactions.fetch({success: function() {
+      $(document).on('click', function(event) {
+        handleClick(event, observers);
+      });
+    }});
+  }
 
-
-  //FIXME: Register global 'click' event
 }
 
 export default {
   register: function(network) {
-
     var observers = new observersCollection();
-    observers.fetch({success: function (a){
+    observers.fetch({success: function (){
 
-      //FIXME: Returns empty array
-      observers = observers.where({network: network});
-
-      console.log('Stored Observers: ', observers);
-
-      // Eval "process" functions
-      for (var i = 0; i < observers.length; i++) {
-        var observer = observers[i];
-
-        for (var j = 0; j < observer.patterns.length; j++) {
-          var pattern = observer.patterns[j];
-
-          pattern.process = eval('(' + pattern.process + ')');
-        }
-      }
+      var obs = observers.where({network: network});
 
       //Integrate observers into DOM
-      integrate(observers);
+      integrate(obs);
+      log('ObserverEngine', 'Integrated' + obs.length + ' observers');
     }});
   }
 };

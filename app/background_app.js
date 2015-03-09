@@ -14,8 +14,8 @@ var obs = [{
   patterns: [
     {
       node: ".UFILikeLink span",
-      container: "._x72",
-      pattern: '<div class="_x72"><div class="userContentWrapper"><div class="userContent">{id}</div></div></div>',
+      container: ".userContentWrapper",
+      pattern: '<div class="userContentWrapper"><div class="userContent">{id}</div></div>',
       process: "function process(info, $node) { info.id = hash(info.id); return info; }"
     }
   ]
@@ -24,7 +24,7 @@ var obs = [{
   name: "profileview",
   network: "facebook",
   type: "click",
-  priority: 1,
+  priority: 2,
   patterns: [
     {
       node: "a[data-hovercard*=\"user\"]",

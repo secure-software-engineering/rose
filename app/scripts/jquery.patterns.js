@@ -1,21 +1,6 @@
 (function($) {
-  // Sebastian Ruhleder, Felix Epp, v. 0.0.8
+  // Sebastian Ruhleder, Felix Epp, v. 0.1.0
   'use strict';
-  /**
-   * Move innerHtml Fields to "content" attribute
-   */
-  var preprocess = function(structure) {
-    //recursion is obsolete use replace
-    for(;;) {
-      var match = /<(.+)>\{(.+)\}<(.+)>/gi.exec(structure);
-
-      if(match === null) {
-        return structure;
-      }
-
-      structure = '<' + match[1] + ' content="{' + match[2] + '}"><' + match[3] + '>';
-    }
-  };
 
   var findPattern = function(pattern, $node, events, level) {
     var data = [], hooks = [], success = false;
@@ -130,55 +115,11 @@
     };
   };
 
-  /**
-   * FIXME: Why compiling the pattern with each click, that is ridonkoulus??? Maybe on importing observers
-   */
-  var compilePattern = function(structure) {
-    var name = structure.prop('tagName');
-    var fields = [], conditions = [], events = [];
-
-    $.each(structure[0].attributes, function(i, attr) {
-      var entry = {
-        'name': attr.name,
-        'value': attr.value
-      };
-
-      if(/^\{.+\}$/.test(attr.value)) {
-        entry.value = attr.value.slice(1,-1);
-        fields.push(entry);
-      }
-      else if(/^\[.+\]$/.test(attr.value)) {
-        entry.value = attr.value.slice(1, -1);
-        events.push(entry);
-      } else {
-        conditions.push(entry);
-      }
-    });
-
-    var children = [];
-    structure.children().each(function() {
-      var childPattern = compilePattern($(this));
-
-      children.push(childPattern);
-    });
-
-    return {
-      'tag': name,
-      'fields': fields,
-      'conditions': conditions,
-      'events': events,
-      'children': children
-    };
-  };
-
   $.fn.extend({
     applyPattern : function(options) {
-      // Compile pattern
-      var pattern = compilePattern($(preprocess(options.structure)));
-
       // Wrap node in container
       var $node = $('<div></div>').append(this.clone()); //.wrap() possible?
 
-      return findPattern(pattern, $node, options.events, 0);
+      return findPattern(options.structure, $node, options.events, 0);
     }});
 })(jQuery);

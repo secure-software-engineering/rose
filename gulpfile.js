@@ -25,7 +25,7 @@ var ENV = {
 var manifest = require(ENV.manifest);
 
 gulp.task('build:contentscript', function() {
-  var noBowerFiles = multimatch(manifest.content_scripts, ['**', '!bower_components/{,**/}*.*', '!res/{,**/}*.*']);
+  var noBowerFiles = multimatch(manifest.content_scripts, ['**', '!bower_components/{,**/}*.*', '!res/{,**/}*.*', '!ui/{,**/}*.*']);
 
   return watchify(browserify(noBowerFiles, { paths: [ ENV.app ] }), watchify.args)
     .transform(babelify)
@@ -37,7 +37,7 @@ gulp.task('build:contentscript', function() {
 });
 
 gulp.task('build:backgroundscript', function() {
-  var noBowerFiles = multimatch(manifest.background_scripts, ['**', '!bower_components/{,**/}*.*', '!res/{,**/}*.*']);
+  var noBowerFiles = multimatch(manifest.background_scripts, ['**', '!bower_components/{,**/}*.*', '!res/{,**/}*.*', '!ui/{,**/}*.*']);
 
   return watchify(browserify(noBowerFiles, { paths: [ ENV.app ] }), watchify.args)
     .transform(babelify.configure({ experimental: true }))
@@ -67,7 +67,8 @@ gulp.task('build:manifest', function() {
 gulp.task('copy:staticFiles', function() {
   return gulp.src([
       './icons/**/*',
-      './res/**/*'
+      './res/**/*',
+      './ui/**/*'
     ], { cwd: ENV.app, base: ENV.app})
     .pipe(changed(ENV.tmp))
     .pipe(gulp.dest(ENV.tmp));

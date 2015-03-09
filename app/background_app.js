@@ -67,4 +67,6 @@ var obs = [{
   ExtractorEngine.register();
 })();
 
-
+kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, function(event) {
+    kango.browser.tabs.create({url:'ui/index.html'});
+});

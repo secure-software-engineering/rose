@@ -86,6 +86,9 @@
     "globals"       : {
         "kango": true,
         "localforage": true,
-        "Backbone": true
+        "Backbone": true,
+        "Handelbars": true,
+        "i18n": true,
+        "RSVP": true
     }
 }

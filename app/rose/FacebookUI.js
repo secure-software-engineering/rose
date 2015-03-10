@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // require('Observers/Facebook/FacebookLikeObserver');
 
-// require('Storage/Storage');
+import CommentsCollection from 'rose/collections/comments';
 
 var loadCss = function loadCss(link) {
   var cssLink;
@@ -44,29 +44,31 @@ var loadCss = function loadCss(link) {
 
 export default (function () {
   FacebookUI.prototype._activeItem = {};
+  FacebookUI.prototype._comments = new CommentsCollection();
 
   // FacebookUI.prototype._likeObserver = new FacebookLikeObserver();
 
   function FacebookUI() {
     var options;
+    options = {
+      debug: true,
+      getAsync: false,
+      fallbackLng: 'en',
+      resGetPath: kango.io.getResourceUrl('res/locales/') + '__lng__/__ns__.json'
+    };
+    i18n.init(options);
     Handlebars.registerHelper('I18n', function(i18nKey) {
       var result;
       result = i18n.t(i18nKey);
       return new Handlebars.SafeString(result);
     });
-    options = {
-      debug: true,
-      getAsync: false,
-      fallbackLng: 'en',
-      resStore: resources
-    };
-    i18n.init(options);
     loadCss('res/semantic/semantic.min.css');
     loadCss('res/main.css');
     this._registerEventHandlers();
     this._injectCommentRibbon();
     this._injectReminder();
     this._injectSidebar();
+    this._comments.fetch();
   }
 
   FacebookUI.prototype.injectUI = function() {};
@@ -127,14 +129,6 @@ export default (function () {
     });
   };
 
-  FacebookUI.prototype._getComment = function(id) {
-    var promise;
-    promise = new RSVP.Promise(function(resolve) {
-      // return Storage.getComment(id, 'Facebook', resolve);
-    });
-    return promise;
-  };
-
   FacebookUI.prototype._getTemplate = function(template) {
     var promise;
     promise = new RSVP.Promise(function(resolve) {
@@ -171,44 +165,43 @@ export default (function () {
         $('.ui.sidebar').sidebar('hide');
         _this._activeItem.text = $('.sidebar textarea').val() || '';
         _this._activeItem.rating = $('.ui.rating').rating('get rating') || 0;
-        // return Storage.addComment(_this._activeItem, 'Facebook');
+        _this._activeItem.network = 'facebook';
+        //check is update or create
+        _this._comments.create(_this._activeItem);
       };
     })(this));
 
-    return $('body').on('click', '.rose.comment', (function(_this) {
+    $('body').on('click', '.rose.comment', (function(_this) {
       return function(evt) {
         //Testing with static id
         var item = {record: {object: {id : 'thereisnohash'}}};
         $('.ui.sidebar').dimmer('show');
         $('.ui.sidebar').sidebar('push page');
         $('.ui.sidebar').sidebar('show');
-        if ($('.fbxWelcomeBoxName').length > 0) {
-          // item = _this._likeObserver.handleNode($(evt.target).siblings(), 'status');
-        } else {
-          // item = _this._likeObserver.handleNode($(evt.target), 'timeline');
-        }
+        // if ($('.fbxWelcomeBoxName').length > 0) {
+        //   item = _this._likeObserver.handleNode($(evt.target).siblings(), 'status');
+        // } else {
+        //   item = _this._likeObserver.handleNode($(evt.target), 'timeline');
+        // }
         _this._activeItem = item.record.object;
-        return _this._getComment(_this._activeItem.id).then(function(comment) {
-          var activeComment, i, rating, _i, _len, _ref, _results;
-          if (comment != null) {
-            activeComment = comment.record;
-            $('.ui.form textarea').val(activeComment.text);
-            _ref = activeComment.rating;
-            _results = [];
-            for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-              rating = _ref[i];
-              _results.push($('.ui.rating:eq(' + i + ')').rating('set rating', rating));
-            }
-            return _results;
-          } else {
-            $('.ui.form textarea').val('');
-            return $('.ui.rating').rating('set rating', 0);
+        var comment = _this.comments.findWhere({contentId: item.record.object.id});
+        if (comment !== null) {
+          var activeComment = comment.get('record');
+          var rating;
+          $('.ui.form textarea').val(activeComment.text);
+          for (var i = 0, len = activeComment.rating.length; i < len;  i++) {
+            rating = activeComment.rating[i];
+            $('.ui.rating:eq(' + i + ')').rating('set rating', rating);
           }
-        }).then(function() {
-          return $('.ui.sidebar').dimmer('hide');
-        });
+        } else {
+          $('.ui.form textarea').val('');
+          $('.ui.rating').rating('set rating', 0);
+        }
+        //When store does not repsoned??
+        // $('.ui.sidebar').dimmer('hide');
       };
     })(this));
+
   };
 
   return FacebookUI;

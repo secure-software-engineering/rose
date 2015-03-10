@@ -1,6 +1,4 @@
-resources = {};
-resources.de = {};
-resources.de.translation = {
+{
   "about": "Über",
   "backup": "Datensicherung",
   "restore": "Wiederherstellen",
@@ -105,4 +103,4 @@ resources.de.translation = {
     "rating1": "Für wie angemessen halten Sie es diesen Inhalt auf Facebook zu zeigen",
     "rating2": "Wie unterhaltsam ist dieser Inhalt für Sie"
   }
-};
+}

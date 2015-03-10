@@ -21,7 +21,7 @@
         "bower_components/backbone/backbone.js",
         "bower_components/localforage/dist/localforage.js",
         "bower_components/kango-localforage-backbone/dist/localforage.backbone.js",
-        "res/semantic/semantic.min.js",
+        "bower_components/semantic-ui/dist/semantic.min.js",
         "bower_components/rsvp/rsvp.min.js",
         "bower_components/handlebars/handlebars.min.js",
         "bower_components/i18next/i18next.min.js",

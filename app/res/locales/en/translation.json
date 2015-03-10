@@ -1,5 +1,4 @@
-resources.en = {};
-resources.en.translation = {
+{
   "about": "About",
   "backup": "Data Backup",
   "restore": "Restore",
@@ -100,4 +99,4 @@ resources.en.translation = {
     "rating1": "Do you think it is appropriate to show this content on Facebook",
     "rating2": "How entertaining is this content to you"
   }
-};
+}

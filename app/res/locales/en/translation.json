@@ -96,7 +96,7 @@
 
   "sidebar": {
     "infoText": "Tell us what you are commenting on (picture, link, status update, ...) Tell us who posted/shared it (you, a friend, a user who is not your friend, a page, ...) Tell us why you decided to share something with a certain audience.",
-    "rating1": "Do you think it is appropriate to show this content on Facebook",
-    "rating2": "How entertaining is this content to you"
+    "ratingEntertain": "How entertaining is this content to you",
+    "ratingAppropriate": "Do you think it is appropriate to show this content on Facebook"
   }
 }

@@ -100,7 +100,7 @@
 
   "sidebar": {
     "infoText": "Erzähl uns was Du kommentierst (Bild, Link, Status,...). Erzähl uns wer das gepostet/geshared hat (Du selbst, ein Freund, ein anderer Nutzer, eine Seite, ...). Erzähl uns warum Du dich entschieden hast einen Post, ein Bild etc. nur mit bestimmten \"Freunden\" zu teilen.",
-    "rating1": "Für wie angemessen halten Sie es diesen Inhalt auf Facebook zu zeigen",
-    "rating2": "Wie unterhaltsam ist dieser Inhalt für Sie"
+    "ratingEntertain": "Wie unterhaltsam ist dieser Inhalt für Sie",
+    "ratingAppropriate": "Für wie angemessen halten Sie es diesen Inhalt auf Facebook zu zeigen"
   }
 }

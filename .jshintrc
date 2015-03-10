@@ -87,7 +87,7 @@
         "kango": true,
         "localforage": true,
         "Backbone": true,
-        "Handelbars": true,
+        "Handlebars": true,
         "i18n": true,
         "RSVP": true
     }

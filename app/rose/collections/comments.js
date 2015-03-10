@@ -1,4 +1,4 @@
-import Comment from '../models/Comment';
+import Comment from '../models/comment';
 
 var collection = Backbone.Collection.extend({
   model: Comment,

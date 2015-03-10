@@ -30,6 +30,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // require('Observers/Facebook/FacebookLikeObserver');
 
 import CommentsCollection from 'rose/collections/comments';
+import ObserverEngine from 'rose/observer-engine';
+import ObserverCollection from 'rose/collections/observers';
+import ObserverModel from 'rose/models/observer';
 
 var loadCss = function loadCss(link) {
   var cssLink;
@@ -45,8 +48,7 @@ var loadCss = function loadCss(link) {
 export default (function () {
   FacebookUI.prototype._activeItem = {};
   FacebookUI.prototype._comments = new CommentsCollection();
-
-  // FacebookUI.prototype._likeObserver = new FacebookLikeObserver();
+  FacebookUI.prototype._likeObserver = {};
 
   function FacebookUI() {
     var options;
@@ -64,11 +66,20 @@ export default (function () {
     });
     loadCss('res/semantic/semantic.min.css');
     loadCss('res/main.css');
-    this._registerEventHandlers();
-    this._injectCommentRibbon();
-    this._injectReminder();
-    this._injectSidebar();
-    this._comments.fetch();
+
+    //fetch existing comments from storage
+    this._comments.fetch({success: function(col, res, options) {
+      options._this._registerEventHandlers();
+      options._this._injectCommentRibbon();
+      options._this._injectReminder();
+      options._this._injectSidebar();
+    }, _this: this});
+
+    //Get LikeObserver for contentid generation
+    var observers = new ObserverCollection();
+    observers.fetch({success: function(col, res, options){
+      options._this._likeObserver = col.findWhere({network: 'facebook', name: 'like'});
+    },_this: this});
   }
 
   FacebookUI.prototype.injectUI = function() {};
@@ -156,37 +167,49 @@ export default (function () {
   };
 
   FacebookUI.prototype._registerEventHandlers = function() {
+
+    //Cancel
     $('body').on('click', '.sidebar .cancel.button', function() {
       return $('.ui.sidebar').sidebar('hide');
     });
 
+    //Save a comment
     $('body').on('click', '.sidebar .save.button', (function(_this) {
       return function() {
-        $('.ui.sidebar').sidebar('hide');
         _this._activeItem.text = $('.sidebar textarea').val() || '';
         _this._activeItem.rating = $('.ui.rating').rating('get rating') || 0;
         _this._activeItem.network = 'facebook';
         //check is update or create
         _this._comments.create(_this._activeItem);
+        $('.ui.sidebar').sidebar('hide');
       };
     })(this));
 
+    // Start commenting
     $('body').on('click', '.rose.comment', (function(_this) {
       return function(evt) {
-        //Testing with static id
-        var item = {record: {object: {id : 'thereisnohash'}}};
-        $('.ui.sidebar').dimmer('show');
-        $('.ui.sidebar').sidebar('push page');
-        $('.ui.sidebar').sidebar('show');
+        // Receive id for content element
+        _this._activeItem = {};
+        var pattern = _this._likeObserver.get('patterns')[0];
+        var $node = $(evt.target).siblings().find(pattern.node);
+
+        _this._activeItem.id = ObserverEngine.handlePattern($node, pattern).id;
+
         // if ($('.fbxWelcomeBoxName').length > 0) {
         //   item = _this._likeObserver.handleNode($(evt.target).siblings(), 'status');
         // } else {
         //   item = _this._likeObserver.handleNode($(evt.target), 'timeline');
         // }
-        _this._activeItem = item.record.object;
-        var comment = _this.comments.findWhere({contentId: item.record.object.id});
-        if (comment !== null) {
-          var activeComment = comment.get('record');
+
+        //Show sidebar
+        // $('.ui.sidebar').dimmer('show');
+        $('.ui.sidebar').sidebar('push page');
+        $('.ui.sidebar').sidebar('show');
+
+        //Check if comment for this content exists and set form
+        var comment = _this._comments.findWhere({id: _this._activeItem.id});
+        if (comment !== undefined) {
+          var activeComment = comment.toJSON();
           var rating;
           $('.ui.form textarea').val(activeComment.text);
           for (var i = 0, len = activeComment.rating.length; i < len;  i++) {
@@ -197,7 +220,7 @@ export default (function () {
           $('.ui.form textarea').val('');
           $('.ui.rating').rating('set rating', 0);
         }
-        //When store does not repsoned??
+
         // $('.ui.sidebar').dimmer('hide');
       };
     })(this));

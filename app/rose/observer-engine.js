@@ -10,23 +10,53 @@ var interactions;
 
 /**
  * Stores an interaction in storage.
- * @param {string} name - The interaction's name.
- * @param {string} network - The network in which the interaction took place.
+ * @param {object} observer - the corresponding observer model
  * @param {object} data - The interaction's data.
  */
-function storeInteraction(name, network, version, data) {
+function storeInteraction(observer, data) {
   // Set type for storage
   data.type = 'interaction';
 
   // Save observer name and version
   data.origin = {
-    observer: name,
-    version:  version
+    observer: observer.get('name'),
+    network: observer.get('network'),
+    version:  observer.get('version')
   };
 
   // Logging interaction
   log('ObserverEngine', 'New interaction: ' + JSON.stringify(data));
   interactions.create(data);
+}
+
+/**
+ * Handles click events and uses the supplied observers to apply
+ * patterns.
+ * @param {object} node - The node which trigger this
+ * @param {object} pattern - a single pattern
+ */
+function handlePattern($node, pattern) {
+  // Check if node matches click event pattern
+  if (!$node.is(pattern.node)) {
+    return;
+  }
+
+  // Only continue if parent container can be found
+  if ($node.parents(pattern.container).length) {
+    var container = $node.closest(pattern.container);
+
+    // Extract information
+    var result = $(container).applyPattern({
+      structure: pattern.structure
+    });
+
+    // Store the extracted information if something is found
+    if (result.success) {
+
+      // Process data
+      return pattern.process(result.data[0], $node);
+    }
+  }
 }
 
 /**
@@ -40,35 +70,20 @@ function handleClick(event, observers) {
   var $node = $(event.target);
 
   // Apply observers
-  observers.forEach(function(observer) {
+  for (var o = 0; o < observers.length; o++) {
+    var observer = observers[o];
+    var patterns = observer.get('patterns');
+
     // Apply patterns
-    observer.get('patterns').forEach(function(pattern) {
-      // Check if node matches click event pattern
-      if (!$node.is(pattern.node)) {
-        return;
+    for (var p = 0; p < patterns.length; p++) {
+      var pattern = patterns[p];
+      var extract = handlePattern($node, pattern);
+      // Store interaction
+      if (extract) {
+        storeInteraction(observer, extract);
       }
-
-      // Only continue if parent container can be found
-      if ($node.parents(pattern.container).length) {
-        var container = $node.closest(pattern.container);
-
-        // Extract information
-        var result = $(container).applyPattern({
-          structure: pattern.structure
-        });
-
-        // Store the extracted information if something is found
-        if (result.success) {
-
-          // Process data
-          var extract = pattern.process(result.data[0], $node);
-
-          // Store interaction
-          storeInteraction(observer.name, observer.network, observer.version, extract);
-        }
-      }
-    });
-  });
+    }
+  }
 }
 
 /**
@@ -95,6 +110,7 @@ function integrate(observers) {
 }
 
 export default {
+  handlePattern: handlePattern,
   register: function(network) {
     var observers = new observersCollection();
     observers.fetch({success: function (){
@@ -103,7 +119,7 @@ export default {
 
       //Integrate observers into DOM
       integrate(obs);
-      log('ObserverEngine', 'Integrated' + obs.length + ' observers');
+      log('ObserverEngine', 'Integrated ' + obs.length + ' observers');
     }});
   }
 };

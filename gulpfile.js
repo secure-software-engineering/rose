@@ -49,8 +49,8 @@ gulp.task('build:backgroundscript', function() {
 });
 
 gulp.task('build:manifest', function() {
-  var contentscripts = manifest.content_scripts.filter(function (element) { return /bower_components/.test(element); });
-  var backgroundscripts = manifest.background_scripts.filter(function (element) { return /bower_components/.test(element); });
+  var contentscripts = manifest.content_scripts.filter(function (element) { return /bower_components|res\//.test(element); });
+  var backgroundscripts = manifest.background_scripts.filter(function (element) { return /bower_components|res\//.test(element); });
 
   contentscripts.push('contentscript.js');
   backgroundscripts.push('backgroundscript.js');

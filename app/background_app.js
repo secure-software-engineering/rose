@@ -7,7 +7,7 @@ import observersCollection from 'rose/collections/observers';
  * Should be removed when connected to updater
  */
 var obs = [{
-  name: "like",
+  name: "LikeContent",
   network: "facebook",
   type: "click",
   priority: 1,
@@ -15,8 +15,14 @@ var obs = [{
     {
       node: ".UFILikeLink span",
       container: ".userContentWrapper",
-      pattern: '<div class="userContentWrapper"><div class="userContent">{id}</div></div>',
-      process: "function process(info, $node) { info.id = hash(info.id); return info; }"
+      pattern: '<div class="userContentWrapper"><div class="clearfix"><div><div><div><div><h5><div><span><span><a href="{sharer}"></a></span></span></div></h5><div><span><span><a href="{id}"><abbr></abbr></a></span></span></div></div></div></div></div></div></div>',
+      process: "function process(info, $node) { info.id = hash(info.id); info.sharer = hash(info.sharer); return info; }"
+    },
+    {
+      node: ".UFILikeLink span",
+      container: ".userContentWrapper",
+      pattern: '<div class="userContentWrapper"><div class="clearfix"><div><div><div><div><h5><div><span><a href="{sharer}"></a></span></span></div></h5><div><span><span><a href="{id}"><abbr></abbr></a></span></span></div></div></div></div></div></div></div>',
+      process: "function process(info, $node) { info.id = hash(info.id); info.sharer = hash(info.sharer); return info; }"
     }
   ]
 },

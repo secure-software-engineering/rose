@@ -19,24 +19,21 @@
   "rtl": "No",
   "components": [
     "button",
-    "divider",
     "header",
     "icon",
     "input",
     "label",
-    "loader",
+    "list",
     "form",
-    "comment",
-    "checkbox",
+    "menu",
     "dimmer",
-    "dropdown",
     "nag",
     "rating",
     "sidebar",
-    "transition",
-    "form",
-    "state",
-    "visibility"
+    "item"
   ],
   "version": "1.11.4"
 }
+
+
+

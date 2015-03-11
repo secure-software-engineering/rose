@@ -1,11 +1,8 @@
-<div class="ui styled wide floating sidebar">
-    <div class="ui inverted dimmer">
-      <div class="ui text loader">{{I18n 'loading'}}</div>
-    </div>
-    <h3 class="ui header">{{I18n 'comment'}}</h3>
-    <p>{{I18n 'sidebar.infoText'}}</p>
-    <div class="ui form">
+<div class="ui wide vertical sidebar menu left">
+    <div class="ui form item">
+        <p>{{I18n 'sidebar.infoText'}}</p>
         <div class="field">
+            <label>{{I18n 'comment'}}</label>
             <textarea></textarea>
         </div>
         <div class="two fluid ui buttons">
@@ -14,34 +11,23 @@
             <div class="ui positive save button">{{I18n 'save'}}</div>
         </div>
     </div>
-    <div class="ui divider"></div>
-    <h3 class="ui header">Rating</h3>
-    <div class="ui divided list">
-        <div class="item">
-            <div class="content">
-                <div class="header">
-                    {{I18n 'sidebar.ratingEntertain'}}?
-                </div>
-                <div class="ui star rating right">
-                    <i class="icon"></i>
-                    <i class="icon"></i>
-                    <i class="icon"></i>
-                    <i class="icon"></i>
-                    <i class="icon"></i>
+    <div class="ui item">
+        <h4 class="ui header">Rating</h4>
+        <div class="ui list">
+            <div class="item">
+                <div class="content">
+                    <div class="description">
+                        {{I18n 'sidebar.ratingEntertain'}}?
+                    </div>
+                    <div class="ui huge star rating" data-max-rating="5"></div>
                 </div>
             </div>
-        </div>
-        <div class="item">
-            <div class="content">
-                <div class="header">
-                    {{I18n 'sidebar.ratingAppropriate'}}?
-                </div>
-                <div class="ui star rating right">
-                    <i class="icon"></i>
-                    <i class="icon"></i>
-                    <i class="icon"></i>
-                    <i class="icon"></i>
-                    <i class="icon"></i>
+            <div class="item">
+                <div class="content">
+                    <div class="description">
+                        {{I18n 'sidebar.ratingAppropriate'}}?
+                    </div>
+                    <div class="ui huge star rating" data-max-rating="5"></div>
                 </div>
             </div>
         </div>

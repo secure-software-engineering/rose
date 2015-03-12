@@ -4,4 +4,4 @@ dist
 kango-runtime/src/common
 *.pyc
 *.sublime-*
-semantic/
+./semantic/

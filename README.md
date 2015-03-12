@@ -2,6 +2,8 @@
 
 Synopsis
 ----
+
+[![Join the chat at https://gitter.im/secure-software-engineering/rose](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/secure-software-engineering/rose?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 ROSE is a browser extension researchers can use to capture in situ data on how users actually use the online social network Facebook.
 
 [Please see the project wiki for more detailed information.](https://github.com/oliverh855/rose/wiki)

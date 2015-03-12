@@ -37,24 +37,22 @@ function storeInteraction(observer, data) {
  */
 function handlePattern($node, pattern) {
   // Check if node matches click event pattern
-  if (!$node.is(pattern.node)) {
-    return;
-  }
+  if ($node.is(pattern.node)) {
+    // Only continue if parent container can be found
+    if ($node.parents(pattern.container).length) {
+      var container = $node.closest(pattern.container);
 
-  // Only continue if parent container can be found
-  if ($node.parents(pattern.container).length) {
-    var container = $node.closest(pattern.container);
+      // Extract information
+      var result = $(container).applyPattern({
+        structure: pattern.structure
+      });
 
-    // Extract information
-    var result = $(container).applyPattern({
-      structure: pattern.structure
-    });
+      // Store the extracted information if something is found
+      if (result.success) {
 
-    // Store the extracted information if something is found
-    if (result.success) {
-
-      // Process data
-      return pattern.process(result.data[0], $node);
+        // Process data
+        return pattern.process(result.data[0], $node);
+      }
     }
   }
 }
@@ -79,8 +77,9 @@ function handleClick(event, observers) {
       var pattern = patterns[p];
       var extract = handlePattern($node, pattern);
       // Store interaction
-      if (extract) {
+      if (extract !== undefined) {
         storeInteraction(observer, extract);
+        break;
       }
     }
   }

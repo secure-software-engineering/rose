@@ -11,19 +11,27 @@ var obs = [{
   network: "facebook",
   type: "click",
   priority: 1,
+  version: "0.1",
   patterns: [
     {
       node: ".UFILikeLink span",
       container: ".userContentWrapper",
-      pattern: '<div class="userContentWrapper"><div class="clearfix"><div><div><div><div><h5><div><span><span><a href="{sharer}"></a></span></span></div></h5><div><span><span><a href="{id}"><abbr></abbr></a></span></span></div></div></div></div></div></div></div>',
-      process: "function process(info, $node) { info.id = hash(info.id); info.sharer = hash(info.sharer); return info; }"
+      pattern: '<div class="userContentWrapper"><div class="clearfix"><div><div><div><div><h5><div><span><span class="fwb"><a href="{sharer}"></a></span></span></div></h5><div><span><span><a href="{contentId}"><abbr></abbr></a></span></span></div></div></div></div></div></div></div>',
+      process: "function process(info, $node) { info.contentId = hash(info.contentId); info.sharer = hash(info.sharer); return info; }"
     },
     {
       node: ".UFILikeLink span",
       container: ".userContentWrapper",
-      pattern: '<div class="userContentWrapper"><div class="clearfix"><div><div><div><div><h5><div><span><a href="{sharer}"></a></span></span></div></h5><div><span><span><a href="{id}"><abbr></abbr></a></span></span></div></div></div></div></div></div></div>',
-      process: "function process(info, $node) { info.id = hash(info.id); info.sharer = hash(info.sharer); return info; }"
+      pattern: '<div class="userContentWrapper"><div class="clearfix"><div><div><div><div><h5><div><span class="fwb"><a href="{sharer}"></a></span></span></div></h5><div><span><span><a href="{contentId}"><abbr></abbr></a></span></span></div></div></div></div></div></div></div>',
+      process: "function process(info, $node) { info.contentId = hash(info.contentId); info.sharer = hash(info.sharer); return info; }"
+    },
+    {
+      node: ".UFILikeLink span",
+      container: ".userContentWrapper",
+      pattern: '<div class="userContentWrapper"><div class="clearfix"><div><div><div><div><h6><div><span class="fwb"><a href="{sharer}"></a></span></span></div></h5><div><span><span><a href="{contentId}"><abbr></abbr></a></span></span></div></div></div></div></div></div></div>',
+      process: "function process(info, $node) { info.contentId = hash(info.contentId); info.sharer = hash(info.sharer); return info; }"
     }
+
   ]
 },
 {

@@ -89,7 +89,7 @@ export default (function () {
     //Get LikeObserver for contentid generation
     var observers = new ObserverCollection();
     observers.fetch({success: function(col, res, options){
-      options._this._likeObserver = col.findWhere({network: 'facebook', name: 'like'});
+      options._this._likeObserver = col.findWhere({network: 'facebook', name: 'LikeContent'});
     },_this: this});
 
   }
@@ -188,6 +188,7 @@ export default (function () {
         _this._activeItem.text = $('.sidebar textarea').val() || '';
         _this._activeItem.rating = $('.ui.rating').rating('get rating') || 0;
         _this._activeItem.network = 'facebook';
+        _this._activeItem.createdAt = Date.now();
         //check is update or create
         _this._comments.create(_this._activeItem);
         $('.ui.sidebar').sidebar('hide');
@@ -199,10 +200,19 @@ export default (function () {
       return function(evt) {
         // Receive id for content element
         _this._activeItem = {};
-        var pattern = _this._likeObserver.get('patterns')[0];
-        var $node = $(evt.target).siblings().find(pattern.node);
+        var patterns = _this._likeObserver.get('patterns');
+        var $node = $(evt.target).siblings().find(patterns[0].node);
 
-        _this._activeItem.id = ObserverEngine.handlePattern($node, pattern).id;
+        var observerResult;
+        //Fix this with LikePage Observer or at least through warning
+        _this._activeItem.contentId = Math.random();
+        for (var i = 0; i < patterns.length; i++) {
+          observerResult = ObserverEngine.handlePattern($node, patterns[i]);
+          if (observerResult !== undefined) {
+            _this._activeItem.contentId = observerResult.contentId;
+            break;
+          }
+        }
 
         // if ($('.fbxWelcomeBoxName').length > 0) {
         //   item = _this._likeObserver.handleNode($(evt.target).siblings(), 'status');
@@ -215,7 +225,7 @@ export default (function () {
         $('.ui.sidebar').sidebar('show');
 
         //Check if comment for this content exists and set form
-        var comment = _this._comments.findWhere({id: _this._activeItem.id});
+        var comment = _this._comments.findWhere({contentId: _this._activeItem.contentId});
         if (comment !== undefined) {
           var activeComment = comment.toJSON();
           var rating;

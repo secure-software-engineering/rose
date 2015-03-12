@@ -1,0 +1,7 @@
+node_modules
+app/bower_components
+dist
+kango-runtime/src/common
+*.pyc
+*.sublime-*
+semantic/

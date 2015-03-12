@@ -1,0 +1,69 @@
+{
+  "name": "ROSE",
+  "version": "3.0.0",
+  "description": "Research tool for field studies in online social networks.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iamolivinius/gulpicRose"
+  },
+  "main": "Gulpfile.js",
+  "dependencies": {
+    "gulp": "^3.8.11"
+  },
+  "devDependencies": {
+    "babel": "^4.6.3",
+    "babelify": "^5.0.3",
+    "better-console": "^0.2.4",
+    "browserify": "^9.0.3",
+    "del": "^1.1.1",
+    "gulp": "^3.8.11",
+    "gulp-autoprefixer": "^2.1.0",
+    "gulp-changed": "^1.1.1",
+    "gulp-chmod": "^1.2.0",
+    "gulp-clone": "^1.0.0",
+    "gulp-concat": "^2.5.2",
+    "gulp-concat-css": "^2.1.1",
+    "gulp-connect": "^2.2.0",
+    "gulp-copy": "0.0.2",
+    "gulp-filter": "^2.0.2",
+    "gulp-flatten": "0.0.4",
+    "gulp-header": "^1.2.2",
+    "gulp-help": "^1.3.3",
+    "gulp-if": "^1.2.5",
+    "gulp-json-editor": "^2.2.1",
+    "gulp-less": "^3.0.1",
+    "gulp-minify-css": "^0.5.1",
+    "gulp-notify": "^2.2.0",
+    "gulp-plumber": "^0.6.6",
+    "gulp-print": "^1.1.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-replace": "^0.5.3",
+    "gulp-rtlcss": "^0.1.4",
+    "gulp-uglify": "^1.1.0",
+    "gulp-watch": "^4.1.1",
+    "lodash": "^3.3.1",
+    "multimatch": "^2.0.0",
+    "node-forge": "^0.6.20",
+    "require-dot-file": "^0.4.0",
+    "semantic-ui": "^1.11.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.0.0",
+    "watchify": "^2.4.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "bower install && cd app/bower_components/forge && npm install && npm run minify"
+  },
+  "author": "Fraunhofer SIT",
+  "contributors": [
+    {
+      "name": "Felix Epp",
+      "email": "work@felixepp.de"
+    },
+    {
+      "name": "Oliver Hoffmann",
+      "email": "oliverh855@gmail.com"
+    }
+  ],
+  "license": "ISC"
+}

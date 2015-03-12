@@ -188,7 +188,7 @@ export default (function () {
         _this._activeItem.text = $('.sidebar textarea').val() || '';
         _this._activeItem.rating = $('.ui.rating').rating('get rating') || 0;
         _this._activeItem.network = 'facebook';
-        _this._activeItem.createdAt = Date.now();
+        _this._activeItem.createdAt = (new Date()).toJSON();
         //check is update or create
         _this._comments.create(_this._activeItem);
         $('.ui.sidebar').sidebar('hide');

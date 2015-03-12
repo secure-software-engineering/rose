@@ -14,8 +14,8 @@ var interactions;
  * @param {object} data - The interaction's data.
  */
 function storeInteraction(observer, data) {
-  // Set type for storage
-  data.type = 'interaction';
+  // Time
+  data.createdAt = (new Date()).toJSON();
 
   // Save observer name and version
   data.origin = {

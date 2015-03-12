@@ -105,8 +105,7 @@ export default (function () {
       return;
     }
     return this._getTemplate('sidebar').then(function(source) {
-      var template;
-      return template = Handlebars.compile(source);
+      return Handlebars.compile(source);
     }).then(function(template) {
       $('body').append(template());
       $('.ui.sidebar').sidebar();
@@ -116,8 +115,7 @@ export default (function () {
 
   FacebookUI.prototype._injectCommentRibbon = function() {
     return this._getTemplate('commentLabel').then(function(source) {
-      var template;
-      return template = Handlebars.compile(source);
+      return Handlebars.compile(source);
     }).then(function(template) {
       if ($('.fbxWelcomeBoxName').length > 0) {
         $("*[data-timestamp]").not($('*[data-timestamp] .rose.comment').parent()).prepend(template());
@@ -142,8 +140,7 @@ export default (function () {
         }
       };
     })(this)).then(function(source) {
-      var template;
-      return template = Handlebars.compile(source);
+      return Handlebars.compile(source);
     }).then(function(template) {
       $('body').append(template());
       return $('.ui.nag').nag({

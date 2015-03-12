@@ -1,8 +1,7 @@
-bower_components
 node_modules
-packages
-kango_workspace/src/common/
-kango
-.tmp
-dist/
+app/bower_components
+dist
+kango-runtime/src/common
+*.pyc
 *.sublime-*
+semantic/

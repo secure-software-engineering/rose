@@ -43,10 +43,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     font-style: normal;
 
 }
+/* reset needed for semantic layout */
+.ui.sidebar *, .ui.sidebar :after, .ui.sidebar :before {
+  box-sizing: inherit;
+}
 
 .ui.star.rating {
     padding-top: 10px;
     padding-bottom: 5px;
+    float: right;
 }
 
 .rose.comment {

@@ -2847,7 +2847,7 @@
 ---------------*/
 
 .ui.header .ui.label {
-  font-size: 1.28em;
+  font-size: '';
   margin: 0em 0em 0em 0.5rem;
   vertical-align: middle;
 }
@@ -6618,13 +6618,19 @@ i.icon.bed:before {
 
 .ui.input {
   position: relative;
-  display: inline-block;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
   color: rgba(0, 0, 0, 0.8);
 }
 
 .ui.input input {
   margin: 0em;
-  width: 100%;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
   outline: none;
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
   text-align: left;
@@ -6882,10 +6888,10 @@ i.icon.bed:before {
 }
 
 .ui.labeled.input > .label {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1 0 auto;
-  -ms-flex: 1 0 auto;
-  flex: 1 0 auto;
+  -webkit-box-flex: 0;
+  -webkit-flex-grow: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
   margin: 0;
   font-size: 1em;
 }
@@ -6966,10 +6972,10 @@ i.icon.bed:before {
 
 .ui.action.input > .button,
 .ui.action.input > .buttons {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1 0 auto;
-  -ms-flex: 1 0 auto;
-  flex: 1 0 auto;
+  -webkit-box-flex: 0;
+  -webkit-flex-grow: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
 }
 
 .ui.action.input > .button,
@@ -9707,22 +9713,24 @@ ol.ui.horizontal.list li:before,
      Required Field
 ---------------------*/
 
-.ui.form .required.fields > .field > label:after,
+.ui.form .required.fields:not(.grouped) > .field > label:after,
+.ui.form .required.fields.grouped > label:after,
 .ui.form .required.field > label:after,
-.ui.form .required.fields > .field > .checkbox:after,
+.ui.form .required.fields:not(.grouped) > .field > .checkbox:after,
 .ui.form .required.field > .checkbox:after {
   margin: -0.2em 0em 0em 0.2em;
   content: '*';
   color: #d95c5c;
 }
 
-.ui.form .required.fields > .field > label:after,
+.ui.form .required.fields:not(.grouped) > .field > label:after,
+.ui.form .required.fields.grouped > label:after,
 .ui.form .required.field > label:after {
   display: inline-block;
   vertical-align: top;
 }
 
-.ui.form .required.fields > .field > .checkbox:after,
+.ui.form .required.fields:not(.grouped) > .field > .checkbox:after,
 .ui.form .required.field > .checkbox:after {
   position: absolute;
   top: 0%;

@@ -24,7 +24,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+import CommentModel from 'rose/models/comment';
 import CommentsCollection from 'rose/collections/comments';
 import ObserverEngine from 'rose/observer-engine';
 import ObserverCollection from 'rose/collections/observers';
@@ -41,7 +41,7 @@ var loadCss = function loadCss(link) {
 };
 
 export default (function () {
-  FacebookUI.prototype._activeItem = {};
+  FacebookUI.prototype._activeComment = {};
   FacebookUI.prototype._comments = new CommentsCollection();
   FacebookUI.prototype._likeObserver = {};
 
@@ -177,42 +177,22 @@ export default (function () {
 
   FacebookUI.prototype._registerEventHandlers = function() {
 
-    //Cancel
-    $('body').on('click', '.sidebar .cancel.button', function() {
-      return $('.ui.sidebar').sidebar('hide');
-    });
-
-    //Save a comment
-    $('body').on('click', '.sidebar .save.button', (function(_this) {
-      return function() {
-        _this._activeItem.text = $('.sidebar textarea').val() || '';
-        _this._activeItem.rating = $('.ui.rating').rating('get rating') || 0;
-        _this._activeItem.network = 'facebook';
-        _this._activeItem.createdAt = (new Date()).toJSON();
-        //check is update or create
-        _this._comments.create(_this._activeItem);
-        $('.ui.sidebar').sidebar('hide');
-      };
-    })(this));
-
     // Start commenting
     $('body').on('click', '.rose.comment', (function(_this) {
       return function(evt) {
         // Receive id for content element
-        _this._activeItem = {};
         var patterns = _this._likeObserver.get('patterns');
         var $node = $(evt.target).siblings().find(patterns[0].node);
 
         var observerResult;
         //Fix this with LikePage Observer or at least through warning
-        _this._activeItem.contentId = Math.random();
         for (var i = 0; i < patterns.length; i++) {
           observerResult = ObserverEngine.handlePattern($node, patterns[i]);
           if (observerResult !== undefined) {
-            _this._activeItem.contentId = observerResult.contentId;
             break;
           }
         }
+
 
         // if ($('.fbxWelcomeBoxName').length > 0) {
         //   item = _this._likeObserver.handleNode($(evt.target).siblings(), 'status');
@@ -225,9 +205,12 @@ export default (function () {
         $('.ui.sidebar').sidebar('show');
 
         //Check if comment for this content exists and set form
-        var comment = _this._comments.findWhere({contentId: _this._activeItem.contentId});
-        if (comment !== undefined) {
-          var activeComment = comment.toJSON();
+        _this._activeComment = undefined;
+        if (observerResult !== undefined) {
+          _this._activeComment = _this._comments.findWhere({contentId: observerResult.contentId});
+        }
+        if (_this._activeComment !== undefined) {
+          var activeComment = _this._activeComment.toJSON();
           var rating;
           $('.ui.form textarea').val(activeComment.text);
           for (var i = 0, len = activeComment.rating.length; i < len;  i++) {
@@ -235,10 +218,26 @@ export default (function () {
             $('.ui.rating:eq(' + i + ')').rating('set rating', rating);
           }
         } else {
+          //check is update or create
+          _this._activeComment = _this._comments.create({contentId: observerResult.contentId, createdAt: (new Date()).toJSON()});
           $('.ui.form textarea').val('');
           $('.ui.rating').rating('set rating', 0);
         }
 
+      };
+    })(this));
+
+    //Save a comment
+    $('body').on('click', '.sidebar .save.button', (function(_this) {
+      return function() {
+        var comment = {};
+        comment.text = $('.sidebar textarea').val() || '';
+        comment.rating = $('.ui.rating').rating('get rating') || [0,0];
+        comment.network = 'facebook';
+        comment.updatedAt = (new Date()).toJSON();
+        _this._activeComment.set(comment);
+        _this._activeComment.save();
+        $('.ui.sidebar').sidebar('hide');
       };
     })(this));
 

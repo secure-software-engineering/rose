@@ -1,5 +1,5 @@
 import ObserverEngine from 'rose/observer-engine';
-import FacebookUI from 'rose/FacebookUI';
+import FacebookUI from 'rose/facebook-ui';
 
 /* Content Script */
 (function() {

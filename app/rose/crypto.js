@@ -1,6 +1,7 @@
 /** @module crypto */
 
 /* Requirements */
+import SystemConfigModel from 'rose/models/system-config';
 
 export default {
     /**
@@ -9,14 +10,14 @@ export default {
      * @returns {String}
      */
     sha1: function sha1(message) {
+        var configs = new SystemConfigModel();
+        configs.fetch();
         var md = forge.md.sha1.create();
-        var salt = "Rose"; //FIXME: Get from Configs
+        var salt = configs.get('salt');
         md.update(salt + message);
         var hash = md.digest().toHex();
 
-        // Slice and return hash
-        // return hash.slice(0, configsFromStorage.getHashLength);
-        return hash;
+        return hash.slice(0, configs.get('hashLength'));
     },
     /**
      * Verifies the message's claim to authenticity, based on a signature and
@@ -42,4 +43,4 @@ export default {
     //     // Verify and return result
     //     return sign.verify(signature);
     // }
-}
+};

@@ -9,7 +9,7 @@
  *            Portions Copyright 2008-2011 Apple Inc. All rights reserved.
  * @license   Licensed under MIT license
  *            See https://raw.github.com/emberjs/ember.js/master/LICENSE
- * @version   1.11.0-beta.4
+ * @version   1.11.1
  */
 
 (function() {
@@ -432,13 +432,12 @@ enifed('ember-testing/adapters/qunit', ['exports', 'ember-testing/adapters/adapt
   });
 
 });
-enifed('ember-testing/helpers', ['ember-metal/core', 'ember-metal/property_get', 'ember-metal/error', 'ember-metal/run_loop', 'ember-views/system/jquery', 'ember-testing/test'], function (Ember, property_get, EmberError, run, jQuery, Test) {
+enifed('ember-testing/helpers', ['ember-metal/core', 'ember-metal/property_get', 'ember-metal/error', 'ember-metal/run_loop', 'ember-views/system/jquery', 'ember-testing/test', 'ember-runtime/ext/rsvp'], function (Ember, property_get, EmberError, run, jQuery, Test, RSVP) {
 
   'use strict';
 
   var helper = Test['default'].registerHelper;
   var asyncHelper = Test['default'].registerAsyncHelper;
-  var countAsync = 0;
 
   function currentRouteName(app) {
     var appController = app.__container__.lookup('controller:application');
@@ -625,12 +624,7 @@ enifed('ember-testing/helpers', ['ember-metal/core', 'ember-metal/property_get',
   }
 
   function wait(app, value) {
-    return Test['default'].promise(function(resolve) {
-      // If this is the first async promise, kick off the async test
-      if (++countAsync === 1) {
-        Test['default'].adapter.asyncStart();
-      }
-
+    return new RSVP['default'].Promise(function(resolve) {
       // Every 10ms, poll for the async thing to have finished
       var watcher = setInterval(function() {
         var router = app.__container__.lookup('router:main');
@@ -653,11 +647,6 @@ enifed('ember-testing/helpers', ['ember-metal/core', 'ember-metal/property_get',
         }
         // Stop polling
         clearInterval(watcher);
-
-        // If this is the last async promise, end the async test
-        if (--countAsync === 0) {
-          Test['default'].adapter.asyncEnd();
-        }
 
         // Synchronously resolve the promise
         run['default'](null, resolve, value);
@@ -1310,7 +1299,7 @@ enifed('ember-testing/test', ['exports', 'ember-metal/core', 'ember-metal/run_lo
 
     return function() {
       var args = slice.call(arguments);
-      var lastPromise = Test.lastPromise;
+      var lastPromise;
 
       args.unshift(app);
 
@@ -1321,35 +1310,28 @@ enifed('ember-testing/test', ['exports', 'ember-metal/core', 'ember-metal/run_lo
         return fn.apply(app, args);
       }
 
-      if (!lastPromise) {
-        // It's the first async helper in current context
-        lastPromise = fn.apply(app, args);
-      } else {
-        // wait for last helper's promise to resolve and then
-        // execute. To be safe, we need to tell the adapter we're going
-        // asynchronous here, because fn may not be invoked before we
-        // return.
-        Test.adapter.asyncStart();
-        run(function() {
-          lastPromise = Test.resolve(lastPromise).then(function() {
-            try {
-              return fn.apply(app, args);
-            } finally {
-              Test.adapter.asyncEnd();
-            }
-          });
-        });
-      }
+      lastPromise = run(function() {
+        return Test.resolve(Test.lastPromise);
+      });
 
-      return lastPromise;
+      // wait for last helper's promise to resolve and then
+      // execute. To be safe, we need to tell the adapter we're going
+      // asynchronous here, because fn may not be invoked before we
+      // return.
+      Test.adapter.asyncStart();
+      return lastPromise.then(function() {
+        return fn.apply(app, args);
+      })["finally"](function() {
+        Test.adapter.asyncEnd();
+      });
     };
   }
 
   function run(fn) {
     if (!emberRun['default'].currentRunLoop) {
-      emberRun['default'](fn);
+      return emberRun['default'](fn);
     } else {
-      fn();
+      return fn();
     }
   }
 
@@ -1513,6 +1495,7 @@ enifed('ember-testing/test', ['exports', 'ember-metal/core', 'ember-metal/run_lo
 
   Test.Promise.prototype = create['default'](RSVP['default'].Promise.prototype);
   Test.Promise.prototype.constructor = Test.Promise;
+  Test.Promise.resolve = Test.resolve;
 
   // Patch `then` to isolate async methods
   // specifically `Ember.Test.lastPromise`
@@ -1529,7 +1512,6 @@ enifed('ember-testing/test', ['exports', 'ember-metal/core', 'ember-metal/run_lo
   // 1. Set `Ember.Test.lastPromise` to null
   // 2. Invoke method
   // 3. Return the last promise created during method
-  // 4. Restore `Ember.Test.lastPromise` to original value
   function isolate(fn, val) {
     var value, lastPromise;
 
@@ -1539,6 +1521,7 @@ enifed('ember-testing/test', ['exports', 'ember-metal/core', 'ember-metal/run_lo
     value = fn(val);
 
     lastPromise = Test.lastPromise;
+    Test.lastPromise = null;
 
     // If the method returned a promise
     // return that promise. If not,
@@ -1546,12 +1529,11 @@ enifed('ember-testing/test', ['exports', 'ember-metal/core', 'ember-metal/run_lo
     if ((value && (value instanceof Test.Promise)) || !lastPromise) {
       return value;
     } else {
-      run(function() {
-        lastPromise = Test.resolve(lastPromise).then(function() {
+      return run(function() {
+        return Test.resolve(lastPromise).then(function() {
           return value;
         });
       });
-      return lastPromise;
     }
   }
 
@@ -1722,32 +1704,66 @@ define('ember-qunit/qunit-module', ['exports', 'qunit'], function (exports, quni
 
   exports.createModule = createModule;
 
-  function normalizeCallbacks(callbacks) {
+  function beforeEachCallback(callbacks) {
     if (typeof callbacks !== 'object') { return; }
     if (!callbacks) { return; }
 
+    var beforeEach;
+    
+    if (callbacks.setup) {
+      beforeEach = callbacks.setup;
+      delete callbacks.setup;
+    }
+
     if (callbacks.beforeEach) {
-      callbacks.setup = callbacks.beforeEach;
+      beforeEach = callbacks.beforeEach;
       delete callbacks.beforeEach;
     }
 
+    return beforeEach;
+  }
+
+  function afterEachCallback(callbacks) {
+    if (typeof callbacks !== 'object') { return; }
+    if (!callbacks) { return; }
+
+    var afterEach;
+
+    if (callbacks.teardown) {
+      afterEach = callbacks.teardown;
+      delete callbacks.teardown;
+    }
+
     if (callbacks.afterEach) {
-      callbacks.teardown = callbacks.afterEach;
+      afterEach = callbacks.afterEach;
       delete callbacks.afterEach;
     }
+
+    return afterEach;
   }
 
   function createModule(Constructor, name, description, callbacks) {
-    normalizeCallbacks(callbacks || description);
+    var beforeEach = beforeEachCallback(callbacks || description);
+    var afterEach  = afterEachCallback(callbacks || description);
 
     var module = new Constructor(name, description, callbacks);
 
     qunit.module(module.name, {
-      setup: function() {
-        module.setup();
+      setup: function(assert) {
+        var done = assert.async();
+        module.setup().then(function() {
+          if (beforeEach) {
+            beforeEach.call(module.context, assert);
+          }
+        })['finally'](done);
       },
-      teardown: function() {
-        module.teardown();
+
+      teardown: function(assert) {
+        if (afterEach) {
+          afterEach.call(module.context, assert);
+        }
+        var done = assert.async();
+        module.teardown()['finally'](done);
       }
     });
   }
@@ -1769,12 +1785,18 @@ define('ember-qunit/test', ['exports', 'ember', 'ember-test-helpers', 'qunit'], 
       var result = callback.call(context, assert);
 
       function failTestOnPromiseRejection(reason) {
-        ok(false, reason);
+        var message;
+        if (reason instanceof Error) {
+          message = reason.stack;
+        } else {
+          message = Ember['default'].inspect(reason);
+        }
+        ok(false, message);
       }
 
       Ember['default'].run(function(){
         QUnit.stop();
-        Ember['default'].RSVP.Promise.cast(result)['catch'](failTestOnPromiseRejection)['finally'](QUnit.start);
+        Ember['default'].RSVP.Promise.resolve(result)['catch'](failTestOnPromiseRejection)['finally'](QUnit.start);
       });
     }
 
@@ -1783,7 +1805,7 @@ define('ember-qunit/test', ['exports', 'ember', 'ember-test-helpers', 'qunit'], 
   exports['default'] = test;
 
 });
-define('ember-test-helpers', ['exports', 'ember', 'ember-test-helpers/isolated-container', 'ember-test-helpers/test-module', 'ember-test-helpers/test-module-for-component', 'ember-test-helpers/test-module-for-model', 'ember-test-helpers/test-context', 'ember-test-helpers/test-resolver'], function (exports, Ember, isolatedContainer, TestModule, TestModuleForComponent, TestModuleForModel, test_context, test_resolver) {
+define('ember-test-helpers', ['exports', 'ember', 'ember-test-helpers/isolated-container', 'ember-test-helpers/test-module', 'ember-test-helpers/test-module-for-component', 'ember-test-helpers/test-module-for-model', 'ember-test-helpers/test-module-for-integration', 'ember-test-helpers/test-context', 'ember-test-helpers/test-resolver'], function (exports, Ember, isolatedContainer, TestModule, TestModuleForComponent, TestModuleForModel, TestModuleForIntegration, test_context, test_resolver) {
 
   'use strict';
 
@@ -1793,6 +1815,7 @@ define('ember-test-helpers', ['exports', 'ember', 'ember-test-helpers/isolated-c
   exports.TestModule = TestModule['default'];
   exports.TestModuleForComponent = TestModuleForComponent['default'];
   exports.TestModuleForModel = TestModuleForModel['default'];
+  exports.TestModuleForIntegration = TestModuleForIntegration['default'];
   exports.getContext = test_context.getContext;
   exports.setContext = test_context.setContext;
   exports.setResolver = test_resolver.setResolver;
@@ -1832,24 +1855,28 @@ define('ember-test-helpers/isolated-container', ['exports', 'ember-test-helpers/
     var resolver = test_resolver.getResolver();
     var container;
 
+    var normalize = function(fullName) {
+      return resolver.normalize(fullName);
+    };
+
     if (Ember['default'].Registry) {
       var registry = new Ember['default'].Registry();
+      registry.normalizeFullName = normalize;
+
       container = registry.container();
       exposeRegistryMethodsWithoutDeprecations(container);
 
     } else {
       container = new Ember['default'].Container();
+
+      //normalizeFullName only exists since Ember 1.9
+      if (Ember['default'].typeOf(container.normalizeFullName) === 'function') {
+        container.normalizeFullName = normalize;
+      } else {
+        container.normalize = normalize;
+      }
     }
 
-    var normalize = function(fullName) {
-      return resolver.normalize(fullName);
-    };
-    //normalizeFullName only exists since Ember 1.9
-    if (Ember['default'].typeOf(container.normalizeFullName) === 'function') {
-      container.normalizeFullName = normalize;
-    } else {
-      container.normalize = normalize;
-    }
     container.optionsForType('component', { singleton: false });
     container.optionsForType('view', { singleton: false });
     container.optionsForType('template', { instantiate: false });
@@ -1862,6 +1889,18 @@ define('ember-test-helpers/isolated-container', ['exports', 'ember-test-helpers/
     container.register('view:toplevel', Ember['default'].View.extend());
     container.register('view:select', Ember['default'].Select);
     container.register('route:basic', Ember['default'].Route, { instantiate: false });
+
+    var globalContext = typeof global === 'object' && global || self;
+    if (globalContext.DS) {
+      var DS = globalContext.DS;
+      container.register('transform:boolean', DS.BooleanTransform);
+      container.register('transform:date', DS.DateTransform);
+      container.register('transform:number', DS.NumberTransform);
+      container.register('transform:string', DS.StringTransform);
+      container.register('serializer:-default', DS.JSONSerializer);
+      container.register('serializer:-rest', DS.RESTSerializer);
+      container.register('adapter:-rest', DS.RESTAdapter);
+    }
 
     for (var i = fullNames.length; i > 0; i--) {
       var fullName = fullNames[i - 1];
@@ -1924,38 +1963,121 @@ define('ember-test-helpers/test-module-for-component', ['exports', 'ember-test-h
 
       this.callbacks.render = function() {
         var containerView = Ember['default'].ContainerView.create({container: container});
-        var view = Ember['default'].run(function(){
+        Ember['default'].run(function(){
           var subject = context.subject();
           containerView.pushObject(subject);
           containerView.appendTo('#ember-testing');
-          return subject;
         });
 
-        _this.teardownSteps.push(function() {
+        _this.teardownSteps.unshift(function() {
           Ember['default'].run(function() {
             Ember['default'].tryInvoke(containerView, 'destroy');
           });
         });
-
-        return view.$();
       };
 
       this.callbacks.append = function() {
-        Ember['default'].deprecate('this.append() is deprecated. Please use this.render() instead.');
-        return this.callbacks.render();
+        Ember['default'].deprecate('this.append() is deprecated. Please use this.render() or this.$() instead.');
+        return context.$();
       };
 
       context.$ = function() {
-        var $view = this.render();
+        this.render();
         var subject = this.subject();
 
-        if (arguments.length){
-          return subject.$.apply(subject, arguments);
-        } else {
-          return $view;
-        }
+        return subject.$.apply(subject, arguments);
       };
     }
+  });
+
+});
+define('ember-test-helpers/test-module-for-integration', ['exports', 'ember', 'ember-test-helpers/test-module', 'ember-test-helpers/test-resolver', 'ember-test-helpers/test-context'], function (exports, Ember, TestModule, test_resolver, test_context) {
+
+  'use strict';
+
+  exports['default'] = TestModule['default'].extend({
+
+    isIntegration: true,
+
+    init: function(name, description, callbacks) {
+      this._super.call(this, name, description, callbacks);
+      this.setupSteps.push(this.setupIntegrationHelpers);
+      this.teardownSteps.push(this.teardownView);
+    },
+
+    setupIntegrationHelpers: function() {
+      var self = this;
+      var context = this.context;
+      context.dispatcher = Ember['default'].EventDispatcher.create();
+      context.dispatcher.setup({}, '#ember-testing');
+      this.actionHooks = {};
+
+      context.render = function(template) {
+        if (Ember['default'].isArray(template)) {
+          template = template.join('');
+        }
+        if (typeof template === 'string') {
+          template = Ember['default'].Handlebars.compile(template);
+        }
+        self.view = Ember['default'].View.create({
+          context: context,
+          controller: self,
+          template: template,
+          container: self.container
+        });
+        Ember['default'].run(function() {
+          self.view.appendTo('#ember-testing');
+        });
+      };
+
+      context.$ = function() {
+        return self.view.$.apply(self.view, arguments);
+      };
+
+      context.set = function(key, value) {
+        Ember['default'].run(function() {
+          Ember['default'].set(context, key, value);
+        });
+      };
+
+      context.get = function(key) {
+        return Ember['default'].get(context, key);
+      };
+
+      context.on = function(actionName, handler) {
+        self.actionHooks[actionName] = handler;
+      };
+
+    },
+
+    setupContext: function() {
+
+      test_context.setContext({
+        container:  this.container,
+        factory: function() {},
+        dispatcher: null
+      });
+
+      this.context = test_context.getContext();
+    },
+
+    send: function(actionName) {
+      var hook = this.actionHooks[actionName];
+      if (!hook) {
+        throw new Error("integration testing template received unexpected action " + actionName);
+      }
+      hook.apply(this, Array.prototype.slice.call(arguments, 1));
+    },
+
+    teardownView: function() {
+      var view = this.view;
+      if (view) {
+        Ember['default'].run(function() {
+          view.destroy();
+        });
+      }
+    }
+
   });
 
 });
@@ -1990,11 +2112,15 @@ define('ember-test-helpers/test-module-for-model', ['exports', 'ember-test-helpe
       }
 
       callbacks.store = function(){
+        var container = this.container;
+
         return container.lookup('store:main');
       };
 
       if (callbacks.subject === defaultSubject) {
         callbacks.subject = function(options) {
+          var container = this.container;
+
           return Ember['default'].run(function() {
             return container.lookup('store:main').createRecord(modelName, options);
           });
@@ -2004,7 +2130,7 @@ define('ember-test-helpers/test-module-for-model', ['exports', 'ember-test-helpe
   });
 
 });
-define('ember-test-helpers/test-module', ['exports', 'ember-test-helpers/isolated-container', 'ember-test-helpers/test-context', 'klassy'], function (exports, isolatedContainer, test_context, klassy) {
+define('ember-test-helpers/test-module', ['exports', 'ember', 'ember-test-helpers/isolated-container', 'ember-test-helpers/test-context', 'klassy', 'ember-test-helpers/test-resolver'], function (exports, Ember, isolatedContainer, test_context, klassy, test_resolver) {
 
   'use strict';
 
@@ -2021,6 +2147,11 @@ define('ember-test-helpers/test-module', ['exports', 'ember-test-helpers/isolate
       this.description = description || subjectName;
       this.name = description || subjectName;
       this.callbacks = callbacks || {};
+
+      if (this.callbacks.integration) {
+        this.isIntegration = callbacks.integration;      
+        delete callbacks.integration;
+      }
 
       this.initSubject();
       this.initNeeds();
@@ -2068,26 +2199,33 @@ define('ember-test-helpers/test-module', ['exports', 'ember-test-helpers/isolate
         delete this.callbacks.teardown;
       }
 
+      this.teardownSteps.push(this.teardownSubject);
       this.teardownSteps.push(this.teardownContainer);
       this.teardownSteps.push(this.teardownContext);
       this.teardownSteps.push(this.teardownTestElements);
 
       if (this.callbacks.afterTeardown) {
         this.teardownSteps.push( this.callbacks.afterTeardown );
-        delete this.callbacks.beforeTeardown;
+        delete this.callbacks.afterTeardown;
       }
     },
 
     setup: function() {
-      this.invokeSteps(this.setupSteps);
-      this.contextualizeCallbacks();
-      this.invokeSteps(this.contextualizedSetupSteps, this.context);
+      var self = this;
+      return self.invokeSteps(self.setupSteps).then(function() {
+        self.contextualizeCallbacks();
+        return self.invokeSteps(self.contextualizedSetupSteps, self.context);
+      });
     },
 
     teardown: function() {
-      this.invokeSteps(this.contextualizedTeardownSteps, this.context);
-      this.invokeSteps(this.teardownSteps);
-      this.cache = null;
+      var self = this;
+      return self.invokeSteps(self.contextualizedTeardownSteps, self.context).then(function() {
+        return self.invokeSteps(self.teardownSteps);
+      }).then(function() {
+        self.cache = null;
+        self.cachedCalls = null;
+      });
     },
 
     invokeSteps: function(steps, _context) {
@@ -2095,14 +2233,24 @@ define('ember-test-helpers/test-module', ['exports', 'ember-test-helpers/isolate
       if (!context) {
         context = this;
       }
-
-      for (var i = 0, l = steps.length; i < l; i++) {
-        steps[i].call(context);
+      steps = steps.slice();
+      function nextStep() {
+        var step = steps.shift();
+        if (step) {
+          return Ember['default'].RSVP.resolve(step.call(context)).then(nextStep);
+        } else {
+          return Ember['default'].RSVP.resolve();
+        }
       }
+      return nextStep();
     },
 
     setupContainer: function() {
-      this.container = isolatedContainer['default'](this.needs);
+      if (this.isIntegration) {
+        this._setupIntegratedContainer();
+      } else {
+        this._setupIsolatedContainer();
+      }
     },
 
     setupContext: function() {
@@ -2123,14 +2271,24 @@ define('ember-test-helpers/test-module', ['exports', 'ember-test-helpers/isolate
     },
 
     setupTestElements: function() {
-      if (Ember.$('#ember-testing').length === 0) {
-        Ember.$('<div id="ember-testing"/>').appendTo(document.body);
+      if (Ember['default'].$('#ember-testing').length === 0) {
+        Ember['default'].$('<div id="ember-testing"/>').appendTo(document.body);
+      }
+    },
+
+    teardownSubject: function() {
+      var subject = this.cache.subject;
+
+      if (subject) {
+        Ember['default'].run(function() {
+          Ember['default'].tryInvoke(subject, 'destroy');
+        });
       }
     },
 
     teardownContainer: function() {
       var container = this.container;
-      Ember.run(function() {
+      Ember['default'].run(function() {
         container.destroy();
       });
     },
@@ -2138,15 +2296,15 @@ define('ember-test-helpers/test-module', ['exports', 'ember-test-helpers/isolate
     teardownContext: function() {
       var context = this.context;
       if (context.dispatcher) {
-        Ember.run(function() {
+        Ember['default'].run(function() {
           context.dispatcher.destroy();
         });
       }
     },
 
     teardownTestElements: function() {
-      Ember.$('#ember-testing').empty();
-      Ember.View.views = {};
+      Ember['default'].$('#ember-testing').empty();
+      Ember['default'].View.views = {};
     },
 
     defaultSubject: function(options, factory) {
@@ -2161,25 +2319,51 @@ define('ember-test-helpers/test-module', ['exports', 'ember-test-helpers/isolate
       var factory   = context.factory;
 
       this.cache = this.cache || {};
+      this.cachedCalls = this.cachedCalls || {};
 
-      var keys = Ember.keys(callbacks);
+      var keys = Ember['default'].keys(callbacks);
 
       for (var i = 0, l = keys.length; i < l; i++) {
         (function(key) {
 
           context[key] = function(options) {
-            if (_this.cache[key]) { return _this.cache[key]; }
+            if (_this.cachedCalls[key]) { return _this.cache[key]; }
 
             var result = callbacks[key].call(_this, options, factory());
 
             _this.cache[key] = result;
+            _this.cachedCalls[key] = true;
 
             return result;
           };
 
         })(keys[i]);
       }
+    },
+
+
+    _setupIsolatedContainer: function() {
+      this.container = isolatedContainer['default'](this.needs);
+    },
+
+    _setupIntegratedContainer: function() {
+      var resolver = test_resolver.getResolver();
+      var namespace = Ember['default'].Object.create({
+        Resolver: { create: function() { return resolver; } }
+      });
+
+      if (Ember['default'].Application.buildRegistry) {
+        var registry;
+        registry = Ember['default'].Application.buildRegistry(namespace);
+        registry.register('component-lookup:main', Ember['default'].ComponentLookup);
+        this.registry = registry;
+        this.container = registry.container();
+      } else {
+        this.container = Ember['default'].Application.buildContainer(namespace);
+        this.container.register('component-lookup:main', Ember['default'].ComponentLookup);
+      }
     }
+
   });
 
 });
@@ -2363,11 +2547,13 @@ define('qunit', ['exports'], function (exports) {
 
 	var module = QUnit.module;
 	var test = QUnit.test;
+	var skip = QUnit.skip;
 
 	exports['default'] = QUnit;
 
 	exports.module = module;
 	exports.test = test;
+	exports.skip = skip;
 
 });
 /*!
@@ -5353,8 +5539,9 @@ QUnit.notifications = function(options) {
 /* globals jQuery,QUnit */
 
 QUnit.config.autostart = false;
-QUnit.config.urlConfig.push({ id: 'nocontainer', label: 'Hide container' });
+QUnit.config.urlConfig.push({ id: 'nocontainer', label: 'Hide container'});
 QUnit.config.urlConfig.push({ id: 'nojshint', label: 'Disable JSHint'});
+QUnit.config.urlConfig.push({ id: 'doccontainer', label: 'Doc test pane'});
 
 if (QUnit.notifications) {
   QUnit.notifications({
@@ -5367,7 +5554,9 @@ if (QUnit.notifications) {
 
 jQuery(document).ready(function() {
   var containerVisibility = QUnit.urlParams.nocontainer ? 'hidden' : 'visible';
+  var containerPosition = QUnit.urlParams.doccontainer ? 'absolute' : 'relative';
   document.getElementById('ember-testing-container').style.visibility = containerVisibility;
+  document.getElementById('ember-testing-container').style.position = containerPosition;
 });
 
 /* globals jQuery,QUnit */

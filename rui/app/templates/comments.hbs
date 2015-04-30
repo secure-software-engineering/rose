@@ -1,0 +1,13 @@
+<h2 class="ui dividing header">
+  <i class="settings icon"></i>
+  <div class="content">
+    {{t "comments.title"}}
+    <div class="sub header">{{t "comments.subtitle"}}</div>
+  </div>
+</h2>
+
+<div class="ui comments">
+  {{#each sortedList as |comment|}}
+    {{rose-comment model=comment}}
+  {{/each}}
+</div>

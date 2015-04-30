@@ -1,0 +1,43 @@
+<a class="avatar">
+  <i class="circular file text outline icon"></i>
+</a>
+<div class="content">
+  <div class="metadata">
+    <span class="date">{{moment model.createdAt}}</span>
+  </div>
+  <div class="text disabled">
+  {{#liquid-if isEditable}}
+    <div class="ui form">
+      {{textarea value=model.text}}
+    </div>
+  {{else}}
+    {{model.text}}
+  {{/liquid-if}}
+  </div>
+  <div class="actions">
+  {{#if isEditable}}
+    <a {{action "save"}}>
+      {{t "action.save"}}
+    </a>
+    <a {{action "cancel"}}>
+      {{t "action.cancel"}}
+    </a>
+  {{else}}
+    <a {{action "edit"}}>
+      {{t "action.edit"}}
+    </a>
+  {{/if}}
+  {{#if model.isPrivate}}
+    <a {{action "unhide"}}>
+      {{t "action.unhide"}}
+    </a>
+  {{else}}
+    <a {{action "hide"}}>
+      {{t "action.hide"}}
+    </a>
+  {{/if}}
+    <a {{action "delete"}}>
+      {{t "action.delete"}}
+    </a>
+  </div>
+</div>

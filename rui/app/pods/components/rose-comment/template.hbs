@@ -1,0 +1,50 @@
+<a class="avatar">
+  <i class="circular comment icon"></i>
+</a>
+<div class="content">
+  <a class="author">{{t "comments.you"}}</a> {{t "comments.commentedOn"}} <strong>{{model.contentId}}</strong>
+  <div class="metadata">
+    <span class="date">{{moment model.createdAt}}</span>
+    {{#each model.rating as |value|}}
+    <div class="rating">
+      <i class="star icon"></i>
+      {{value}}
+    </div>
+    {{/each}}
+  </div>
+  <div class="text">
+  {{#liquid-if isEditable}}
+    <div class="ui form">
+      {{textarea value=model.text}}
+    </div>
+  {{else}}
+    <div class="ui segment"><pre>{{model.text}}</pre></div>
+  {{/liquid-if}}
+  </div>
+  <div class="actions">
+  {{#if isEditable}}
+    <a {{action "save"}}>
+      {{t "action.save"}}
+    </a>
+    <a {{action "cancel"}}>
+      {{t "action.cancel"}}
+    </a>
+  {{else}}
+    <a {{action "edit"}}>
+      {{t "action.edit"}}
+    </a>
+  {{/if}}
+  {{#if model.isPrivate}}
+    <a {{action "unhide"}}>
+      {{t "action.unhide"}}
+    </a>
+  {{else}}
+    <a {{action "hide"}}>
+      {{t "action.hide"}}
+    </a>
+  {{/if}}
+    <a {{action "delete"}}>
+      {{t "action.delete"}}
+    </a>
+  </div>
+</div>

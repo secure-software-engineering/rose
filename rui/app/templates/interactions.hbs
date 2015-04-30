@@ -1,0 +1,13 @@
+<h2 class="ui dividing header">
+  <i class="settings icon"></i>
+  <div class="content">
+    {{t "interactions.title"}}
+    <div class="sub header">{{t "interactions.subtitle"}}</div>
+  </div>
+</h2>
+
+<div class="ui comments">
+  {{#each model as |interaction|}}
+  {{rose-interaction model=interaction}}
+  {{/each}}
+</div>

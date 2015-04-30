@@ -1,0 +1,28 @@
+<h2 class="ui dividing header">
+  <i class="book icon"></i>
+  <div class="content">
+    {{t "diary.title"}}
+    <div class="sub header">{{t "diary.subtitle"}}</div>
+  </div>
+</h2>
+
+<div class="ui form">
+  <div class="field">
+    {{textarea value=diaryInput}}
+  </div>
+
+  <button class="ui primary button {{if diaryInputIsEmpty "disabled"}}" {{action "save"}}>
+    {{t "action.save"}}
+  </button>
+  <button class="ui button" {{action "cancel"}}>
+    {{t "action.cancel"}}
+  </button>
+</div>
+
+<div class="ui divider"></div>
+
+<div class="ui comments">
+  {{#each sortedList as |entry|}}
+    {{diary-entry model=entry}}
+  {{/each}}
+</div>

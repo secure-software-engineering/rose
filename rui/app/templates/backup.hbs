@@ -1,0 +1,17 @@
+<h2 class="ui dividing header">
+  <i class="download icon"></i>
+  <div class="content">
+    {{t "backup.title"}}
+    <div class="sub header">{{t "backup.subtitle"}}</div>
+  </div>
+</h2>
+
+<div class="ui form">
+  <div class="field">
+    {{textarea readonly=true value=jsonData}}
+  </div>
+
+  <button class="ui primary button" {{action "download"}}>
+    {{t "action.download"}}
+  </button>
+</div>

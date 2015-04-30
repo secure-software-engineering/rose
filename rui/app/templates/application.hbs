@@ -1,0 +1,84 @@
+<div class="ui page grid">
+  <div class="four wide column">
+
+    <div class="ui vertical menu">
+
+      <div class="header item">
+        ROSE
+      </div>
+      {{#link-to "diary" class="item"}}
+        {{t "sidebarMenu.diary"}}
+      {{/link-to}}
+      {{#link-to "backup" class="item"}}
+        {{t "sidebarMenu.backup"}}
+      {{/link-to}}
+      {{#link-to "settings" class="item"}}
+        {{t "sidebarMenu.settings"}}
+      {{/link-to}}
+
+      <div class="header item">
+        {{t "sidebarMenu.networks"}}
+      </div>
+      <div class="item">
+        Facebook
+        <div class="menu">
+          {{#link-to "comments" "facebook" class="item"}}
+            {{t "sidebarMenu.comments"}}
+          {{/link-to}}
+          {{#link-to "interactions" "facebook" class="item"}}
+            {{t "sidebarMenu.interactions"}}
+          {{/link-to}}
+          {{#link-to "privacysettings" "facebook" class="item"}}
+            {{t "sidebarMenu.privacySettings"}}
+          {{/link-to}}
+        </div>
+      </div>
+
+      <div class="item">
+        Google+
+        <div class="menu">
+          {{#link-to "comments" "google" class="item"}}
+            {{t "sidebarMenu.comments"}}
+          {{/link-to}}
+          {{#link-to "interactions" "google" class="item"}}
+            {{t "sidebarMenu.interactions"}}
+          {{/link-to}}
+          {{#link-to "privacysettings" "google" class="item"}}
+            {{t "sidebarMenu.privacySettings"}}
+          {{/link-to}}
+        </div>
+      </div>
+
+      <div class="item">
+        Twitter
+        <div class="menu">
+          {{#link-to "comments" "twitter" class="item"}}
+            {{t "sidebarMenu.comments"}}
+          {{/link-to}}
+          {{#link-to "interactions" "twitter" class="item"}}
+            {{t "sidebarMenu.interactions"}}
+          {{/link-to}}
+          {{#link-to "privacysettings" "twitter" class="item"}}
+            {{t "sidebarMenu.privacySettings"}}
+          {{/link-to}}
+        </div>
+      </div>
+
+      <div class="header item">
+        {{t "sidebarMenu.more"}}
+      </div>
+      {{#link-to "help" class="item"}}
+        {{t "sidebarMenu.help"}}
+      {{/link-to}}
+      {{#link-to "about" class="item"}}
+        {{t "sidebarMenu.about"}}
+      {{/link-to}}
+    </div>
+  </div>
+
+  <div class="twelve wide column">
+    <div class="ui segment">
+      {{outlet}}
+    </div>
+  </div>
+</div>

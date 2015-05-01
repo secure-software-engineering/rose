@@ -10,6 +10,26 @@
   <div class="field">
     <label>{{t "settings.language"}}</label>
     <p>Whats the purpose of this settings?</p>
-    {{ui-dropdown}}
+    {{ui-dropdown class="ui selection dropdown"
+                    value=userSettings.currentLanguage
+                    content=availableLanguages
+                    optionLabelPath="content.language"
+                    optionValuePath="content.code"}}
+  </div>
+
+  <div class="field">
+    <label>{{t "settings.commentReminder"}}</label>
+    <p>Whats the purpose of this settings?</p>
+    {{ui-checkbox class="toggle"
+                  checked=userSettings.commentReminderIsEnabled
+                  label=commentReminderLabel}}
+  </div>
+
+  <div class="field">
+    <label>{{t "settings.extraFeatures"}}</label>
+    <p>Whats the purpose of this settings?</p>
+    {{ui-checkbox class="toggle"
+                  checked=userSettings.developerModeIsEnabled
+                  label=developerModeLabel}}
   </div>
 </div>

@@ -1,8 +1,8 @@
 export default {
   // General
   and: "and",
-  yes: "yes",
-  no: "no",
+  yes: "Yes",
+  no: "No",
 
   action: {
     save: "Save",
@@ -26,7 +26,9 @@ export default {
     networks: "Networks",
     more: "More",
     help: "Help",
-    about: "About"
+    about: "About",
+    extraFeatures: "Extra Features",
+    studyCreator: "Study Creator"
   },
 
   // Diary Page
@@ -45,7 +47,9 @@ export default {
   settings: {
     title: "Settings",
     subtitle: "Here you can manage your ROSE settings",
-    language: "Language"
+    language: "Language",
+    commentReminder: "Comment Reminder",
+    extraFeatures: "Extra Features"
   },
 
   // Comments Page

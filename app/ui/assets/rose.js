@@ -92,6 +92,32 @@ define('rose/adapters/kango-adapter', ['exports', 'ember', 'ember-data'], functi
   'use strict';
 
   exports['default'] = DS['default'].Adapter.extend({
+    createRecord: function createRecord(store, type, snapshot) {
+      var collectionNamespace = this.collectionNamespace;
+      var modelNamespace = this.modelNamespace;
+      var id = snapshot.id;
+      var serializer = store.serializerFor(type.typeKey);
+      var recordHash = serializer.serialize(snapshot, { includeId: true });
+
+      return new Ember['default'].RSVP.Promise(function (resolve, reject) {
+        kango.invokeAsyncCallback('localforage.getItem', collectionNamespace, function (list) {
+          if (Ember['default'].isEmpty(list)) {
+            list = [];
+          }
+
+          if (!list.contains(modelNamespace + '/' + id)) {
+            list.push(modelNamespace + '/' + id);
+          }
+
+          kango.invokeAsyncCallback('localforage.setItem', collectionNamespace, list, function () {
+            kango.invokeAsyncCallback('localforage.setItem', modelNamespace + '/' + id, recordHash, function () {
+              resolve(recordHash);
+            });
+          });
+        });
+      });
+    },
+
     findAll: function findAll() {
       return getList(this.collectionNamespace).then(function (comments) {
         if (Ember['default'].isEmpty(comments)) {
@@ -202,6 +228,16 @@ define('rose/adapters/kango-adapter', ['exports', 'ember', 'ember-data'], functi
       });
     });
   }
+
+});
+define('rose/adapters/user-setting', ['exports', 'rose/adapters/kango-adapter'], function (exports, KangoAdapter) {
+
+  'use strict';
+
+  exports['default'] = KangoAdapter['default'].extend({
+    collectionNamespace: 'userSettings',
+    modelNamespace: 'userSetting'
+  });
 
 });
 define('rose/app', ['exports', 'ember', 'ember/resolver', 'ember/load-initializers', 'rose/config/environment'], function (exports, Ember, Resolver, loadInitializers, config) {
@@ -930,11 +966,9 @@ define('rose/components/ui-rating', ['exports', 'semantic-ui-ember/components/ui
 });
 define('rose/controllers/application', ['exports', 'ember'], function (exports, Ember) {
 
-  'use strict';
+	'use strict';
 
-  exports['default'] = Ember['default'].Controller.extend({
-    settings: Ember['default'].inject.service()
-  });
+	exports['default'] = Ember['default'].Controller.extend({});
 
 });
 define('rose/controllers/backup', ['exports', 'ember'], function (exports, Ember) {
@@ -1004,6 +1038,30 @@ define('rose/controllers/interactions', ['exports', 'ember'], function (exports,
   exports['default'] = Ember['default'].Controller.extend({
     listSorting: ['createdAt:desc'],
     sortedList: Ember['default'].computed.sort('model', 'listSorting') });
+
+});
+define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages'], function (exports, Ember, languages) {
+
+  'use strict';
+
+  exports['default'] = Ember['default'].Controller.extend({
+    commentReminderLabel: (function () {
+      var t = this.container.lookup('utils:t');
+      return this.get('userSettings.commentReminderIsEnabled') ? t('yes') : t('no');
+    }).property('userSettings.commentReminderIsEnabled'),
+
+    developerModeLabel: (function () {
+      var t = this.container.lookup('utils:t');
+      return this.get('userSettings.developerModeIsEnabled') ? t('yes') : t('no');
+    }).property('userSettings.developerModeIsEnabled'),
+
+    changeI18nLanguage: (function () {
+      var application = this.container.lookup('application:main');
+      Ember['default'].set(application, 'locale', this.get('userSettings.currentLanguage'));
+    }).observes('userSettings.currentLanguage'),
+
+    availableLanguages: languages['default']
+  });
 
 });
 define('rose/helpers/lf-yield-inverse', ['exports', 'liquid-fire/ember-internals'], function (exports, ember_internals) {
@@ -1233,6 +1291,40 @@ define('rose/initializers/t', ['exports', 'ember', 'ember-cli-i18n/utils/t', 'ro
   };
 
 });
+define('rose/initializers/user-settings', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  exports.initialize = initialize;
+
+  function initialize(container, application) {
+    application.deferReadiness();
+
+    KangoAPI.onReady(function () {
+      var store = container.lookup('store:main');
+      store.find('user-setting').then(function (configs) {
+        var config = undefined;
+        if (Ember['default'].isEmpty(configs)) {
+          config = store.createRecord('user-setting', { id: 0 }).save();
+        } else {
+          config = configs.get('firstObject');
+        }
+        container.register('userSettings:main', config, { instantiate: false, singleton: true });
+        container.injection('controller', 'userSettings', 'userSettings:main');
+
+        Ember['default'].set(application, 'locale', config.get('currentLanguage'));
+
+        application.advanceReadiness();
+      });
+    });
+  }
+
+  exports['default'] = {
+    name: 'user-settings',
+    initialize: initialize
+  };
+
+});
 define('rose/locales/de', ['exports'], function (exports) {
 
 	'use strict';
@@ -1247,8 +1339,8 @@ define('rose/locales/en', ['exports'], function (exports) {
   exports['default'] = {
     // General
     and: "and",
-    yes: "yes",
-    no: "no",
+    yes: "Yes",
+    no: "No",
 
     action: {
       save: "Save",
@@ -1272,7 +1364,9 @@ define('rose/locales/en', ['exports'], function (exports) {
       networks: "Networks",
       more: "More",
       help: "Help",
-      about: "About"
+      about: "About",
+      extraFeatures: "Extra Features",
+      studyCreator: "Study Creator"
     },
 
     // Diary Page
@@ -1291,7 +1385,9 @@ define('rose/locales/en', ['exports'], function (exports) {
     settings: {
       title: "Settings",
       subtitle: "Here you can manage your ROSE settings",
-      language: "Language"
+      language: "Language",
+      commentReminder: "Comment Reminder",
+      extraFeatures: "Extra Features"
     },
 
     // Comments Page
@@ -1373,6 +1469,13 @@ define('rose/locales/en', ['exports'], function (exports) {
   };
 
 });
+define('rose/locales/languages', ['exports'], function (exports) {
+
+	'use strict';
+
+	exports['default'] = [{ language: "Deutsch", code: "de" }, { language: "English", code: "en" }];
+
+});
 define('rose/models/comment', ['exports', 'ember-data'], function (exports, DS) {
 
   'use strict';
@@ -1418,6 +1521,30 @@ define('rose/models/interaction', ['exports', 'ember-data'], function (exports, 
     origin: DS['default'].attr(),
     sharer: DS['default'].attr('string'),
     isPrivate: DS['default'].attr('boolean')
+  });
+
+});
+define('rose/models/user-setting', ['exports', 'ember-data'], function (exports, DS) {
+
+  'use strict';
+
+  exports['default'] = DS['default'].Model.extend({
+    commentReminderIsEnabled: DS['default'].attr('boolean'),
+    developerModeIsEnabled: DS['default'].attr('boolean'),
+    currentLanguage: DS['default'].attr('string'),
+
+    saveWhenDirty: (function () {
+      if (this.get('isLoading') || this.get('isSaving')) {
+        return;
+      }
+      if (this.get('isDirty')) {
+        this.save();
+      }
+    }).observes('isDirty'),
+
+    setupModel: (function () {
+      this.get('isDirty');
+    }).on('init')
   });
 
 });
@@ -2808,7 +2935,7 @@ define('rose/routes/backup', ['exports', 'ember'], function (exports, Ember) {
 
   exports['default'] = Ember['default'].Route.extend({
     model: function model() {
-      var promises = [this.store.find('comment'), this.store.find('interaction'), this.store.find('diary-entry')];
+      var promises = [this.store.find('comment'), this.store.find('interaction'), this.store.find('diary-entry'), this.store.find('user-setting')];
 
       return Ember['default'].RSVP.all(promises);
     }
@@ -2881,15 +3008,6 @@ define('rose/services/liquid-fire-transitions', ['exports', 'liquid-fire/transit
 	'use strict';
 
 	exports['default'] = TransitionMap['default'];
-
-});
-define('rose/services/settings', ['exports', 'ember'], function (exports, Ember) {
-
-  'use strict';
-
-  exports['default'] = Ember['default'].Service.extend({
-    currentLanguage: "en"
-  });
 
 });
 define('rose/templates/about', ['exports'], function (exports) {
@@ -3603,6 +3721,113 @@ define('rose/templates/application', ['exports'], function (exports) {
       };
     }());
     var child12 = (function() {
+      var child0 = (function() {
+        return {
+          isHTMLBars: true,
+          revision: "Ember@1.11.1",
+          blockParams: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          build: function build(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("              ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          render: function render(context, env, contextualElement) {
+            var dom = env.dom;
+            var hooks = env.hooks, inline = hooks.inline;
+            dom.detectNamespace(contextualElement);
+            var fragment;
+            if (env.useFragmentCache && dom.canClone) {
+              if (this.cachedFragment === null) {
+                fragment = this.build(dom);
+                if (this.hasRendered) {
+                  this.cachedFragment = fragment;
+                } else {
+                  this.hasRendered = true;
+                }
+              }
+              if (this.cachedFragment) {
+                fragment = dom.cloneNode(this.cachedFragment, true);
+              }
+            } else {
+              fragment = this.build(dom);
+            }
+            var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
+            inline(env, morph0, context, "t", ["sidebarMenu.studyCreator"], {});
+            return fragment;
+          }
+        };
+      }());
+      return {
+        isHTMLBars: true,
+        revision: "Ember@1.11.1",
+        blockParams: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        build: function build(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("        ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","item");
+          var el2 = dom.createTextNode("\n          ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n          ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("div");
+          dom.setAttribute(el2,"class","menu");
+          var el3 = dom.createTextNode("\n");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("          ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n        ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        render: function render(context, env, contextualElement) {
+          var dom = env.dom;
+          var hooks = env.hooks, inline = hooks.inline, block = hooks.block;
+          dom.detectNamespace(contextualElement);
+          var fragment;
+          if (env.useFragmentCache && dom.canClone) {
+            if (this.cachedFragment === null) {
+              fragment = this.build(dom);
+              if (this.hasRendered) {
+                this.cachedFragment = fragment;
+              } else {
+                this.hasRendered = true;
+              }
+            }
+            if (this.cachedFragment) {
+              fragment = dom.cloneNode(this.cachedFragment, true);
+            }
+          } else {
+            fragment = this.build(dom);
+          }
+          var element0 = dom.childAt(fragment, [1]);
+          var morph0 = dom.createMorphAt(element0,1,1);
+          var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),1,1);
+          inline(env, morph0, context, "t", ["sidebarMenu.extraFeatures"], {});
+          block(env, morph1, context, "link-to", ["comments", "twitter"], {"class": "item"}, child0, null);
+          return fragment;
+        }
+      };
+    }());
+    var child13 = (function() {
       return {
         isHTMLBars: true,
         revision: "Ember@1.11.1",
@@ -3645,7 +3870,7 @@ define('rose/templates/application', ['exports'], function (exports) {
         }
       };
     }());
-    var child13 = (function() {
+    var child14 = (function() {
       return {
         isHTMLBars: true,
         revision: "Ember@1.11.1",
@@ -3815,6 +4040,8 @@ define('rose/templates/application', ['exports'], function (exports) {
         dom.appendChild(el3, el4);
         var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
         var el4 = dom.createTextNode("    ");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
@@ -3848,7 +4075,7 @@ define('rose/templates/application', ['exports'], function (exports) {
       },
       render: function render(context, env, contextualElement) {
         var dom = env.dom;
-        var hooks = env.hooks, block = hooks.block, inline = hooks.inline, content = hooks.content;
+        var hooks = env.hooks, block = hooks.block, inline = hooks.inline, get = hooks.get, content = hooks.content;
         dom.detectNamespace(contextualElement);
         var fragment;
         if (env.useFragmentCache && dom.canClone) {
@@ -3866,28 +4093,29 @@ define('rose/templates/application', ['exports'], function (exports) {
         } else {
           fragment = this.build(dom);
         }
-        var element0 = dom.childAt(fragment, [0]);
-        var element1 = dom.childAt(element0, [1, 1]);
-        var element2 = dom.childAt(element1, [9, 1]);
-        var element3 = dom.childAt(element1, [11, 1]);
-        var element4 = dom.childAt(element1, [13, 1]);
-        var morph0 = dom.createMorphAt(element1,3,3);
-        var morph1 = dom.createMorphAt(element1,4,4);
-        var morph2 = dom.createMorphAt(element1,5,5);
-        var morph3 = dom.createMorphAt(dom.childAt(element1, [7]),1,1);
-        var morph4 = dom.createMorphAt(element2,1,1);
-        var morph5 = dom.createMorphAt(element2,2,2);
-        var morph6 = dom.createMorphAt(element2,3,3);
-        var morph7 = dom.createMorphAt(element3,1,1);
-        var morph8 = dom.createMorphAt(element3,2,2);
-        var morph9 = dom.createMorphAt(element3,3,3);
-        var morph10 = dom.createMorphAt(element4,1,1);
-        var morph11 = dom.createMorphAt(element4,2,2);
-        var morph12 = dom.createMorphAt(element4,3,3);
-        var morph13 = dom.createMorphAt(dom.childAt(element1, [15]),1,1);
-        var morph14 = dom.createMorphAt(element1,17,17);
-        var morph15 = dom.createMorphAt(element1,18,18);
-        var morph16 = dom.createMorphAt(dom.childAt(element0, [3, 1]),1,1);
+        var element1 = dom.childAt(fragment, [0]);
+        var element2 = dom.childAt(element1, [1, 1]);
+        var element3 = dom.childAt(element2, [9, 1]);
+        var element4 = dom.childAt(element2, [11, 1]);
+        var element5 = dom.childAt(element2, [13, 1]);
+        var morph0 = dom.createMorphAt(element2,3,3);
+        var morph1 = dom.createMorphAt(element2,4,4);
+        var morph2 = dom.createMorphAt(element2,5,5);
+        var morph3 = dom.createMorphAt(dom.childAt(element2, [7]),1,1);
+        var morph4 = dom.createMorphAt(element3,1,1);
+        var morph5 = dom.createMorphAt(element3,2,2);
+        var morph6 = dom.createMorphAt(element3,3,3);
+        var morph7 = dom.createMorphAt(element4,1,1);
+        var morph8 = dom.createMorphAt(element4,2,2);
+        var morph9 = dom.createMorphAt(element4,3,3);
+        var morph10 = dom.createMorphAt(element5,1,1);
+        var morph11 = dom.createMorphAt(element5,2,2);
+        var morph12 = dom.createMorphAt(element5,3,3);
+        var morph13 = dom.createMorphAt(dom.childAt(element2, [15]),1,1);
+        var morph14 = dom.createMorphAt(element2,17,17);
+        var morph15 = dom.createMorphAt(element2,18,18);
+        var morph16 = dom.createMorphAt(element2,19,19);
+        var morph17 = dom.createMorphAt(dom.childAt(element1, [3, 1]),1,1);
         block(env, morph0, context, "link-to", ["diary"], {"class": "item"}, child0, null);
         block(env, morph1, context, "link-to", ["backup"], {"class": "item"}, child1, null);
         block(env, morph2, context, "link-to", ["settings"], {"class": "item"}, child2, null);
@@ -3902,9 +4130,10 @@ define('rose/templates/application', ['exports'], function (exports) {
         block(env, morph11, context, "link-to", ["interactions", "twitter"], {"class": "item"}, child10, null);
         block(env, morph12, context, "link-to", ["privacysettings", "twitter"], {"class": "item"}, child11, null);
         inline(env, morph13, context, "t", ["sidebarMenu.more"], {});
-        block(env, morph14, context, "link-to", ["help"], {"class": "item"}, child12, null);
-        block(env, morph15, context, "link-to", ["about"], {"class": "item"}, child13, null);
-        content(env, morph16, context, "outlet");
+        block(env, morph14, context, "liquid-if", [get(env, context, "userSettings.developerModeIsEnabled")], {}, child12, null);
+        block(env, morph15, context, "link-to", ["help"], {"class": "item"}, child13, null);
+        block(env, morph16, context, "link-to", ["about"], {"class": "item"}, child14, null);
+        content(env, morph17, context, "outlet");
         return fragment;
       }
     };
@@ -6810,6 +7039,52 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var el3 = dom.createTextNode("\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createTextNode("Whats the purpose of this settings?");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createTextNode("Whats the purpose of this settings?");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
@@ -6819,7 +7094,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
       },
       render: function render(context, env, contextualElement) {
         var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, content = hooks.content;
+        var hooks = env.hooks, inline = hooks.inline, get = hooks.get;
         dom.detectNamespace(contextualElement);
         var fragment;
         if (env.useFragmentCache && dom.canClone) {
@@ -6838,15 +7113,26 @@ define('rose/templates/settings', ['exports'], function (exports) {
           fragment = this.build(dom);
         }
         var element0 = dom.childAt(fragment, [0, 3]);
-        var element1 = dom.childAt(fragment, [2, 1]);
+        var element1 = dom.childAt(fragment, [2]);
+        var element2 = dom.childAt(element1, [1]);
+        var element3 = dom.childAt(element1, [3]);
+        var element4 = dom.childAt(element1, [5]);
         var morph0 = dom.createMorphAt(element0,1,1);
         var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
-        var morph2 = dom.createMorphAt(dom.childAt(element1, [1]),0,0);
-        var morph3 = dom.createMorphAt(element1,5,5);
+        var morph2 = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
+        var morph3 = dom.createMorphAt(element2,5,5);
+        var morph4 = dom.createMorphAt(dom.childAt(element3, [1]),0,0);
+        var morph5 = dom.createMorphAt(element3,5,5);
+        var morph6 = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
+        var morph7 = dom.createMorphAt(element4,5,5);
         inline(env, morph0, context, "t", ["settings.title"], {});
         inline(env, morph1, context, "t", ["settings.subtitle"], {});
         inline(env, morph2, context, "t", ["settings.language"], {});
-        content(env, morph3, context, "ui-dropdown");
+        inline(env, morph3, context, "ui-dropdown", [], {"class": "ui selection dropdown", "value": get(env, context, "userSettings.currentLanguage"), "content": get(env, context, "availableLanguages"), "optionLabelPath": "content.language", "optionValuePath": "content.code"});
+        inline(env, morph4, context, "t", ["settings.commentReminder"], {});
+        inline(env, morph5, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.commentReminderIsEnabled"), "label": get(env, context, "commentReminderLabel")});
+        inline(env, morph6, context, "t", ["settings.extraFeatures"], {});
+        inline(env, morph7, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.developerModeIsEnabled"), "label": get(env, context, "developerModeLabel")});
         return fragment;
       }
     };
@@ -6859,7 +7145,7 @@ define('rose/tests/adapters/application.jshint', function () {
 
   module('JSHint - adapters');
   test('adapters/application.js should pass jshint', function() { 
-    ok(false, 'adapters/application.js should pass jshint.\nadapters/application.js: line 8, col 7, \'kango\' is not defined.\nadapters/application.js: line 26, col 9, \'kango\' is not defined.\nadapters/application.js: line 48, col 9, \'kango\' is not defined.\nadapters/application.js: line 7, col 53, \'reject\' is defined but never used.\nadapters/application.js: line 18, col 53, \'reject\' is defined but never used.\nadapters/application.js: line 47, col 58, \'reject\' is defined but never used.\n\n6 errors'); 
+    ok(false, 'adapters/application.js should pass jshint.\nadapters/application.js: line 7, col 53, \'reject\' is defined but never used.\nadapters/application.js: line 18, col 53, \'reject\' is defined but never used.\nadapters/application.js: line 47, col 58, \'reject\' is defined but never used.\n\n3 errors'); 
   });
 
 });
@@ -6889,7 +7175,17 @@ define('rose/tests/adapters/kango-adapter.jshint', function () {
 
   module('JSHint - adapters');
   test('adapters/kango-adapter.js should pass jshint', function() { 
-    ok(false, 'adapters/kango-adapter.js should pass jshint.\nadapters/kango-adapter.js: line 72, col 7, \'kango\' is not defined.\nadapters/kango-adapter.js: line 83, col 7, \'kango\' is not defined.\nadapters/kango-adapter.js: line 90, col 13, \'kango\' is not defined.\nadapters/kango-adapter.js: line 91, col 15, \'kango\' is not defined.\nadapters/kango-adapter.js: line 104, col 5, \'kango\' is not defined.\nadapters/kango-adapter.js: line 112, col 5, \'kango\' is not defined.\nadapters/kango-adapter.js: line 27, col 43, \'recordArray\' is defined but never used.\nadapters/kango-adapter.js: line 71, col 53, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 82, col 53, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 103, col 51, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 111, col 51, \'reject\' is defined but never used.\n\n11 errors'); 
+    ok(false, 'adapters/kango-adapter.js should pass jshint.\nadapters/kango-adapter.js: line 12, col 54, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 53, col 43, \'recordArray\' is defined but never used.\nadapters/kango-adapter.js: line 97, col 53, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 108, col 53, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 129, col 51, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 137, col 51, \'reject\' is defined but never used.\n\n6 errors'); 
+  });
+
+});
+define('rose/tests/adapters/user-setting.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - adapters');
+  test('adapters/user-setting.js should pass jshint', function() { 
+    ok(true, 'adapters/user-setting.js should pass jshint.'); 
   });
 
 });
@@ -6950,6 +7246,16 @@ define('rose/tests/controllers/interactions.jshint', function () {
   module('JSHint - controllers');
   test('controllers/interactions.js should pass jshint', function() { 
     ok(true, 'controllers/interactions.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/controllers/settings.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - controllers');
+  test('controllers/settings.js should pass jshint', function() { 
+    ok(true, 'controllers/settings.js should pass jshint.'); 
   });
 
 });
@@ -7065,7 +7371,17 @@ define('rose/tests/initializers/kango-api.jshint', function () {
 
   module('JSHint - initializers');
   test('initializers/kango-api.js should pass jshint', function() { 
-    ok(false, 'initializers/kango-api.js should pass jshint.\ninitializers/kango-api.js: line 4, col 3, \'KangoAPI\' is not defined.\n\n1 error'); 
+    ok(true, 'initializers/kango-api.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/initializers/user-settings.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - initializers');
+  test('initializers/user-settings.js should pass jshint', function() { 
+    ok(true, 'initializers/user-settings.js should pass jshint.'); 
   });
 
 });
@@ -7086,6 +7402,16 @@ define('rose/tests/locales/en.jshint', function () {
   module('JSHint - locales');
   test('locales/en.js should pass jshint', function() { 
     ok(true, 'locales/en.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/locales/languages.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - locales');
+  test('locales/languages.js should pass jshint', function() { 
+    ok(true, 'locales/languages.js should pass jshint.'); 
   });
 
 });
@@ -7116,6 +7442,16 @@ define('rose/tests/models/interaction.jshint', function () {
   module('JSHint - models');
   test('models/interaction.js should pass jshint', function() { 
     ok(true, 'models/interaction.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/models/user-setting.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - models');
+  test('models/user-setting.js should pass jshint', function() { 
+    ok(true, 'models/user-setting.js should pass jshint.'); 
   });
 
 });
@@ -7239,16 +7575,6 @@ define('rose/tests/routes/settings.jshint', function () {
   });
 
 });
-define('rose/tests/services/settings.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - services');
-  test('services/settings.js should pass jshint', function() { 
-    ok(true, 'services/settings.js should pass jshint.'); 
-  });
-
-});
 define('rose/tests/test-helper', ['rose/tests/helpers/resolver', 'ember-qunit'], function (resolver, ember_qunit) {
 
 	'use strict';
@@ -7367,6 +7693,32 @@ define('rose/tests/unit/adapters/kango-adapter-test.jshint', function () {
   module('JSHint - unit/adapters');
   test('unit/adapters/kango-adapter-test.js should pass jshint', function() { 
     ok(true, 'unit/adapters/kango-adapter-test.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/unit/adapters/user-setting-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('adapter:user-setting', 'UserSettingAdapter', {});
+
+  // Replace this with your real tests.
+  ember_qunit.test('it exists', function (assert) {
+    var adapter = this.subject();
+    assert.ok(adapter);
+  });
+
+  // Specify the other units that are required for this test.
+  // needs: ['serializer:foo']
+
+});
+define('rose/tests/unit/adapters/user-setting-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/adapters');
+  test('unit/adapters/user-setting-test.js should pass jshint', function() { 
+    ok(true, 'unit/adapters/user-setting-test.js should pass jshint.'); 
   });
 
 });
@@ -7500,6 +7852,32 @@ define('rose/tests/unit/controllers/interactions-test.jshint', function () {
   });
 
 });
+define('rose/tests/unit/controllers/settings-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('controller:settings', {});
+
+  // Replace this with your real tests.
+  ember_qunit.test('it exists', function (assert) {
+    var controller = this.subject();
+    assert.ok(controller);
+  });
+
+  // Specify the other units that are required for this test.
+  // needs: ['controller:foo']
+
+});
+define('rose/tests/unit/controllers/settings-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/controllers');
+  test('unit/controllers/settings-test.js should pass jshint', function() { 
+    ok(true, 'unit/controllers/settings-test.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/unit/initializers/kango-api-test', ['ember', 'rose/initializers/kango-api', 'qunit'], function (Ember, kango_api, qunit) {
 
   'use strict';
@@ -7532,6 +7910,41 @@ define('rose/tests/unit/initializers/kango-api-test.jshint', function () {
   module('JSHint - unit/initializers');
   test('unit/initializers/kango-api-test.js should pass jshint', function() { 
     ok(true, 'unit/initializers/kango-api-test.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/unit/initializers/user-settings-test', ['ember', 'rose/initializers/user-settings', 'qunit'], function (Ember, user_settings, qunit) {
+
+  'use strict';
+
+  var container, application;
+
+  qunit.module('UserSettingsInitializer', {
+    beforeEach: function beforeEach() {
+      Ember['default'].run(function () {
+        application = Ember['default'].Application.create();
+        container = application.__container__;
+        application.deferReadiness();
+      });
+    }
+  });
+
+  // Replace this with your real tests.
+  qunit.test('it works', function (assert) {
+    user_settings.initialize(container, application);
+
+    // you would normally confirm the results of the initializer here
+    assert.ok(true);
+  });
+
+});
+define('rose/tests/unit/initializers/user-settings-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/initializers');
+  test('unit/initializers/user-settings-test.js should pass jshint', function() { 
+    ok(true, 'unit/initializers/user-settings-test.js should pass jshint.'); 
   });
 
 });
@@ -7610,6 +8023,32 @@ define('rose/tests/unit/models/interaction-test.jshint', function () {
   module('JSHint - unit/models');
   test('unit/models/interaction-test.js should pass jshint', function() { 
     ok(true, 'unit/models/interaction-test.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/unit/models/user-setting-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleForModel('user-setting', {
+    // Specify the other units that are required for this test.
+    needs: []
+  });
+
+  ember_qunit.test('it exists', function (assert) {
+    var model = this.subject();
+    // var store = this.store();
+    assert.ok(!!model);
+  });
+
+});
+define('rose/tests/unit/models/user-setting-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/models');
+  test('unit/models/user-setting-test.js should pass jshint', function() { 
+    ok(true, 'unit/models/user-setting-test.js should pass jshint.'); 
   });
 
 });
@@ -7906,32 +8345,6 @@ define('rose/tests/unit/routes/settings-test.jshint', function () {
   module('JSHint - unit/routes');
   test('unit/routes/settings-test.js should pass jshint', function() { 
     ok(true, 'unit/routes/settings-test.js should pass jshint.'); 
-  });
-
-});
-define('rose/tests/unit/services/settings-test', ['ember-qunit'], function (ember_qunit) {
-
-  'use strict';
-
-  ember_qunit.moduleFor('service:settings', {});
-
-  // Replace this with your real tests.
-  ember_qunit.test('it exists', function (assert) {
-    var service = this.subject();
-    assert.ok(service);
-  });
-
-  // Specify the other units that are required for this test.
-  // needs: ['service:foo']
-
-});
-define('rose/tests/unit/services/settings-test.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - unit/services');
-  test('unit/services/settings-test.js should pass jshint', function() { 
-    ok(true, 'unit/services/settings-test.js should pass jshint.'); 
   });
 
 });
@@ -8405,7 +8818,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0."});
+  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.db7ccfa8"});
 }
 
 /* jshint ignore:end */

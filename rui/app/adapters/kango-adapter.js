@@ -2,6 +2,32 @@ import Ember from 'ember';
 import DS from 'ember-data';
 
 export default DS.Adapter.extend({
+  createRecord: function(store, type, snapshot) {
+    const collectionNamespace = this.collectionNamespace;
+    const modelNamespace = this.modelNamespace;
+    const id = snapshot.id;
+    const serializer = store.serializerFor(type.typeKey);
+    const recordHash = serializer.serialize(snapshot, { includeId: true });
+
+    return new Ember.RSVP.Promise(function (resolve, reject) {
+      kango.invokeAsyncCallback('localforage.getItem', collectionNamespace, function (list) {
+        if (Ember.isEmpty(list)){
+          list = [];
+        }
+
+        if (!list.contains(modelNamespace + '/' + id)) {
+          list.push(modelNamespace + '/' + id);
+        }
+
+        kango.invokeAsyncCallback('localforage.setItem', collectionNamespace, list, function () {
+          kango.invokeAsyncCallback('localforage.setItem', modelNamespace + '/' + id, recordHash, function () {
+            resolve(recordHash);
+          });
+        });
+      });
+    });
+  },
+
   findAll: function() {
     return getList(this.collectionNamespace)
       .then(function(comments) {

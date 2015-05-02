@@ -128,5 +128,26 @@ export default {
 
     forQuestions: "For questions about ROSE feel free to contact",
     licenceNotice: "This program is free software;you can redistribute it and/or modify it under the terms of the GNU General Public License version as published by the Free Software Foundation;either version 3 of the License, or (at your option) any later version."
+  },
+
+  // Study Creator Page
+  studyCreator: {
+    title: 'Study Creator',
+    subtitle: 'LALALALALALALa',
+
+    roseComments: "ROSE Comments",
+    roseCommentsDesc: "Check if the ROSE Comments function should be available",
+    roseCommentsRating: "ROSE Comments Rating",
+    roseCommentsRatingDesc: "Check if the ROSE Comments rating function should be available",
+    salt: "Salt",
+    saltDesc: "Whats the purpose of this settings?",
+    hashLength: "Hash Length",
+    hashLengthDesc: "Whats the purpose of this settings?",
+    repositoryUrl: "Repository URL",
+    repositoryUrlDesc: "Whats the purpose of this settings?",
+    autoUpdate: "Automatically Update Observers from Repository",
+    autoUpdateDesc: "Whats the purpose of this settings?",
+    exportConfig: "Export Configuration",
+    exportConfigDesc: "Export configuration to file"
   }
 };

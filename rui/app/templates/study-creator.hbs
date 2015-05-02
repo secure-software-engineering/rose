@@ -1,0 +1,68 @@
+<h2 class="ui dividing header">
+  <i class="lab icon"></i>
+  <div class="content">
+    {{t "studyCreator.title"}}
+    <div class="sub header">{{t "studyCreator.subtitle"}}</div>
+  </div>
+</h2>
+
+<div class="ui form">
+  <div class="field">
+    <label>{{t "studyCreator.roseComments"}}</label>
+    <p>{{t "studyCreator.roseCommentsDesc"}}</p>
+
+    {{ui-checkbox checked=model.roseCommentsIsEnabled class="toggle" label=commentsEnabledLabel}}
+  </div>
+
+  <div class="field">
+    <label>{{t "studyCreator.roseCommentsRating"}}</label>
+    <p>{{t "studyCreator.roseCommentsRatingDesc"}}</p>
+
+    {{ui-checkbox checked=model.roseCommentsRatingIsEnabled class="toggle" label=ratingsEnabledLabel}}
+  </div>
+
+  <div class="field">
+    <label>{{t "studyCreator.salt"}}</label>
+    <p>{{t "studyCreator.saltDesc"}}</p>
+
+    {{input type="text" value=model.salt}}
+  </div>
+
+  <div class="field">
+    <label>{{t "studyCreator.hashLength"}}</label>
+    <p>{{t "studyCreator.hashLengthDesc"}}</p>
+
+    {{input type="number" value=model.hashLength}}
+  </div>
+
+  <div class="field">
+    <label>{{t "studyCreator.repositoryUrl"}}</label>
+    <p>{{t "studyCreator.repositoryUrlDesc"}}</p>
+
+    <div class="ui action input">
+      {{input type="text" value=model.repositoryUrl insert-newline="loadBaseFile"}}
+
+      <button class="ui icon button {{if isLoading "loading"}}" {{action "loadBaseFile"}}>
+        <i class="search icon"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>{{t "studyCreator.autoUpdate"}}</label>
+    <p>{{t "studyCreator.autoUpdateDesc"}}</p>
+
+    {{ui-checkbox checked=model.autoUpdateIsEnabled class="toggle" label=autoUpdateObserversLabel}}
+  </div>
+
+  <div class="field">
+    <label>{{t "studyCreator.exportConfig"}}</label>
+    <p>{{t "studyCreator.exportConfigDesc"}}</p>
+
+    {{input value=model.fileName}}
+  </div>
+
+  <button class="ui primary button" {{action "download"}}>
+    {{t "action.download"}}
+  </button>
+</div>

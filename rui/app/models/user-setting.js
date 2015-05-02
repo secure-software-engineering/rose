@@ -6,9 +6,6 @@ export default DS.Model.extend({
   currentLanguage: DS.attr('string'),
 
   saveWhenDirty: function() {
-    if (this.get('isLoading') || this.get('isSaving')) {
-      return;
-    }
     if (this.get('isDirty')) {
       this.save();
     }

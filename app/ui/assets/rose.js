@@ -1064,6 +1064,22 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
   });
 
 });
+define('rose/controllers/study-creator', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  exports['default'] = Ember['default'].Controller.extend({
+    actions: {
+      download: function download() {
+        var jsondata = JSON.stringify(this.get('model'), null, 4);
+        var fileName = this.get('model.fileName');
+
+        window.saveAs(new Blob([jsondata]), fileName);
+      }
+    }
+  });
+
+});
 define('rose/helpers/lf-yield-inverse', ['exports', 'liquid-fire/ember-internals'], function (exports, ember_internals) {
 
   'use strict';
@@ -1465,6 +1481,27 @@ define('rose/locales/en', ['exports'], function (exports) {
 
       forQuestions: "For questions about ROSE feel free to contact",
       licenceNotice: "This program is free software;you can redistribute it and/or modify it under the terms of the GNU General Public License version as published by the Free Software Foundation;either version 3 of the License, or (at your option) any later version."
+    },
+
+    // Study Creator Page
+    studyCreator: {
+      title: "Study Creator",
+      subtitle: "LALALALALALALa",
+
+      roseComments: "ROSE Comments",
+      roseCommentsDesc: "Check if the ROSE Comments function should be available",
+      roseCommentsRating: "ROSE Comments Rating",
+      roseCommentsRatingDesc: "Check if the ROSE Comments rating function should be available",
+      salt: "Salt",
+      saltDesc: "Whats the purpose of this settings?",
+      hashLength: "Hash Length",
+      hashLengthDesc: "Whats the purpose of this settings?",
+      repositoryUrl: "Repository URL",
+      repositoryUrlDesc: "Whats the purpose of this settings?",
+      autoUpdate: "Automatically Update Observers from Repository",
+      autoUpdateDesc: "Whats the purpose of this settings?",
+      exportConfig: "Export Configuration",
+      exportConfigDesc: "Export configuration to file"
     }
   };
 
@@ -1524,6 +1561,31 @@ define('rose/models/interaction', ['exports', 'ember-data'], function (exports, 
   });
 
 });
+define('rose/models/study-creator-setting', ['exports', 'ember-data'], function (exports, DS) {
+
+  'use strict';
+
+  exports['default'] = DS['default'].Model.extend({
+    roseCommentsIsEnabled: DS['default'].attr('boolean'),
+    roseCommentsRatingIsEnabled: DS['default'].attr('boolean'),
+    salt: DS['default'].attr('string'),
+    hashLength: DS['default'].attr('number'),
+    repositoryUrl: DS['default'].attr('string'),
+    autoUpdateIsEnabled: DS['default'].attr('boolean'),
+    fileName: DS['default'].attr('string', { defaultValue: 'rose-study-configuration.txt' }),
+
+    saveWhenDirty: (function () {
+      if (this.get('isDirty')) {
+        this.save();
+      }
+    }).observes('isDirty'),
+
+    setupModel: (function () {
+      this.get('isDirty');
+    }).on('init')
+  });
+
+});
 define('rose/models/user-setting', ['exports', 'ember-data'], function (exports, DS) {
 
   'use strict';
@@ -1534,9 +1596,6 @@ define('rose/models/user-setting', ['exports', 'ember-data'], function (exports,
     currentLanguage: DS['default'].attr('string'),
 
     saveWhenDirty: (function () {
-      if (this.get('isLoading') || this.get('isSaving')) {
-        return;
-      }
       if (this.get('isDirty')) {
         this.save();
       }
@@ -2919,6 +2978,7 @@ define('rose/router', ['exports', 'ember', 'rose/config/environment'], function 
     this.route('comments', { path: '/:network_name/comments' });
     this.route('interactions', { path: '/:network_name/interactions' });
     this.route('privacysettings', { path: '/:network_name/privacysettings' });
+    this.route('study-creator');
   });
 
 });
@@ -2994,6 +3054,25 @@ define('rose/routes/settings', ['exports', 'ember'], function (exports, Ember) {
 	'use strict';
 
 	exports['default'] = Ember['default'].Route.extend({});
+
+});
+define('rose/routes/study-creator', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  exports['default'] = Ember['default'].Route.extend({
+    model: function model() {
+      var self = this;
+
+      return this.store.find('study-creator-setting').then(function (settings) {
+        if (Ember['default'].isEmpty(settings)) {
+          return self.store.createRecord('study-creator-setting');
+        }
+
+        return settings.get('firstObject');
+      });
+    }
+  });
 
 });
 define('rose/services/liquid-fire-modals', ['exports', 'liquid-fire/modals'], function (exports, Modals) {
@@ -3822,7 +3901,7 @@ define('rose/templates/application', ['exports'], function (exports) {
           var morph0 = dom.createMorphAt(element0,1,1);
           var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),1,1);
           inline(env, morph0, context, "t", ["sidebarMenu.extraFeatures"], {});
-          block(env, morph1, context, "link-to", ["comments", "twitter"], {"class": "item"}, child0, null);
+          block(env, morph1, context, "link-to", ["study-creator"], {"class": "item"}, child0, null);
           return fragment;
         }
       };
@@ -7139,6 +7218,338 @@ define('rose/templates/settings', ['exports'], function (exports) {
   }()));
 
 });
+define('rose/templates/study-creator', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    return {
+      isHTMLBars: true,
+      revision: "Ember@1.11.1",
+      blockParams: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      build: function build(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h2");
+        dom.setAttribute(el1,"class","ui dividing header");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("i");
+        dom.setAttribute(el2,"class","lab icon");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","content");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3,"class","sub header");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"class","ui form");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3,"class","ui action input");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("button");
+        var el5 = dom.createTextNode("\n        ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createElement("i");
+        dom.setAttribute(el5,"class","search icon");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n      ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("button");
+        dom.setAttribute(el2,"class","ui primary button");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      render: function render(context, env, contextualElement) {
+        var dom = env.dom;
+        var hooks = env.hooks, inline = hooks.inline, get = hooks.get, subexpr = hooks.subexpr, concat = hooks.concat, attribute = hooks.attribute, element = hooks.element;
+        dom.detectNamespace(contextualElement);
+        var fragment;
+        if (env.useFragmentCache && dom.canClone) {
+          if (this.cachedFragment === null) {
+            fragment = this.build(dom);
+            if (this.hasRendered) {
+              this.cachedFragment = fragment;
+            } else {
+              this.hasRendered = true;
+            }
+          }
+          if (this.cachedFragment) {
+            fragment = dom.cloneNode(this.cachedFragment, true);
+          }
+        } else {
+          fragment = this.build(dom);
+        }
+        var element0 = dom.childAt(fragment, [0, 3]);
+        var element1 = dom.childAt(fragment, [2]);
+        var element2 = dom.childAt(element1, [1]);
+        var element3 = dom.childAt(element1, [3]);
+        var element4 = dom.childAt(element1, [5]);
+        var element5 = dom.childAt(element1, [7]);
+        var element6 = dom.childAt(element1, [9]);
+        var element7 = dom.childAt(element6, [5]);
+        var element8 = dom.childAt(element7, [3]);
+        var element9 = dom.childAt(element1, [11]);
+        var element10 = dom.childAt(element1, [13]);
+        var element11 = dom.childAt(element1, [15]);
+        var morph0 = dom.createMorphAt(element0,1,1);
+        var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
+        var morph2 = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
+        var morph3 = dom.createMorphAt(dom.childAt(element2, [3]),0,0);
+        var morph4 = dom.createMorphAt(element2,5,5);
+        var morph5 = dom.createMorphAt(dom.childAt(element3, [1]),0,0);
+        var morph6 = dom.createMorphAt(dom.childAt(element3, [3]),0,0);
+        var morph7 = dom.createMorphAt(element3,5,5);
+        var morph8 = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
+        var morph9 = dom.createMorphAt(dom.childAt(element4, [3]),0,0);
+        var morph10 = dom.createMorphAt(element4,5,5);
+        var morph11 = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
+        var morph12 = dom.createMorphAt(dom.childAt(element5, [3]),0,0);
+        var morph13 = dom.createMorphAt(element5,5,5);
+        var morph14 = dom.createMorphAt(dom.childAt(element6, [1]),0,0);
+        var morph15 = dom.createMorphAt(dom.childAt(element6, [3]),0,0);
+        var morph16 = dom.createMorphAt(element7,1,1);
+        var attrMorph0 = dom.createAttrMorph(element8, 'class');
+        var morph17 = dom.createMorphAt(dom.childAt(element9, [1]),0,0);
+        var morph18 = dom.createMorphAt(dom.childAt(element9, [3]),0,0);
+        var morph19 = dom.createMorphAt(element9,5,5);
+        var morph20 = dom.createMorphAt(dom.childAt(element10, [1]),0,0);
+        var morph21 = dom.createMorphAt(dom.childAt(element10, [3]),0,0);
+        var morph22 = dom.createMorphAt(element10,5,5);
+        var morph23 = dom.createMorphAt(element11,1,1);
+        inline(env, morph0, context, "t", ["studyCreator.title"], {});
+        inline(env, morph1, context, "t", ["studyCreator.subtitle"], {});
+        inline(env, morph2, context, "t", ["studyCreator.roseComments"], {});
+        inline(env, morph3, context, "t", ["studyCreator.roseCommentsDesc"], {});
+        inline(env, morph4, context, "ui-checkbox", [], {"checked": get(env, context, "model.roseCommentsIsEnabled"), "class": "toggle", "label": get(env, context, "commentsEnabledLabel")});
+        inline(env, morph5, context, "t", ["studyCreator.roseCommentsRating"], {});
+        inline(env, morph6, context, "t", ["studyCreator.roseCommentsRatingDesc"], {});
+        inline(env, morph7, context, "ui-checkbox", [], {"checked": get(env, context, "model.roseCommentsRatingIsEnabled"), "class": "toggle", "label": get(env, context, "ratingsEnabledLabel")});
+        inline(env, morph8, context, "t", ["studyCreator.salt"], {});
+        inline(env, morph9, context, "t", ["studyCreator.saltDesc"], {});
+        inline(env, morph10, context, "input", [], {"type": "text", "value": get(env, context, "model.salt")});
+        inline(env, morph11, context, "t", ["studyCreator.hashLength"], {});
+        inline(env, morph12, context, "t", ["studyCreator.hashLengthDesc"], {});
+        inline(env, morph13, context, "input", [], {"type": "number", "value": get(env, context, "model.hashLength")});
+        inline(env, morph14, context, "t", ["studyCreator.repositoryUrl"], {});
+        inline(env, morph15, context, "t", ["studyCreator.repositoryUrlDesc"], {});
+        inline(env, morph16, context, "input", [], {"type": "text", "value": get(env, context, "model.repositoryUrl"), "insert-newline": "loadBaseFile"});
+        attribute(env, attrMorph0, element8, "class", concat(env, ["ui icon button ", subexpr(env, context, "if", [get(env, context, "isLoading"), "loading"], {})]));
+        element(env, element8, context, "action", ["loadBaseFile"], {});
+        inline(env, morph17, context, "t", ["studyCreator.autoUpdate"], {});
+        inline(env, morph18, context, "t", ["studyCreator.autoUpdateDesc"], {});
+        inline(env, morph19, context, "ui-checkbox", [], {"checked": get(env, context, "model.autoUpdateIsEnabled"), "class": "toggle", "label": get(env, context, "autoUpdateObserversLabel")});
+        inline(env, morph20, context, "t", ["studyCreator.exportConfig"], {});
+        inline(env, morph21, context, "t", ["studyCreator.exportConfigDesc"], {});
+        inline(env, morph22, context, "input", [], {"value": get(env, context, "model.fileName")});
+        element(env, element11, context, "action", ["download"], {});
+        inline(env, morph23, context, "t", ["action.download"], {});
+        return fragment;
+      }
+    };
+  }()));
+
+});
 define('rose/tests/adapters/application.jshint', function () {
 
   'use strict';
@@ -7256,6 +7667,16 @@ define('rose/tests/controllers/settings.jshint', function () {
   module('JSHint - controllers');
   test('controllers/settings.js should pass jshint', function() { 
     ok(true, 'controllers/settings.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/controllers/study-creator.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - controllers');
+  test('controllers/study-creator.js should pass jshint', function() { 
+    ok(true, 'controllers/study-creator.js should pass jshint.'); 
   });
 
 });
@@ -7445,6 +7866,16 @@ define('rose/tests/models/interaction.jshint', function () {
   });
 
 });
+define('rose/tests/models/study-creator-setting.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - models');
+  test('models/study-creator-setting.js should pass jshint', function() { 
+    ok(true, 'models/study-creator-setting.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/models/user-setting.jshint', function () {
 
   'use strict';
@@ -7572,6 +8003,16 @@ define('rose/tests/routes/settings.jshint', function () {
   module('JSHint - routes');
   test('routes/settings.js should pass jshint', function() { 
     ok(true, 'routes/settings.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/routes/study-creator.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - routes');
+  test('routes/study-creator.js should pass jshint', function() { 
+    ok(true, 'routes/study-creator.js should pass jshint.'); 
   });
 
 });
@@ -7878,6 +8319,32 @@ define('rose/tests/unit/controllers/settings-test.jshint', function () {
   });
 
 });
+define('rose/tests/unit/controllers/study-creator-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('controller:study-creator', {});
+
+  // Replace this with your real tests.
+  ember_qunit.test('it exists', function (assert) {
+    var controller = this.subject();
+    assert.ok(controller);
+  });
+
+  // Specify the other units that are required for this test.
+  // needs: ['controller:foo']
+
+});
+define('rose/tests/unit/controllers/study-creator-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/controllers');
+  test('unit/controllers/study-creator-test.js should pass jshint', function() { 
+    ok(true, 'unit/controllers/study-creator-test.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/unit/initializers/kango-api-test', ['ember', 'rose/initializers/kango-api', 'qunit'], function (Ember, kango_api, qunit) {
 
   'use strict';
@@ -8023,6 +8490,32 @@ define('rose/tests/unit/models/interaction-test.jshint', function () {
   module('JSHint - unit/models');
   test('unit/models/interaction-test.js should pass jshint', function() { 
     ok(true, 'unit/models/interaction-test.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/unit/models/study-creator-setting-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleForModel('study-creator-setting', {
+    // Specify the other units that are required for this test.
+    needs: []
+  });
+
+  ember_qunit.test('it exists', function (assert) {
+    var model = this.subject();
+    // var store = this.store();
+    assert.ok(!!model);
+  });
+
+});
+define('rose/tests/unit/models/study-creator-setting-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/models');
+  test('unit/models/study-creator-setting-test.js should pass jshint', function() { 
+    ok(true, 'unit/models/study-creator-setting-test.js should pass jshint.'); 
   });
 
 });
@@ -8345,6 +8838,31 @@ define('rose/tests/unit/routes/settings-test.jshint', function () {
   module('JSHint - unit/routes');
   test('unit/routes/settings-test.js should pass jshint', function() { 
     ok(true, 'unit/routes/settings-test.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/unit/routes/study-creator-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('route:study-creator', {});
+
+  ember_qunit.test('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+
+  // Specify the other units that are required for this test.
+  // needs: ['controller:foo']
+
+});
+define('rose/tests/unit/routes/study-creator-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/routes');
+  test('unit/routes/study-creator-test.js should pass jshint', function() { 
+    ok(true, 'unit/routes/study-creator-test.js should pass jshint.'); 
   });
 
 });

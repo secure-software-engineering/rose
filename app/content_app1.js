@@ -1,8 +1,11 @@
 import ObserverEngine from 'rose/observer-engine';
 import FacebookUI from 'rose/facebook-ui';
+import SystemConfigModel from 'rose/models/system-config';
 
 /* Content Script */
 (function() {
+  var configs = new SystemConfigModel();
+  configs.fetch(); //wait for success
 
 //Check for network
 /**
@@ -27,7 +30,7 @@ for (var name in identifiers) {
      */
     ObserverEngine.register(name);
 
-    if (name === 'facebook') {
+    if (name === 'facebook' && configs.get('roseCommentsIsEnabled')) {
       var facebookUI = new FacebookUI();
       facebookUI.redrawUI();
     }

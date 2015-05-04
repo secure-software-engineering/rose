@@ -24,7 +24,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import CommentModel from 'rose/models/comment';
+import SystemConfigModel from 'rose/models/system-config';
+import UserSettingsModel from 'rose/models/user-settings';
 import CommentsCollection from 'rose/collections/comments';
 import ObserverEngine from 'rose/observer-engine';
 import ObserverCollection from 'rose/collections/observers';
@@ -44,8 +45,13 @@ export default (function () {
   FacebookUI.prototype._activeComment = {};
   FacebookUI.prototype._comments = new CommentsCollection();
   FacebookUI.prototype._likeObserver = {};
+  FacebookUI.prototype._configs = new SystemConfigModel();
+  FacebookUI.prototype._settings = new UserSettingsModel();
 
   function FacebookUI() {
+    this._configs.fetch();
+    this._settings.fetch();
+
     var options;
     options = {
       debug: true,
@@ -53,12 +59,18 @@ export default (function () {
       fallbackLng: 'en',
       resGetPath: kango.io.getResourceUrl('res/locales/') + '__lng__/__ns__.json'
     };
+    var isLanguageSet = this._settings.get('currentLanguage') !== null || this._settings.get('currentLanguage') !== undefined;
+    var isLanguageNotAutoDetect = this._settings.get('currentLanguage') !== 'auto';
+    if (isLanguageSet && isLanguageNotAutoDetect) {
+      options.lng = this._settings.get('currentLanguage');
+    }
     i18n.init(options);
     Handlebars.registerHelper('I18n', function(i18nKey) {
       var result;
       result = i18n.t(i18nKey);
       return new Handlebars.SafeString(result);
     });
+
     loadCss('res/semantic/semantic.min.css');
     loadCss('res/main.css');
 
@@ -66,7 +78,7 @@ export default (function () {
     this._comments.fetch({success: function(col, res, options) {
       options._this._registerEventHandlers();
       options._this._injectCommentRibbon();
-      options._this._injectReminder();
+      options._this._injectReminder.bind(options._this)();
       options._this._injectSidebar();
 
       //create MutationObserver to inject elements when new content is loaded into DOM
@@ -109,7 +121,12 @@ export default (function () {
     }).then(function(template) {
       $('body').append(template());
       $('.ui.sidebar').sidebar();
-      return $('.ui.rating').rating();
+      if(this._configs.get('roseCommentsRatingIsEnabled')) {
+        $('.ui.rating').rating();
+      }
+      else {
+        $('.ui.rating').remove();
+      }
     });
   };
 
@@ -130,23 +147,23 @@ export default (function () {
   };
 
   FacebookUI.prototype._injectReminder = function() {
-    if ($('.ui.nag').length > 0) {
-      return;
-    }
-    return this._getSettings().then((function(_this) {
-      return function(settings) {
-        if (settings.reminder.isActive) {
-          return _this._getTemplate('reminder');
-        }
-      };
-    })(this)).then(function(source) {
+    if ($('.ui.nag').length === 0 && this._settings.get('commentReminderIsEnabled')) {
+      this._getTemplate('reminder').then(function(source) {
       return Handlebars.compile(source);
-    }).then(function(template) {
-      $('body').append(template());
-      return $('.ui.nag').nag({
-        easing: 'swing'
+      }).then(function(template) {
+        $('body').append(template());
+        // return $('.ui.nag').nag({
+        //   easing: 'swing'
+        // });
+        $('.ui.nag').css({
+          'position': 'fixed',
+          'display': 'block'
+        });
+        $('.ui.nag').click(function(){
+          this.remove();
+        });
       });
-    });
+    }
   };
 
   FacebookUI.prototype._getTemplate = function(template) {
@@ -163,14 +180,6 @@ export default (function () {
       return kango.xhr.send(details, function(data) {
         return resolve(data.response);
       });
-    });
-    return promise;
-  };
-
-  FacebookUI.prototype._getSettings = function() {
-    var promise;
-    promise = new RSVP.Promise(function(resolve) {
-      // return Storage.getSettings(resolve);
     });
     return promise;
   };
@@ -211,17 +220,26 @@ export default (function () {
         }
         if (_this._activeComment !== undefined) {
           var activeComment = _this._activeComment.toJSON();
-          var rating;
           $('.ui.form textarea').val(activeComment.text);
-          for (var i = 0, len = activeComment.rating.length; i < len;  i++) {
-            rating = activeComment.rating[i];
-            $('.ui.rating:eq(' + i + ')').rating('set rating', rating);
+
+          if(_this._configs.get('roseCommentsRatingIsEnabled')) {
+
+            if (activeComment.rating) {
+              for (var i = 0, len = activeComment.rating.length; i < len;  i++) {
+                $('.ui.rating:eq(' + i + ')').rating('set rating', activeComment.rating[i]);
+              }
+            }
+            else {
+              $('.ui.rating').rating('set rating', 0);
+            }
           }
         } else {
           //check is update or create
           _this._activeComment = _this._comments.create({contentId: observerResult.contentId, createdAt: (new Date()).toJSON()});
           $('.ui.form textarea').val('');
-          $('.ui.rating').rating('set rating', 0);
+          if(_this._configs.get('roseCommentsRatingIsEnabled')) {
+            $('.ui.rating').rating('set rating', 0);
+          }
         }
 
       };
@@ -232,7 +250,9 @@ export default (function () {
       return function() {
         var comment = {};
         comment.text = $('.sidebar textarea').val() || '';
-        comment.rating = $('.ui.rating').rating('get rating') || [0,0];
+        if(_this._configs.get('roseCommentsRatingIsEnabled')) {
+          comment.rating = $('.ui.rating').rating('get rating') || [0,0];
+        }
         comment.network = 'facebook';
         comment.updatedAt = (new Date()).toJSON();
         _this._activeComment.set(comment);

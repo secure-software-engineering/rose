@@ -22,7 +22,8 @@
     <p>Whats the purpose of this settings?</p>
     {{ui-checkbox class="toggle"
                   checked=userSettings.commentReminderIsEnabled
-                  label=commentReminderLabel}}
+                  label=commentReminderLabel
+                  action="saveSettings"}}
   </div>
 
   <div class="field">
@@ -30,6 +31,7 @@
     <p>Whats the purpose of this settings?</p>
     {{ui-checkbox class="toggle"
                   checked=userSettings.developerModeIsEnabled
-                  label=developerModeLabel}}
+                  label=developerModeLabel
+                  action="saveSettings"}}
   </div>
 </div>

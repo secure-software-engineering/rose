@@ -2,6 +2,8 @@ import Ember from 'ember';
 import languages from '../locales/languages';
 
 export default Ember.Controller.extend({
+  availableLanguages: languages,
+
   commentReminderLabel: function() {
     const t = this.container.lookup('utils:t');
     return (this.get('userSettings.commentReminderIsEnabled')) ? t('yes') : t('no');
@@ -17,5 +19,13 @@ export default Ember.Controller.extend({
     Ember.set(application, 'locale', this.get('userSettings.currentLanguage'));
   }.observes('userSettings.currentLanguage'),
 
-  availableLanguages: languages
+  onChange: function() {
+    this.send('saveSettings');
+  }.observes('userSettings.currentLanguage'),
+
+  actions: {
+    saveSettings: function() {
+      this.get('userSettings').save();
+    }
+  }
 });

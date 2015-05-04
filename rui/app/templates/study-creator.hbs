@@ -11,21 +11,30 @@
     <label>{{t "studyCreator.roseComments"}}</label>
     <p>{{t "studyCreator.roseCommentsDesc"}}</p>
 
-    {{ui-checkbox checked=model.roseCommentsIsEnabled class="toggle" label=commentsEnabledLabel}}
+    {{ui-checkbox checked=model.roseCommentsIsEnabled
+                  class="toggle"
+                  label=commentsEnabledLabel
+                  action="saveSettings"}}
   </div>
 
   <div class="field">
     <label>{{t "studyCreator.roseCommentsRating"}}</label>
     <p>{{t "studyCreator.roseCommentsRatingDesc"}}</p>
 
-    {{ui-checkbox checked=model.roseCommentsRatingIsEnabled class="toggle" label=ratingsEnabledLabel}}
+    {{ui-checkbox checked=model.roseCommentsRatingIsEnabled
+                  class="toggle"
+                  label=ratingsEnabledLabel
+                  action="saveSettings"}}
   </div>
 
   <div class="field">
     <label>{{t "studyCreator.salt"}}</label>
     <p>{{t "studyCreator.saltDesc"}}</p>
 
-    {{input type="text" value=model.salt}}
+    {{input type="text"
+            value=model.salt
+            insert-newline="saveSettings"
+            focus-out="saveSettings"}}
   </div>
 
   <div class="field">
@@ -40,19 +49,36 @@
     <p>{{t "studyCreator.repositoryUrlDesc"}}</p>
 
     <div class="ui action input">
-      {{input type="text" value=model.repositoryUrl insert-newline="loadBaseFile"}}
+      {{input type="text" value=model.repositoryUrl insert-newline="fetchBaseFile"}}
 
-      <button class="ui icon button {{if isLoading "loading"}}" {{action "loadBaseFile"}}>
+      <button class="ui icon button {{if baseFileIsLoading "loading"}}" {{action "fetchBaseFile"}}>
         <i class="search icon"></i>
       </button>
     </div>
   </div>
 
   <div class="field">
+    <label>Networks</label>
+    <p>asdfasdfasdfasdfasdf</p>
+
+    {{#each model.networks as |network|}}
+    <div class="field">
+      <div class="ui checkbox">
+        {{input type="checkbox" checked=network.isEnabled id=network.namespace}}
+        <label for={{network.namespace}}>asdfasdf</label>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+
+  <div class="field">
     <label>{{t "studyCreator.autoUpdate"}}</label>
     <p>{{t "studyCreator.autoUpdateDesc"}}</p>
 
-    {{ui-checkbox checked=model.autoUpdateIsEnabled class="toggle" label=autoUpdateObserversLabel}}
+    {{ui-checkbox checked=model.autoUpdateIsEnabled
+                  class="toggle"
+                  label=autoUpdateObserversLabel
+                  action="saveSettings"}}
   </div>
 
   <div class="field">

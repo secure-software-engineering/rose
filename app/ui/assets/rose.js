@@ -1510,7 +1510,7 @@ define('rose/locales/languages', ['exports'], function (exports) {
 
 	'use strict';
 
-	exports['default'] = [{ language: "Deutsch", code: "de" }, { language: "English", code: "en" }];
+	exports['default'] = [{ language: "English", code: "en" }];
 
 });
 define('rose/models/comment', ['exports', 'ember-data'], function (exports, DS) {
@@ -9336,7 +9336,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.db7ccfa8"});
+  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.e4bd71ed"});
 }
 
 /* jshint ignore:end */

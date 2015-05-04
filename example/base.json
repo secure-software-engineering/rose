@@ -4,7 +4,7 @@
   "networks": [{
     "id": 1,
     "name": "Facebook",
-    "short": "facebook",
+    "code": "facebook",
     "observers": [
       "facebook/like-content.json",
       "facebook/profile-view.json"
@@ -12,12 +12,12 @@
   }, {
     "id": 2,
     "name": "Google+",
-    "short": "google",
+    "code": "google",
     "observers": []
   }, {
     "id": 3,
     "name": "Twitter",
-    "short": "twitter",
+    "code": "twitter",
     "observers": []
   }],
   "public_key": "-----BEGIN PUBLIC KEY-----MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA2M/bnLEag/IfXoj1Oqf1kMSsyfw4vdOQatlgSOce935xNMQDOM4ao4m9jh7/W2g5hv7/yogDgJt3UZZINrLA/uC56VDqgNYh3AdsyZFl2YYY/XmurzrtTEPyCQiSe1ic1jBeQnWCdfiX0Kt9L89aJFmBeXpOJvnGb8HI1Q99IMWhWBm6x6MV2nfMEaTalSs4jTpcOoC+0wKyxa17Bi5uD1YEJtSTG1r/AuVg6bMssqBzlhMk3oL13fRk+Yw65KWm0sDuGgs/xSQKyIlzI7Z1kucbYCRGm09dOwxuP4EWWbh1J8JG7sGfdzLPduf0i08EqgFn2R1q2wy/vktLcjBKCAtMkCWfKpSAQImjLP8phwY7wKuTkyh/5E2I8FX+LnfqVvAkVIdMUzlCtTLQP1U4J7RUNVIWBJx+y8WpCHhEnvXmwIKWFZ+L+YOLJnXUlL/XlqY0KUQocN8m0RdXejoKSOrTVywQ1CscRfd8prenzW75MiDqxLigIfe9Y/TiBo7uJVHUS1j1+Eoz1sr4IterTBCpG3P7FPJ7s32eGzfOQSu48rikFzeiSLTZhj42ZOEqaUMZuN0yBBfWcz02AV2nAwoHi4zXM25wva+Qc0qNoEXFr+gVtcOt5V7jXPx6osNcWSp/V6yJOu2vrfxhgmOQ1vmIlXDbQlGE9ePEJB0clvMCAwEAAQ==-----END PUBLIC KEY-----"

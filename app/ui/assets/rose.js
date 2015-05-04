@@ -1086,8 +1086,17 @@ define('rose/controllers/study-creator', ['exports', 'ember'], function (exports
         this.get('model').save();
       },
 
+      saveNetworkSettings: function saveNetworkSettings(network) {
+        network.value.save();
+      },
+
       download: function download() {
-        var jsondata = JSON.stringify(this.get('model'), null, 4);
+        var model = this.get('model').toJSON();
+        var networks = this.get('model.networks').map(function (network) {
+          return network.toJSON({ includeId: true });
+        });
+        model.networks = networks;
+        var jsondata = JSON.stringify(model, null, 4);
         var fileName = this.get('model.fileName');
 
         window.saveAs(new Blob([jsondata]), fileName);
@@ -7251,6 +7260,56 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
 
   exports['default'] = Ember.HTMLBars.template((function() {
     var child0 = (function() {
+      var child0 = (function() {
+        return {
+          isHTMLBars: true,
+          revision: "Ember@1.11.3",
+          blockParams: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          build: function build(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("      ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("div");
+            dom.setAttribute(el1,"class","field");
+            var el2 = dom.createTextNode("\n        ");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createComment("");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("\n      ");
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          render: function render(context, env, contextualElement) {
+            var dom = env.dom;
+            var hooks = env.hooks, get = hooks.get, inline = hooks.inline;
+            dom.detectNamespace(contextualElement);
+            var fragment;
+            if (env.useFragmentCache && dom.canClone) {
+              if (this.cachedFragment === null) {
+                fragment = this.build(dom);
+                if (this.hasRendered) {
+                  this.cachedFragment = fragment;
+                } else {
+                  this.hasRendered = true;
+                }
+              }
+              if (this.cachedFragment) {
+                fragment = dom.cloneNode(this.cachedFragment, true);
+              }
+            } else {
+              fragment = this.build(dom);
+            }
+            var morph0 = dom.createMorphAt(dom.childAt(fragment, [1]),1,1);
+            inline(env, morph0, context, "ui-checkbox", [], {"checked": get(env, context, "network.isEnabled"), "class": "toggle", "label": get(env, context, "network.name"), "action": "saveNetworkSettings", "value": get(env, context, "network")});
+            return fragment;
+          }
+        };
+      }());
       return {
         isHTMLBars: true,
         revision: "Ember@1.11.3",
@@ -7259,37 +7318,13 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         hasRendered: false,
         build: function build(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("    ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("div");
-          dom.setAttribute(el1,"class","field");
-          var el2 = dom.createTextNode("\n      ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("div");
-          dom.setAttribute(el2,"class","ui checkbox");
-          var el3 = dom.createTextNode("\n        ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createComment("");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n        ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createElement("label");
-          var el4 = dom.createTextNode("asdfasdf");
-          dom.appendChild(el3, el4);
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n      ");
-          dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n    ");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
+          var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
           return el0;
         },
         render: function render(context, env, contextualElement, blockArguments) {
           var dom = env.dom;
-          var hooks = env.hooks, set = hooks.set, get = hooks.get, inline = hooks.inline, attribute = hooks.attribute;
+          var hooks = env.hooks, set = hooks.set, get = hooks.get, block = hooks.block;
           dom.detectNamespace(contextualElement);
           var fragment;
           if (env.useFragmentCache && dom.canClone) {
@@ -7307,13 +7342,11 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
           } else {
             fragment = this.build(dom);
           }
-          var element0 = dom.childAt(fragment, [1, 1]);
-          var element1 = dom.childAt(element0, [3]);
-          var morph0 = dom.createMorphAt(element0,1,1);
-          var attrMorph0 = dom.createAttrMorph(element1, 'for');
+          var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
+          dom.insertBoundary(fragment, null);
+          dom.insertBoundary(fragment, 0);
           set(env, context, "network", blockArguments[0]);
-          inline(env, morph0, context, "input", [], {"type": "checkbox", "checked": get(env, context, "network.isEnabled"), "id": get(env, context, "network.namespace")});
-          attribute(env, attrMorph0, element1, "for", get(env, context, "network.namespace"));
+          block(env, morph0, context, "if", [get(env, context, "network.isLoaded")], {}, child0, null);
           return fragment;
         }
       };
@@ -7598,44 +7631,44 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         } else {
           fragment = this.build(dom);
         }
-        var element2 = dom.childAt(fragment, [0, 3]);
-        var element3 = dom.childAt(fragment, [2]);
-        var element4 = dom.childAt(element3, [1]);
-        var element5 = dom.childAt(element3, [3]);
-        var element6 = dom.childAt(element3, [5]);
-        var element7 = dom.childAt(element3, [7]);
-        var element8 = dom.childAt(element3, [9]);
-        var element9 = dom.childAt(element8, [5]);
-        var element10 = dom.childAt(element9, [3]);
-        var element11 = dom.childAt(element3, [13]);
-        var element12 = dom.childAt(element3, [15]);
-        var element13 = dom.childAt(element3, [17]);
-        var morph0 = dom.createMorphAt(element2,1,1);
-        var morph1 = dom.createMorphAt(dom.childAt(element2, [3]),0,0);
-        var morph2 = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
-        var morph3 = dom.createMorphAt(dom.childAt(element4, [3]),0,0);
-        var morph4 = dom.createMorphAt(element4,5,5);
-        var morph5 = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
-        var morph6 = dom.createMorphAt(dom.childAt(element5, [3]),0,0);
-        var morph7 = dom.createMorphAt(element5,5,5);
-        var morph8 = dom.createMorphAt(dom.childAt(element6, [1]),0,0);
-        var morph9 = dom.createMorphAt(dom.childAt(element6, [3]),0,0);
-        var morph10 = dom.createMorphAt(element6,5,5);
-        var morph11 = dom.createMorphAt(dom.childAt(element7, [1]),0,0);
-        var morph12 = dom.createMorphAt(dom.childAt(element7, [3]),0,0);
-        var morph13 = dom.createMorphAt(element7,5,5);
-        var morph14 = dom.createMorphAt(dom.childAt(element8, [1]),0,0);
-        var morph15 = dom.createMorphAt(dom.childAt(element8, [3]),0,0);
-        var morph16 = dom.createMorphAt(element9,1,1);
-        var attrMorph0 = dom.createAttrMorph(element10, 'class');
-        var morph17 = dom.createMorphAt(dom.childAt(element3, [11]),5,5);
-        var morph18 = dom.createMorphAt(dom.childAt(element11, [1]),0,0);
-        var morph19 = dom.createMorphAt(dom.childAt(element11, [3]),0,0);
-        var morph20 = dom.createMorphAt(element11,5,5);
-        var morph21 = dom.createMorphAt(dom.childAt(element12, [1]),0,0);
-        var morph22 = dom.createMorphAt(dom.childAt(element12, [3]),0,0);
-        var morph23 = dom.createMorphAt(element12,5,5);
-        var morph24 = dom.createMorphAt(element13,1,1);
+        var element0 = dom.childAt(fragment, [0, 3]);
+        var element1 = dom.childAt(fragment, [2]);
+        var element2 = dom.childAt(element1, [1]);
+        var element3 = dom.childAt(element1, [3]);
+        var element4 = dom.childAt(element1, [5]);
+        var element5 = dom.childAt(element1, [7]);
+        var element6 = dom.childAt(element1, [9]);
+        var element7 = dom.childAt(element6, [5]);
+        var element8 = dom.childAt(element7, [3]);
+        var element9 = dom.childAt(element1, [13]);
+        var element10 = dom.childAt(element1, [15]);
+        var element11 = dom.childAt(element1, [17]);
+        var morph0 = dom.createMorphAt(element0,1,1);
+        var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
+        var morph2 = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
+        var morph3 = dom.createMorphAt(dom.childAt(element2, [3]),0,0);
+        var morph4 = dom.createMorphAt(element2,5,5);
+        var morph5 = dom.createMorphAt(dom.childAt(element3, [1]),0,0);
+        var morph6 = dom.createMorphAt(dom.childAt(element3, [3]),0,0);
+        var morph7 = dom.createMorphAt(element3,5,5);
+        var morph8 = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
+        var morph9 = dom.createMorphAt(dom.childAt(element4, [3]),0,0);
+        var morph10 = dom.createMorphAt(element4,5,5);
+        var morph11 = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
+        var morph12 = dom.createMorphAt(dom.childAt(element5, [3]),0,0);
+        var morph13 = dom.createMorphAt(element5,5,5);
+        var morph14 = dom.createMorphAt(dom.childAt(element6, [1]),0,0);
+        var morph15 = dom.createMorphAt(dom.childAt(element6, [3]),0,0);
+        var morph16 = dom.createMorphAt(element7,1,1);
+        var attrMorph0 = dom.createAttrMorph(element8, 'class');
+        var morph17 = dom.createMorphAt(dom.childAt(element1, [11]),5,5);
+        var morph18 = dom.createMorphAt(dom.childAt(element9, [1]),0,0);
+        var morph19 = dom.createMorphAt(dom.childAt(element9, [3]),0,0);
+        var morph20 = dom.createMorphAt(element9,5,5);
+        var morph21 = dom.createMorphAt(dom.childAt(element10, [1]),0,0);
+        var morph22 = dom.createMorphAt(dom.childAt(element10, [3]),0,0);
+        var morph23 = dom.createMorphAt(element10,5,5);
+        var morph24 = dom.createMorphAt(element11,1,1);
         inline(env, morph0, context, "t", ["studyCreator.title"], {});
         inline(env, morph1, context, "t", ["studyCreator.subtitle"], {});
         inline(env, morph2, context, "t", ["studyCreator.roseComments"], {});
@@ -7653,8 +7686,8 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         inline(env, morph14, context, "t", ["studyCreator.repositoryUrl"], {});
         inline(env, morph15, context, "t", ["studyCreator.repositoryUrlDesc"], {});
         inline(env, morph16, context, "input", [], {"type": "text", "value": get(env, context, "model.repositoryUrl"), "insert-newline": "fetchBaseFile"});
-        attribute(env, attrMorph0, element10, "class", concat(env, ["ui icon button ", subexpr(env, context, "if", [get(env, context, "baseFileIsLoading"), "loading"], {})]));
-        element(env, element10, context, "action", ["fetchBaseFile"], {});
+        attribute(env, attrMorph0, element8, "class", concat(env, ["ui icon button ", subexpr(env, context, "if", [get(env, context, "baseFileIsLoading"), "loading"], {})]));
+        element(env, element8, context, "action", ["fetchBaseFile"], {});
         block(env, morph17, context, "each", [get(env, context, "model.networks")], {}, child0, null);
         inline(env, morph18, context, "t", ["studyCreator.autoUpdate"], {});
         inline(env, morph19, context, "t", ["studyCreator.autoUpdateDesc"], {});
@@ -7662,7 +7695,7 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         inline(env, morph21, context, "t", ["studyCreator.exportConfig"], {});
         inline(env, morph22, context, "t", ["studyCreator.exportConfigDesc"], {});
         inline(env, morph23, context, "input", [], {"value": get(env, context, "model.fileName")});
-        element(env, element13, context, "action", ["download"], {});
+        element(env, element11, context, "action", ["download"], {});
         inline(env, morph24, context, "t", ["action.download"], {});
         return fragment;
       }

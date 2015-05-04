@@ -62,12 +62,15 @@
     <p>asdfasdfasdfasdfasdf</p>
 
     {{#each model.networks as |network|}}
-    <div class="field">
-      <div class="ui checkbox">
-        {{input type="checkbox" checked=network.isEnabled id=network.namespace}}
-        <label for={{network.namespace}}>asdfasdf</label>
+      {{#if network.isLoaded}}
+      <div class="field">
+        {{ui-checkbox checked=network.isEnabled
+                      class="toggle"
+                      label=network.name
+                      action="saveNetworkSettings"
+                      value=network}}
       </div>
-    </div>
+      {{/if}}
     {{/each}}
   </div>
 

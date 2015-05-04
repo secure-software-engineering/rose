@@ -8,8 +8,15 @@ export default Ember.Controller.extend({
       this.get('model').save();
     },
 
+    saveNetworkSettings: function(network) {
+      network.value.save();
+    },
+
     download: function() {
-      const jsondata = JSON.stringify(this.get('model'), null, 4);
+      let model = this.get('model').toJSON();
+      let networks = this.get('model.networks').map(function(network) { return network.toJSON({ includeId: true }); });
+      model.networks = networks;
+      const jsondata = JSON.stringify(model, null, 4);
       const fileName = this.get('model.fileName');
 
       window.saveAs(new Blob([jsondata]), fileName);

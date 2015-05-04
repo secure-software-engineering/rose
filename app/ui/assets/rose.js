@@ -1045,6 +1045,8 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
   'use strict';
 
   exports['default'] = Ember['default'].Controller.extend({
+    availableLanguages: languages['default'],
+
     commentReminderLabel: (function () {
       var t = this.container.lookup('utils:t');
       return this.get('userSettings.commentReminderIsEnabled') ? t('yes') : t('no');
@@ -1060,7 +1062,15 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
       Ember['default'].set(application, 'locale', this.get('userSettings.currentLanguage'));
     }).observes('userSettings.currentLanguage'),
 
-    availableLanguages: languages['default']
+    onChange: (function () {
+      this.send('saveSettings');
+    }).observes('userSettings.currentLanguage'),
+
+    actions: {
+      saveSettings: function saveSettings() {
+        this.get('userSettings').save();
+      }
+    }
   });
 
 });
@@ -1069,12 +1079,38 @@ define('rose/controllers/study-creator', ['exports', 'ember'], function (exports
   'use strict';
 
   exports['default'] = Ember['default'].Controller.extend({
+    baseFileIsLoading: false,
+
     actions: {
+      saveSettings: function saveSettings() {
+        this.get('model').save();
+      },
+
       download: function download() {
         var jsondata = JSON.stringify(this.get('model'), null, 4);
         var fileName = this.get('model.fileName');
 
         window.saveAs(new Blob([jsondata]), fileName);
+      },
+
+      fetchBaseFile: function fetchBaseFile() {
+        this.get('model.networks').clear();
+
+        var self = this;
+        self.set('baseFileIsLoading', true);
+
+        Ember['default'].$.getJSON(this.get('model.repositoryUrl')).then(function (data) {
+          data.networks.forEach(function (nw) {
+            var network = self.store.createRecord('network', nw);
+            self.get('model.networks').addObject(network);
+            self.get('model').save();
+          });
+
+          self.set('baseFileIsLoading', false);
+        }).fail(function (error) {
+          self.set('baseFileIsLoading', false);
+          console.log(error);
+        });
       }
     }
   });
@@ -1561,6 +1597,17 @@ define('rose/models/interaction', ['exports', 'ember-data'], function (exports, 
   });
 
 });
+define('rose/models/network', ['exports', 'ember-data'], function (exports, DS) {
+
+  'use strict';
+
+  exports['default'] = DS['default'].Model.extend({
+    name: DS['default'].attr('string'),
+    namespace: DS['default'].attr('string'),
+    isEnabled: DS['default'].attr('boolean')
+  });
+
+});
 define('rose/models/study-creator-setting', ['exports', 'ember-data'], function (exports, DS) {
 
   'use strict';
@@ -1573,16 +1620,7 @@ define('rose/models/study-creator-setting', ['exports', 'ember-data'], function 
     repositoryUrl: DS['default'].attr('string'),
     autoUpdateIsEnabled: DS['default'].attr('boolean'),
     fileName: DS['default'].attr('string', { defaultValue: 'rose-study-configuration.txt' }),
-
-    saveWhenDirty: (function () {
-      if (this.get('isDirty')) {
-        this.save();
-      }
-    }).observes('isDirty'),
-
-    setupModel: (function () {
-      this.get('isDirty');
-    }).on('init')
+    networks: DS['default'].hasMany('network', { async: true })
   });
 
 });
@@ -1593,18 +1631,7 @@ define('rose/models/user-setting', ['exports', 'ember-data'], function (exports,
   exports['default'] = DS['default'].Model.extend({
     commentReminderIsEnabled: DS['default'].attr('boolean'),
     developerModeIsEnabled: DS['default'].attr('boolean'),
-    currentLanguage: DS['default'].attr('string'),
-
-    saveWhenDirty: (function () {
-      if (this.get('isDirty')) {
-        this.save();
-      }
-    }).observes('isDirty'),
-
-    setupModel: (function () {
-      this.get('isDirty');
-    }).on('init')
-  });
+    currentLanguage: DS['default'].attr('string') });
 
 });
 define('rose/pods/components/diary-entry/component', ['exports', 'ember'], function (exports, Ember) {
@@ -1650,7 +1677,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -1700,7 +1727,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child1 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -1743,7 +1770,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child2 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -1808,7 +1835,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child3 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -1859,7 +1886,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child4 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -1910,7 +1937,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child5 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -1960,7 +1987,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -2119,7 +2146,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 1,
         cachedFragment: null,
         hasRendered: false,
@@ -2175,7 +2202,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child1 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2225,7 +2252,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child2 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2273,7 +2300,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child3 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2338,7 +2365,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child4 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2389,7 +2416,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child5 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2440,7 +2467,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child6 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2490,7 +2517,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -2674,7 +2701,7 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2728,7 +2755,7 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
     var child1 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2775,7 +2802,7 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
     var child2 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2821,7 +2848,7 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -3096,7 +3123,7 @@ define('rose/templates/about', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -3286,7 +3313,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3329,7 +3356,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child1 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3372,7 +3399,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child2 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3415,7 +3442,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child3 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3458,7 +3485,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child4 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3501,7 +3528,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child5 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3544,7 +3571,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child6 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3587,7 +3614,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child7 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3630,7 +3657,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child8 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3673,7 +3700,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child9 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3716,7 +3743,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child10 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3759,7 +3786,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child11 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3803,7 +3830,7 @@ define('rose/templates/application', ['exports'], function (exports) {
       var child0 = (function() {
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.1",
+          revision: "Ember@1.11.3",
           blockParams: 0,
           cachedFragment: null,
           hasRendered: false,
@@ -3845,7 +3872,7 @@ define('rose/templates/application', ['exports'], function (exports) {
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3909,7 +3936,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child13 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3952,7 +3979,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child14 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3994,7 +4021,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -4226,7 +4253,7 @@ define('rose/templates/backup', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -4339,7 +4366,7 @@ define('rose/templates/comments', ['exports'], function (exports) {
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 1,
         cachedFragment: null,
         hasRendered: false,
@@ -4382,7 +4409,7 @@ define('rose/templates/comments', ['exports'], function (exports) {
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -4471,7 +4498,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
       var child0 = (function() {
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.1",
+          revision: "Ember@1.11.3",
           blockParams: 1,
           cachedFragment: null,
           hasRendered: false,
@@ -4512,7 +4539,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -4555,7 +4582,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
         var child0 = (function() {
           return {
             isHTMLBars: true,
-            revision: "Ember@1.11.1",
+            revision: "Ember@1.11.3",
             blockParams: 1,
             cachedFragment: null,
             hasRendered: false,
@@ -4596,7 +4623,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
         }());
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.1",
+          revision: "Ember@1.11.3",
           blockParams: 1,
           cachedFragment: null,
           hasRendered: false,
@@ -4637,7 +4664,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -4677,7 +4704,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -4724,7 +4751,7 @@ define('rose/templates/components/liquid-container', ['exports'], function (expo
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -4774,7 +4801,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
         var child0 = (function() {
           return {
             isHTMLBars: true,
-            revision: "Ember@1.11.1",
+            revision: "Ember@1.11.3",
             blockParams: 0,
             cachedFragment: null,
             hasRendered: false,
@@ -4817,7 +4844,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
         var child1 = (function() {
           return {
             isHTMLBars: true,
-            revision: "Ember@1.11.1",
+            revision: "Ember@1.11.3",
             blockParams: 0,
             cachedFragment: null,
             hasRendered: false,
@@ -4859,7 +4886,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
         }());
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.1",
+          revision: "Ember@1.11.3",
           blockParams: 1,
           cachedFragment: null,
           hasRendered: false,
@@ -4900,7 +4927,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -4944,7 +4971,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
           var child0 = (function() {
             return {
               isHTMLBars: true,
-              revision: "Ember@1.11.1",
+              revision: "Ember@1.11.3",
               blockParams: 0,
               cachedFragment: null,
               hasRendered: false,
@@ -4987,7 +5014,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
           var child1 = (function() {
             return {
               isHTMLBars: true,
-              revision: "Ember@1.11.1",
+              revision: "Ember@1.11.3",
               blockParams: 0,
               cachedFragment: null,
               hasRendered: false,
@@ -5029,7 +5056,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
           }());
           return {
             isHTMLBars: true,
-            revision: "Ember@1.11.1",
+            revision: "Ember@1.11.3",
             blockParams: 1,
             cachedFragment: null,
             hasRendered: false,
@@ -5070,7 +5097,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
         }());
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.1",
+          revision: "Ember@1.11.3",
           blockParams: 1,
           cachedFragment: null,
           hasRendered: false,
@@ -5111,7 +5138,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -5151,7 +5178,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -5198,7 +5225,7 @@ define('rose/templates/components/liquid-measured', ['exports'], function (expor
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -5247,7 +5274,7 @@ define('rose/templates/components/liquid-modal', ['exports'], function (exports)
       var child0 = (function() {
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.1",
+          revision: "Ember@1.11.3",
           blockParams: 0,
           cachedFragment: null,
           hasRendered: false,
@@ -5299,7 +5326,7 @@ define('rose/templates/components/liquid-modal', ['exports'], function (exports)
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 1,
         cachedFragment: null,
         hasRendered: false,
@@ -5347,7 +5374,7 @@ define('rose/templates/components/liquid-modal', ['exports'], function (exports)
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -5395,7 +5422,7 @@ define('rose/templates/components/liquid-outlet', ['exports'], function (exports
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 1,
         cachedFragment: null,
         hasRendered: false,
@@ -5436,7 +5463,7 @@ define('rose/templates/components/liquid-outlet', ['exports'], function (exports
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -5484,7 +5511,7 @@ define('rose/templates/components/liquid-spacer', ['exports'], function (exports
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -5526,7 +5553,7 @@ define('rose/templates/components/liquid-spacer', ['exports'], function (exports
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -5576,7 +5603,7 @@ define('rose/templates/components/liquid-versions', ['exports'], function (expor
         var child0 = (function() {
           return {
             isHTMLBars: true,
-            revision: "Ember@1.11.1",
+            revision: "Ember@1.11.3",
             blockParams: 0,
             cachedFragment: null,
             hasRendered: false,
@@ -5616,7 +5643,7 @@ define('rose/templates/components/liquid-versions', ['exports'], function (expor
         }());
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.1",
+          revision: "Ember@1.11.3",
           blockParams: 0,
           cachedFragment: null,
           hasRendered: false,
@@ -5656,7 +5683,7 @@ define('rose/templates/components/liquid-versions', ['exports'], function (expor
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 1,
         cachedFragment: null,
         hasRendered: false,
@@ -5697,7 +5724,7 @@ define('rose/templates/components/liquid-versions', ['exports'], function (expor
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -5746,7 +5773,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
       var child0 = (function() {
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.1",
+          revision: "Ember@1.11.3",
           blockParams: 1,
           cachedFragment: null,
           hasRendered: false,
@@ -5787,7 +5814,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -5830,7 +5857,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
         var child0 = (function() {
           return {
             isHTMLBars: true,
-            revision: "Ember@1.11.1",
+            revision: "Ember@1.11.3",
             blockParams: 1,
             cachedFragment: null,
             hasRendered: false,
@@ -5871,7 +5898,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
         }());
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.1",
+          revision: "Ember@1.11.3",
           blockParams: 1,
           cachedFragment: null,
           hasRendered: false,
@@ -5912,7 +5939,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -5952,7 +5979,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -5999,7 +6026,7 @@ define('rose/templates/components/ui-checkbox', ['exports'], function (exports) 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -6055,7 +6082,7 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -6098,7 +6125,7 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
     var child1 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -6140,7 +6167,7 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
       var child0 = (function() {
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.1",
+          revision: "Ember@1.11.3",
           blockParams: 0,
           cachedFragment: null,
           hasRendered: false,
@@ -6182,7 +6209,7 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -6224,7 +6251,7 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
       var child0 = (function() {
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.1",
+          revision: "Ember@1.11.3",
           blockParams: 0,
           cachedFragment: null,
           hasRendered: false,
@@ -6266,7 +6293,7 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -6307,7 +6334,7 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
     var child4 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -6349,7 +6376,7 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -6419,7 +6446,7 @@ define('rose/templates/components/ui-radio', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -6475,7 +6502,7 @@ define('rose/templates/diary', ['exports'], function (exports) {
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 1,
         cachedFragment: null,
         hasRendered: false,
@@ -6518,7 +6545,7 @@ define('rose/templates/diary', ['exports'], function (exports) {
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -6662,7 +6689,7 @@ define('rose/templates/help', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -6851,7 +6878,7 @@ define('rose/templates/interactions', ['exports'], function (exports) {
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.1",
+        revision: "Ember@1.11.3",
         blockParams: 1,
         cachedFragment: null,
         hasRendered: false,
@@ -6894,7 +6921,7 @@ define('rose/templates/interactions', ['exports'], function (exports) {
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -6981,7 +7008,7 @@ define('rose/templates/privacysettings', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -7057,7 +7084,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -7209,9 +7236,9 @@ define('rose/templates/settings', ['exports'], function (exports) {
         inline(env, morph2, context, "t", ["settings.language"], {});
         inline(env, morph3, context, "ui-dropdown", [], {"class": "ui selection dropdown", "value": get(env, context, "userSettings.currentLanguage"), "content": get(env, context, "availableLanguages"), "optionLabelPath": "content.language", "optionValuePath": "content.code"});
         inline(env, morph4, context, "t", ["settings.commentReminder"], {});
-        inline(env, morph5, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.commentReminderIsEnabled"), "label": get(env, context, "commentReminderLabel")});
+        inline(env, morph5, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.commentReminderIsEnabled"), "label": get(env, context, "commentReminderLabel"), "action": "saveSettings"});
         inline(env, morph6, context, "t", ["settings.extraFeatures"], {});
-        inline(env, morph7, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.developerModeIsEnabled"), "label": get(env, context, "developerModeLabel")});
+        inline(env, morph7, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.developerModeIsEnabled"), "label": get(env, context, "developerModeLabel"), "action": "saveSettings"});
         return fragment;
       }
     };
@@ -7223,9 +7250,77 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
   'use strict';
 
   exports['default'] = Ember.HTMLBars.template((function() {
+    var child0 = (function() {
+      return {
+        isHTMLBars: true,
+        revision: "Ember@1.11.3",
+        blockParams: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        build: function build(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","field");
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("div");
+          dom.setAttribute(el2,"class","ui checkbox");
+          var el3 = dom.createTextNode("\n        ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n        ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createElement("label");
+          var el4 = dom.createTextNode("asdfasdf");
+          dom.appendChild(el3, el4);
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n      ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        render: function render(context, env, contextualElement, blockArguments) {
+          var dom = env.dom;
+          var hooks = env.hooks, set = hooks.set, get = hooks.get, inline = hooks.inline, attribute = hooks.attribute;
+          dom.detectNamespace(contextualElement);
+          var fragment;
+          if (env.useFragmentCache && dom.canClone) {
+            if (this.cachedFragment === null) {
+              fragment = this.build(dom);
+              if (this.hasRendered) {
+                this.cachedFragment = fragment;
+              } else {
+                this.hasRendered = true;
+              }
+            }
+            if (this.cachedFragment) {
+              fragment = dom.cloneNode(this.cachedFragment, true);
+            }
+          } else {
+            fragment = this.build(dom);
+          }
+          var element0 = dom.childAt(fragment, [1, 1]);
+          var element1 = dom.childAt(element0, [3]);
+          var morph0 = dom.createMorphAt(element0,1,1);
+          var attrMorph0 = dom.createAttrMorph(element1, 'for');
+          set(env, context, "network", blockArguments[0]);
+          inline(env, morph0, context, "input", [], {"type": "checkbox", "checked": get(env, context, "network.isEnabled"), "id": get(env, context, "network.namespace")});
+          attribute(env, attrMorph0, element1, "for", get(env, context, "network.namespace"));
+          return fragment;
+        }
+      };
+    }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.1",
+      revision: "Ember@1.11.3",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -7403,6 +7498,29 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("label");
+        var el4 = dom.createTextNode("Networks");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createTextNode("asdfasdfasdfasdfasdf");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
         var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
@@ -7462,7 +7580,7 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
       },
       render: function render(context, env, contextualElement) {
         var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, get = hooks.get, subexpr = hooks.subexpr, concat = hooks.concat, attribute = hooks.attribute, element = hooks.element;
+        var hooks = env.hooks, inline = hooks.inline, get = hooks.get, subexpr = hooks.subexpr, concat = hooks.concat, attribute = hooks.attribute, element = hooks.element, block = hooks.block;
         dom.detectNamespace(contextualElement);
         var fragment;
         if (env.useFragmentCache && dom.canClone) {
@@ -7480,70 +7598,72 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         } else {
           fragment = this.build(dom);
         }
-        var element0 = dom.childAt(fragment, [0, 3]);
-        var element1 = dom.childAt(fragment, [2]);
-        var element2 = dom.childAt(element1, [1]);
-        var element3 = dom.childAt(element1, [3]);
-        var element4 = dom.childAt(element1, [5]);
-        var element5 = dom.childAt(element1, [7]);
-        var element6 = dom.childAt(element1, [9]);
-        var element7 = dom.childAt(element6, [5]);
-        var element8 = dom.childAt(element7, [3]);
-        var element9 = dom.childAt(element1, [11]);
-        var element10 = dom.childAt(element1, [13]);
-        var element11 = dom.childAt(element1, [15]);
-        var morph0 = dom.createMorphAt(element0,1,1);
-        var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
-        var morph2 = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
-        var morph3 = dom.createMorphAt(dom.childAt(element2, [3]),0,0);
-        var morph4 = dom.createMorphAt(element2,5,5);
-        var morph5 = dom.createMorphAt(dom.childAt(element3, [1]),0,0);
-        var morph6 = dom.createMorphAt(dom.childAt(element3, [3]),0,0);
-        var morph7 = dom.createMorphAt(element3,5,5);
-        var morph8 = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
-        var morph9 = dom.createMorphAt(dom.childAt(element4, [3]),0,0);
-        var morph10 = dom.createMorphAt(element4,5,5);
-        var morph11 = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
-        var morph12 = dom.createMorphAt(dom.childAt(element5, [3]),0,0);
-        var morph13 = dom.createMorphAt(element5,5,5);
-        var morph14 = dom.createMorphAt(dom.childAt(element6, [1]),0,0);
-        var morph15 = dom.createMorphAt(dom.childAt(element6, [3]),0,0);
-        var morph16 = dom.createMorphAt(element7,1,1);
-        var attrMorph0 = dom.createAttrMorph(element8, 'class');
-        var morph17 = dom.createMorphAt(dom.childAt(element9, [1]),0,0);
-        var morph18 = dom.createMorphAt(dom.childAt(element9, [3]),0,0);
-        var morph19 = dom.createMorphAt(element9,5,5);
-        var morph20 = dom.createMorphAt(dom.childAt(element10, [1]),0,0);
-        var morph21 = dom.createMorphAt(dom.childAt(element10, [3]),0,0);
-        var morph22 = dom.createMorphAt(element10,5,5);
-        var morph23 = dom.createMorphAt(element11,1,1);
+        var element2 = dom.childAt(fragment, [0, 3]);
+        var element3 = dom.childAt(fragment, [2]);
+        var element4 = dom.childAt(element3, [1]);
+        var element5 = dom.childAt(element3, [3]);
+        var element6 = dom.childAt(element3, [5]);
+        var element7 = dom.childAt(element3, [7]);
+        var element8 = dom.childAt(element3, [9]);
+        var element9 = dom.childAt(element8, [5]);
+        var element10 = dom.childAt(element9, [3]);
+        var element11 = dom.childAt(element3, [13]);
+        var element12 = dom.childAt(element3, [15]);
+        var element13 = dom.childAt(element3, [17]);
+        var morph0 = dom.createMorphAt(element2,1,1);
+        var morph1 = dom.createMorphAt(dom.childAt(element2, [3]),0,0);
+        var morph2 = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
+        var morph3 = dom.createMorphAt(dom.childAt(element4, [3]),0,0);
+        var morph4 = dom.createMorphAt(element4,5,5);
+        var morph5 = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
+        var morph6 = dom.createMorphAt(dom.childAt(element5, [3]),0,0);
+        var morph7 = dom.createMorphAt(element5,5,5);
+        var morph8 = dom.createMorphAt(dom.childAt(element6, [1]),0,0);
+        var morph9 = dom.createMorphAt(dom.childAt(element6, [3]),0,0);
+        var morph10 = dom.createMorphAt(element6,5,5);
+        var morph11 = dom.createMorphAt(dom.childAt(element7, [1]),0,0);
+        var morph12 = dom.createMorphAt(dom.childAt(element7, [3]),0,0);
+        var morph13 = dom.createMorphAt(element7,5,5);
+        var morph14 = dom.createMorphAt(dom.childAt(element8, [1]),0,0);
+        var morph15 = dom.createMorphAt(dom.childAt(element8, [3]),0,0);
+        var morph16 = dom.createMorphAt(element9,1,1);
+        var attrMorph0 = dom.createAttrMorph(element10, 'class');
+        var morph17 = dom.createMorphAt(dom.childAt(element3, [11]),5,5);
+        var morph18 = dom.createMorphAt(dom.childAt(element11, [1]),0,0);
+        var morph19 = dom.createMorphAt(dom.childAt(element11, [3]),0,0);
+        var morph20 = dom.createMorphAt(element11,5,5);
+        var morph21 = dom.createMorphAt(dom.childAt(element12, [1]),0,0);
+        var morph22 = dom.createMorphAt(dom.childAt(element12, [3]),0,0);
+        var morph23 = dom.createMorphAt(element12,5,5);
+        var morph24 = dom.createMorphAt(element13,1,1);
         inline(env, morph0, context, "t", ["studyCreator.title"], {});
         inline(env, morph1, context, "t", ["studyCreator.subtitle"], {});
         inline(env, morph2, context, "t", ["studyCreator.roseComments"], {});
         inline(env, morph3, context, "t", ["studyCreator.roseCommentsDesc"], {});
-        inline(env, morph4, context, "ui-checkbox", [], {"checked": get(env, context, "model.roseCommentsIsEnabled"), "class": "toggle", "label": get(env, context, "commentsEnabledLabel")});
+        inline(env, morph4, context, "ui-checkbox", [], {"checked": get(env, context, "model.roseCommentsIsEnabled"), "class": "toggle", "label": get(env, context, "commentsEnabledLabel"), "action": "saveSettings"});
         inline(env, morph5, context, "t", ["studyCreator.roseCommentsRating"], {});
         inline(env, morph6, context, "t", ["studyCreator.roseCommentsRatingDesc"], {});
-        inline(env, morph7, context, "ui-checkbox", [], {"checked": get(env, context, "model.roseCommentsRatingIsEnabled"), "class": "toggle", "label": get(env, context, "ratingsEnabledLabel")});
+        inline(env, morph7, context, "ui-checkbox", [], {"checked": get(env, context, "model.roseCommentsRatingIsEnabled"), "class": "toggle", "label": get(env, context, "ratingsEnabledLabel"), "action": "saveSettings"});
         inline(env, morph8, context, "t", ["studyCreator.salt"], {});
         inline(env, morph9, context, "t", ["studyCreator.saltDesc"], {});
-        inline(env, morph10, context, "input", [], {"type": "text", "value": get(env, context, "model.salt")});
+        inline(env, morph10, context, "input", [], {"type": "text", "value": get(env, context, "model.salt"), "insert-newline": "saveSettings", "focus-out": "saveSettings"});
         inline(env, morph11, context, "t", ["studyCreator.hashLength"], {});
         inline(env, morph12, context, "t", ["studyCreator.hashLengthDesc"], {});
         inline(env, morph13, context, "input", [], {"type": "number", "value": get(env, context, "model.hashLength")});
         inline(env, morph14, context, "t", ["studyCreator.repositoryUrl"], {});
         inline(env, morph15, context, "t", ["studyCreator.repositoryUrlDesc"], {});
-        inline(env, morph16, context, "input", [], {"type": "text", "value": get(env, context, "model.repositoryUrl"), "insert-newline": "loadBaseFile"});
-        attribute(env, attrMorph0, element8, "class", concat(env, ["ui icon button ", subexpr(env, context, "if", [get(env, context, "isLoading"), "loading"], {})]));
-        element(env, element8, context, "action", ["loadBaseFile"], {});
-        inline(env, morph17, context, "t", ["studyCreator.autoUpdate"], {});
-        inline(env, morph18, context, "t", ["studyCreator.autoUpdateDesc"], {});
-        inline(env, morph19, context, "ui-checkbox", [], {"checked": get(env, context, "model.autoUpdateIsEnabled"), "class": "toggle", "label": get(env, context, "autoUpdateObserversLabel")});
-        inline(env, morph20, context, "t", ["studyCreator.exportConfig"], {});
-        inline(env, morph21, context, "t", ["studyCreator.exportConfigDesc"], {});
-        inline(env, morph22, context, "input", [], {"value": get(env, context, "model.fileName")});
-        element(env, element11, context, "action", ["download"], {});
-        inline(env, morph23, context, "t", ["action.download"], {});
+        inline(env, morph16, context, "input", [], {"type": "text", "value": get(env, context, "model.repositoryUrl"), "insert-newline": "fetchBaseFile"});
+        attribute(env, attrMorph0, element10, "class", concat(env, ["ui icon button ", subexpr(env, context, "if", [get(env, context, "baseFileIsLoading"), "loading"], {})]));
+        element(env, element10, context, "action", ["fetchBaseFile"], {});
+        block(env, morph17, context, "each", [get(env, context, "model.networks")], {}, child0, null);
+        inline(env, morph18, context, "t", ["studyCreator.autoUpdate"], {});
+        inline(env, morph19, context, "t", ["studyCreator.autoUpdateDesc"], {});
+        inline(env, morph20, context, "ui-checkbox", [], {"checked": get(env, context, "model.autoUpdateIsEnabled"), "class": "toggle", "label": get(env, context, "autoUpdateObserversLabel"), "action": "saveSettings"});
+        inline(env, morph21, context, "t", ["studyCreator.exportConfig"], {});
+        inline(env, morph22, context, "t", ["studyCreator.exportConfigDesc"], {});
+        inline(env, morph23, context, "input", [], {"value": get(env, context, "model.fileName")});
+        element(env, element13, context, "action", ["download"], {});
+        inline(env, morph24, context, "t", ["action.download"], {});
         return fragment;
       }
     };
@@ -7863,6 +7983,16 @@ define('rose/tests/models/interaction.jshint', function () {
   module('JSHint - models');
   test('models/interaction.js should pass jshint', function() { 
     ok(true, 'models/interaction.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/models/network.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - models');
+  test('models/network.js should pass jshint', function() { 
+    ok(true, 'models/network.js should pass jshint.'); 
   });
 
 });
@@ -8490,6 +8620,32 @@ define('rose/tests/unit/models/interaction-test.jshint', function () {
   module('JSHint - unit/models');
   test('unit/models/interaction-test.js should pass jshint', function() { 
     ok(true, 'unit/models/interaction-test.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/unit/models/network-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleForModel('network', {
+    // Specify the other units that are required for this test.
+    needs: []
+  });
+
+  ember_qunit.test('it exists', function (assert) {
+    var model = this.subject();
+    // var store = this.store();
+    assert.ok(!!model);
+  });
+
+});
+define('rose/tests/unit/models/network-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/models');
+  test('unit/models/network-test.js should pass jshint', function() { 
+    ok(true, 'unit/models/network-test.js should pass jshint.'); 
   });
 
 });
@@ -9336,7 +9492,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.e4bd71ed"});
+  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.2ddfb8d6"});
 }
 
 /* jshint ignore:end */

@@ -152,9 +152,6 @@ export default (function () {
       return Handlebars.compile(source);
       }).then(function(template) {
         $('body').append(template());
-        // return $('.ui.nag').nag({
-        //   easing: 'swing'
-        // });
         $('.ui.nag').css({
           'position': 'fixed',
           'display': 'block'

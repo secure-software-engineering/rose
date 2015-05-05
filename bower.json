@@ -23,7 +23,8 @@
     "kango-localforage-backbone": "~0.4.2",
     "handlebars": "~3.0.0",
     "i18next": "~1.7.7",
-    "rsvp": "~3.0.17"
+    "rsvp": "~3.0.17",
+    "jquery-cookie": "~1.4.1"
   },
   "resolutions": {
     "localforage": "0.9.2"

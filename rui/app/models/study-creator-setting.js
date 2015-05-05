@@ -4,7 +4,7 @@ export default DS.Model.extend({
   roseCommentsIsEnabled: DS.attr('boolean'),
   roseCommentsRatingIsEnabled: DS.attr('boolean'),
   salt: DS.attr('string'),
-  hashLength: DS.attr('number'),
+  hashLength: DS.attr('number', { defaultValue: 8 }),
   repositoryUrl: DS.attr('string'),
   autoUpdateIsEnabled: DS.attr('boolean'),
   fileName: DS.attr('string', { defaultValue: 'rose-study-configuration.txt' }),

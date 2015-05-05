@@ -41,7 +41,10 @@
     <label>{{t "studyCreator.hashLength"}}</label>
     <p>{{t "studyCreator.hashLengthDesc"}}</p>
 
-    {{input type="number" value=model.hashLength}}
+    {{input type="number"
+            value=model.hashLength
+            insert-newline="saveSettings"
+            focus-out="saveSettings"}}
   </div>
 
   <div class="field">
@@ -88,7 +91,9 @@
     <label>{{t "studyCreator.exportConfig"}}</label>
     <p>{{t "studyCreator.exportConfigDesc"}}</p>
 
-    {{input value=model.fileName}}
+    {{input value=model.fileName
+            insert-newline="saveSettings"
+            focus-out="saveSettings"}}
   </div>
 
   <button class="ui primary button" {{action "download"}}>

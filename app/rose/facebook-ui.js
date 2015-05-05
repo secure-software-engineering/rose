@@ -212,32 +212,34 @@ export default (function () {
 
         //Check if comment for this content exists and set form
         _this._activeComment = undefined;
-        if (observerResult !== undefined) {
-          _this._activeComment = _this._comments.findWhere({contentId: observerResult.contentId});
-        }
-        if (_this._activeComment !== undefined) {
-          var activeComment = _this._activeComment.toJSON();
-          $('.ui.form textarea').val(activeComment.text);
+        _this._comments.fetch({success: function onCommentsFetched(){
+          if (observerResult !== undefined) {
+              _this._activeComment = _this._comments.findWhere({contentId: observerResult.contentId});
+          }
+          if (_this._activeComment !== undefined) {
+            var activeComment = _this._activeComment.toJSON();
+            $('.ui.form textarea').val(activeComment.text);
 
-          if(_this._configs.get('roseCommentsRatingIsEnabled')) {
+            if(_this._configs.get('roseCommentsRatingIsEnabled')) {
 
-            if (activeComment.rating) {
-              for (var i = 0, len = activeComment.rating.length; i < len;  i++) {
-                $('.ui.rating:eq(' + i + ')').rating('set rating', activeComment.rating[i]);
+              if (activeComment.rating) {
+                for (var i = 0, len = activeComment.rating.length; i < len;  i++) {
+                  $('.ui.rating:eq(' + i + ')').rating('set rating', activeComment.rating[i]);
+                }
+              }
+              else {
+                $('.ui.rating').rating('set rating', 0);
               }
             }
-            else {
+          } else {
+            //check is update or create
+            _this._activeComment = _this._comments.create({contentId: observerResult.contentId, createdAt: (new Date()).toJSON()});
+            $('.ui.form textarea').val('');
+            if(_this._configs.get('roseCommentsRatingIsEnabled')) {
               $('.ui.rating').rating('set rating', 0);
             }
           }
-        } else {
-          //check is update or create
-          _this._activeComment = _this._comments.create({contentId: observerResult.contentId, createdAt: (new Date()).toJSON()});
-          $('.ui.form textarea').val('');
-          if(_this._configs.get('roseCommentsRatingIsEnabled')) {
-            $('.ui.rating').rating('set rating', 0);
-          }
-        }
+        }});
 
       };
     })(this));

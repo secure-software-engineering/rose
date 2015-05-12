@@ -75,28 +75,27 @@ export default (function () {
     loadCss('res/main.css');
 
     //fetch existing comments from storage
-    this._comments.fetch({success: function(col, res, options) {
-      options._this._registerEventHandlers();
-      options._this._injectCommentRibbon();
-      options._this._injectReminder.bind(options._this)();
-      options._this._injectSidebar();
+    this._comments.fetch({success: function() {
 
-      //create MutationObserver to inject elements when new content is loaded into DOM
-      var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+      //Search for the container which is streamed with content
+      // than attach ui and evetn + MutationObserver
+      var pageletIds = ['#stream_pagelet', '#pagelet_timeline_recent', '#pagelet_timeline_main_column'];
+      for (var pagelet, i = 0; i < pageletIds.length; i++) {
+        pagelet = $(pageletIds[i])[0];
+        if (pagelet !== null && pagelet !== undefined) {
+          this.injectUI();
 
-      var observer = new MutationObserver(function(mutations, observer) {
-          observer._this._injectCommentRibbon();
-      });
-      observer._this = options._this;
-
-      // define what element should be observed by the observer
-      // and what types of mutations trigger the callback
-      observer.observe(document.getElementById('stream_pagelet'), {
-        childList: true,
-        subtree: true
-        // attributes: true
-      });
-    }, _this: this});
+          //create MutationObserver to inject elements when new content is loaded into DOM
+          var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+          var observer = new MutationObserver(this.redrawUI.bind(this));
+          observer.observe(pagelet, {
+            childList: true,
+            subtree: true
+          });
+          break;
+        }
+      }
+    }.bind(this)});
 
     //Get LikeObserver for contentid generation
     var observers = new ObserverCollection();
@@ -106,7 +105,12 @@ export default (function () {
 
   }
 
-  FacebookUI.prototype.injectUI = function() {};
+  FacebookUI.prototype.injectUI = function() {
+    this._registerEventHandlers();
+    this._injectCommentRibbon();
+    this._injectReminder();
+    this._injectSidebar();
+  };
 
   FacebookUI.prototype.redrawUI = function() {
     return this._injectCommentRibbon();
@@ -131,18 +135,10 @@ export default (function () {
   };
 
   FacebookUI.prototype._injectCommentRibbon = function() {
-    return this._getTemplate('commentLabel').then(function(source) {
+    this._getTemplate('commentLabel').then(function(source) {
       return Handlebars.compile(source);
     }).then(function(template) {
-      if ($('.fbxWelcomeBoxName').length > 0) {
-        $("*[data-timestamp]").not($('*[data-timestamp] .rose.comment').parent()).prepend(template());
-        if ($("*[data-timestamp]").length <= 0) {
-          return $('.userContentWrapper').not($('.userContentWrapper .rose.comment').parent()).prepend(template());
-        }
-      } else {
-        $(".timelineUnitContainer").has(".fbTimelineFeedbackActions").not($(".timelineUnitContainer .rose.comment").parent()).prepend(template()).addClass('timeline');
-        return $('.rose.comment').addClass('timeline');
-      }
+      $('.userContentWrapper').not($('.rose.comment + .userContentWrapper')).before(template());
     });
   };
 
@@ -198,13 +194,6 @@ export default (function () {
             break;
           }
         }
-
-
-        // if ($('.fbxWelcomeBoxName').length > 0) {
-        //   item = _this._likeObserver.handleNode($(evt.target).siblings(), 'status');
-        // } else {
-        //   item = _this._likeObserver.handleNode($(evt.target), 'timeline');
-        // }
 
         //Show sidebar
         $('.ui.sidebar').sidebar('push page');

@@ -27,7 +27,7 @@ export default {
     more: "More",
     help: "Help",
     about: "About",
-    extraFeatures: "Extra Features",
+    extraFeatures: "R&D Features",
     studyCreator: "Study Creator"
   },
 
@@ -49,7 +49,7 @@ export default {
     subtitle: "Here you can manage your ROSE settings",
     language: "Language",
     commentReminder: "Comment Reminder",
-    extraFeatures: "Extra Features"
+    extraFeatures: "Features for researchers and developers"
   },
 
   // Comments Page

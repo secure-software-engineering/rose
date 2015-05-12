@@ -45,8 +45,8 @@ export default {
 
   // Settings Page
   settings: {
-    title: "Settings",
-    subtitle: "Here you can manage your ROSE settings",
+    title: "Einstellungen",
+    subtitle: "Hier können Sie Ihre ROSE Einstellungen anpassen",
     language: "Language",
     commentReminder: "Comment Reminder",
     extraFeatures: "Extra Features"

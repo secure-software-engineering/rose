@@ -39,8 +39,13 @@ function handlePattern($node, pattern) {
   // Check if node matches click event pattern
   if ($node.is(pattern.node)) {
     // Only continue if parent container can be found
-    if ($node.parents(pattern.container).length) {
-      var container = $node.closest(pattern.container);
+    if (pattern.container === 'self' || $node.parents(pattern.container).length) {
+      var container;
+      if(pattern.container === 'self') {
+        container = $node;
+      } else {
+        container = $node.closest(pattern.container);
+      }
 
       // Extract information
       var result = $(container).applyPattern({

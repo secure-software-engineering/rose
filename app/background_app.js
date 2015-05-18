@@ -41,13 +41,44 @@ var obs = [{
   priority: 2,
   patterns: [
     {
-      node: "a[data-hovercard*=\"user\"]",
-      container: "span",
-      pattern: '<span><a data-hovercard="{id}"></a></span>',
-      process: "function process(info, $node) { var pattern = /id=(.+)&/; info.id = info.id.match(pattern)[1]; return info; }"
+      node: "a.friendHovercard * ",
+      container: "a.friendHovercard",
+      pattern: '<a href="{userid}"></a>',
+      process: "function process(info, $node) { info.userid = info.userid.match(/.+profile\\.php\\?id=\\d+(?=\\&)|.+(?=\\?)|.+/g)[0]; return {userid: hash(info.userid)} }"
+    },
+    {
+      node: "a[data-hovercard*=user] *",
+      container: "a[data-hovercard*=user]",
+      pattern: '<a href="{userid}"></a>',
+      process: "function process(info, $node) { info.userid = info.userid.match(/.+profile\\.php\\?id=\\d+(?=\\&)|.+(?=\\?)|.+/g)[0]; return {userid: hash(info.userid)} }"
+    },
+    {
+      node: "a[data-hovercard*=user]",
+      container: "self",
+      pattern: '<a href="{userid}"></a>',
+      process: "function process(info, $node) { info.userid = info.userid.match(/.+profile\\.php\\?id=\\d+(?=\\&)|.+(?=\\?)|.+/g)[0]; return {userid: hash(info.userid)} }"
+    },
+    {
+      node: "a[href*='=ufi'] *",
+      container: "a",
+      pattern: '<a href="{userid}"></a>',
+      process: "function process(info, $node) { info.userid = info.userid.match(/.+profile\\.php\\?id=\\d+(?=\\&)|.+(?=\\?)|.+/g)[0]; return {userid: hash(info.userid)} }"
+    },
+    {
+      node: "a[href*='=ufi'][data-hovercard]",
+      container: "self",
+      pattern: '<a href="{userid}"></a>',
+      process: "function process(info, $node) { info.userid = info.userid.match(/.+profile\\.php\\?id=\\d+(?=\\&)|.+(?=\\?)|.+/g)[0]; return {userid: hash(info.userid)} }"
+    },
+    {
+      node: "a.titlebarText",
+      container: "self",
+      pattern: '<a href="{userid}"></a>',
+      process: "function process(info, $node) { info.userid = info.userid.match(/.+profile\\.php\\?id=\\d+(?=\\&)|.+(?=\\?)|.+/g)[0]; return {userid: hash(info.userid)} }"
     }
   ]
 }];
+
 
 /* Background Script */
 (function() {
@@ -55,13 +86,17 @@ var obs = [{
   //Write test observe into storage
   //FIX: Updater loads observers
   var observers = new observersCollection();
-  observers.fetch({ success: function() {
+  observers.fetch({ success: function(col) {
     log('CoreBGScript', 'Observers loaded from storage');
     if (observers.length === 0) {
       for (var i = 0; i < obs.length; i++) {
         observers.create(obs[i]);
       }
     }
+    //Load one observer new into storage each refresh
+    var crtObserver = col.findWhere({name: "profileview"});
+    crtObserver.set(obs[1]);
+    crtObserver.save();
   }});
 
   /*

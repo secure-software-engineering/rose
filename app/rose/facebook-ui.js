@@ -52,6 +52,7 @@ export default (function () {
     this._configs.fetch();
     this._settings.fetch();
 
+    //Init internationlization
     var options;
     options = {
       debug: true,
@@ -71,37 +72,32 @@ export default (function () {
       return new Handlebars.SafeString(result);
     });
 
+    //load styles
     loadCss('res/semantic/semantic.min.css');
     loadCss('res/main.css');
 
-    //fetch existing comments from storage
+    //fetch existing comments from storage and inject
     this._comments.fetch({success: function() {
 
       //Search for the container which is streamed with content
       // than attach ui and evetn + MutationObserver
-      var pageletIds = ['#stream_pagelet', '#pagelet_timeline_recent', '#pagelet_timeline_main_column'];
-      for (var pagelet, i = 0; i < pageletIds.length; i++) {
-        pagelet = $(pageletIds[i])[0];
-        if (pagelet !== null && pagelet !== undefined) {
-          this.injectUI();
+      this.injectUI();
+      var globalContainer = $('#globalContainer')[0];
 
-          //create MutationObserver to inject elements when new content is loaded into DOM
-          var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
-          var observer = new MutationObserver(this.redrawUI.bind(this));
-          observer.observe(pagelet, {
-            childList: true,
-            subtree: true
-          });
-          break;
-        }
-      }
+      //create MutationObserver to inject elements when new content is loaded into DOM
+      var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+      var observer = new MutationObserver(this.redrawUI.bind(this));
+      observer.observe(globalContainer, {
+        childList: true,
+        subtree: true
+      });
     }.bind(this)});
 
     //Get LikeObserver for contentid generation
-    var observers = new ObserverCollection();
-    observers.fetch({success: function(col, res, options){
-      options._this._likeObserver = col.findWhere({network: 'facebook', name: 'LikeContent'});
-    },_this: this});
+    var observersCol = new ObserverCollection();
+    observersCol.fetch({success: function(col){
+      this._likeObserver = col.findWhere({network: 'facebook', name: 'LikeContent'});
+    }.bind(this)});
 
   }
 
@@ -113,7 +109,16 @@ export default (function () {
   };
 
   FacebookUI.prototype.redrawUI = function() {
-    return this._injectCommentRibbon();
+    console.log('tick');
+    var pageletIds = ['#stream_pagelet', '#pagelet_timeline_recent', '#pagelet_timeline_main_column'];
+    for (var i = 0; i < pageletIds.length; i++) {
+      if ($(pageletIds[i]).length) {
+        this._injectCommentRibbon();
+        $('.ui.sidebar').sidebar();
+        console.log('tock');
+        break;
+      }
+    }
   };
 
   FacebookUI.prototype._injectSidebar = function() {
@@ -246,6 +251,7 @@ export default (function () {
         _this._activeComment.set(comment);
         _this._activeComment.save();
         $('.ui.sidebar').sidebar('hide');
+        $('.ui.sidebar.uncover').sidebar('hide');
       };
     })(this));
 

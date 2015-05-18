@@ -109,13 +109,11 @@ export default (function () {
   };
 
   FacebookUI.prototype.redrawUI = function() {
-    console.log('tick');
     var pageletIds = ['#stream_pagelet', '#pagelet_timeline_recent', '#pagelet_timeline_main_column'];
     for (var i = 0; i < pageletIds.length; i++) {
       if ($(pageletIds[i]).length) {
         this._injectCommentRibbon();
         $('.ui.sidebar').sidebar();
-        console.log('tock');
         break;
       }
     }

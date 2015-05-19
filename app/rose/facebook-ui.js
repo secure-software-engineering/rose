@@ -151,7 +151,7 @@ export default (function () {
       return Handlebars.compile(source);
       }).then(function(template) {
         $('body').append(template());
-        $('.ui.nag').nag('show');
+        $('.ui.nag').nag({ expires: 1 });
       });
     }
   };

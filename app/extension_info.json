@@ -17,15 +17,15 @@
     "content_scripts": [
         "bower_components/jquery/dist/jquery.js",
         "bower_components/jquery-cookie/jquery.cookie.js",
-        "bower_components/forge/js/forge.min.js",
+        "bower_components/forge/js/forge.js",
         "bower_components/underscore/underscore.js",
         "bower_components/backbone/backbone.js",
         "bower_components/localforage/dist/localforage.js",
         "bower_components/kango-localforage-backbone/dist/localforage.backbone.js",
-        "res/semantic/semantic.min.js",
-        "bower_components/rsvp/rsvp.min.js",
-        "bower_components/handlebars/handlebars.min.js",
-        "bower_components/i18next/i18next.min.js",
+        "res/semantic/semantic.js",
+        "bower_components/rsvp/rsvp.js",
+        "bower_components/handlebars/handlebars.js",
+        "bower_components/i18next/i18next.js",
         "content_app1.js"
     ],
     "browser_button": {

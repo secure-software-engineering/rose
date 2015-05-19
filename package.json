@@ -45,7 +45,7 @@
     "multimatch": "^2.0.0",
     "node-forge": "^0.6.20",
     "require-dot-file": "^0.4.0",
-    "semantic-ui": "^1.11.0",
+    "semantic-ui": "^1.12.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
     "watchify": "^2.4.0"

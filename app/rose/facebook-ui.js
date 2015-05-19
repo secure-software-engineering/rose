@@ -151,13 +151,7 @@ export default (function () {
       return Handlebars.compile(source);
       }).then(function(template) {
         $('body').append(template());
-        $('.ui.nag').css({
-          'position': 'fixed',
-          'display': 'block'
-        });
-        $('.ui.nag').click(function(){
-          this.remove();
-        });
+        $('.ui.nag').nag('show');
       });
     }
   };

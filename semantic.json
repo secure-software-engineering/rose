@@ -30,7 +30,8 @@
     "nag",
     "rating",
     "sidebar",
-    "item"
+    "item",
+    "popup"
   ],
   "version": "1.11.6"
 }

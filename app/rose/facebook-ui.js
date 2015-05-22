@@ -28,7 +28,6 @@ import SystemConfigModel from 'rose/models/system-config';
 import UserSettingsModel from 'rose/models/user-settings';
 import CommentsCollection from 'rose/collections/comments';
 import ObserverEngine from 'rose/observer-engine';
-import ObserverCollection from 'rose/collections/observers';
 
 var loadCss = function loadCss(link) {
   var cssLink;
@@ -44,7 +43,6 @@ var loadCss = function loadCss(link) {
 export default (function () {
   FacebookUI.prototype._activeComment = {};
   FacebookUI.prototype._comments = new CommentsCollection();
-  FacebookUI.prototype._likeObserver = {};
   FacebookUI.prototype._configs = new SystemConfigModel();
   FacebookUI.prototype._settings = new UserSettingsModel();
 
@@ -91,12 +89,6 @@ export default (function () {
         childList: true,
         subtree: true
       });
-    }.bind(this)});
-
-    //Get LikeObserver for contentid generation
-    var observersCol = new ObserverCollection();
-    observersCol.fetch({success: function(col){
-      this._likeObserver = col.findWhere({network: 'facebook', name: 'LikeContent'});
     }.bind(this)});
 
   }
@@ -180,16 +172,11 @@ export default (function () {
     $('body').on('click', '.rose.comment', (function(_this) {
       return function(evt) {
         // Receive id for content element
-        var patterns = _this._likeObserver.get('patterns');
-        var $node = $(evt.target).siblings().find(patterns[0].node);
-
-        var observerResult;
-        //Fix this with LikePage Observer or at least through warning
-        for (var i = 0; i < patterns.length; i++) {
-          observerResult = ObserverEngine.handlePattern($node, patterns[i]);
-          if (observerResult !== undefined) {
-            break;
-          }
+        var $container = $(evt.currentTarget).siblings('.userContentWrapper');
+        var extractorResult = ObserverEngine.extractData($container, 'StatusUpdate');
+        if (extractorResult.contentId === undefined) {
+          console.error('Could not obtain contentId!');
+          return;
         }
 
         //Show sidebar
@@ -199,9 +186,7 @@ export default (function () {
         //Check if comment for this content exists and set form
         _this._activeComment = undefined;
         _this._comments.fetch({success: function onCommentsFetched(){
-          if (observerResult !== undefined) {
-              _this._activeComment = _this._comments.findWhere({contentId: observerResult.contentId});
-          }
+          _this._activeComment = _this._comments.findWhere({contentId: extractorResult.contentId});
           if (_this._activeComment !== undefined) {
             var activeComment = _this._activeComment.toJSON();
             $('.ui.form textarea').val(activeComment.text);
@@ -219,7 +204,12 @@ export default (function () {
             }
           } else {
             //check is update or create
-            _this._activeComment = _this._comments.create({contentId: observerResult.contentId, createdAt: (new Date()).toJSON()});
+            if(extractorResult.sharerId === undefined) {
+              _this._activeComment = _this._comments.create({contentId: extractorResult.contentId, createdAt: (new Date()).toJSON()});
+            }
+            else {
+              _this._activeComment = _this._comments.create({contentId: extractorResult.contentId, sharerId: extractorResult.sharerId, createdAt: (new Date()).toJSON()});
+            }
             $('.ui.form textarea').val('');
             if(_this._configs.get('roseCommentsRatingIsEnabled')) {
               $('.ui.rating').rating('set rating', 0);

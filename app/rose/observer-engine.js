@@ -188,7 +188,7 @@ function integrate(observers) {
 }
 
 export default {
-  handlePattern: extractData,
+  extractData: extractData,
   register: function(network) {
     var observers = new observersCollection();
     observers.fetch({success: function (){

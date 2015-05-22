@@ -31,7 +31,6 @@ var extractors =
     fields: [
     {
       name: "userId",
-      selector: "self",
       attr: "href",
       match: ".+profile\\.php\\?id=\\d+(?=\\&)|.+(?=\\?)|.+",
       hash: true
@@ -69,7 +68,13 @@ function extractData($container, extractorName) {
 
   for (var i = 0; i < extractor.fields.length; i++) {
     var field = extractor.fields[i];
-    var $elem = $container.find(field.selector);
+    var $elem;
+    if (field.selector !== undefined) {
+      $elem = $container.find(field.selector);
+    }
+    else {
+      $elem = $container;
+    }
     if ($elem.length) {
       var datum;
       if (field.attr === "content") {
@@ -154,7 +159,7 @@ function handleClick(event, observers) {
         else {
           storeInteraction(observer);
         }
-        break;
+        return
       }
     }
   }

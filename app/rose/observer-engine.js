@@ -9,30 +9,30 @@ var interactions;
 
 var extractors =
 {
-  "StatusUpdate":
+  'StatusUpdate':
   {
     fields: [{
-      name: "sharerId",
-      selector: "> div > a",
-      attr: "href",
-      match: ".+profile\\.php\\?id=\\d+(?=\\&)|.+(?=\\?)|.+",
+      name: 'sharerId',
+      selector: '> div > a',
+      attr: 'href',
+      match: '.+profile\\.php\\?id=\\d+(?=\\&)|.+(?=\\?)|.+',
       hash: true
     }, {
-      name: "contentId",
-      selector: "> div.clearfix > div > div > div > div > div > span > span > a:first-child",
-      match: ".+(?=\\?)|.+",
-      attr: "href",
+      name: 'contentId',
+      selector: '> div.clearfix > div > div > div > div > div > span > span > a:first-child',
+      match: '.+(?=\\?)|.+',
+      attr: 'href',
       hash: true
     }]
   },
 
-  "UserLink":
+  'UserLink':
   {
     fields: [
     {
-      name: "userId",
-      attr: "href",
-      match: ".+profile\\.php\\?id=\\d+(?=\\&)|.+(?=\\?)|.+",
+      name: 'userId',
+      attr: 'href',
+      match: '.+profile\\.php\\?id=\\d+(?=\\&)|.+(?=\\?)|.+',
       hash: true
     }]
   }};
@@ -43,8 +43,6 @@ var extractors =
  * @param {object} data - The interaction's data.
  */
 function storeInteraction(observer, data) {
-  // Default: empty object
-  data = typeof data !== 'undefined' ? data : {};
 
   // Time
   data.createdAt = (new Date()).toJSON();
@@ -77,14 +75,14 @@ function extractData($container, extractorName) {
     }
     if ($elem.length) {
       var datum;
-      if (field.attr === "content") {
+      if (field.attr === 'content') {
         datum = $elem.html();
       }
       else {
         datum = $elem.attr(field.attr);
       }
       //something found?
-      if (datum !== "") {
+      if (datum !== '') {
 
         //extract detailed info with match
         if (field.match !== undefined) {
@@ -98,8 +96,9 @@ function extractData($container, extractorName) {
         data[field.name] = datum;
       }
     }
-  return data;
   }
+
+  return data;
 
 }
 
@@ -152,14 +151,14 @@ function handleClick(event, observers) {
       if ($container !== undefined) {
 
         //Try to extract fields
-        if (observer.has("extractor")) {
-          var extract = extractData($container, observer.get("extractor"));
+        if (pattern.extractor) {
+          var extract = extractData($container, pattern.extractor);
           storeInteraction(observer, extract);
         }
         else {
           storeInteraction(observer);
         }
-        return
+        return;
       }
     }
   }

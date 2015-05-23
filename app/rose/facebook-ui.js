@@ -49,13 +49,18 @@ export default (function () {
   function FacebookUI() {
     this._configs.fetch();
     this._settings.fetch();
+    this._comments.fetch();
+
+    //load styles
+    loadCss('res/semantic/semantic.min.css');
+    loadCss('res/main.css');
 
     //Init internationlization
     var options;
     options = {
-      debug: true,
-      getAsync: false,
-      fallbackLng: 'en',
+      debug: true, //remove on production
+      fallbackLng: false,
+      load: 'unspecific',
       resGetPath: kango.io.getResourceUrl('res/locales/') + '__lng__/__ns__.json'
     };
     var isLanguageSet = this._settings.get('currentLanguage') !== null || this._settings.get('currentLanguage') !== undefined;
@@ -63,22 +68,14 @@ export default (function () {
     if (isLanguageSet && isLanguageNotAutoDetect) {
       options.lng = this._settings.get('currentLanguage');
     }
-    i18n.init(options);
-    Handlebars.registerHelper('I18n', function(i18nKey) {
-      var result;
-      result = i18n.t(i18nKey);
-      return new Handlebars.SafeString(result);
-    });
-
-    //load styles
-    loadCss('res/semantic/semantic.min.css');
-    loadCss('res/main.css');
-
-    //fetch existing comments from storage and inject
-    this._comments.fetch({success: function() {
+    i18n.init(options, (function translationLoaded(t) {
+      Handlebars.registerHelper('I18n', function(i18nKey) {
+        var translation = t(i18nKey);
+        return new Handlebars.SafeString(translation);
+      });
 
       //Search for the container which is streamed with content
-      // than attach ui and evetn + MutationObserver
+      // than attach ui and event + MutationObserver
       this.injectUI();
       var globalContainer = $('#globalContainer')[0];
 
@@ -89,8 +86,7 @@ export default (function () {
         childList: true,
         subtree: true
       });
-    }.bind(this)});
-
+    }).bind(this));
   }
 
   FacebookUI.prototype.injectUI = function() {
@@ -118,7 +114,8 @@ export default (function () {
     return this._getTemplate('sidebar').then(function(source) {
       return Handlebars.compile(source);
     }).then(function(template) {
-      $('body').append(template());
+      $("body > div" ).wrapAll( "<div class='pusher' />");
+      $('body').prepend(template());
       $('.ui.sidebar').sidebar();
       if(this._configs.get('roseCommentsRatingIsEnabled')) {
         $('.ui.rating').rating();

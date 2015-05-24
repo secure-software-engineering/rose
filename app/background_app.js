@@ -15,7 +15,21 @@ var obs = [
   version: '0.2',
   patterns: [
     {
-      node: '.UFILikeLink span',
+      node: '.UFILikeLink span:contains("Unlike"), .UFILikeLink span:contains("Gefällt mir nicht mehr")',
+      container: '.userContentWrapper',
+      extractor: 'StatusUpdate'
+    }
+  ]
+},
+{
+  name: 'UnlikeContent',
+  network: 'facebook',
+  type: 'click',
+  priority: 2,
+  version: '0.2',
+  patterns: [
+    {
+      node: '.UFILikeLink span:contains("Like"), .UFILikeLink span:contains("Gefällt mir")',
       container: '.userContentWrapper',
       extractor: 'StatusUpdate'
     }
@@ -25,7 +39,7 @@ var obs = [
   name: 'ViewProfile',
   network: 'facebook',
   type: 'click',
-  priority: 2,
+  priority: 3,
   version: '0.2',
   patterns: [
     {

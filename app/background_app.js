@@ -6,19 +6,7 @@ import observersCollection from 'rose/collections/observers';
  * Hard coded observers for testing
  * Should be removed when connected to updater
  */
-var obs = [{
-  name: 'UpdateStatus',
-  network: 'facebook',
-  type: 'click',
-  priority: 3,
-  version: '0.1',
-  patterns: [
-    {
-      node: 'form[action*=updatestatus] button[type=submit]',
-      container: 'form[action*=updatestatus]'
-    }
-  ]
-},
+var obs = [
 {
   name: 'LikeContent',
   network: 'facebook',
@@ -44,6 +32,33 @@ var obs = [{
       node: 'a.friendHovercard * , a[data-hovercard*="user"] *, a[href*="=ufi"] *, a.titlebarText, a[href*="=ufi"][data-hovercard], a[data-hovercard*="user"]',
       container: 'a',
       extractor: 'UserLink'
+    }
+  ]
+},
+{
+  name: 'Comment',
+  network: 'facebook',
+  type: 'input',
+  priority: 3,
+  version: '0.1',
+  patterns: [
+    {
+      node: '.UFIAddCommentInput *',
+      container: '.userContentWrapper',
+      extractor: 'StatusUpdate'
+    }
+  ]
+},
+{
+  name: 'UpdateStatus',
+  network: 'facebook',
+  type: 'click',
+  priority: 3,
+  version: '0.1',
+  patterns: [
+    {
+      node: 'form[action*=updatestatus] button[type=submit]',
+      container: 'form[action*=updatestatus]'
     }
   ]
 },
@@ -126,7 +141,6 @@ var obs = [{
 }];
 
 
-
 /* Background Script */
 (function() {
 
@@ -140,10 +154,7 @@ var obs = [{
         observers.create(obs[i]);
       }
     }
-    // //Load one observer new into storage each refresh
-    // var crtObserver = col.findWhere({name: 'UpdateStatus'});
-    // crtObserver.set(obs[0]);
-    // crtObserver.save();
+
   }});
 
   /*

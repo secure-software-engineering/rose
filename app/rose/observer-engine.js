@@ -134,7 +134,7 @@ function classifiy($node, pattern) {
  * @param {object} event - An event object.
  * @param {array} observers - A set of observers.
  */
-function handleClick(event, observers) {
+function handleEvent(event, observers) {
   // Wrap event target
   var $node = $(event.target);
 
@@ -170,18 +170,31 @@ function handleClick(event, observers) {
  */
 function integrate(observers) {
 
-  // Filter anbd prioritize observers for correct event type and defer event handling
-  observers = observers.filter(function(observer) {
-    return observer.get('type') === 'click';
-  });
-
   // Register global 'click' event
   if (observers.length) {
     interactions = new interactionsCollection();
     interactions.fetch({success: function() {
-      $(document).on('click', function(event) {
-        handleClick(event, observers);
+      // Filter anbd prioritize observers for correct event type and defer event handling
+      var clickObservers = observers.filter(function(observer) {
+        return observer.get('type') === 'click';
       });
+      if (clickObservers.length) {
+        $(document).on('click', function(event) {
+          handleEvent(event, clickObservers);
+        });
+      };
+
+      var inputObservers = observers.filter(function(observer) {
+        return observer.get('type') === 'input';
+      });
+      if (inputObservers.length) {
+        $(document).on('keyup', function(event) {
+          //check for enter keyup
+          if (event.keyCode === 13) {
+            handleEvent(event, inputObservers);
+          };
+        });
+      };
     }});
   }
 

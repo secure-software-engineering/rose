@@ -27,7 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import SystemConfigModel from 'rose/models/system-config';
 import UserSettingsModel from 'rose/models/user-settings';
 import CommentsCollection from 'rose/collections/comments';
-import ObserverEngine from 'rose/observer-engine';
+import ExtractorEngine from 'rose/extractor-engine';
+import ExtractorCollection from 'rose/collections/extractors';
 
 var loadCss = function loadCss(link) {
   var cssLink;
@@ -45,11 +46,16 @@ export default (function () {
   FacebookUI.prototype._comments = new CommentsCollection();
   FacebookUI.prototype._configs = new SystemConfigModel();
   FacebookUI.prototype._settings = new UserSettingsModel();
+  FacebookUI.prototype._statusUpdateExtractor = {};
 
   function FacebookUI() {
     this._configs.fetch();
     this._settings.fetch();
     this._comments.fetch();
+    var extractorsCol = new ExtractorCollection();
+    extractorsCol.fetch({success: function extractorsLoaded(col){
+      this._statusUpdateExtractor = col.findWhere({name: 'StatusUpdate'});
+    }.bind(this)});
 
     //load styles
     loadCss('res/semantic/semantic.min.css');
@@ -114,7 +120,7 @@ export default (function () {
     return this._getTemplate('sidebar').then(function(source) {
       return Handlebars.compile(source);
     }).then(function(template) {
-      $("body > div" ).wrapAll( "<div class='pusher' />");
+      $('body > div').wrapAll( '<div class="pusher" />');
       $('body').prepend(template());
       $('.ui.sidebar').sidebar();
       if(this._configs.get('roseCommentsRatingIsEnabled')) {
@@ -170,7 +176,7 @@ export default (function () {
       return function(evt) {
         // Receive id for content element
         var $container = $(evt.currentTarget).siblings('.userContentWrapper');
-        var extractorResult = ObserverEngine.extractData($container, 'StatusUpdate');
+        var extractorResult = ExtractorEngine.extractFieldsFromContainer($container, _this._statusUpdateExtractor);
         if (extractorResult.contentId === undefined) {
           console.error('Could not obtain contentId!');
           return;

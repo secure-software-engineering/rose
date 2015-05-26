@@ -1,12 +1,13 @@
 import log from 'rose/log';
 import ExtractorEngine from 'rose/extractor-engine';
-import observersCollection from 'rose/collections/observers';
+import ObserverCollection from 'rose/collections/observers';
+import ExtractorCollection from 'rose/collections/extractors';
 
 /**
  * Hard coded observers for testing
  * Should be removed when connected to updater
  */
-var obs = [
+var observers = [
 {
   name: 'LikeContent',
   network: 'facebook',
@@ -154,18 +155,85 @@ var obs = [
   ]
 }];
 
+var extractors = [
+{
+  name: 'StatusUpdate',
+  fields: [{
+    name: 'sharerId',
+    selector: '> div > a',
+    attr: 'href',
+    match: '.+profile\\.php\\?id=\\d+(?=\\&)|.+(?=\\?)|.+',
+    hash: true
+  }, {
+    name: 'contentId',
+    selector: '> div.clearfix > div > div > div > div > div > span > span > a:first-child',
+    match: '.+(?=\\?)|.+',
+    attr: 'href',
+    hash: true
+  }]
+},
+{
+  name: 'UserLink',
+  fields: [
+  {
+    name: 'userId',
+    attr: 'href',
+    match: '.+profile\\.php\\?id=\\d+(?=\\&)|.+(?=\\?)|.+',
+    hash: true
+  }]
+},
+{
+  name: 'privacy-settings',
+  network: 'facebook',
+  type: 'url',
+  informationUrl: 'https://www.facebook.com/settings/?tab=privacy',
+  interval: 5000,
+  container: '.fbSettingsSections',
+  fields: [
+  {
+    name: 'viewFuturePosts',
+    attr: 'content',
+    selector: '.fbSettingsSectionsItem:nth-child(1) .fbSettingsListItem:nth-child(1) .fbSettingsListItemContent > div:last-child'
+  },
+  {
+    name: 'sendFriendRequests',
+    attr: 'content',
+    selector: '.fbSettingsSectionsItem:nth-child(2) .fbSettingsListItem:nth-child(1) .fbSettingsListItemContent > div:last-child'
+  },
+  {
+    name: 'MessageFilter',
+    attr: 'content',
+    selector: '.fbSettingsSectionsItem:nth-child(2) .fbSettingsListItem:nth-child(2) .fbSettingsListItemContent > div:last-child'
+  },
+  {
+    name: 'EMailLookup',
+    attr: 'content',
+    selector: '.fbSettingsSectionsItem:nth-child(3) .fbSettingsListItem:nth-child(1) .fbSettingsListItemContent > div:last-child'
+  },
+  {
+    name: 'PhonenumberLookup',
+    attr: 'content',
+    selector: '.fbSettingsSectionsItem:nth-child(3) .fbSettingsListItem:nth-child(2) .fbSettingsListItemContent > div:last-child'
+  },
+  {
+    name: 'SearchEngines',
+    attr: 'content',
+    selector: '.fbSettingsSectionsItem:nth-child(3) .fbSettingsListItem:nth-child(3) .fbSettingsListItemContent > div:last-child'
+  }]
+
+}];
 
 /* Background Script */
 (function() {
 
   //Write test observe into storage
   //FIX: Updater loads observers
-  var observers = new observersCollection();
-  observers.fetch({ success: function(col) {
+  var observerCol = new ObserverCollection();
+  observerCol.fetch({ success: function() {
     log('CoreBGScript', 'Observers loaded from storage');
-    if (observers.length === 0) {
-      for (var i = 0; i < obs.length; i++) {
-        observers.create(obs[i]);
+    if (observerCol.length === 0) {
+      for (var i = 0; i < observers.length; i++) {
+        observerCol.create(observers[i]);
       }
     }
 
@@ -175,17 +243,23 @@ var obs = [
    * Extractor Engine
    * ----------------
    *
-   * Start extractor engine and integrate with Heartbeat.
+   * Store Extracotrs in storage and start extractor engine and integrate
+   * with execution service.
    */
+  var extractorCol = new ExtractorCollection();
+  var extractorEngine;
+  extractorCol.fetch({success: function extractorCollSuccesfullyLoaded(){
+    log('CoreBGScript', 'Extractors loaded from storage');
+    if (extractorCol.length === 0) {
+      for (var j = 0; j < extractors.length; j++) {
+        extractorCol.create(extractors[j]);
+      }
+    }
+    extractorEngine = new ExtractorEngine(extractorCol);
+    extractorEngine.register();
+  }})
 
-   ExtractorEngine.add({
-    network: 'Facebook',
-    name: 'privacy-settings',
-    informationUrl: 'https://www.facebook.com/settings/?tab=privacy',
-    interval : 5000
-  });
 
-  ExtractorEngine.register();
 })();
 
 kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, function(event) {

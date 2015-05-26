@@ -2,40 +2,11 @@
 
 /** Requirements */
 import log from 'rose/log';
-import observersCollection from 'rose/collections/observers';
-import interactionsCollection from 'rose/collections/interactions';
-import {sha1 as hash} from 'rose/crypto';
+import ObserversCollection from 'rose/collections/observers';
+import InteractionsCollection from 'rose/collections/interactions';
+import ExtractorEngine from 'rose/extractor-engine';
 var interactions;
-
-var extractors =
-{
-  'StatusUpdate':
-  {
-    fields: [{
-      name: 'sharerId',
-      selector: '> div > a',
-      attr: 'href',
-      match: '.+profile\\.php\\?id=\\d+(?=\\&)|.+(?=\\?)|.+',
-      hash: true
-    }, {
-      name: 'contentId',
-      selector: '> div.clearfix > div > div > div > div > div > span > span > a:first-child',
-      match: '.+(?=\\?)|.+',
-      attr: 'href',
-      hash: true
-    }]
-  },
-
-  'UserLink':
-  {
-    fields: [
-    {
-      name: 'userId',
-      attr: 'href',
-      match: '.+profile\\.php\\?id=\\d+(?=\\&)|.+(?=\\?)|.+',
-      hash: true
-    }]
-  }};
+var extractorEngine;
 
 /**
  * Stores an interaction in storage.
@@ -57,49 +28,6 @@ function storeInteraction(observer, data) {
   // Logging interaction
   log('ObserverEngine', 'New interaction: ' + JSON.stringify(data));
   interactions.create(data);
-}
-
-
-function extractData($container, extractorName) {
-  var extractor = extractors[extractorName];
-  var data = {};
-
-  for (var i = 0; i < extractor.fields.length; i++) {
-    var field = extractor.fields[i];
-    var $elem;
-    if (field.selector !== undefined) {
-      $elem = $container.find(field.selector);
-    }
-    else {
-      $elem = $container;
-    }
-    if ($elem.length) {
-      var datum;
-      if (field.attr === 'content') {
-        datum = $elem.html();
-      }
-      else {
-        datum = $elem.attr(field.attr);
-      }
-      //something found?
-      if (datum !== '') {
-
-        //extract detailed info with match
-        if (field.match !== undefined) {
-          datum = datum.match(new RegExp(field.match, 'g'))[0];
-        }
-
-        if (field.hash) {
-          datum = hash(datum);
-        }
-
-        data[field.name] = datum;
-      }
-    }
-  }
-
-  return data;
-
 }
 
 /**
@@ -152,7 +80,7 @@ function handleEvent(event, observers) {
 
         //Try to extract fields
         if (pattern.extractor) {
-          var extract = extractData($container, pattern.extractor);
+          var extract = extractorEngine.extractFieldsFromContainerByName($container, pattern.extractor);
           storeInteraction(observer, extract);
         }
         else {
@@ -172,7 +100,7 @@ function integrate(observers) {
 
   // Register global 'click' event
   if (observers.length) {
-    interactions = new interactionsCollection();
+    interactions = new InteractionsCollection();
     interactions.fetch({success: function() {
       // Filter anbd prioritize observers for correct event type and defer event handling
       var clickObservers = observers.filter(function(observer) {
@@ -201,9 +129,8 @@ function integrate(observers) {
 }
 
 export default {
-  extractData: extractData,
   register: function(network) {
-    var observers = new observersCollection();
+    var observers = new ObserversCollection();
     observers.fetch({success: function (){
 
       var obs = observers.where({network: network});
@@ -212,5 +139,6 @@ export default {
       integrate(obs);
       log('ObserverEngine', 'Integrated ' + obs.length + ' observers');
     }});
+    extractorEngine = new ExtractorEngine();
   }
 };

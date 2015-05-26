@@ -1,46 +1,60 @@
 # Extractors
 
-Extractors contain information on how to extract user data from a social network. An extractor is identified by a name and is linked to a social network. The extractor captures appropriate user data and stores it in storage in a predefined interval.
+Extractors contain information on how to extract user data from a social network. An extractor is identified by a name and is linked to a social network. The extractor captures appropriate user data and stores it in storage either from an url in a predefined interval or from an user interaction.
 
 ## General Structure
 
 An extractor is denoted as a JSON object. The skeleton of an extractor contains the following fields:
 
-* `name`: String. The `name` field denotes the extractor's name. It is advised to use hyphenated words to name an extractor, e.g. `this-is-a-name`. In combination with the `network` field, this field identifies an extractor.
+* `name`: String. The `name` field denotes the extractor's name. It is advised to use hyphenated words to name an extractor, e.g. `this-is-a-name`. The name should reflect the type of content elemnt it extracts. In combination with the `network` field, this field identifies an extractor.
 
 * `network`: String. The `network` field denotes the network the extractor belongs to. The following values are allowed in this field: `facebook`, `gplus`, `twitter`.
 
-* ~~`type`: String. The `type` field denotes the observer's type. The following values are allowed in this field: `pattern`, `input`. Dependent on this field, other fields are necessary for the observer to work.~~
-
 * `version`: String. The `version` field denotes the observer's development version, specified in a *major.minor* versioning scheme.
 
-* `interval`: String. The `interval` field denotes how often the extractor's is executed.
+* `type`: String. The `type` field denotes wether the extractor is handlung html elements, like a container sent from an observer or an url which has to be called. The following values are allowed in this field: `container`, `url`. Dependent on this field, other fields are necessary for the observer to work.
 
-* `informationUrl`: String. The `informationUrl` denotes which url contains the data the extractor is looking for.
+* `interval`: String (optional: only applies for URL extractors). The `interval` field denotes how often the extractor's is executed.
+
+* `informationUrl`: String (optional: only applies for URL extractors). The `informationUrl` denotes which url contains the data the extractor is looking for.
+
+* `container`: String (optional: only applies for URL extractors). If specified the fields are only extracted from a certain scope.
+
+* `fields`: String. Each field represents a datum that is extrated and stored to database. It constists of the following fiels:
+    * `name`: String. With this name the datum is stored in to db.
+    * `selector`: String. A JQuery selector to identified a html to contains the requested datum.
+    * `attr`: String. Either a HTML Attribute name which will be extracted from the element or the string `content` to obtain the innerHTML of the element.
+    * `match`: String. A RegEx without scope definition. The extract os matched by this RegEx to clean urls or else.
+    * `hash`: Boolean. If true the extract is hashed to secure the participants privacy.
 
 An example for a skeleton of an observer is:
 
 ```JSON
     {
-        "network": "Facebook",
-        "name": "privacy-settings",
-        "version": "0.0",
+        "name": "status-update",
+        "network": "facebook",
+        "version": "0.1",
         "informationUrl" : "https://www.facebook.com/settings/?tab=privacy",
         "interval" : 43200,
-        "process" : "function(content){var $data, entry;\r\n            $data = $(content);\r\n            entry = {};\r\n            $data.find(\".fbSettingsSectionsItem\").each(function() {\r\n              var section;\r\n              section = $(this).find(\".fbSettingsSectionsItemName\").html();\r\n              entry[section] = {};\r\n              $(this).find(\".fbSettingsListItemContent\").each(function() {\r\n                var key, value;\r\n                key = $(this).find(\"div:nth-child(1)\").html();\r\n                value = $(this).find(\"div:nth-child(2)\").html();\r\n                entry[section][key] = value;\r\n              });\r\n            });return entry}"
+        "fields": [{
+          "name": "contentId",
+          "selector": "> div.clearfix > div > div > div > div > div > span > span > a:first-child",
+          "attr": "href",
+          "match": ".+(?=\\?)|.+",
+          "hash": true
+        }, ... ]
+      },
     }
 ```
 
-
-## The `process` function
-
-The `process` function expects exactly one argument, `data`. The `data` contains a complete DOM Object of the requested informationUrl.
-
-The return value of the `process` function is saved as a static entry data in storage.
-
-The `process` function is written in JavaScript and serialized as a String. In order to verify its origins, the `signature` field has to contain a valid signature of the function's serialization.
-
 ## Changelog
+
+
+2015-05-26 Felix Epp <work@felixepp.de>
+
+* Added separation into url and container extractor
+
+* Added fields definition
 
 2015-02-12 Felix Epp <work@felixepp.de>
 

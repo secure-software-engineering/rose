@@ -2,6 +2,10 @@ import ObserverEngine from 'rose/observer-engine';
 import FacebookUI from 'rose/facebook-ui';
 import SystemConfigModel from 'rose/models/system-config';
 
+import ClickTracker from 'rose/activity-trackers/click';
+import MouseMoveTracker from 'rose/activity-trackers/mousemove';
+import ScrollTracker from 'rose/activity-trackers/scroll';
+
 /* Content Script */
 (function() {
   var configs = new SystemConfigModel();
@@ -34,6 +38,10 @@ import SystemConfigModel from 'rose/models/system-config';
         var facebookUI = new FacebookUI();
         facebookUI.redrawUI();
       }
+
+      ClickTracker.start();
+      MouseMoveTracker.start();
+      ScrollTracker.start();
 
       break;
     }

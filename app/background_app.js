@@ -9,66 +9,105 @@ import ExtractorCollection from 'rose/collections/extractors';
  */
 var observers = [
 {
-  name: 'LikeContent',
+  name: 'like-comment',
   network: 'facebook',
   type: 'click',
   priority: 1,
   version: '0.2',
   patterns: [
     {
-      node: '.UFILikeLink span:contains("Unlike"), .UFILikeLink span:contains("Gefällt mir nicht mehr")',
+      node: '.UFICommentActions .UFILikeLink:contains("Unlike"), .UFICommentActions .UFILikeLink:contains("Gefällt mir nicht mehr")',
       container: '.userContentWrapper',
-      extractor: 'StatusUpdate'
+      extractor: 'status-update'
     }
   ]
-},
-{
-  name: 'UnlikeContent',
+},{
+  name: 'like-content',
   network: 'facebook',
   type: 'click',
   priority: 2,
   version: '0.2',
   patterns: [
     {
-      node: '.UFILikeLink span:contains("Like"), .UFILikeLink span:contains("Gefällt mir")',
+      node: '.UFILikeLink span:contains("Unlike"), .UFILikeLink span:contains("Gefällt mir nicht mehr")',
       container: '.userContentWrapper',
-      extractor: 'StatusUpdate'
+      extractor: 'status-update'
     }
   ]
-},
-{
-  name: 'ViewProfile',
+},{
+  name: 'unlike-comment',
   network: 'facebook',
   type: 'click',
   priority: 3,
   version: '0.2',
   patterns: [
     {
-      node: 'a.friendHovercard * , a[data-hovercard*="user"] *, a[href*="=ufi"] *, a.titlebarText, a[href*="=ufi"][data-hovercard], a[data-hovercard*="user"]',
-      container: 'a',
-      extractor: 'UserLink'
+      node: '.UFICommentActions .UFILikeLink:contains("Like"), .UFICommentActions .UFILikeLink:contains("Gefällt mir")',
+      container: '.userContentWrapper',
+      extractor: 'status-update'
+    }
+  ]
+},{
+  name: 'unlike-content',
+  network: 'facebook',
+  type: 'click',
+  priority: 4,
+  version: '0.2',
+  patterns: [
+    {
+      node: '.UFILikeLink span:contains("Like"), .UFILikeLink span:contains("Gefällt mir")',
+      container: '.userContentWrapper',
+      extractor: 'status-update'
     }
   ]
 },
 {
-  name: 'Comment',
+  name: 'view-profile',
+  network: 'facebook',
+  type: 'click',
+  priority: 5,
+  version: '0.2',
+  patterns: [
+    {
+      node: 'a.friendHovercard * , a[data-hovercard*="user"] *, a[href*="=ufi"] *, a.titlebarText, a[href*="=ufi"][data-hovercard], a[data-hovercard*="user"]',
+      container: 'a',
+      extractor: 'user-link'
+    }
+  ]
+},
+{
+  name: 'comment-reply',
   network: 'facebook',
   type: 'input',
-  priority: 3,
+  priority: 6,
+  version: '0.1',
+  patterns: [
+    {
+      node: '.UFIReplyList *',
+      container: '.userContentWrapper',
+      extractor: 'status-update'
+    }
+  ]
+},
+{
+  name: 'comment-content',
+  network: 'facebook',
+  type: 'input',
+  priority: 7,
   version: '0.1',
   patterns: [
     {
       node: '.UFIAddCommentInput *',
       container: '.userContentWrapper',
-      extractor: 'StatusUpdate'
+      extractor: 'status-update'
     }
   ]
 },
 {
-  name: 'UpdateStatus',
+  name: 'update-status',
   network: 'facebook',
   type: 'click',
-  priority: 3,
+  priority: 8,
   version: '0.1',
   patterns: [
     {
@@ -78,10 +117,10 @@ var observers = [
   ]
 },
 {
-  name: 'FriendRequestAdd',
+  name: 'friend-request-add',
   network: 'facebook',
   type: 'click',
-  priority: 4,
+  priority: 9,
   version: '0.1',
   patterns: [
     {//friend currently viewed profile
@@ -103,10 +142,10 @@ var observers = [
   ]
 },
 {
-  name: 'Unfriend',
+  name: 'unfriend',
   network: 'facebook',
   type: 'click',
-  priority: 7,
+  priority: 10,
   version: '0.1',
   patterns: [
     {//friend currently viewed profile
@@ -120,10 +159,10 @@ var observers = [
   ]
 },
 {
-  name: 'FriendRequestConfirm',
+  name: 'friend-request-confirm',
   network: 'facebook',
   type: 'click',
-  priority: 5,
+  priority: 11,
   version: '0.1',
   patterns: [
     {//friend currently viewed profile
@@ -137,10 +176,10 @@ var observers = [
   ]
 },
 {
-  name: 'FriendRequestReject',
+  name: 'friend-request-reject',
   network: 'facebook',
   type: 'click',
-  priority: 6,
+  priority: 12,
   version: '0.1',
   patterns: [
     {//friend currently viewed profile
@@ -157,7 +196,7 @@ var observers = [
 
 var extractors = [
 {
-  name: 'StatusUpdate',
+  name: 'status-update',
   fields: [{
     name: 'sharerId',
     selector: '> div > a',
@@ -173,7 +212,7 @@ var extractors = [
   }]
 },
 {
-  name: 'UserLink',
+  name: 'user-link',
   fields: [
   {
     name: 'userId',

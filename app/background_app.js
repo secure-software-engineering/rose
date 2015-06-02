@@ -296,7 +296,7 @@ var extractors = [
     }
     extractorEngine = new ExtractorEngine(extractorCol);
     extractorEngine.register();
-  }})
+  }});
 
 
 })();

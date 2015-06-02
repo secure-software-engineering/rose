@@ -54,7 +54,7 @@ export default (function () {
     this._comments.fetch();
     var extractorsCol = new ExtractorCollection();
     extractorsCol.fetch({success: function extractorsLoaded(col){
-      this._statusUpdateExtractor = col.findWhere({name: 'StatusUpdate'});
+      this._statusUpdateExtractor = col.findWhere({name: 'status-update'});
     }.bind(this)});
 
     //load styles

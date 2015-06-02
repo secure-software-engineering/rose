@@ -24,50 +24,83 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-let type = 'mousemove';
-let mouseMoveDistance = 0;
-let lastPosition = {
-  x: undefined,
-  y: undefined
-};
+let type = 'window';
+let open = false;
+let active = false;
 
 let store = function() {
-  if (mouseMoveDistance > 0) {
+  return new Promise((resolve) => {
     kango.invokeAsyncCallback('localforage.getItem', type + '-activity-records', (records) => {
       records = records || [];
       records.push({
         type: type,
         date: Date.now(),
-        value: Math.round(mouseMoveDistance)
+        value: {
+          open,
+          active
+        }
       });
+
       kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', records, () => {
-        mouseMoveDistance = 0;
+        resolve();
       });
     });
-  }
+  });
 };
 
-let start = function() {
-  $(document).on('mousemove', (e) => {
-    const currentPosition = {
-      x: e.pageX,
-      y: e.pageY
-    };
+let getAllWindows = function() {
+  return new Promise((resolve) => {
+    kango.browser.windows.getAll((windows => {
+      resolve(windows);
+    }));
+  });
+};
 
-    if (lastPosition.x && lastPosition.y) {
-      const xDifference = currentPosition.x - lastPosition.x;
-      const yDifference = currentPosition.y - lastPosition.y;
+let getTabs = function(window) {
+  return new Promise((resolve) => {
+    window.getTabs((tabs) => {
+      resolve(tabs);
+    });
+  });
+};
 
-      const distance = Math.sqrt((xDifference * xDifference) +
-        (yDifference * yDifference));
+let checkStatus = async function() {
+  let openTmp = false;
+  let activeTmp = false;
 
-      mouseMoveDistance += distance;
+  let windows = await getAllWindows();
+
+  for (let window of windows) {
+    let tabs = await getTabs(window);
+
+    for (let tab of tabs) {
+      let url = tab.getUrl();
+
+      if (url.indexOf('://www.facebook.com') >= 0) {
+        openTmp = true;
+
+        if (window.isActive() && tab.isActive()) {
+          activeTmp = true;
+        }
+      }
     }
+  }
 
-    lastPosition = currentPosition;
+  if (!((openTmp === open) && (activeTmp === active))) {
+    open = openTmp;
+    active = activeTmp;
+    await store();
+  }
+
+  setTimeout(checkStatus, 1000);
+}
+
+let start = function() {
+  kango.browser.addEventListener(kango.browser.event.TAB_REMOVED, function(event) {
+    checkStatus();
   });
 
-  setInterval(store, 60000);
+  checkStatus();
 };
 
 export default {

@@ -1,7 +1,11 @@
+import 'babelify/polyfill';
+
 import log from 'rose/log';
 import ExtractorEngine from 'rose/extractor-engine';
 import ObserverCollection from 'rose/collections/observers';
 import ExtractorCollection from 'rose/collections/extractors';
+
+import WindowTracker from 'rose/activity-trackers/window';
 
 /**
  * Hard coded observers for testing
@@ -296,9 +300,9 @@ var extractors = [
     }
     extractorEngine = new ExtractorEngine(extractorCol);
     extractorEngine.register();
-  }})
+  }});
 
-
+  WindowTracker.start();
 })();
 
 kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, function(event) {

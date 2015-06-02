@@ -38,7 +38,7 @@ let store = function() {
       records.push({
         type: type,
         date: Date.now(),
-        value: mouseMoveDistance
+        value: Math.round(mouseMoveDistance)
       });
       kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', records, () => {
         mouseMoveDistance = 0;

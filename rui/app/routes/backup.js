@@ -1,5 +1,18 @@
 import Ember from 'ember';
 
+let getItem = (key) => {
+  return new Ember.RSVP.Promise((resolve) => {
+    kango.invokeAsyncCallback('localforage.getItem', key, (data) => {
+      resolve({
+        type: {
+          typeKey: key
+        },
+        content: data
+      });
+    });
+  });
+};
+
 export default Ember.Route.extend({
   model: function() {
     let promises = [
@@ -7,6 +20,10 @@ export default Ember.Route.extend({
       this.store.find('interaction'),
       this.store.find('diary-entry'),
       this.store.find('user-setting'),
+      getItem('click-activity-records'),
+      getItem('mousemove-activity-records'),
+      getItem('window-activity-records'),
+      getItem('scroll-activity-records')
     ];
 
     return Ember.RSVP.all(promises);

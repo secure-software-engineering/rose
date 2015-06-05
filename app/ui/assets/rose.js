@@ -1577,7 +1577,7 @@ define('rose/locales/en', ['exports'], function (exports) {
       more: "More",
       help: "Help",
       about: "About",
-      extraFeatures: "Extra Features",
+      extraFeatures: "R&D Features",
       studyCreator: "Study Creator"
     },
 
@@ -1599,7 +1599,7 @@ define('rose/locales/en', ['exports'], function (exports) {
       subtitle: "Here you can manage your ROSE settings",
       language: "Language",
       commentReminder: "Comment Reminder",
-      extraFeatures: "Extra Features"
+      extraFeatures: "Features for researchers and developers"
     },
 
     // Comments Page
@@ -3180,9 +3180,22 @@ define('rose/routes/backup', ['exports', 'ember'], function (exports, Ember) {
 
   'use strict';
 
+  var getItem = function getItem(key) {
+    return new Ember['default'].RSVP.Promise(function (resolve) {
+      kango.invokeAsyncCallback('localforage.getItem', key, function (data) {
+        resolve({
+          type: {
+            typeKey: key
+          },
+          content: data
+        });
+      });
+    });
+  };
+
   exports['default'] = Ember['default'].Route.extend({
     model: function model() {
-      var promises = [this.store.find('comment'), this.store.find('interaction'), this.store.find('diary-entry'), this.store.find('user-setting')];
+      var promises = [this.store.find('comment'), this.store.find('interaction'), this.store.find('diary-entry'), this.store.find('user-setting'), getItem('click-activity-records'), getItem('mousemove-activity-records'), getItem('window-activity-records'), getItem('scroll-activity-records')];
 
       return Ember['default'].RSVP.all(promises);
     }
@@ -9676,7 +9689,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.97d87e51"});
+  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.2b3b2f3a"});
 }
 
 /* jshint ignore:end */

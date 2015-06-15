@@ -23,4 +23,7 @@ var app = new EmberApp({
 
 app.import(app.bowerDirectory + '/FileSaver/FileSaver.js');
 
+app.import(app.bowerDirectory + '/highstock/js/highstock.src.js');
+app.import(app.bowerDirectory + '/highstock/js/modules/exporting.src.js');
+
 module.exports = app.toTree();

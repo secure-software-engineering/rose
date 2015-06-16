@@ -339,7 +339,7 @@ var extractors = [
   //*******************************//
   // Careful deletes all Rose data //
   //*******************************//
-  localforage.clear();
+  // localforage.clear();
 
   //Write test observe into storage
   //FIX: Updater loads observers

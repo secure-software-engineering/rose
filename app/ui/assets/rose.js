@@ -1047,16 +1047,6 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
   exports['default'] = Ember['default'].Controller.extend({
     availableLanguages: languages['default'],
 
-    commentReminderLabel: (function () {
-      var t = this.container.lookup('utils:t');
-      return this.get('userSettings.commentReminderIsEnabled') ? t('yes') : t('no');
-    }).property('userSettings.commentReminderIsEnabled'),
-
-    developerModeLabel: (function () {
-      var t = this.container.lookup('utils:t');
-      return this.get('userSettings.developerModeIsEnabled') ? t('yes') : t('no');
-    }).property('userSettings.developerModeIsEnabled'),
-
     changeI18nLanguage: (function () {
       var application = this.container.lookup('application:main');
       Ember['default'].set(application, 'locale', this.get('userSettings.currentLanguage'));
@@ -1068,6 +1058,11 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
 
     actions: {
       saveSettings: function saveSettings() {
+        this.get('userSettings').save();
+      },
+
+      resetRose: function resetRose() {
+        this.set('userSettings.firstRun', true);
         this.get('userSettings').save();
       }
     }
@@ -1123,6 +1118,20 @@ define('rose/controllers/study-creator', ['exports', 'ember'], function (exports
       }
     }
   });
+
+});
+define('rose/helpers/boolean-to-yesno', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  exports.booleanToYesno = booleanToYesno;
+
+  function booleanToYesno(params) {
+    var t = this.container.lookup('utils:t');
+    return params[0] ? t('yes') : t('no');
+  }
+
+  exports['default'] = Ember['default'].HTMLBars.makeBoundHelper(booleanToYesno);
 
 });
 define('rose/helpers/lf-yield-inverse', ['exports', 'liquid-fire/ember-internals'], function (exports, ember_internals) {
@@ -1599,7 +1608,8 @@ define('rose/locales/en', ['exports'], function (exports) {
       subtitle: "Here you can manage your ROSE settings",
       language: "Language",
       commentReminder: "Comment Reminder",
-      extraFeatures: "Features for researchers and developers"
+      extraFeatures: "Features for researchers and developers",
+      resetRose: "Reset ROSE"
     },
 
     // Comments Page
@@ -1752,7 +1762,7 @@ define('rose/models/interaction', ['exports', 'ember-data'], function (exports, 
     contentId: DS['default'].attr('string'),
     createdAt: DS['default'].attr('string'),
     origin: DS['default'].attr(),
-    sharer: DS['default'].attr('string'),
+    sharerId: DS['default'].attr('string'),
     isPrivate: DS['default'].attr('boolean')
   });
 
@@ -1791,7 +1801,9 @@ define('rose/models/user-setting', ['exports', 'ember-data'], function (exports,
   exports['default'] = DS['default'].Model.extend({
     commentReminderIsEnabled: DS['default'].attr('boolean'),
     developerModeIsEnabled: DS['default'].attr('boolean'),
-    currentLanguage: DS['default'].attr('string', { defaultValue: 'en' }) });
+    currentLanguage: DS['default'].attr('string', { defaultValue: 'en' }),
+    firstRun: DS['default'].attr('boolean', { defaultValue: 'true' })
+  });
 
 });
 define('rose/pods/components/diary-entry/component', ['exports', 'ember'], function (exports, Ember) {
@@ -2440,6 +2452,131 @@ define('rose/pods/components/high-chart/template', ['exports'], function (export
         var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
         dom.insertBoundary(fragment, 0);
         content(env, morph0, context, "yield");
+        return fragment;
+      }
+    };
+  }()));
+
+});
+define('rose/pods/components/installation-wizard/component', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  exports['default'] = Ember['default'].Component.extend({
+    actions: {
+      cancelWizard: function cancelWizard() {
+        var settings = this.get('userSettings');
+        settings.set('firstRun', false);
+        settings.save();
+      }
+    }
+  });
+
+});
+define('rose/pods/components/installation-wizard/template', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    return {
+      isHTMLBars: true,
+      revision: "Ember@1.11.3",
+      blockParams: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      build: function build(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"class","ui two column centered grid");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","column");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3,"class","ui segment");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("h2");
+        dom.setAttribute(el4,"class","ui dividing header");
+        var el5 = dom.createTextNode("\n        ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createElement("i");
+        dom.setAttribute(el5,"class","download icon");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n        ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createElement("div");
+        dom.setAttribute(el5,"class","content");
+        var el6 = dom.createTextNode("\n          Welcome to ROSE\n          ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6,"class","sub header");
+        var el7 = dom.createTextNode("Where all your dreams come true");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n        ");
+        dom.appendChild(el5, el6);
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n      ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("h4");
+        var el5 = dom.createTextNode("Study Configuration File");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("button");
+        dom.setAttribute(el4,"class","ui basic button");
+        var el5 = dom.createTextNode("Cancel");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("button");
+        dom.setAttribute(el4,"class","ui primary button");
+        var el5 = dom.createTextNode("Import");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      render: function render(context, env, contextualElement) {
+        var dom = env.dom;
+        var hooks = env.hooks, element = hooks.element;
+        dom.detectNamespace(contextualElement);
+        var fragment;
+        if (env.useFragmentCache && dom.canClone) {
+          if (this.cachedFragment === null) {
+            fragment = this.build(dom);
+            if (this.hasRendered) {
+              this.cachedFragment = fragment;
+            } else {
+              this.hasRendered = true;
+            }
+          }
+          if (this.cachedFragment) {
+            fragment = dom.cloneNode(this.cachedFragment, true);
+          }
+        } else {
+          fragment = this.build(dom);
+        }
+        var element0 = dom.childAt(fragment, [0, 1, 1, 5]);
+        element(env, element0, context, "action", ["cancelWizard"], {});
         return fragment;
       }
     };
@@ -3360,6 +3497,13 @@ define('rose/routes/about', ['exports', 'ember'], function (exports, Ember) {
 	exports['default'] = Ember['default'].Route.extend({});
 
 });
+define('rose/routes/application', ['exports', 'ember'], function (exports, Ember) {
+
+	'use strict';
+
+	exports['default'] = Ember['default'].Route.extend({});
+
+});
 define('rose/routes/backup', ['exports', 'ember'], function (exports, Ember) {
 
   'use strict';
@@ -3688,6 +3832,127 @@ define('rose/templates/application', ['exports'], function (exports) {
   'use strict';
 
   exports['default'] = Ember.HTMLBars.template((function() {
+    var child0 = (function() {
+      return {
+        isHTMLBars: true,
+        revision: "Ember@1.11.3",
+        blockParams: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        build: function build(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        render: function render(context, env, contextualElement) {
+          var dom = env.dom;
+          var hooks = env.hooks, get = hooks.get, inline = hooks.inline;
+          dom.detectNamespace(contextualElement);
+          var fragment;
+          if (env.useFragmentCache && dom.canClone) {
+            if (this.cachedFragment === null) {
+              fragment = this.build(dom);
+              if (this.hasRendered) {
+                this.cachedFragment = fragment;
+              } else {
+                this.hasRendered = true;
+              }
+            }
+            if (this.cachedFragment) {
+              fragment = dom.cloneNode(this.cachedFragment, true);
+            }
+          } else {
+            fragment = this.build(dom);
+          }
+          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
+          inline(env, morph0, context, "installation-wizard", [], {"userSettings": get(env, context, "userSettings")});
+          return fragment;
+        }
+      };
+    }());
+    var child1 = (function() {
+      return {
+        isHTMLBars: true,
+        revision: "Ember@1.11.3",
+        blockParams: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        build: function build(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","ui page grid");
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("div");
+          dom.setAttribute(el2,"class","four wide column");
+          var el3 = dom.createTextNode("\n    ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n  ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("div");
+          dom.setAttribute(el2,"class","twelve wide column");
+          var el3 = dom.createTextNode("\n    ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createElement("div");
+          dom.setAttribute(el3,"class","ui segment");
+          var el4 = dom.createTextNode("\n      ");
+          dom.appendChild(el3, el4);
+          var el4 = dom.createComment("");
+          dom.appendChild(el3, el4);
+          var el4 = dom.createTextNode("\n    ");
+          dom.appendChild(el3, el4);
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n  ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        render: function render(context, env, contextualElement) {
+          var dom = env.dom;
+          var hooks = env.hooks, inline = hooks.inline, content = hooks.content;
+          dom.detectNamespace(contextualElement);
+          var fragment;
+          if (env.useFragmentCache && dom.canClone) {
+            if (this.cachedFragment === null) {
+              fragment = this.build(dom);
+              if (this.hasRendered) {
+                this.cachedFragment = fragment;
+              } else {
+                this.hasRendered = true;
+              }
+            }
+            if (this.cachedFragment) {
+              fragment = dom.cloneNode(this.cachedFragment, true);
+            }
+          } else {
+            fragment = this.build(dom);
+          }
+          var element0 = dom.childAt(fragment, [1]);
+          var morph0 = dom.createMorphAt(dom.childAt(element0, [1]),1,1);
+          var morph1 = dom.createMorphAt(dom.childAt(element0, [3, 1]),1,1);
+          inline(env, morph0, context, "render", ["sidebar-menu"], {});
+          content(env, morph1, context, "outlet");
+          return fragment;
+        }
+      };
+    }());
     return {
       isHTMLBars: true,
       revision: "Ember@1.11.3",
@@ -3696,47 +3961,13 @@ define('rose/templates/application', ['exports'], function (exports) {
       hasRendered: false,
       build: function build(dom) {
         var el0 = dom.createDocumentFragment();
-        var el1 = dom.createElement("div");
-        dom.setAttribute(el1,"class","ui page grid");
-        var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","four wide column");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","twelve wide column");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3,"class","ui segment");
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n    ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
+        var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         return el0;
       },
       render: function render(context, env, contextualElement) {
         var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, content = hooks.content;
+        var hooks = env.hooks, get = hooks.get, block = hooks.block;
         dom.detectNamespace(contextualElement);
         var fragment;
         if (env.useFragmentCache && dom.canClone) {
@@ -3754,11 +3985,10 @@ define('rose/templates/application', ['exports'], function (exports) {
         } else {
           fragment = this.build(dom);
         }
-        var element0 = dom.childAt(fragment, [0]);
-        var morph0 = dom.createMorphAt(dom.childAt(element0, [1]),1,1);
-        var morph1 = dom.createMorphAt(dom.childAt(element0, [3, 1]),1,1);
-        inline(env, morph0, context, "render", ["sidebar-menu"], {});
-        content(env, morph1, context, "outlet");
+        var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
+        dom.insertBoundary(fragment, null);
+        dom.insertBoundary(fragment, 0);
+        block(env, morph0, context, "if", [get(env, context, "userSettings.firstRun")], {}, child0, child1);
         return fragment;
       }
     };
@@ -6758,6 +6988,32 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var el3 = dom.createTextNode("\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createTextNode("DANGER DANGER DANGER");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("button");
+        dom.setAttribute(el3,"class","ui red button");
+        var el4 = dom.createTextNode("Reset");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
@@ -6767,7 +7023,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
       },
       render: function render(context, env, contextualElement) {
         var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, get = hooks.get;
+        var hooks = env.hooks, inline = hooks.inline, get = hooks.get, subexpr = hooks.subexpr, element = hooks.element;
         dom.detectNamespace(contextualElement);
         var fragment;
         if (env.useFragmentCache && dom.canClone) {
@@ -6790,6 +7046,8 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var element2 = dom.childAt(element1, [1]);
         var element3 = dom.childAt(element1, [3]);
         var element4 = dom.childAt(element1, [5]);
+        var element5 = dom.childAt(element1, [7]);
+        var element6 = dom.childAt(element5, [5]);
         var morph0 = dom.createMorphAt(element0,1,1);
         var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
         var morph2 = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
@@ -6798,14 +7056,17 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var morph5 = dom.createMorphAt(element3,5,5);
         var morph6 = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
         var morph7 = dom.createMorphAt(element4,5,5);
+        var morph8 = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
         inline(env, morph0, context, "t", ["settings.title"], {});
         inline(env, morph1, context, "t", ["settings.subtitle"], {});
         inline(env, morph2, context, "t", ["settings.language"], {});
         inline(env, morph3, context, "ui-dropdown", [], {"class": "ui selection dropdown", "value": get(env, context, "userSettings.currentLanguage"), "content": get(env, context, "availableLanguages"), "optionLabelPath": "content.language", "optionValuePath": "content.code"});
         inline(env, morph4, context, "t", ["settings.commentReminder"], {});
-        inline(env, morph5, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.commentReminderIsEnabled"), "label": get(env, context, "commentReminderLabel"), "action": "saveSettings"});
+        inline(env, morph5, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.commentReminderIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "userSettings.commentReminderIsEnabled")], {}), "action": "saveSettings"});
         inline(env, morph6, context, "t", ["settings.extraFeatures"], {});
-        inline(env, morph7, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.developerModeIsEnabled"), "label": get(env, context, "developerModeLabel"), "action": "saveSettings"});
+        inline(env, morph7, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.developerModeIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "userSettings.developerModeIsEnabled")], {}), "action": "saveSettings"});
+        inline(env, morph8, context, "t", ["settings.resetRose"], {});
+        element(env, element6, context, "action", ["resetRose"], {});
         return fragment;
       }
     };
@@ -8168,10 +8429,10 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         inline(env, morph1, context, "t", ["studyCreator.subtitle"], {});
         inline(env, morph2, context, "t", ["studyCreator.roseComments"], {});
         inline(env, morph3, context, "t", ["studyCreator.roseCommentsDesc"], {});
-        inline(env, morph4, context, "ui-checkbox", [], {"checked": get(env, context, "model.roseCommentsIsEnabled"), "class": "toggle", "label": get(env, context, "commentsEnabledLabel"), "action": "saveSettings"});
+        inline(env, morph4, context, "ui-checkbox", [], {"checked": get(env, context, "model.roseCommentsIsEnabled"), "class": "toggle", "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "model.roseCommentsIsEnabled")], {}), "action": "saveSettings"});
         inline(env, morph5, context, "t", ["studyCreator.roseCommentsRating"], {});
         inline(env, morph6, context, "t", ["studyCreator.roseCommentsRatingDesc"], {});
-        inline(env, morph7, context, "ui-checkbox", [], {"checked": get(env, context, "model.roseCommentsRatingIsEnabled"), "class": "toggle", "label": get(env, context, "ratingsEnabledLabel"), "action": "saveSettings"});
+        inline(env, morph7, context, "ui-checkbox", [], {"checked": get(env, context, "model.roseCommentsRatingIsEnabled"), "class": "toggle", "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "model.roseCommentsRatingIsEnabled")], {}), "action": "saveSettings"});
         inline(env, morph8, context, "t", ["studyCreator.salt"], {});
         inline(env, morph9, context, "t", ["studyCreator.saltDesc"], {});
         inline(env, morph10, context, "input", [], {"type": "text", "value": get(env, context, "model.salt"), "insert-newline": "saveSettings", "focus-out": "saveSettings"});
@@ -8186,7 +8447,7 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         block(env, morph17, context, "each", [get(env, context, "model.networks")], {}, child0, null);
         inline(env, morph18, context, "t", ["studyCreator.autoUpdate"], {});
         inline(env, morph19, context, "t", ["studyCreator.autoUpdateDesc"], {});
-        inline(env, morph20, context, "ui-checkbox", [], {"checked": get(env, context, "model.autoUpdateIsEnabled"), "class": "toggle", "label": get(env, context, "autoUpdateObserversLabel"), "action": "saveSettings"});
+        inline(env, morph20, context, "ui-checkbox", [], {"checked": get(env, context, "model.autoUpdateIsEnabled"), "class": "toggle", "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "model.autoUpdateIsEnabled")], {}), "action": "saveSettings"});
         inline(env, morph21, context, "t", ["studyCreator.exportConfig"], {});
         inline(env, morph22, context, "t", ["studyCreator.exportConfigDesc"], {});
         inline(env, morph23, context, "input", [], {"value": get(env, context, "model.fileName"), "insert-newline": "saveSettings", "focus-out": "saveSettings"});
@@ -8377,6 +8638,16 @@ define('rose/tests/ember-cli-i18n-test', ['ember', 'rose/config/environment'], f
   }
 
 });
+define('rose/tests/helpers/boolean-to-yesno.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - helpers');
+  test('helpers/boolean-to-yesno.js should pass jshint', function() { 
+    ok(true, 'helpers/boolean-to-yesno.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/helpers/resolver', ['exports', 'ember/resolver', 'rose/config/environment'], function (exports, Resolver, config) {
 
   'use strict';
@@ -8564,6 +8835,16 @@ define('rose/tests/pods/components/high-chart/component.jshint', function () {
   });
 
 });
+define('rose/tests/pods/components/installation-wizard/component.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - pods/components/installation-wizard');
+  test('pods/components/installation-wizard/component.js should pass jshint', function() { 
+    ok(true, 'pods/components/installation-wizard/component.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/pods/components/rose-comment/component.jshint', function () {
 
   'use strict';
@@ -8601,6 +8882,16 @@ define('rose/tests/routes/about.jshint', function () {
   module('JSHint - routes');
   test('routes/about.js should pass jshint', function() { 
     ok(true, 'routes/about.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/routes/application.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - routes');
+  test('routes/application.js should pass jshint', function() { 
+    ok(true, 'routes/application.js should pass jshint.'); 
   });
 
 });
@@ -9023,6 +9314,29 @@ define('rose/tests/unit/controllers/study-creator-test.jshint', function () {
   });
 
 });
+define('rose/tests/unit/helpers/boolean-to-yesno-test', ['rose/helpers/boolean-to-yesno', 'qunit'], function (boolean_to_yesno, qunit) {
+
+  'use strict';
+
+  qunit.module('Unit | Helper | boolean to yesno');
+
+  // Replace this with your real tests.
+  qunit.test('it works', function (assert) {
+    var result = boolean_to_yesno.booleanToYesno(42);
+    assert.ok(result);
+  });
+
+});
+define('rose/tests/unit/helpers/boolean-to-yesno-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/helpers');
+  test('unit/helpers/boolean-to-yesno-test.js should pass jshint', function() { 
+    ok(true, 'unit/helpers/boolean-to-yesno-test.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/unit/initializers/kango-api-test', ['ember', 'rose/initializers/kango-api', 'qunit'], function (Ember, kango_api, qunit) {
 
   'use strict';
@@ -9314,6 +9628,39 @@ define('rose/tests/unit/pods/components/high-chart/component-test.jshint', funct
   });
 
 });
+define('rose/tests/unit/pods/components/installation-wizard/component-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleForComponent('installation-wizard', 'Unit | Component | installation wizard', {
+    // Specify the other units that are required for this test
+    // needs: ['component:foo', 'helper:bar'],
+    unit: true
+  });
+
+  ember_qunit.test('it renders', function (assert) {
+    assert.expect(2);
+
+    // Creates the component instance
+    var component = this.subject();
+    assert.equal(component._state, 'preRender');
+
+    // Renders the component to the page
+    this.render();
+    assert.equal(component._state, 'inDOM');
+  });
+
+});
+define('rose/tests/unit/pods/components/installation-wizard/component-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/pods/components/installation-wizard');
+  test('unit/pods/components/installation-wizard/component-test.js should pass jshint', function() { 
+    ok(true, 'unit/pods/components/installation-wizard/component-test.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/unit/pods/components/rose-comment/component-test', ['ember-qunit'], function (ember_qunit) {
 
   'use strict';
@@ -9400,6 +9747,31 @@ define('rose/tests/unit/routes/about-test.jshint', function () {
   module('JSHint - unit/routes');
   test('unit/routes/about-test.js should pass jshint', function() { 
     ok(true, 'unit/routes/about-test.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/unit/routes/application-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('route:application', 'Unit | Route | application', {});
+
+  ember_qunit.test('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+
+  // Specify the other units that are required for this test.
+  // needs: ['controller:foo']
+
+});
+define('rose/tests/unit/routes/application-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/routes');
+  test('unit/routes/application-test.js should pass jshint', function() { 
+    ok(true, 'unit/routes/application-test.js should pass jshint.'); 
   });
 
 });
@@ -10098,7 +10470,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.d86c486a"});
+  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.733abbc8"});
 }
 
 /* jshint ignore:end */

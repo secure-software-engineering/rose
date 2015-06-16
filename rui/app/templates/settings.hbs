@@ -22,7 +22,7 @@
     <p>Whats the purpose of this settings?</p>
     {{ui-checkbox class="toggle"
                   checked=userSettings.commentReminderIsEnabled
-                  label=commentReminderLabel
+                  label=(boolean-to-yesno userSettings.commentReminderIsEnabled)
                   action="saveSettings"}}
   </div>
 
@@ -31,7 +31,13 @@
     <p>Whats the purpose of this settings?</p>
     {{ui-checkbox class="toggle"
                   checked=userSettings.developerModeIsEnabled
-                  label=developerModeLabel
+                  label=(boolean-to-yesno userSettings.developerModeIsEnabled)
                   action="saveSettings"}}
+  </div>
+
+  <div class="field">
+    <label>{{t "settings.resetRose"}}</label>
+    <p>DANGER DANGER DANGER</p>
+    <button class="ui red button" {{action 'resetRose'}}>Reset</button>
   </div>
 </div>

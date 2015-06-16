@@ -13,7 +13,7 @@
 
     {{ui-checkbox checked=model.roseCommentsIsEnabled
                   class="toggle"
-                  label=commentsEnabledLabel
+                  label=(boolean-to-yesno model.roseCommentsIsEnabled)
                   action="saveSettings"}}
   </div>
 
@@ -23,7 +23,7 @@
 
     {{ui-checkbox checked=model.roseCommentsRatingIsEnabled
                   class="toggle"
-                  label=ratingsEnabledLabel
+                  label=(boolean-to-yesno model.roseCommentsRatingIsEnabled)
                   action="saveSettings"}}
   </div>
 
@@ -83,7 +83,7 @@
 
     {{ui-checkbox checked=model.autoUpdateIsEnabled
                   class="toggle"
-                  label=autoUpdateObserversLabel
+                  label=(boolean-to-yesno model.autoUpdateIsEnabled)
                   action="saveSettings"}}
   </div>
 

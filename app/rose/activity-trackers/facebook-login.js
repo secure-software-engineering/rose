@@ -33,8 +33,6 @@ let getLatestStatus = function() {
       records = records || [];
       let latest = records.pop();
 
-      debugger;
-
       resolve((latest) ? latest.value : false);
     });
   });

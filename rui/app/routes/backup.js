@@ -23,7 +23,8 @@ export default Ember.Route.extend({
       getItem('click-activity-records'),
       getItem('mousemove-activity-records'),
       getItem('window-activity-records'),
-      getItem('scroll-activity-records')
+      getItem('scroll-activity-records'),
+      getItem('fb-login-activity-records')
     ];
 
     return Ember.RSVP.all(promises);

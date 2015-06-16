@@ -16,6 +16,7 @@
     "semantic-ui": "~1.12.1",
     "highlightjs": "8.5.0",
     "localforage": "~1.2.1",
-    "FileSaver": "*"
+    "FileSaver": "*",
+    "highstock": "~3.0.1"
   }
 }

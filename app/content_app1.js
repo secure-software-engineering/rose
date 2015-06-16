@@ -1,3 +1,5 @@
+import 'babelify/polyfill';
+
 import ObserverEngine from 'rose/observer-engine';
 import FacebookUI from 'rose/facebook-ui';
 import SystemConfigModel from 'rose/models/system-config';
@@ -5,6 +7,7 @@ import SystemConfigModel from 'rose/models/system-config';
 import ClickTracker from 'rose/activity-trackers/click';
 import MouseMoveTracker from 'rose/activity-trackers/mousemove';
 import ScrollTracker from 'rose/activity-trackers/scroll';
+import FBLoginTracker from 'rose/activity-trackers/facebook-login';
 
 /* Content Script */
 (function() {
@@ -42,6 +45,7 @@ import ScrollTracker from 'rose/activity-trackers/scroll';
       ClickTracker.start();
       MouseMoveTracker.start();
       ScrollTracker.start();
+      FBLoginTracker.start();
 
       break;
     }

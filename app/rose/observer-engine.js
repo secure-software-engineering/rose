@@ -13,7 +13,7 @@ var extractorEngine;
  * @param {object} observer - the corresponding observer model
  * @param {object} data - The interaction's data.
  */
-function storeInteraction(observer, data) {
+function storeInteraction(observer, data = {}) {
 
   // Time
   data.createdAt = (new Date()).toJSON();
@@ -38,20 +38,15 @@ function storeInteraction(observer, data) {
  */
 function classifiy($node, pattern) {
 
-  // Check if node matches any selectors
-  if (typeof pattern.node === 'string' ) {
-    pattern.node = [ pattern.node ];
-  }
-  for (var i = 0; i < pattern.node.length; i++) {
-    if ($node.is(pattern.node[i])) {
+  // Check if node matches the selectors
+  if ($node.is(pattern.node)) {
 
-      // Only continue if parent container can be found
-      var $container = $node.closest(pattern.container);
-      if ($container.length) {
+    // Only continue if parent container can be found
+    var $container = $node.closest(pattern.container);
+    if ($container.length) {
 
-        //success
-        return $container;
-      }
+      //success
+      return $container;
     }
   }
 }
@@ -110,7 +105,7 @@ function integrate(observers) {
         $(document).on('click', function(event) {
           handleEvent(event, clickObservers);
         });
-      };
+      }
 
       var inputObservers = observers.filter(function(observer) {
         return observer.get('type') === 'input';
@@ -120,9 +115,9 @@ function integrate(observers) {
           //check for enter keyup
           if (event.keyCode === 13) {
             handleEvent(event, inputObservers);
-          };
+          }
         });
-      };
+      }
     }});
   }
 

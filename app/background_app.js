@@ -39,10 +39,40 @@ var observers = [
     }
   ]
 },{
-  name: 'unlike-comment',
+  name: 'like-photo',
+  network: 'facebook',
+  type: 'click',
+  priority: 2,
+  version: '0.2',
+  patterns: [
+    {
+      node: '.fbPhotosPhotoLike span.like',
+      container: '.fbPhotoSnowliftPopup'
+    },{
+      node: '.UFILikeLink span:contains("Unlike"), .UFILikeLink span:contains("Gefällt mir nicht mehr")',
+      container: '#fbPhotoPageContainer'
+    },{
+      node: '.UFILikeLink span:contains("Unlike"), .UFILikeLink span:contains("Gefällt mir nicht mehr")',
+      container: '.fbPhotoSnowliftPopup'
+    }
+  ]
+},{
+  name: 'like-page',
   network: 'facebook',
   type: 'click',
   priority: 3,
+  version: '0.1',
+  patterns: [
+    {
+      node: '.PageLikeButton:contains("Unlike"), .PageLikeButton:contains("Gefällt mir nicht mehr")',
+      container: '.PageLikeButton'
+    }
+  ]
+},{
+  name: 'unlike-comment',
+  network: 'facebook',
+  type: 'click',
+  priority: 4,
   version: '0.2',
   patterns: [
     {
@@ -55,7 +85,7 @@ var observers = [
   name: 'unlike-content',
   network: 'facebook',
   type: 'click',
-  priority: 4,
+  priority: 5,
   version: '0.2',
   patterns: [
     {
@@ -64,8 +94,37 @@ var observers = [
       extractor: 'status-update'
     }
   ]
-},
-{
+},{
+  name: 'unlike-photo',
+  network: 'facebook',
+  type: 'click',
+  priority: 2,
+  version: '0.2',
+  patterns: [
+    {
+      node: '.fbPhotosPhotoLike span.unlike',
+      container: '.fbPhotoSnowliftPopup'
+    },{
+      node: '.UFILikeLink span:contains("Like"), .UFILikeLink span:contains("Gefällt mir")',
+      container: '#fbPhotoPageContainer'
+    },{
+      node: '.UFILikeLink span:contains("Like"), .UFILikeLink span:contains("Gefällt mir")',
+      container: '.fbPhotoSnowliftPopup'
+    }
+  ]
+},{
+  name: 'unlike-page',
+  network: 'facebook',
+  type: 'click',
+  priority: 1,
+  version: '0.1',
+  patterns: [
+    {
+      node: '.PageLikeButton:contains("Like"), .PageLikeButton:contains("Gefällt mir"),.PageLikeButton:contains("Like") *, .PageLikeButton:contains("Gefällt mir") *',
+      container: '.PageLikeButton'
+    }
+  ]
+},{
   name: 'view-profile',
   network: 'facebook',
   type: 'click',
@@ -106,21 +165,28 @@ var observers = [
       extractor: 'status-update'
     }
   ]
-},
-{
-  name: 'update-status',
+},{
+  name: 'comment-content',
   network: 'facebook',
-  type: 'click',
-  priority: 8,
+  type: 'input',
+  priority: 7,
   version: '0.1',
   patterns: [
     {
-      node: 'form[action*=updatestatus] button[type=submit]',
-      container: 'form[action*=updatestatus]'
+      node: '.UFIAddCommentInput *',
+      container: '.userContentWrapper',
+      extractor: 'status-update'
+    },
+    {
+      node: '.UFIAddCommentInput *',
+      container: '.fbPhotoSnowliftContainer'
+    },
+    {
+      node: '.UFIAddCommentInput *',
+      container: '.fbxPhotoContentContainer'
     }
   ]
-},
-{
+},{
   name: 'friend-request-add',
   network: 'facebook',
   type: 'click',
@@ -268,6 +334,12 @@ var extractors = [
 
 /* Background Script */
 (function() {
+
+
+  //*******************************//
+  // Careful deletes all Rose data //
+  //*******************************//
+  localforage.clear();
 
   //Write test observe into storage
   //FIX: Updater loads observers

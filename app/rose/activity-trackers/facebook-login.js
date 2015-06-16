@@ -70,7 +70,6 @@ let checkStatus = async function() {
 };
 
 let start = async function() {
-  debugger;
   let networkDomain = 'facebook.com';
 
   if ((new RegExp('^https:\/\/[\w\.\-]*(' + networkDomain.replace(/\./g, '\\$&') + ')$')).test(window.location.origin)) {

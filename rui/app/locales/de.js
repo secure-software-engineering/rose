@@ -49,7 +49,8 @@ export default {
     subtitle: "Hier können Sie Ihre ROSE Einstellungen anpassen",
     language: "Language",
     commentReminder: "Comment Reminder",
-    extraFeatures: "Extra Features"
+    extraFeatures: "Extra Features",
+    resetRose: "ROSE Zurücksetzen"
   },
 
   // Comments Page

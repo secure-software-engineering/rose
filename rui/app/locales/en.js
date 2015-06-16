@@ -49,7 +49,8 @@ export default {
     subtitle: "Here you can manage your ROSE settings",
     language: "Language",
     commentReminder: "Comment Reminder",
-    extraFeatures: "Features for researchers and developers"
+    extraFeatures: "Features for researchers and developers",
+    resetRose: "Reset ROSE"
   },
 
   // Comments Page

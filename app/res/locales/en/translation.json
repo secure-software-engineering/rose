@@ -98,6 +98,11 @@
   "sidebar": {
     "infoText": "Tell us what you are commenting on (picture, link, status update, ...) Tell us who posted/shared it (you, a friend, a user who is not your friend, a page, ...) Tell us why you decided to share something with a certain audience.",
     "ratingEntertain": "How entertaining is this content to you",
-    "ratingAppropriate": "Do you think it is appropriate to show this content on Facebook"
+    "ratingAppropriate": "Do you think it is appropriate to show this content on Facebook",
+    "ratingConcentration": "How well were you concentrating",
+    "ratingInteresting": "Did you find the content you were just reading interesting",
+    "ratingEnjoy": "Did you enjoy what you were just reading",
+    "questionNotice": "Why did you notice this post?",
+    "questionQuality": "Did you examine the quality of the information? If so, how?"
   }
 }

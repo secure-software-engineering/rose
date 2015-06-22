@@ -285,6 +285,42 @@ var observers = [
     }
   ]
 },{
+  name: 'join-event',
+  network: 'facebook',
+  type: 'click',
+  priority: 9,
+  version: '0.1',
+  patterns: [
+    {
+      node: 'a[ajaxify*="/join.php"] *, a[ajaxify*="/join.php"], a[ajaxify*="response=join"]',
+      container: 'a'
+    }
+  ]
+},{
+  name: 'associate-event',
+  network: 'facebook',
+  type: 'click',
+  priority: 9,
+  version: '0.1',
+  patterns: [
+    {
+      node: 'a[ajaxify*="/associate.php"] *, a[ajaxify*="/associate.php"]',
+      container: 'a'
+    }
+  ]
+},{
+  name: 'decline-event',
+  network: 'facebook',
+  type: 'click',
+  priority: 9,
+  version: '0.1',
+  patterns: [
+    {
+      node: 'a[ajaxify*="/decline.php"] *, a[ajaxify*="/decline.php"]',
+      container: 'a'
+    }
+  ]
+},{
   name: 'friend-request-add',
   network: 'facebook',
   type: 'click',

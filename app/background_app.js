@@ -218,6 +218,30 @@ var observers = [
     }
   ]
 },{
+  name: 'upload-photo',
+  network: 'facebook',
+  type: 'click',
+  priority: 8,
+  version: '0.1',
+  patterns: [
+    {
+      node: 'form[action*="upload/photos"] button[type="submit"]',
+      container: 'form'
+    }
+  ]
+},{
+  name: 'update-status',
+  network: 'facebook',
+  type: 'click',
+  priority: 9,
+  version: '0.1',
+  patterns: [
+    {
+      node: 'form[action*=updatestatus] button[type="submit"]',
+      container: 'form[action*=updatestatus]'
+    }
+  ]
+},{
   name: 'friend-request-add',
   network: 'facebook',
   type: 'click',
@@ -294,6 +318,8 @@ var observers = [
 
   ]
 }];
+
+
 
 var extractors = [
 {

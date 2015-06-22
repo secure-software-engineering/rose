@@ -13,6 +13,37 @@ import WindowTracker from 'rose/activity-trackers/window';
  */
 var observers = [
 {
+  name: 'chat',
+  network: 'facebook',
+  type: 'input',
+  priority: 1,
+  version: '0.1',
+  patterns: [
+    {
+      node: '.fbNubFlyoutInner textarea.uiTextareaAutogrow',
+      container: '.fbNubFlyoutInner',
+      extractor: 'chat-user-link'
+    },    {
+      node: '#pagelet_web_messenger textarea.uiTextareaAutogrow',
+      container: '#pagelet_web_messenger div[role="main"]',
+      extractor: 'chat-user-link'
+    }
+  ]
+},
+{
+  name: 'chat-reply',
+  network: 'facebook',
+  type: 'click',
+  priority: 1,
+  version: '0.1',
+  patterns: [
+    {
+      node: '#pagelet_web_messenger .uiButtonConfirm input',
+      container: '#pagelet_web_messenger div[role="main"]',
+      extractor: 'chat-user-link'
+    }
+  ]
+},{
   name: 'like-comment',
   network: 'facebook',
   type: 'click',
@@ -132,7 +163,7 @@ var observers = [
   version: '0.2',
   patterns: [
     {
-      node: 'a.friendHovercard * , a[data-hovercard*="user"] *, a[href*="=ufi"] *, a.titlebarText, a[href*="=ufi"][data-hovercard], a[data-hovercard*="user"]',
+      node: 'a.friendHovercard * , a[data-hovercard*="user"] *, a[href*="=ufi"] *, a.titlebarText, a[href*="=ufi"][data-hovercard], a[data-hovercard*="user"], .webMessengerMessageGroup strong > a, #webMessengerHeaderName a',
       container: 'a',
       extractor: 'user-link'
     }
@@ -222,9 +253,9 @@ var observers = [
       node: '.FriendListUnfriend *',
       container: '#globalContainer'
     },
-    {//hovercard not yet read yfor extraction
+    {//hovercard not yet ready for extraction
       node: '.FriendListUnfriend *',
-      container: 'willö never be reached'
+      container: 'will never be reached'
     }
   ]
 },
@@ -280,8 +311,7 @@ var extractors = [
     attr: 'href',
     hash: true
   }]
-},
-{
+},{
   name: 'user-link',
   fields: [
   {
@@ -290,8 +320,17 @@ var extractors = [
     match: '.+profile\\.php\\?id=\\d+(?=\\&)|.+(?=\\?)|.+',
     hash: true
   }]
-},
-{
+},{
+  name: 'chat-user-link',
+  fields: [
+  {
+    name: 'userId',
+    selector: 'h4.titlebarTextWrapper > a.titlebarText, #webMessengerHeaderName a',
+    attr: 'href',
+    match: '.+profile\\.php\\?id=\\d+(?=\\&)|.+(?=\\?)|.+',
+    hash: true
+  }]
+},{
   name: 'privacy-settings',
   network: 'facebook',
   type: 'url',

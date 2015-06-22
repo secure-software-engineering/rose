@@ -102,21 +102,21 @@ function integrate(observers) {
         return observer.get('type') === 'click';
       });
       if (clickObservers.length) {
-        $(document).on('click', function(event) {
+        document.addEventListener('click', function(event) {
           handleEvent(event, clickObservers);
-        });
+        }, true);
       }
 
       var inputObservers = observers.filter(function(observer) {
         return observer.get('type') === 'input';
       });
       if (inputObservers.length) {
-        $(document).on('keyup', function(event) {
+        document.addEventListener('keyup', function(event) {
           //check for enter keyup
           if (event.keyCode === 13) {
             handleEvent(event, inputObservers);
           }
-        });
+        }, true);
       }
     }});
   }

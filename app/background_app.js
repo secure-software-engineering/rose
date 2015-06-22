@@ -44,7 +44,7 @@ var observers = [
     }
   ]
 },{
-  name: 'like-comment',
+  name: 'unlike-comment',
   network: 'facebook',
   type: 'click',
   priority: 1,
@@ -57,70 +57,14 @@ var observers = [
     }
   ]
 },{
-  name: 'like-content',
-  network: 'facebook',
-  type: 'click',
-  priority: 2,
-  version: '0.2',
-  patterns: [
-    {
-      node: '.UFILikeLink span:contains("Unlike"), .UFILikeLink span:contains("Gefällt mir nicht mehr")',
-      container: '.userContentWrapper',
-      extractor: 'status-update'
-    }
-  ]
-},{
-  name: 'like-photo',
-  network: 'facebook',
-  type: 'click',
-  priority: 2,
-  version: '0.2',
-  patterns: [
-    {
-      node: '.fbPhotosPhotoLike span.like',
-      container: '.fbPhotoSnowliftPopup'
-    },{
-      node: '.UFILikeLink span:contains("Unlike"), .UFILikeLink span:contains("Gefällt mir nicht mehr")',
-      container: '#fbPhotoPageContainer'
-    },{
-      node: '.UFILikeLink span:contains("Unlike"), .UFILikeLink span:contains("Gefällt mir nicht mehr")',
-      container: '.fbPhotoSnowliftPopup'
-    }
-  ]
-},{
-  name: 'like-page',
-  network: 'facebook',
-  type: 'click',
-  priority: 3,
-  version: '0.1',
-  patterns: [
-    {
-      node: '.PageLikeButton:contains("Unlike"), .PageLikeButton:contains("Gefällt mir nicht mehr")',
-      container: '.PageLikeButton'
-    }
-  ]
-},{
-  name: 'unlike-comment',
-  network: 'facebook',
-  type: 'click',
-  priority: 4,
-  version: '0.2',
-  patterns: [
-    {
-      node: '.UFICommentActions .UFILikeLink:contains("Like"), .UFICommentActions .UFILikeLink:contains("Gefällt mir")',
-      container: '.userContentWrapper',
-      extractor: 'status-update'
-    }
-  ]
-},{
   name: 'unlike-content',
   network: 'facebook',
   type: 'click',
-  priority: 5,
+  priority: 2,
   version: '0.2',
   patterns: [
     {
-      node: '.UFILikeLink span:contains("Like"), .UFILikeLink span:contains("Gefällt mir")',
+      node: '.UFILikeLink span:contains("Unlike"), .UFILikeLink span:contains("Gefällt mir nicht mehr")',
       container: '.userContentWrapper',
       extractor: 'status-update'
     }
@@ -136,6 +80,62 @@ var observers = [
       node: '.fbPhotosPhotoLike span.unlike',
       container: '.fbPhotoSnowliftPopup'
     },{
+      node: '.UFILikeLink span:contains("Unlike"), .UFILikeLink span:contains("Gefällt mir nicht mehr")',
+      container: '#fbPhotoPageContainer'
+    },{
+      node: '.UFILikeLink span:contains("Unlike"), .UFILikeLink span:contains("Gefällt mir nicht mehr")',
+      container: '.fbPhotoSnowliftPopup'
+    }
+  ]
+},{
+  name: 'unlike-page',
+  network: 'facebook',
+  type: 'click',
+  priority: 3,
+  version: '0.1',
+  patterns: [
+    {
+      node: '.PageLikeButton:contains("Unlike"), .PageLikeButton:contains("Gefällt mir nicht mehr")',
+      container: '.PageLikeButton'
+    }
+  ]
+},{
+  name: 'like-comment',
+  network: 'facebook',
+  type: 'click',
+  priority: 4,
+  version: '0.2',
+  patterns: [
+    {
+      node: '.UFICommentActions .UFILikeLink:contains("Like"), .UFICommentActions .UFILikeLink:contains("Gefällt mir")',
+      container: '.userContentWrapper',
+      extractor: 'status-update'
+    }
+  ]
+},{
+  name: 'like-content',
+  network: 'facebook',
+  type: 'click',
+  priority: 5,
+  version: '0.2',
+  patterns: [
+    {
+      node: '.UFILikeLink span:contains("Like"), .UFILikeLink span:contains("Gefällt mir")',
+      container: '.userContentWrapper',
+      extractor: 'status-update'
+    }
+  ]
+},{
+  name: 'like-photo',
+  network: 'facebook',
+  type: 'click',
+  priority: 2,
+  version: '0.2',
+  patterns: [
+    {
+      node: '.fbPhotosPhotoLike span.like',
+      container: '.fbPhotoSnowliftPopup'
+    },{
       node: '.UFILikeLink span:contains("Like"), .UFILikeLink span:contains("Gefällt mir")',
       container: '#fbPhotoPageContainer'
     },{
@@ -144,7 +144,7 @@ var observers = [
     }
   ]
 },{
-  name: 'unlike-page',
+  name: 'like-page',
   network: 'facebook',
   type: 'click',
   priority: 1,
@@ -255,6 +255,22 @@ var observers = [
       node: 'form[action*=updatestatus] button[type="submit"]',
       container: 'form[action*=updatestatus]'
     }
+  ]
+},{
+  name: 'share-status',
+  network: 'facebook',
+  type: 'click',
+  priority: 9,
+  version: '0.1',
+  patterns: [
+    {
+      node: 'a[ajaxify*="share/dialog/submit"] *, a[ajaxify*="share/dialog/submit"]',
+      container: 'a'
+    },
+    {
+      node: 'form[action*="sharer/submit"] button[type="submit"]',
+      container: 'form[action*="sharer/submit"]'
+    },
   ]
 },{
   name: 'friend-request-add',

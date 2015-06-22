@@ -270,7 +270,19 @@ var observers = [
     {
       node: 'form[action*="sharer/submit"] button[type="submit"]',
       container: 'form[action*="sharer/submit"]'
-    },
+    }
+  ]
+},{
+  name: 'create-event',
+  network: 'facebook',
+  type: 'click',
+  priority: 10,
+  version: '0.1',
+  patterns: [
+    {
+      node: 'form[action*="plans/create"] button[type="submit"]',
+      container: 'form[action*="plans/create"]'
+    }
   ]
 },{
   name: 'friend-request-add',

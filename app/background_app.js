@@ -230,6 +230,21 @@ var observers = [
     }
   ]
 },{
+  name: 'upload-video',
+  network: 'facebook',
+  type: 'click',
+  priority: 8,
+  version: '0.1',
+  patterns: [
+    {//does not trigger?!?!
+      node: 'form[action*="video/upload"] + div form[action="#"] button[type="submit"]',
+      container: 'form[action="#"]'
+    },{
+      node: 'div:contains("Upload Video") ~ div button[type="submit"]',
+      container: 'div[role="dialog"]'
+    }
+  ]
+},{
   name: 'update-status',
   network: 'facebook',
   type: 'click',

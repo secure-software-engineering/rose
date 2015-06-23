@@ -1,6 +1,23 @@
-/** @module crypto */
+/*
+Copyright (C) 2015
+    Felix Epp <work@felixepp.de>
 
-/* Requirements */
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import SystemConfigModel from 'rose/models/system-config';
 
 export default {
@@ -18,29 +35,5 @@ export default {
         var hash = md.digest().toHex();
 
         return hash.slice(0, configs.get('hashLength'));
-    },
-    /**
-     * Verifies the message's claim to authenticity, based on a signature and
-     * a certificate.
-     * @param {String} message - The message whose authenticity shall be verified.
-     * @param {String} signature - The proposed signature of the message.
-     * @param {String} certificate - The certificate with which to verify the signature.
-     * @returns {Boolean}
-     */
-    // verify: function verify(message, signature, certificate) {
-    //     // Initialize an instance of the Signature class
-    //     var sign = new sec.Signature({
-    //         alg:  "SHA1withRSA",
-    //         prov: "cryptojs/jsrsa"
-    //     });
-
-    //     // Load certificate
-    //     sign.initVerifyByCertificatePEM(certificate);
-
-    //     // Load message
-    //     sign.updateString(message);
-
-    //     // Verify and return result
-    //     return sign.verify(signature);
-    // }
+    }
 };

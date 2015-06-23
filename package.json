@@ -7,9 +7,6 @@
     "url": "https://github.com/iamolivinius/gulpicRose"
   },
   "main": "Gulpfile.js",
-  "dependencies": {
-    "gulp": "^3.8.11"
-  },
   "devDependencies": {
     "babel": "^5.4.7",
     "babelify": "^6.1.2",

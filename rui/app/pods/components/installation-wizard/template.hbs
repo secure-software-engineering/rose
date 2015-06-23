@@ -10,8 +10,10 @@
       </h2>
 
       <h4>Study Configuration File</h4>
-      <button class="ui basic button" {{action 'cancelWizard'}}>Cancel</button>
-      <button class="ui primary button">Import</button>
+      <button class="ui basic button left floated" {{action 'cancel'}}>Cancel</button>
+      {{#file-input-button onread="saveConfig"}}
+        Choose File
+      {{/file-input-button}}
     </div>
   </div>
 </div>

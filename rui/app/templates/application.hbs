@@ -1,6 +1,6 @@
 {{#if userSettings.firstRun}}
 
-{{installation-wizard userSettings=userSettings}}
+{{installation-wizard cancel="cancelWizard" onsuccess="saveConfig"}}
 
 {{else}}
 

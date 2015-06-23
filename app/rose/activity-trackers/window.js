@@ -91,16 +91,20 @@ let checkStatus = async function() {
     active = activeTmp;
     await store();
   }
-
-  setTimeout(checkStatus, 1000);
 }
+
+let runLoop = async function() {
+  await checkStatus();
+
+  setTimeout(runLoop, 1000);
+};
 
 let start = function() {
   kango.browser.addEventListener(kango.browser.event.TAB_REMOVED, function(event) {
     checkStatus();
   });
 
-  checkStatus();
+  runLoop();
 };
 
 export default {

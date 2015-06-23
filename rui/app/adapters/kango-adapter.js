@@ -9,7 +9,7 @@ export default DS.Adapter.extend({
     const serializer = store.serializerFor(type.typeKey);
     const recordHash = serializer.serialize(snapshot, { includeId: true });
 
-    return new Ember.RSVP.Promise(function (resolve, reject) {
+    return new Ember.RSVP.Promise(function (resolve) {
       kango.invokeAsyncCallback('localforage.getItem', collectionNamespace, function (list) {
         if (Ember.isEmpty(list)){
           list = [];
@@ -68,7 +68,7 @@ export default DS.Adapter.extend({
             let result = false;
 
             Object.keys(query).forEach(function(key) {
-              result = comment[key] === query[key];
+              result = comment[key] == query[key];
             });
 
             return result;

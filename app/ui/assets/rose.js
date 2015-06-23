@@ -100,7 +100,7 @@ define('rose/adapters/kango-adapter', ['exports', 'ember', 'ember-data'], functi
       var serializer = store.serializerFor(type.typeKey);
       var recordHash = serializer.serialize(snapshot, { includeId: true });
 
-      return new Ember['default'].RSVP.Promise(function (resolve, reject) {
+      return new Ember['default'].RSVP.Promise(function (resolve) {
         kango.invokeAsyncCallback('localforage.getItem', collectionNamespace, function (list) {
           if (Ember['default'].isEmpty(list)) {
             list = [];
@@ -157,7 +157,7 @@ define('rose/adapters/kango-adapter', ['exports', 'ember', 'ember-data'], functi
             var result = false;
 
             Object.keys(query).forEach(function (key) {
-              result = comment[key] === query[key];
+              result = comment[key] == query[key];
             });
 
             return result;
@@ -996,13 +996,17 @@ define('rose/controllers/application', ['exports', 'ember'], function (exports, 
       saveConfig: function saveConfig(data) {
         var _this = this;
 
-        var config = JSON.parse(data);
-        config.id = 0;
+        var payload = JSON.parse(data);
+        payload.id = 0;
 
-        var record = this.store.createRecord('system-config', config);
-
-        record.save().then(function () {
-          _this.send('cancelWizard');
+        this.store.find('system-config', { id: 0 }).then(function (configs) {
+          if (!Ember['default'].isEmpty(configs)) {
+            return configs.get('firstObject').destroyRecord();
+          }
+        }).then(function () {
+          return _this.store.createRecord('system-config', payload).save();
+        }).then(function () {
+          return _this.send('cancelWizard');
         });
       }
     }
@@ -8741,7 +8745,7 @@ define('rose/tests/adapters/kango-adapter.jshint', function () {
 
   module('JSHint - adapters');
   test('adapters/kango-adapter.js should pass jshint', function() { 
-    ok(false, 'adapters/kango-adapter.js should pass jshint.\nadapters/kango-adapter.js: line 12, col 54, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 53, col 43, \'recordArray\' is defined but never used.\nadapters/kango-adapter.js: line 97, col 53, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 108, col 53, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 129, col 51, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 137, col 51, \'reject\' is defined but never used.\n\n6 errors'); 
+    ok(false, 'adapters/kango-adapter.js should pass jshint.\nadapters/kango-adapter.js: line 71, col 39, Expected \'===\' and instead saw \'==\'.\nadapters/kango-adapter.js: line 53, col 43, \'recordArray\' is defined but never used.\nadapters/kango-adapter.js: line 97, col 53, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 108, col 53, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 129, col 51, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 137, col 51, \'reject\' is defined but never used.\n\n6 errors'); 
   });
 
 });

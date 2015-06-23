@@ -9,15 +9,19 @@ export default Ember.Controller.extend({
     },
 
     saveConfig(data) {
-      const config = JSON.parse(data);
-      config.id = 0;
+      const payload = JSON.parse(data);
+      payload.id = 0;
 
-      const record = this.store.createRecord('system-config', config);
-
-      record.save()
+      this.store.find('system-config', { id: 0 })
+        .then((configs) => {
+          if (!Ember.isEmpty(configs)) {
+            return configs.get('firstObject').destroyRecord();
+          }
+        })
         .then(() => {
-          this.send('cancelWizard');
-        });
+          return this.store.createRecord('system-config', payload).save();
+        })
+        .then(() => this.send('cancelWizard'));
     }
   }
 });

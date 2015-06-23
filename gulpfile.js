@@ -112,7 +112,7 @@ gulp.task('kango:build', [
   });
 });
 
-gulp.task('kango:devbuild', [
+gulp.task('kango:chrome', [
   'build:backgroundscript',
   'build:contentscript',
   'build:manifest',
@@ -140,7 +140,11 @@ gulp.task('reload', ['kango:devbuild'], function() {
     .pipe(connect.reload());
 });
 
+gulp.task('build', ['clean:dist', 'clean:tmp'], function() {
+  gulp.start('kango:build');
+});
+
 gulp.task('default', ['clean:dist', 'clean:tmp', 'connect'], function() {
   gulp.start('watch');
-  gulp.start('kango:devbuild');
+  gulp.start('kango:chrome');
 });

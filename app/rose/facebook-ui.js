@@ -60,18 +60,40 @@ export default (function () {
     var options;
     options = {
       debug: true, //remove on production
-      fallbackLng: false,
-      load: 'unspecific',
-      resGetPath: kango.io.getResourceUrl('res/locales/') + '__lng__/__ns__.json'
+      fallbackLng: 'en',
+      load: 'unspecific'
     };
+
     var isLanguageSet = this._settings.get('currentLanguage') !== null || this._settings.get('currentLanguage') !== undefined;
     var isLanguageNotAutoDetect = this._settings.get('currentLanguage') !== 'auto';
     if (isLanguageSet && isLanguageNotAutoDetect) {
       options.lng = this._settings.get('currentLanguage');
     }
-    i18n.init(options, (function translationLoaded(t) {
+    else {
+      options.lng = options.fallbackLng;
+    }
+
+    var loadTranslation = new RSVP.Promise(function(resolve) {
+      var details, resource;
+      resource = 'res/locales/' + options.lng +'/translation.json';
+      details = {
+        url: resource,
+        method: 'GET',
+        async: false,
+        contentType: 'text'
+      };
+      kango.xhr.send(details, function(data) {
+        resolve(data.response);
+      });
+    });
+
+    loadTranslation.then(function(data) {
+      options.resStore = {};
+      options.resStore[options.lng] = {translation: JSON.parse(data)};
+      i18n.init(options);
+
       Handlebars.registerHelper('I18n', function(i18nKey) {
-        var translation = t(i18nKey);
+        var translation = i18n.t(i18nKey);
         return new Handlebars.SafeString(translation);
       });
 
@@ -87,7 +109,7 @@ export default (function () {
         childList: true,
         subtree: true
       });
-    }).bind(this));
+    }.bind(this));
   }
 
   FacebookUI.prototype.injectUI = function() {
@@ -167,11 +189,10 @@ export default (function () {
   FacebookUI.prototype._registerEventHandlers = function() {
 
     // Start commenting
-    $('body').on('click', '.rose.comment', (function(_this) {
-      return function(evt) {
+    $('body').on('click', '.rose.comment', function(evt) {
         // Receive id for content element
         var $container = $(evt.currentTarget).siblings('.userContentWrapper');
-        var extractorResult = ExtractorEngine.extractFieldsFromContainer($container, _this._statusUpdateExtractor);
+        var extractorResult = ExtractorEngine.extractFieldsFromContainer($container, this._statusUpdateExtractor);
         if (extractorResult.contentId === undefined) {
           console.error('Could not obtain contentId!');
           return;
@@ -182,14 +203,14 @@ export default (function () {
         $('.ui.sidebar').sidebar('show');
 
         //Check if comment for this content exists and set form
-        _this._activeComment = undefined;
-        _this._comments.fetch({success: function onCommentsFetched(){
-          _this._activeComment = _this._comments.findWhere({contentId: extractorResult.contentId});
-          if (_this._activeComment !== undefined) {
-            var activeComment = _this._activeComment.toJSON();
+        this._activeComment = undefined;
+        this._comments.fetch({success: function onCommentsFetched(){
+          this._activeComment = this._comments.findWhere({contentId: extractorResult.contentId});
+          if (this._activeComment !== undefined) {
+            var activeComment = this._activeComment.toJSON();
             $('.ui.form textarea').val(activeComment.text);
 
-            if(_this._configs.get('roseCommentsRatingIsEnabled')) {
+            if(this._configs.get('roseCommentsRatingIsEnabled')) {
 
               if (activeComment.rating) {
                 for (var i = 0, len = activeComment.rating.length; i < len;  i++) {
@@ -201,39 +222,35 @@ export default (function () {
               }
             }
           } else {
-            //check is update or create
             if(extractorResult.sharerId === undefined) {
-              _this._activeComment = _this._comments.create({contentId: extractorResult.contentId, createdAt: (new Date()).toJSON()});
+              this._activeComment = this._comments.create({contentId: extractorResult.contentId, createdAt: (new Date()).toJSON()});
             }
             else {
-              _this._activeComment = _this._comments.create({contentId: extractorResult.contentId, sharerId: extractorResult.sharerId, createdAt: (new Date()).toJSON()});
+              this._activeComment = this._comments.create({contentId: extractorResult.contentId, sharerId: extractorResult.sharerId, createdAt: (new Date()).toJSON()});
             }
             $('.ui.form textarea').val('');
-            if(_this._configs.get('roseCommentsRatingIsEnabled')) {
+            if(this._configs.get('roseCommentsRatingIsEnabled')) {
               $('.ui.rating').rating('set rating', 0);
             }
           }
         }});
 
-      };
-    })(this));
+    }.bind(this));
 
     //Save a comment
-    $('body').on('click', '.sidebar .save.button', (function(_this) {
-      return function() {
+    $('body').on('click', '.sidebar .save.button', function() {
         var comment = {};
         comment.text = $('.sidebar textarea').val() || '';
-        if(_this._configs.get('roseCommentsRatingIsEnabled')) {
+        if(this._configs.get('roseCommentsRatingIsEnabled')) {
           comment.rating = $('.ui.rating').rating('get rating') || [0,0];
         }
         comment.network = 'facebook';
         comment.updatedAt = (new Date()).toJSON();
-        _this._activeComment.set(comment);
-        _this._activeComment.save();
+        this._activeComment.set(comment);
+        this._activeComment.save();
         $('.ui.sidebar').sidebar('hide');
         $('.ui.sidebar.uncover').sidebar('hide');
-      };
-    })(this));
+    }.bind(this));
 
   };
 

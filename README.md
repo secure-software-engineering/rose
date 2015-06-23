@@ -1,4 +1,3 @@
-
 [![devDependency Status](https://david-dm.org/secure-software-engineering/rose/dev-status.svg)](https://david-dm.org/secure-software-engineering/rose#info=devDependencies)
 
 Synopsis

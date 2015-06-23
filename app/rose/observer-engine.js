@@ -31,7 +31,9 @@ var extractorEngine;
  * @param {object} observer - the corresponding observer model
  * @param {object} data - The interaction's data.
  */
-function storeInteraction(observer, data = {}) {
+function storeInteraction(observer, extracts = {}) {
+
+  var data = {};
 
   // Time
   data.createdAt = (new Date()).toJSON();
@@ -42,6 +44,10 @@ function storeInteraction(observer, data = {}) {
     network: observer.get('network'),
     version:  observer.get('version')
   };
+
+  if (extracts !== {}) {
+    data.origin.target = extracts;
+  }
 
   // Logging interaction
   log('ObserverEngine', 'New interaction: ' + JSON.stringify(data));

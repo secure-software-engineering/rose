@@ -35,7 +35,7 @@ An example for a skeleton of an observer is:
 
 Each observer can hold multiple patterns to classify interactions by the following fields:
 
-* `patterns`: Array. The `patterns` field is an array containing elements of the structure provided below. The `pattern` field contains a `node`, which is selector to identify a pattern and a `container`, which shall be retrieved for identification. Optional an `extractor` can be specified to extract data from the `container`. It has to be a name from the extractors available to the system.
+* `patterns`: Array. The `patterns` field is an array containing elements of the structure provided below. The `pattern` field contains a `node`, which is a selector to identify a pattern and a `container`, which shall be retrieved for identification. Optional an `extractor` can be specified to extract data from the `container`. It has to be a reference to an extractor available to the system.
 
 Pattern structure:
 
@@ -45,8 +45,31 @@ Pattern structure:
       extractor: 'StatusUpdate'
     }
 
+## Storage
+
+Does an observer match, this user interaction is save to storage. An `interaction` has meta data like a creation date and a storage id. The results are stored in the `origin` object with observer name, network and version. Extracts are included in an `target` object.
+
+```
+    {
+        createdAt: "2015-06-23T11:53:17.251Z"
+        id: "e9f067d6-6250-3af1-549a-8663e7d0a058"
+        origin: {
+            network: "facebook",
+            observer: "like-content",
+            version: "0.2"
+            target: {
+                sharerId: "2d7a10ae",
+                contentId: "1e2148b3"
+            }
+        }
+    }
+```
 
 ## Changelog
+
+2015-06-23 Felix A. Epp <work@felixepp.de>
+
+* Storage definition
 
 2015-05-26 Felix A. Epp <work@felixepp.de>
 

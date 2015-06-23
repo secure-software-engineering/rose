@@ -149,6 +149,8 @@ export default {
     autoUpdate: "Automatically Update Observers from Repository",
     autoUpdateDesc: "Whats the purpose of this settings?",
     exportConfig: "Export Configuration",
-    exportConfigDesc: "Export configuration to file"
+    exportConfigDesc: "Export configuration to file",
+    fingerprint: "Fingerprint",
+    fingerprintDesc: "Whats the purpose of this settings?"
   }
 };

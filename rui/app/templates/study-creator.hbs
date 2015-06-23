@@ -52,11 +52,25 @@
     <p>{{t "studyCreator.repositoryUrlDesc"}}</p>
 
     <div class="ui action input">
-      {{input type="text" value=model.repositoryUrl insert-newline="fetchBaseFile"}}
+      {{input type="text"
+              value=model.repositoryUrl
+              insert-newline="fetchBaseFile"}}
 
       <button class="ui icon button {{if baseFileIsLoading "loading"}}" {{action "fetchBaseFile"}}>
         <i class="search icon"></i>
       </button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>{{t "studyCreator.fingerprint"}}</label>
+    <p>{{t "studyCreator.fingerprintDesc"}}</p>
+
+    <div class="ui input">
+      {{input type="text"
+              value=model.fingerprint
+              insert-newline="saveSettings"
+              focus-out="saveSettings"}}
     </div>
   </div>
 

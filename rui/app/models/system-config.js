@@ -6,5 +6,6 @@ export default DS.Model.extend({
   roseCommentsRatingIsEnabled: DS.attr('boolean'),
   salt: DS.attr('string'),
   hashLength: DS.attr('number'),
-  repositoryURL: DS.attr('string')
+  repositoryURL: DS.attr('string'),
+  fingerprint: DS.attr('string')
 });

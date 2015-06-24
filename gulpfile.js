@@ -135,7 +135,7 @@ gulp.task('watch', function() {
   return gulp.watch(ENV.app + '/**/*', ['reload']);
 });
 
-gulp.task('reload', ['kango:devbuild'], function() {
+gulp.task('reload', ['kango:chrome'], function() {
   return gulp.src(ENV.app + '/**/*')
     .pipe(connect.reload());
 });

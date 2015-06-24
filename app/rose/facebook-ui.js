@@ -146,7 +146,7 @@ export default (function () {
       else {
         $('.ui.rating').remove();
       }
-    });
+    }.bind(this));
   };
 
   FacebookUI.prototype._injectCommentRibbon = function() {
@@ -233,7 +233,7 @@ export default (function () {
               $('.ui.rating').rating('set rating', 0);
             }
           }
-        }});
+        }.bind(this)});
 
     }.bind(this));
 

@@ -153,7 +153,7 @@ export default (function () {
     this._getTemplate('commentLabel').then(function(source) {
       return Handlebars.compile(source);
     }).then(function(template) {
-      $('.userContentWrapper').not($('.rose.comment + .userContentWrapper')).before(template());
+      $('.userContentWrapper').not('.rose.comment + .userContentWrapper').not($('.userContentWrapper').has('div > .userContentWrapper')).before(template());
     });
   };
 

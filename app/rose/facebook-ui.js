@@ -208,7 +208,11 @@ export default (function () {
           this._activeComment = this._comments.findWhere({contentId: extractorResult.contentId});
           if (this._activeComment !== undefined) {
             var activeComment = this._activeComment.toJSON();
-            $('.ui.form textarea').val(activeComment.text);
+            if (activeComment.text !== undefined) {
+              for (var i = 0; i < activeComment.text.length; i++) {
+                $('.sidebar textarea:eq(' + i + ')').val(activeComment.text[i]);
+              }
+            }
 
             if(this._configs.get('roseCommentsRatingIsEnabled')) {
 
@@ -228,7 +232,7 @@ export default (function () {
             else {
               this._activeComment = this._comments.create({contentId: extractorResult.contentId, sharerId: extractorResult.sharerId, createdAt: (new Date()).toJSON()});
             }
-            $('.ui.form textarea').val('');
+            $('.sidebar textarea').val('');
             if(this._configs.get('roseCommentsRatingIsEnabled')) {
               $('.ui.rating').rating('set rating', 0);
             }
@@ -240,9 +244,12 @@ export default (function () {
     //Save a comment
     $('body').on('click', '.sidebar .save.button', function() {
         var comment = {};
-        comment.text = $('.sidebar textarea').val() || '';
+        comment.text = [];
+        $('.sidebar textarea').each(function getVals(i) {
+          comment.text[i] = $(this).val();
+        });
         if(this._configs.get('roseCommentsRatingIsEnabled')) {
-          comment.rating = $('.ui.rating').rating('get rating') || [0,0];
+          comment.rating = $('.ui.rating').rating('get rating') || [];
         }
         comment.network = 'facebook';
         comment.updatedAt = (new Date()).toJSON();

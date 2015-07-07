@@ -28,7 +28,8 @@ let model = Backbone.Model.extend({
     roseCommentsRatingIsEnabled: true,
     salt: 'ROSE',
     hashLength: 8,
-    repositoryURL: 'https://secure-software-engineering.github.io/rose/test/base.json'
+    repositoryURL: 'https://secure-software-engineering.github.io/rose/test/base.json',
+    fingerprint: '25E7 69C6 97EC 2C20 DA3B DDE9 F188 CF17 0FA2 34E8'
   }
 });
 

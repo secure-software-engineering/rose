@@ -1,14 +1,13 @@
 {
   "name": "rose-demo-repository",
   "url": "https://secure-software-engineering.github.io/rose/example/",
+  "timestamp": 1436534468581,
   "networks": [{
     "id": 1,
     "name": "Facebook",
     "namespace": "facebook",
-    "observers": [
-      "facebook/like-content.json",
-      "facebook/profile-view.json"
-    ]
+    "observers": "facebook/facebook-observers.json",
+    "extractors": "facebook/facebook-extractors.json"
   }, {
     "id": 2,
     "name": "Google+",

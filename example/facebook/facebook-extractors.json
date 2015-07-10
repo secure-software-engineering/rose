@@ -1,0 +1,84 @@
+[
+    {
+        "name": "status-update",
+        "fields": [
+            {
+                "name": "sharerId",
+                "selector": "> div > a",
+                "attr": "href",
+                "match": ".+profile\\\\.php\\\\?id=\\\\d+(?=\\\\&)|.+(?=\\\\?)|.+",
+                "hash": true
+            },
+            {
+                "name": "contentId",
+                "selector": "> div.clearfix > div > div > div > div > div > span > span > a:first-child",
+                "match": ".+(?=\\\\?)|.+",
+                "attr": "href",
+                "hash": true
+            }
+        ]
+    },
+    {
+        "name": "user-link",
+        "fields": [
+            {
+                "name": "userId",
+                "attr": "href",
+                "match": ".+profile\\\\.php\\\\?id=\\\\d+(?=\\\\&)|.+(?=\\\\?)|.+",
+                "hash": true
+            }
+        ]
+    },
+    {
+        "name": "chat-user-link",
+        "fields": [
+            {
+                "name": "userId",
+                "selector": "h4.titlebarTextWrapper > a.titlebarText, #webMessengerHeaderName a",
+                "attr": "href",
+                "match": ".+profile\\\\.php\\\\?id=\\\\d+(?=\\\\&)|.+(?=\\\\?)|.+",
+                "hash": true
+            }
+        ]
+    },
+    {
+        "name": "privacy-settings",
+        "network": "facebook",
+        "type": "url",
+        "informationUrl": "https://www.facebook.com/settings/?tab=privacy",
+        "interval": 5000,
+        "container": ".fbSettingsSections",
+        "fields": [
+            {
+                "name": "viewFuturePosts",
+                "attr": "content",
+                "selector": ".fbSettingsSectionsItem:nth-child(1) .fbSettingsListItem:nth-child(1) .fbSettingsListItemContent > div:last-child"
+            },
+            {
+                "name": "sendFriendRequests",
+                "attr": "content",
+                "selector": ".fbSettingsSectionsItem:nth-child(2) .fbSettingsListItem:nth-child(1) .fbSettingsListItemContent > div:last-child"
+            },
+            {
+                "name": "MessageFilter",
+                "attr": "content",
+                "selector": ".fbSettingsSectionsItem:nth-child(2) .fbSettingsListItem:nth-child(2) .fbSettingsListItemContent > div:last-child"
+            },
+            {
+                "name": "EMailLookup",
+                "attr": "content",
+                "selector": ".fbSettingsSectionsItem:nth-child(3) .fbSettingsListItem:nth-child(1) .fbSettingsListItemContent > div:last-child"
+            },
+            {
+                "name": "PhonenumberLookup",
+                "attr": "content",
+                "selector": ".fbSettingsSectionsItem:nth-child(3) .fbSettingsListItem:nth-child(2) .fbSettingsListItemContent > div:last-child"
+            },
+            {
+                "name": "SearchEngines",
+                "attr": "content",
+                "selector": ".fbSettingsSectionsItem:nth-child(3) .fbSettingsListItem:nth-child(3) .fbSettingsListItemContent > div:last-child"
+            }
+        ]
+    }
+]

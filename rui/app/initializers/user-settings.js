@@ -14,6 +14,7 @@ export function initialize(container, application) {
       }
       container.register('userSettings:main', config, { instantiate: false, singleton: true });
       container.injection('controller', 'userSettings', 'userSettings:main');
+      container.injection('route', 'userSettings', 'userSettings:main');
 
       Ember.set(application, 'locale', config.get('currentLanguage'));
 

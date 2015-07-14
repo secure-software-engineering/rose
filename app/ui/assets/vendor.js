@@ -60025,12 +60025,13 @@ define("ember/resolver",
     };
   }
 
-  if (!(Object.create && !Object.create(null).hasOwnProperty)) {
+  var create = (Object.create || Ember.create);
+  if (!(create && !create(null).hasOwnProperty)) {
     throw new Error("This browser does not support Object.create(null), please polyfil with es5-sham: http://git.io/yBU2rg");
   }
 
   function makeDictionary() {
-    var cache = Ember.create(null);
+    var cache = create(null);
     cache['_dict'] = null;
     delete cache['_dict'];
     return cache;
@@ -60321,7 +60322,7 @@ define("ember/resolver",
 
     knownForType: function(type) {
       var moduleEntries = requirejs.entries;
-      var moduleKeys = Ember.keys(moduleEntries);
+      var moduleKeys = (Object.keys || Ember.keys)(moduleEntries);
 
       var items = makeDictionary();
       for (var index = 0, length = moduleKeys.length; index < length; index++) {
@@ -73830,7 +73831,7 @@ define("ember/load-initializers",
 
 ;/*!
     localForage -- Offline Storage, Improved
-    Version 1.2.3
+    Version 1.2.4
     https://mozilla.github.io/localForage
     (c) 2013-2015 Mozilla, Apache License 2.0
 */
@@ -74525,6 +74526,9 @@ requireModule('promise/polyfill').polyfill();
     // verbose ways of binary <-> string data storage.
     var BASE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
+    var BLOB_TYPE_PREFIX = '~~local_forage_type~';
+    var BLOB_TYPE_PREFIX_REGEX = /^~~local_forage_type~([^~]+)~/;
+
     var SERIALIZED_MARKER = '__lfsc__:';
     var SERIALIZED_MARKER_LENGTH = SERIALIZED_MARKER.length;
 
@@ -74542,6 +74546,37 @@ requireModule('promise/polyfill').polyfill();
     var TYPE_FLOAT64ARRAY = 'fl64';
     var TYPE_SERIALIZED_MARKER_LENGTH = SERIALIZED_MARKER_LENGTH +
                                         TYPE_ARRAYBUFFER.length;
+
+    // Get out of our habit of using `window` inline, at least.
+    var globalObject = this;
+
+    // Abstracts constructing a Blob object, so it also works in older
+    // browsers that don't support the native Blob constructor. (i.e.
+    // old QtWebKit versions, at least).
+    function _createBlob(parts, properties) {
+        parts = parts || [];
+        properties = properties || {};
+
+        try {
+            return new Blob(parts, properties);
+        } catch (err) {
+            if (err.name !== 'TypeError') {
+                throw err;
+            }
+
+            var BlobBuilder = globalObject.BlobBuilder ||
+                              globalObject.MSBlobBuilder ||
+                              globalObject.MozBlobBuilder ||
+                              globalObject.WebKitBlobBuilder;
+
+            var builder = new BlobBuilder();
+            for (var i = 0; i < parts.length; i += 1) {
+                builder.append(parts[i]);
+            }
+
+            return builder.getBlob(properties.type);
+        }
+    }
 
     // Serialize a value, afterwards executing a callback (which usually
     // instructs the `setItem()` callback/promise to be executed). This is how
@@ -74599,7 +74634,9 @@ requireModule('promise/polyfill').polyfill();
             var fileReader = new FileReader();
 
             fileReader.onload = function() {
-                var str = bufferToString(this.result);
+                // Backwards-compatible prefix for the blob type.
+                var str = BLOB_TYPE_PREFIX + value.type + '~' +
+                    bufferToString(this.result);
 
                 callback(SERIALIZED_MARKER + TYPE_BLOB + str);
             };
@@ -74609,8 +74646,8 @@ requireModule('promise/polyfill').polyfill();
             try {
                 callback(JSON.stringify(value));
             } catch (e) {
-                window.console.error("Couldn't convert value into a JSON " +
-                                     'string: ', value);
+                console.error("Couldn't convert value into a JSON string: ",
+                              value);
 
                 callback(null, e);
             }
@@ -74641,6 +74678,14 @@ requireModule('promise/polyfill').polyfill();
         var type = value.substring(SERIALIZED_MARKER_LENGTH,
                                    TYPE_SERIALIZED_MARKER_LENGTH);
 
+        var blobType;
+        // Backwards-compatible blob type serialization strategy.
+        // DBs created with older versions of localForage will simply not have the blob type.
+        if (type === TYPE_BLOB && BLOB_TYPE_PREFIX_REGEX.test(serializedString)) {
+            var matcher = serializedString.match(BLOB_TYPE_PREFIX_REGEX);
+            blobType = matcher[1];
+            serializedString = serializedString.substring(matcher[0].length);
+        }
         var buffer = stringToBuffer(serializedString);
 
         // Return the right type based on the code/type set during
@@ -74649,7 +74694,7 @@ requireModule('promise/polyfill').polyfill();
             case TYPE_ARRAYBUFFER:
                 return buffer;
             case TYPE_BLOB:
-                return new Blob([buffer]);
+                return _createBlob([buffer], {type: blobType});
             case TYPE_INT8ARRAY:
                 return new Int8Array(buffer);
             case TYPE_UINT8ARRAY:
@@ -74768,6 +74813,159 @@ requireModule('promise/polyfill').polyfill();
         return;
     }
 
+    var DETECT_BLOB_SUPPORT_STORE = 'local-forage-detect-blob-support';
+    var supportsBlobs;
+
+    // Abstracts constructing a Blob object, so it also works in older
+    // browsers that don't support the native Blob constructor. (i.e.
+    // old QtWebKit versions, at least).
+    function _createBlob(parts, properties) {
+        parts = parts || [];
+        properties = properties || {};
+        try {
+            return new Blob(parts, properties);
+        } catch (e) {
+            if (e.name !== 'TypeError') {
+                throw e;
+            }
+            var BlobBuilder = window.BlobBuilder ||
+                window.MSBlobBuilder ||
+                window.MozBlobBuilder ||
+                window.WebKitBlobBuilder;
+            var builder = new BlobBuilder();
+            for (var i = 0; i < parts.length; i += 1) {
+                builder.append(parts[i]);
+            }
+            return builder.getBlob(properties.type);
+        }
+    }
+
+    // Transform a binary string to an array buffer, because otherwise
+    // weird stuff happens when you try to work with the binary string directly.
+    // It is known.
+    // From http://stackoverflow.com/questions/14967647/ (continues on next line)
+    // encode-decode-image-with-base64-breaks-image (2013-04-21)
+    function _binStringToArrayBuffer(bin) {
+        var length = bin.length;
+        var buf = new ArrayBuffer(length);
+        var arr = new Uint8Array(buf);
+        for (var i = 0; i < length; i++) {
+            arr[i] = bin.charCodeAt(i);
+        }
+        return buf;
+    }
+
+    // Fetch a blob using ajax. This reveals bugs in Chrome < 43.
+    // For details on all this junk:
+    // https://github.com/nolanlawson/state-of-binary-data-in-the-browser#readme
+    function _blobAjax(url) {
+        return new Promise(function(resolve, reject) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url);
+            xhr.withCredentials = true;
+            xhr.responseType = 'arraybuffer';
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState !== 4) {
+                    return;
+                }
+                if (xhr.status === 200) {
+                    return resolve({
+                        response: xhr.response,
+                        type: xhr.getResponseHeader('Content-Type')
+                    });
+                }
+                reject({status: xhr.status, response: xhr.response});
+            };
+            xhr.send();
+        });
+    }
+
+    //
+    // Detect blob support. Chrome didn't support it until version 38.
+    // In version 37 they had a broken version where PNGs (and possibly
+    // other binary types) aren't stored correctly, because when you fetch
+    // them, the content type is always null.
+    //
+    // Furthermore, they have some outstanding bugs where blobs occasionally
+    // are read by FileReader as null, or by ajax as 404s.
+    //
+    // Sadly we use the 404 bug to detect the FileReader bug, so if they
+    // get fixed independently and released in different versions of Chrome,
+    // then the bug could come back. So it's worthwhile to watch these issues:
+    // 404 bug: https://code.google.com/p/chromium/issues/detail?id=447916
+    // FileReader bug: https://code.google.com/p/chromium/issues/detail?id=447836
+    //
+    function _checkBlobSupportWithoutCaching(idb) {
+        return new Promise(function(resolve, reject) {
+            var blob = _createBlob([''], {type: 'image/png'});
+            var txn = idb.transaction([DETECT_BLOB_SUPPORT_STORE], 'readwrite');
+            txn.objectStore(DETECT_BLOB_SUPPORT_STORE).put(blob, 'key');
+            txn.oncomplete = function() {
+                // have to do it in a separate transaction, else the correct
+                // content type is always returned
+                var blobTxn = idb.transaction([DETECT_BLOB_SUPPORT_STORE],
+                    'readwrite');
+                var getBlobReq = blobTxn.objectStore(
+                    DETECT_BLOB_SUPPORT_STORE).get('key');
+                getBlobReq.onerror = reject;
+                getBlobReq.onsuccess = function(e) {
+
+                    var storedBlob = e.target.result;
+                    var url = URL.createObjectURL(storedBlob);
+
+                    _blobAjax(url).then(function(res) {
+                        resolve(!!(res && res.type === 'image/png'));
+                    }, function() {
+                        resolve(false);
+                    }).then(function() {
+                        URL.revokeObjectURL(url);
+                    });
+                };
+            };
+        })["catch"](function() {
+            return false; // error, so assume unsupported
+        });
+    }
+
+    function _checkBlobSupport(idb) {
+        if (typeof supportsBlobs === 'boolean') {
+            return Promise.resolve(supportsBlobs);
+        }
+        return _checkBlobSupportWithoutCaching(idb).then(function(value) {
+            supportsBlobs = value;
+            return supportsBlobs;
+        });
+    }
+
+    // encode a blob for indexeddb engines that don't support blobs
+    function _encodeBlob(blob) {
+        return new Promise(function(resolve, reject) {
+            var reader = new FileReader();
+            reader.onerror = reject;
+            reader.onloadend = function(e) {
+                var base64 = btoa(e.target.result || '');
+                resolve({
+                    __local_forage_encoded_blob: true,
+                    data: base64,
+                    type: blob.type
+                });
+            };
+            reader.readAsBinaryString(blob);
+        });
+    }
+
+    // decode an encoded blob
+    function _decodeBlob(encodedBlob) {
+        var arrayBuff = _binStringToArrayBuffer(atob(encodedBlob.data));
+        return _createBlob([arrayBuff], { type: encodedBlob.type});
+    }
+
+    // is this one of our fancy encoded blobs?
+    function _isEncodedBlob(value) {
+        return value && value.__local_forage_encoded_blob;
+    }
+
     // Open the IndexedDB database (automatically creates one if one didn't
     // previously exist), using any options set in the config.
     function _initStorage(options) {
@@ -74787,9 +74985,13 @@ requireModule('promise/polyfill').polyfill();
             openreq.onerror = function() {
                 reject(openreq.error);
             };
-            openreq.onupgradeneeded = function() {
+            openreq.onupgradeneeded = function(e) {
                 // First time setup: create an empty object store
                 openreq.result.createObjectStore(dbInfo.storeName);
+                if (e.oldVersion <= 1) {
+                    // added when support for blob shims was added
+                    openreq.result.createObjectStore(DETECT_BLOB_SUPPORT_STORE);
+                }
             };
             openreq.onsuccess = function() {
                 dbInfo.db = openreq.result;
@@ -74821,7 +75023,9 @@ requireModule('promise/polyfill').polyfill();
                     if (value === undefined) {
                         value = null;
                     }
-
+                    if (_isEncodedBlob(value)) {
+                        value = _decodeBlob(value);
+                    }
                     resolve(value);
                 };
 
@@ -74852,7 +75056,11 @@ requireModule('promise/polyfill').polyfill();
                     var cursor = req.result;
 
                     if (cursor) {
-                        var result = iterator(cursor.value, cursor.key, iterationNumber++);
+                        var value = cursor.value;
+                        if (_isEncodedBlob(value)) {
+                            value = _decodeBlob(value);
+                        }
+                        var result = iterator(value, cursor.key, iterationNumber++);
 
                         if (result !== void(0)) {
                             resolve(result);
@@ -74886,8 +75094,16 @@ requireModule('promise/polyfill').polyfill();
         }
 
         var promise = new Promise(function(resolve, reject) {
+            var dbInfo;
             self.ready().then(function() {
-                var dbInfo = self._dbInfo;
+                dbInfo = self._dbInfo;
+                return _checkBlobSupport(dbInfo.db);
+            }).then(function(blobSupport) {
+                if (!blobSupport && value instanceof Blob) {
+                    return _encodeBlob(value);
+                }
+                return value;
+            }).then(function(value) {
                 var transaction = dbInfo.db.transaction(dbInfo.storeName, 'readwrite');
                 var store = transaction.objectStore(dbInfo.storeName);
 
@@ -75886,7 +76102,8 @@ requireModule('promise/polyfill').polyfill();
     'use strict';
 
     // Promises!
-    var Promise = (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') ?
+    var Promise = (typeof module !== 'undefined' && module.exports &&
+                   typeof require !== 'undefined') ?
                   require('promise') : this.Promise;
 
     // Custom drivers are stored here when `defineDriver()` is called.
@@ -101218,11 +101435,7 @@ var saveAs = saveAs || (function(view) {
 		, save_link = doc.createElementNS("http://www.w3.org/1999/xhtml", "a")
 		, can_use_save_link = "download" in save_link
 		, click = function(node) {
-			var event = doc.createEvent("MouseEvents");
-			event.initMouseEvent(
-				"click", true, false, view, 0, 0, 0, 0, 0
-				, false, false, false, false, 0, null
-			);
+			var event = new MouseEvent("click");
 			node.dispatchEvent(event);
 		}
 		, webkit_req_fs = view.webkitRequestFileSystem
@@ -101322,10 +101535,12 @@ var saveAs = saveAs || (function(view) {
 				object_url = get_URL().createObjectURL(blob);
 				save_link.href = object_url;
 				save_link.download = name;
-				click(save_link);
-				filesaver.readyState = filesaver.DONE;
-				dispatch_all();
-				revoke(object_url);
+				setTimeout(function() {
+					click(save_link);
+					dispatch_all();
+					revoke(object_url);
+					filesaver.readyState = filesaver.DONE;
+				});
 				return;
 			}
 			// Object and web filesystem URLs have a problem saving in Google Chrome when
@@ -101442,6 +101657,7 @@ if (typeof module !== "undefined" && module.exports) {
     return saveAs;
   });
 }
+
 ;// ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
 

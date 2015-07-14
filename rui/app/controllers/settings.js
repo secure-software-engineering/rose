@@ -18,9 +18,8 @@ export default Ember.Controller.extend({
       this.get('userSettings').save();
     },
 
-    resetRose() {
-      this.set('userSettings.firstRun', true);
-      this.get('userSettings').save();
+    confirm() {
+      this.send('openModal', 'modal/confirm-reset');
     }
   }
 });

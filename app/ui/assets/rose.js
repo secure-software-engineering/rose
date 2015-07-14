@@ -1104,9 +1104,8 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
         this.get('userSettings').save();
       },
 
-      resetRose: function resetRose() {
-        this.set('userSettings.firstRun', true);
-        this.get('userSettings').save();
+      confirm: function confirm() {
+        this.send('openModal', 'modal/confirm-reset');
       }
     }
   });
@@ -1424,6 +1423,7 @@ define('rose/initializers/user-settings', ['exports', 'ember'], function (export
         }
         container.register('userSettings:main', config, { instantiate: false, singleton: true });
         container.injection('controller', 'userSettings', 'userSettings:main');
+        container.injection('route', 'userSettings', 'userSettings:main');
 
         Ember['default'].set(application, 'locale', config.get('currentLanguage'));
 
@@ -3751,11 +3751,22 @@ define('rose/routes/about', ['exports', 'ember'], function (exports, Ember) {
 	exports['default'] = Ember['default'].Route.extend({});
 
 });
-define('rose/routes/application', ['exports', 'ember'], function (exports, Ember) {
+define('rose/routes/application', ['exports', 'ember', 'semantic-ui-ember/mixins/application-route'], function (exports, Ember, SemanticRouteMixin) {
 
-	'use strict';
+  'use strict';
 
-	exports['default'] = Ember['default'].Route.extend({});
+  exports['default'] = Ember['default'].Route.extend(SemanticRouteMixin['default'], {
+    actions: {
+      resetRose: function resetRose() {
+        var _this = this;
+
+        this.set('userSettings.firstRun', true);
+        this.get('userSettings').save().then(function () {
+          return _this.transitionTo('index');
+        });
+      }
+    }
+  });
 
 });
 define('rose/routes/backup', ['exports', 'ember'], function (exports, Ember) {
@@ -4176,6 +4187,10 @@ define('rose/templates/application', ['exports'], function (exports) {
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n\n");
           dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n");
+          dom.appendChild(el0, el1);
           return el0;
         },
         render: function render(context, env, contextualElement) {
@@ -4201,8 +4216,10 @@ define('rose/templates/application', ['exports'], function (exports) {
           var element0 = dom.childAt(fragment, [1]);
           var morph0 = dom.createMorphAt(dom.childAt(element0, [1]),1,1);
           var morph1 = dom.createMorphAt(dom.childAt(element0, [3, 1]),1,1);
+          var morph2 = dom.createMorphAt(fragment,3,3,contextualElement);
           inline(env, morph0, context, "render", ["sidebar-menu"], {});
           content(env, morph1, context, "outlet");
+          inline(env, morph2, context, "outlet", ["modal"], {});
           return fragment;
         }
       };
@@ -7053,6 +7070,94 @@ define('rose/templates/interactions', ['exports'], function (exports) {
   }()));
 
 });
+define('rose/templates/modal/confirm-reset', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    return {
+      isHTMLBars: true,
+      revision: "Ember@1.11.3",
+      blockParams: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      build: function build(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("i");
+        dom.setAttribute(el1,"class","close icon");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"class","header");
+        var el2 = dom.createTextNode("\n  Are u sure you want to reset all settings?\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"class","content");
+        var el2 = dom.createTextNode("\n  Content\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"class","actions");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","ui black button");
+        var el3 = dom.createTextNode("\n    Cancel\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","ui positive right labeled icon button");
+        var el3 = dom.createTextNode("\n    Ok\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("i");
+        dom.setAttribute(el3,"class","checkmark icon");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      render: function render(context, env, contextualElement) {
+        var dom = env.dom;
+        var hooks = env.hooks, element = hooks.element;
+        dom.detectNamespace(contextualElement);
+        var fragment;
+        if (env.useFragmentCache && dom.canClone) {
+          if (this.cachedFragment === null) {
+            fragment = this.build(dom);
+            if (this.hasRendered) {
+              this.cachedFragment = fragment;
+            } else {
+              this.hasRendered = true;
+            }
+          }
+          if (this.cachedFragment) {
+            fragment = dom.cloneNode(this.cachedFragment, true);
+          }
+        } else {
+          fragment = this.build(dom);
+        }
+        var element0 = dom.childAt(fragment, [6, 3]);
+        element(env, element0, context, "action", ["resetRose"], {});
+        return fragment;
+      }
+    };
+  }()));
+
+});
 define('rose/templates/privacysettings', ['exports'], function (exports) {
 
   'use strict';
@@ -7321,7 +7426,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
         inline(env, morph6, context, "t", ["settings.extraFeatures"], {});
         inline(env, morph7, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.developerModeIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "userSettings.developerModeIsEnabled")], {}), "action": "saveSettings"});
         inline(env, morph8, context, "t", ["settings.resetRose"], {});
-        element(env, element6, context, "action", ["resetRose"], {});
+        element(env, element6, context, "action", ["confirm"], {});
         return fragment;
       }
     };
@@ -10458,7 +10563,7 @@ define('rose/transitions/cross-fade', ['exports', 'liquid-fire'], function (expo
   exports['default'] = crossFade;
   // BEGIN-SNIPPET cross-fade-definition
   function crossFade() {
-    var opts = arguments[0] === undefined ? {} : arguments[0];
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
     liquid_fire.stop(this.oldElement);
     return liquid_fire.Promise.all([liquid_fire.animate(this.oldElement, { opacity: 0 }, opts), liquid_fire.animate(this.newElement, { opacity: [opts.maxOpacity || 1, 0] }, opts)]);
@@ -10653,7 +10758,7 @@ define('rose/transitions/fade', ['exports', 'liquid-fire'], function (exports, l
   function fade() {
     var _this = this;
 
-    var opts = arguments[0] === undefined ? {} : arguments[0];
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
     var firstStep;
     var outOpts = opts;
@@ -10713,7 +10818,7 @@ define('rose/transitions/fly-to', ['exports', 'liquid-fire'], function (exports,
   function flyTo() {
     var _this = this;
 
-    var opts = arguments[0] === undefined ? {} : arguments[0];
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
     if (!this.newElement) {
       return liquid_fire.Promise.resolve();
@@ -10814,7 +10919,7 @@ define('rose/transitions/scale', ['exports', 'liquid-fire'], function (exports, 
   function scale() {
     var _this = this;
 
-    var opts = arguments[0] === undefined ? {} : arguments[0];
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
     return liquid_fire.animate(this.oldElement, { scale: [0.2, 1] }, opts).then(function () {
       return liquid_fire.animate(_this.newElement, { scale: [1, 0.2] }, opts);
@@ -10926,7 +11031,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.956fbf29"});
+  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.c7a576d3"});
 }
 
 /* jshint ignore:end */

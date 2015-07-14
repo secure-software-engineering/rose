@@ -54,6 +54,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     float: right;
 }
 
+.ui.form textarea, .ui textarea {
+    height: 5em;
+    min-height: 5em;
+}
+
 .rose.comment {
     margin: -5px 0 5px 0 !important;
     opacity: 0.25;

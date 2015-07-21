@@ -1,0 +1,30 @@
+{
+    "roseCommentsIsEnabled": true,
+    "roseCommentsRatingIsEnabled": true,
+    "salt": "ROSE",
+    "hashLength": 8,
+    "repositoryUrl": "http://secure-software-engineering.github.io/rose/example/base.json",
+    "autoUpdateIsEnabled": true,
+    "fileName": "rose-default-configuration.json",
+    "fingerprint": "25E769C697EC2C20DA3BDDE9F188CF170FA234E8",
+    "networks": [
+        {
+            "id": "1",
+            "name": "Facebook",
+            "namespace": "facebook",
+            "isEnabled": true
+        },
+        {
+            "id": "2",
+            "name": "Google+",
+            "namespace": "google",
+            "isEnabled": false
+        },
+        {
+            "id": "3",
+            "name": "Twitter",
+            "namespace": "twitter",
+            "isEnabled": false
+        }
+    ]
+}

@@ -43,6 +43,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     font-style: normal;
 
 }
+
+body.pushable {
+    background-color: #e9eaed !important;
+}
+
 /* reset needed for semantic layout */
 .ui.sidebar *, .ui.sidebar :after, .ui.sidebar :before {
   box-sizing: inherit;

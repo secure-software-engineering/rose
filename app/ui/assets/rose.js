@@ -1670,9 +1670,13 @@ define('rose/locales/en', ['exports'], function (exports) {
       title: "Settings",
       subtitle: "Here you can manage your ROSE settings",
       language: "Language",
+      languageLabel: "Whats the purpose of this settings?",
       commentReminder: "Comment Reminder",
+      commentReminderLabel: "Whats the purpose of this settings?",
       extraFeatures: "Features for researchers and developers",
-      resetRose: "Reset ROSE"
+      extraFeaturesLabel: "Whats the purpose of this settings?",
+      resetRose: "Reset ROSE",
+      resetRoseLabel: "Whats the purpose of this settings?"
     },
 
     // Comments Page
@@ -7309,7 +7313,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("p");
-        var el4 = dom.createTextNode("Whats the purpose of this settings?");
+        var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n    ");
@@ -7332,7 +7336,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("p");
-        var el4 = dom.createTextNode("Whats the purpose of this settings?");
+        var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n    ");
@@ -7355,7 +7359,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("p");
-        var el4 = dom.createTextNode("Whats the purpose of this settings?");
+        var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n    ");
@@ -7378,7 +7382,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("p");
-        var el4 = dom.createTextNode("DANGER DANGER DANGER");
+        var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n    ");
@@ -7428,21 +7432,29 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var morph0 = dom.createMorphAt(element0,1,1);
         var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
         var morph2 = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
-        var morph3 = dom.createMorphAt(element2,5,5);
-        var morph4 = dom.createMorphAt(dom.childAt(element3, [1]),0,0);
-        var morph5 = dom.createMorphAt(element3,5,5);
-        var morph6 = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
-        var morph7 = dom.createMorphAt(element4,5,5);
-        var morph8 = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
+        var morph3 = dom.createMorphAt(dom.childAt(element2, [3]),0,0);
+        var morph4 = dom.createMorphAt(element2,5,5);
+        var morph5 = dom.createMorphAt(dom.childAt(element3, [1]),0,0);
+        var morph6 = dom.createMorphAt(dom.childAt(element3, [3]),0,0);
+        var morph7 = dom.createMorphAt(element3,5,5);
+        var morph8 = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
+        var morph9 = dom.createMorphAt(dom.childAt(element4, [3]),0,0);
+        var morph10 = dom.createMorphAt(element4,5,5);
+        var morph11 = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
+        var morph12 = dom.createMorphAt(dom.childAt(element5, [3]),0,0);
         inline(env, morph0, context, "t", ["settings.title"], {});
         inline(env, morph1, context, "t", ["settings.subtitle"], {});
         inline(env, morph2, context, "t", ["settings.language"], {});
-        inline(env, morph3, context, "ui-dropdown", [], {"class": "ui selection dropdown", "value": get(env, context, "userSettings.currentLanguage"), "content": get(env, context, "availableLanguages"), "optionLabelPath": "content.language", "optionValuePath": "content.code"});
-        inline(env, morph4, context, "t", ["settings.commentReminder"], {});
-        inline(env, morph5, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.commentReminderIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "userSettings.commentReminderIsEnabled")], {}), "action": "saveSettings"});
-        inline(env, morph6, context, "t", ["settings.extraFeatures"], {});
-        inline(env, morph7, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.developerModeIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "userSettings.developerModeIsEnabled")], {}), "action": "saveSettings"});
-        inline(env, morph8, context, "t", ["settings.resetRose"], {});
+        inline(env, morph3, context, "t", ["settings.languageLabel"], {});
+        inline(env, morph4, context, "ui-dropdown", [], {"class": "ui selection dropdown", "value": get(env, context, "userSettings.currentLanguage"), "content": get(env, context, "availableLanguages"), "optionLabelPath": "content.language", "optionValuePath": "content.code"});
+        inline(env, morph5, context, "t", ["settings.commentReminder"], {});
+        inline(env, morph6, context, "t", ["settings.commentReminderLabel"], {});
+        inline(env, morph7, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.commentReminderIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "userSettings.commentReminderIsEnabled")], {}), "action": "saveSettings"});
+        inline(env, morph8, context, "t", ["settings.extraFeatures"], {});
+        inline(env, morph9, context, "t", ["settings.extraFeaturesLabel"], {});
+        inline(env, morph10, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.developerModeIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "userSettings.developerModeIsEnabled")], {}), "action": "saveSettings"});
+        inline(env, morph11, context, "t", ["settings.resetRose"], {});
+        inline(env, morph12, context, "t", ["settings.resetRoseLabel"], {});
         element(env, element6, context, "action", ["confirm"], {});
         return fragment;
       }
@@ -11048,7 +11060,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.9fb0a5fe"});
+  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.54198fcc"});
 }
 
 /* jshint ignore:end */

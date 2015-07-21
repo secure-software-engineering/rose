@@ -9,7 +9,7 @@
 <div class="ui form">
   <div class="field">
     <label>{{t "settings.language"}}</label>
-    <p>Whats the purpose of this settings?</p>
+    <p>{{t "settings.languageLabel"}}</p>
     {{ui-dropdown class="ui selection dropdown"
                     value=userSettings.currentLanguage
                     content=availableLanguages
@@ -19,7 +19,7 @@
 
   <div class="field">
     <label>{{t "settings.commentReminder"}}</label>
-    <p>Whats the purpose of this settings?</p>
+    <p>{{t "settings.commentReminderLabel"}}</p>
     {{ui-checkbox class="toggle"
                   checked=userSettings.commentReminderIsEnabled
                   label=(boolean-to-yesno userSettings.commentReminderIsEnabled)
@@ -28,7 +28,7 @@
 
   <div class="field">
     <label>{{t "settings.extraFeatures"}}</label>
-    <p>Whats the purpose of this settings?</p>
+    <p>{{t "settings.extraFeaturesLabel"}}</p>
     {{ui-checkbox class="toggle"
                   checked=userSettings.developerModeIsEnabled
                   label=(boolean-to-yesno userSettings.developerModeIsEnabled)
@@ -37,7 +37,7 @@
 
   <div class="field">
     <label>{{t "settings.resetRose"}}</label>
-    <p>DANGER DANGER DANGER</p>
+    <p>{{t "settings.resetRoseLabel"}}</p>
     <button class="ui red button" {{action 'confirm'}}>Reset</button>
   </div>
 </div>

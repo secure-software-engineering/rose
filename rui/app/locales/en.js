@@ -48,9 +48,13 @@ export default {
     title: "Settings",
     subtitle: "Here you can manage your ROSE settings",
     language: "Language",
+    languageLabel: "Whats the purpose of this settings?",
     commentReminder: "Comment Reminder",
+    commentReminderLabel: "Whats the purpose of this settings?",
     extraFeatures: "Features for researchers and developers",
-    resetRose: "Reset ROSE"
+    extraFeaturesLabel: "Whats the purpose of this settings?",
+    resetRose: "Reset ROSE",
+    resetRoseLabel: "Whats the purpose of this settings?"
   },
 
   // Comments Page

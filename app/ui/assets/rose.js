@@ -64,7 +64,8 @@ define('rose/adapters/application', ['exports', 'ember', 'ember-localforage-adap
         });
       }
       return promise;
-    } });
+    }
+  });
 
 });
 define('rose/adapters/comment', ['exports', 'rose/adapters/kango-adapter'], function (exports, KangoAdapter) {
@@ -310,10 +311,16 @@ define('rose/components/liquid-child', ['exports', 'ember'], function (exports, 
 
   exports['default'] = Ember['default'].Component.extend({
     classNames: ['liquid-child'],
-    attributeBindings: ['style'],
-    style: Ember['default'].computed('visible', function () {
-      return new Ember['default'].Handlebars.SafeString(this.get('visible') ? '' : 'visibility:hidden');
-    }),
+
+    updateElementVisibility: (function () {
+      var visible = this.get('visible');
+      var $container = this.$();
+
+      if ($container && $container.length) {
+        $container.css('visibility', visible ? 'visible' : 'hidden');
+      }
+    }).on('willInsertElement').observes('visible'),
+
     tellContainerWeRendered: Ember['default'].on('didInsertElement', function () {
       this.sendAction('didRender', this);
     })
@@ -1072,7 +1079,8 @@ define('rose/controllers/interactions', ['exports', 'ember'], function (exports,
 
   exports['default'] = Ember['default'].Controller.extend({
     listSorting: ['createdAt:desc'],
-    sortedList: Ember['default'].computed.sort('model', 'listSorting') });
+    sortedList: Ember['default'].computed.sort('model', 'listSorting')
+  });
 
 });
 define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages'], function (exports, Ember, languages) {
@@ -1315,10 +1323,26 @@ define('rose/initializers/export-application-global', ['exports', 'ember', 'rose
   exports.initialize = initialize;
 
   function initialize(container, application) {
-    var classifiedName = Ember['default'].String.classify(config['default'].modulePrefix);
+    if (config['default'].exportApplicationGlobal !== false) {
+      var value = config['default'].exportApplicationGlobal;
+      var globalName;
 
-    if (config['default'].exportApplicationGlobal && !window[classifiedName]) {
-      window[classifiedName] = application;
+      if (typeof value === 'string') {
+        globalName = value;
+      } else {
+        globalName = Ember['default'].String.classify(config['default'].modulePrefix);
+      }
+
+      if (!window[globalName]) {
+        window[globalName] = application;
+
+        application.reopen({
+          willDestroy: function willDestroy() {
+            this._super.apply(this, arguments);
+            delete window[globalName];
+          }
+        });
+      }
     }
   }
 
@@ -1547,7 +1571,8 @@ define('rose/locales/de', ['exports'], function (exports) {
       issue8: {
         question: "May I use ROSE for personal purposes after the study ended?",
         answer: "<p>Yes. You may continue using ROSE and process it without hesitation as it does not send any information to the study advisors automatically. Thereto please note the GPL license’s conditions. However, after the study ended we are not able to endorse you by using the software, e.g. providing ROSE updates.</p>"
-      } },
+      }
+    },
 
     // About Page
     about: {
@@ -1708,7 +1733,8 @@ define('rose/locales/en', ['exports'], function (exports) {
       issue8: {
         question: "May I use ROSE for personal purposes after the study ended?",
         answer: "<p>Yes. You may continue using ROSE and process it without hesitation as it does not send any information to the study advisors automatically. Thereto please note the GPL license’s conditions. However, after the study ended we are not able to endorse you by using the software, e.g. providing ROSE updates.</p>"
-      } },
+      }
+    },
 
     // About Page
     about: {
@@ -1830,7 +1856,8 @@ define('rose/models/study-creator-setting', ['exports', 'ember-data'], function 
     repositoryUrl: DS['default'].attr('string'),
     autoUpdateIsEnabled: DS['default'].attr('boolean'),
     fileName: DS['default'].attr('string', { defaultValue: 'rose-study-configuration.txt' }),
-    networks: DS['default'].hasMany('network', { async: true })
+    networks: DS['default'].hasMany('network', { async: true }),
+    fingerprint: DS['default'].attr('string')
   });
 
 });
@@ -2512,7 +2539,8 @@ define('rose/pods/components/high-chart/component', ['exports', 'ember'], functi
             step: true
           },
           yAxis: {
-            type: 'logarithmic' }
+            type: 'logarithmic'
+          }
         },
 
         rangeSelector: {
@@ -4706,7 +4734,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
           var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, null);
           dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass")}, child0, null);
+          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "growDuration": get(env, context, "growDuration"), "growPixelsPerSecond": get(env, context, "growPixelsPerSecond"), "growEasing": get(env, context, "growEasing"), "enableGrowth": get(env, context, "enableGrowth")}, child0, null);
           return fragment;
         }
       };
@@ -5180,7 +5208,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
           var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, null);
           dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass")}, child0, null);
+          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "growDuration": get(env, context, "growDuration"), "growPixelsPerSecond": get(env, context, "growPixelsPerSecond"), "growEasing": get(env, context, "growEasing"), "enableGrowth": get(env, context, "enableGrowth")}, child0, null);
           return fragment;
         }
       };
@@ -5242,6 +5270,8 @@ define('rose/templates/components/liquid-measured', ['exports'], function (expor
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
         return el0;
       },
       render: function render(context, env, contextualElement) {
@@ -5265,7 +5295,6 @@ define('rose/templates/components/liquid-measured', ['exports'], function (expor
           fragment = this.build(dom);
         }
         var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-        dom.insertBoundary(fragment, null);
         dom.insertBoundary(fragment, 0);
         content(env, morph0, context, "yield");
         return fragment;
@@ -5505,7 +5534,7 @@ define('rose/templates/components/liquid-outlet', ['exports'], function (exports
         var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
         dom.insertBoundary(fragment, null);
         dom.insertBoundary(fragment, 0);
-        block(env, morph0, context, "liquid-with", [get(env, context, "outletState")], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "use": get(env, context, "use"), "name": "liquid-outlet", "containerless": get(env, context, "containerless")}, child0, null);
+        block(env, morph0, context, "liquid-with", [get(env, context, "outletState")], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "use": get(env, context, "use"), "name": "liquid-outlet", "containerless": get(env, context, "containerless"), "growDuration": get(env, context, "growDuration"), "growPixelsPerSecond": get(env, context, "growPixelsPerSecond"), "growEasing": get(env, context, "growEasing"), "enableGrowth": get(env, context, "enableGrowth")}, child0, null);
         return fragment;
       }
     };
@@ -5981,7 +6010,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
           var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, null);
           dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass")}, child0, null);
+          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "growDuration": get(env, context, "growDuration"), "growPixelsPerSecond": get(env, context, "growPixelsPerSecond"), "growEasing": get(env, context, "growEasing"), "enableGrowth": get(env, context, "enableGrowth")}, child0, null);
           return fragment;
         }
       };
@@ -10551,7 +10580,7 @@ define('rose/transitions/cross-fade', ['exports', 'liquid-fire'], function (expo
   exports['default'] = crossFade;
   // BEGIN-SNIPPET cross-fade-definition
   function crossFade() {
-    var opts = arguments[0] === undefined ? {} : arguments[0];
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
     liquid_fire.stop(this.oldElement);
     return liquid_fire.Promise.all([liquid_fire.animate(this.oldElement, { opacity: 0 }, opts), liquid_fire.animate(this.newElement, { opacity: [opts.maxOpacity || 1, 0] }, opts)]);
@@ -10563,11 +10592,6 @@ define('rose/transitions/default', ['exports', 'liquid-fire'], function (exports
   'use strict';
 
 
-
-  // This is what we run when no animation is asked for. It just sets
-  // the newly-added element to visible (because we always start them
-  // out invisible so that transitions can control their initial
-  // appearance).
   exports['default'] = defaultTransition;
   function defaultTransition() {
     if (this.newElement) {
@@ -10583,21 +10607,18 @@ define('rose/transitions/explode', ['exports', 'ember', 'liquid-fire'], function
 
 
 
-  // Explode is not, by itself, an animation. It exists to pull apart
-  // other elements so that each of the pieces can be targeted by
-  // animations.
-
   exports['default'] = explode;
 
   function explode() {
     var _this = this;
 
+    var seenElements = {};
+    var sawBackgroundPiece = false;
+
     for (var _len = arguments.length, pieces = Array(_len), _key = 0; _key < _len; _key++) {
       pieces[_key] = arguments[_key];
     }
 
-    var seenElements = {};
-    var sawBackgroundPiece = false;
     var promises = pieces.map(function (piece) {
       if (piece.matchBy) {
         return matchAndExplode(_this, piece, seenElements);
@@ -10723,13 +10744,17 @@ define('rose/transitions/explode', ['exports', 'ember', 'liquid-fire'], function
       return liquid_fire.Promise.resolve();
     }
 
-    var hits = Ember['default'].A(context.oldElement.find("[" + piece.matchBy + "]").toArray());
+    var oldPrefix = piece.pickOld || piece.pick || "";
+    var newPrefix = piece.pickNew || piece.pick || "";
+
+    var hits = Ember['default'].A(context.oldElement.find(oldPrefix + "[" + piece.matchBy + "]").toArray());
     return liquid_fire.Promise.all(hits.map(function (elt) {
       var propValue = Ember['default'].$(elt).attr(piece.matchBy);
       var selector = "[" + piece.matchBy + "=" + propValue + "]";
-      if (context.newElement.find(selector).length > 0) {
+      if (context.newElement.find("" + newPrefix + selector).length > 0) {
         return explodePiece(context, {
-          pick: selector,
+          pickOld: oldPrefix + "[" + piece.matchBy + "=" + propValue + "]",
+          pickNew: newPrefix + "[" + piece.matchBy + "=" + propValue + "]",
           use: piece.use
         }, seen);
       } else {
@@ -10750,7 +10775,7 @@ define('rose/transitions/fade', ['exports', 'liquid-fire'], function (exports, l
   function fade() {
     var _this = this;
 
-    var opts = arguments[0] === undefined ? {} : arguments[0];
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
     var firstStep;
     var outOpts = opts;
@@ -10810,7 +10835,7 @@ define('rose/transitions/fly-to', ['exports', 'liquid-fire'], function (exports,
   function flyTo() {
     var _this = this;
 
-    var opts = arguments[0] === undefined ? {} : arguments[0];
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
     if (!this.newElement) {
       return liquid_fire.Promise.resolve();
@@ -10822,17 +10847,27 @@ define('rose/transitions/fly-to', ['exports', 'liquid-fire'], function (exports,
     var oldOffset = this.oldElement.offset();
     var newOffset = this.newElement.offset();
 
-    var motion = {
-      translateX: newOffset.left - oldOffset.left,
-      translateY: newOffset.top - oldOffset.top,
-      outerWidth: this.newElement.outerWidth(),
-      outerHeight: this.newElement.outerHeight()
-    };
-
-    this.newElement.css({ visibility: 'hidden' });
-    return liquid_fire.animate(this.oldElement, motion, opts).then(function () {
-      _this.newElement.css({ visibility: '' });
-    });
+    if (opts.movingSide === 'new') {
+      var motion = {
+        translateX: [0, oldOffset.left - newOffset.left],
+        translateY: [0, oldOffset.top - newOffset.top],
+        outerWidth: [this.newElement.outerWidth(), this.oldElement.outerWidth()],
+        outerHeight: [this.newElement.outerHeight(), this.oldElement.outerHeight()]
+      };
+      this.oldElement.css({ visibility: 'hidden' });
+      return liquid_fire.animate(this.newElement, motion, opts);
+    } else {
+      var motion = {
+        translateX: newOffset.left - oldOffset.left,
+        translateY: newOffset.top - oldOffset.top,
+        outerWidth: this.newElement.outerWidth(),
+        outerHeight: this.newElement.outerHeight()
+      };
+      this.newElement.css({ visibility: 'hidden' });
+      return liquid_fire.animate(this.oldElement, motion, opts).then(function () {
+        _this.newElement.css({ visibility: '' });
+      });
+    }
   }
 
 });
@@ -10901,7 +10936,7 @@ define('rose/transitions/scale', ['exports', 'liquid-fire'], function (exports, 
   function scale() {
     var _this = this;
 
-    var opts = arguments[0] === undefined ? {} : arguments[0];
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
     return liquid_fire.animate(this.oldElement, { scale: [0.2, 1] }, opts).then(function () {
       return liquid_fire.animate(_this.newElement, { scale: [1, 0.2] }, opts);
@@ -10914,11 +10949,11 @@ define('rose/transitions/scroll-then', ['exports', 'ember'], function (exports, 
   'use strict';
 
   exports['default'] = function (nextTransitionName, options) {
-    var _this = this;
-
     for (var _len = arguments.length, rest = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
       rest[_key - 2] = arguments[_key];
     }
+
+    var _this = this;
 
     Ember['default'].assert('You must provide a transition name as the first argument to scrollThen. Example: this.use(\'scrollThen\', \'toLeft\')', 'string' === typeof nextTransitionName);
 
@@ -11013,7 +11048,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.feece263"});
+  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.9fb0a5fe"});
 }
 
 /* jshint ignore:end */

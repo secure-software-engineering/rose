@@ -6,12 +6,14 @@
     "id": 1,
     "name": "Facebook",
     "namespace": "facebook",
+    "identifier": "facebook.com",
     "observers": "facebook/facebook-observers.json",
     "extractors": "facebook/facebook-extractors.json"
   }, {
     "id": 2,
     "name": "Google+",
     "namespace": "google",
+    "identifier": "plus.google.com",
     "observers": []
   }, {
     "id": 3,

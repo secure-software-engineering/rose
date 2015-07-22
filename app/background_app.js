@@ -82,10 +82,10 @@ var observers = [
   network: 'facebook',
   type: 'click',
   priority: 2,
-  version: '0.2',
+  version: '0.3',
   patterns: [
     {
-      node: '.UFILikeLink span:contains("Unlike"), .UFILikeLink span:contains("Gefällt mir nicht mehr")',
+      node: '.UFILinkBright span',
       container: '.userContentWrapper',
       extractor: 'status-update'
     }
@@ -138,10 +138,10 @@ var observers = [
   network: 'facebook',
   type: 'click',
   priority: 5,
-  version: '0.2',
+  version: '0.3',
   patterns: [
     {
-      node: '.UFILikeLink span:contains("Like"), .UFILikeLink span:contains("Gefällt mir")',
+      node: '.UFILikeLink span',
       container: '.userContentWrapper',
       extractor: 'status-update'
     }

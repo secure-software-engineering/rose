@@ -13,7 +13,7 @@ Features
 ----
 * Currently supported social setwork sites: facebook.com
 * Capturing user interactions such as likes, unlikes, comments, sending chat messages or sharing content.
-* Capture addtional information about the content users interactiing with (e.g. posts, sharer, etc.)
+* Capturing addtional information about the content users interacting with (e.g. posts, sharer, etc.)
 * Capturing user activity by mouse move distance, scroll distance, OSN tab focus time, click amount and login status
 * Comment function enables study participants to comment on their own or others' actions right in the OSN
 * Privacy by Design: With the ROSE control center study participants have full control over the data collected. No shared content such as chat messages or images is collected. Captured events have privacy-respecting identifiers to correlate them among study participants (if required), and to relate events and comments. ROSE's privacy-aware design aims on minimizing interferences with the field.

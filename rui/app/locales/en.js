@@ -18,7 +18,7 @@ export default {
   // Sidebar Menu
   sidebarMenu: {
     diary: "Diary",
-    backup: "Backup",
+    backup: "Data Management",
     settings: "Settings",
     comments: "Comments",
     interactions: "Interactions",
@@ -27,40 +27,40 @@ export default {
     more: "More",
     help: "Help",
     about: "About",
-    extraFeatures: "R&D Features",
+    extraFeatures: "Researcher Features",
     studyCreator: "Study Creator"
   },
 
   // Diary Page
   diary: {
     title: "Diary",
-    subtitle: "Here you can make a note of everything else that attracted your attention"
+    subtitle: "Here you can take notes of everything that attracted your attention"
   },
 
   // Backup Page
   backup: {
-    title: "Data Backup",
-    subtitle: "Here you can review, save or restore all data you supplied or which was recorded by ROSE"
+    title: "Data Management",
+    subtitle: "Here you can review and download all data recorded and collected by ROSE. If you press the \"Download\" button you can store all data in a file locally on your computer."
   },
 
   // Settings Page
   settings: {
     title: "Settings",
-    subtitle: "Here you can manage your ROSE settings",
+    subtitle: "On this page you can manage the configuration of ROSE.",
     language: "Language",
-    languageLabel: "Whats the purpose of this settings?",
-    commentReminder: "Comment Reminder",
-    commentReminderLabel: "Whats the purpose of this settings?",
+    languageLabel: "Choose your preferred language. ROSE can also adopt the browser language (\"auto detect\" option).",
+    commentReminder: "Comment reminder",
+    commentReminderLabel: "ROSE can ocassionally display reminders to remember you to comment on your actions if that is required by the study you are participating in. You can deactivate this features if it disturbs you.",
     extraFeatures: "Features for researchers and developers",
-    extraFeaturesLabel: "Whats the purpose of this settings?",
-    resetRose: "Reset ROSE",
-    resetRoseLabel: "Whats the purpose of this settings?"
+    extraFeaturesLabel: "ROSE has additional features for field researchers and ROSE developers. These features are normally not visible, but can be activated here.",
+    resetRose: "Reset ROSE configuration",
+    resetRoseLabel: "Here you can reset ROSE's configurations. The initialization wizard will appear again asking you to load either a default configuration or a specific study configuration file."
   },
 
   // Comments Page
   comments: {
     title: "Comments",
-    subtitle: "Have a look at all your comments",
+    subtitle: "All comments you have entered using the comment sidebar.",
 
     you: "You",
     commentedOn: "commented on"
@@ -69,14 +69,14 @@ export default {
   // Interactions Page
   interactions: {
     title: "Interactions",
-    subtitle: "All your recent interactions",
+    subtitle: "All your recent interactions for this social media page recorded by ROSE.",
     actionOn: "action on"
   },
 
   // Privacy Settings Page
   privacySettings: {
     title: "Privacy Settings",
-    subtitle: "Have a look at your privacy settings"
+    subtitle: "Your privacy settings for this social media page recorded by ROSE."
   },
 
   // Help Page
@@ -122,7 +122,7 @@ export default {
   about: {
     title: "About ROSE",
     subtitle: "Information about ROSE",
-    description: "ROSE is a browser extension to support empirical Field studies by recording users' interactions with the social network Facebook for a limited period of time. Please consider the help page for further information on ROSE's functioning.",
+    description: "ROSE is a browser extension to support empirical field studies by recording users' interactions with social media pages for a limited period of time. Please consider the help page for further information on ROSE's functioning.",
     developedBy: "is developed by",
 
     address: {
@@ -138,23 +138,23 @@ export default {
   // Study Creator Page
   studyCreator: {
     title: 'Study Creator',
-    subtitle: 'LALALALALALALa',
+    subtitle: 'With this page you can create a tailored configuration file for your study. You can distribute this configuration file to you study participants; by loading this file into their installations of ROSE participants can adapt their ROSE instances to the specific needs of your empirical study.',
 
-    roseComments: "ROSE Comments",
-    roseCommentsDesc: "Check if the ROSE Comments function should be available",
-    roseCommentsRating: "ROSE Comments Rating",
-    roseCommentsRatingDesc: "Check if the ROSE Comments rating function should be available",
-    salt: "Salt",
-    saltDesc: "Whats the purpose of this settings?",
-    hashLength: "Hash Length",
-    hashLengthDesc: "Whats the purpose of this settings?",
-    repositoryUrl: "Repository URL",
-    repositoryUrlDesc: "Whats the purpose of this settings?",
-    autoUpdate: "Automatically Update Observers from Repository",
-    autoUpdateDesc: "Whats the purpose of this settings?",
-    exportConfig: "Export Configuration",
-    exportConfigDesc: "Export configuration to file",
-    fingerprint: "Fingerprint",
-    fingerprintDesc: "Whats the purpose of this settings?"
+    roseComments: "In-situ comments",
+    roseCommentsDesc: "Check this if ROSE's in-situ comment function should be available to participants. Currently the in-situ comment function works only for Facebook.",
+    roseCommentsRating: "Add in-situ rating option",
+    roseCommentsRatingDesc: "Check this if the in-situ comment function should also ask for rating content.",
+    salt: "Cryptographic salt for content identifiers",
+    saltDesc: "ROSE records pseudonymous identifiers for user content that allow researchers to re-identify content without a need to reveal it. These identfiers are derived from user-entered content and a cryptographic salt. As a cryptographic salt you can enter any arbitray text string, for example \"ROSE123\" or whatever else you like. However, make sure that in case you investigate a group of participants all use the same salt in their ROSE configuration. Otherwise you can not correlate identifiers among participants afterwards.",
+    hashLength: "Content identifier length",
+    hashLengthDesc: "Here you can specify the length of the pseudonymous identifiers created by ROSE. You need to balance participants' privacy and the uniqueness of identifiers: the shorter the identifier the more secure they are; the longer the identifiers the more unique they are. Every digit adds a factor of 16 to the space of possible identifiers for your study. For example, setting the option to 4 allows for 16*16*16*16=65536 unique identifiers for your study. 5 is a good value if you are unsure how to use this option.",
+    repositoryUrl: "URL of pattern repository",
+    repositoryUrlDesc: "ROSE gets its patterns to match user interactions to specific interaction types from a pattern repository. Here you can enter the URL of this repository.",
+    autoUpdate: "Automatically update patterns during study",
+    autoUpdateDesc: "While the patterns are usually only pushed to ROSE when the configuration file is loaded into participants' instances of ROSE, it is also possible to continously update them while the study is running. This might be necessary for long-term studies, if the user interface of the investigated social media site changes.",
+    exportConfig: "Export configuration file",
+    exportConfigDesc: "Here you can export a configuration file with all the settings entered on this page. Your participants can load this file into their installations of ROSE.",
+    fingerprint: "Pattern repository signing key fingerprint",
+    fingerprintDesc: "For reasons of security, the patterns stored in the pattern repository need to be signed with a RSA private key. This signature is validated before ROSE loads any patterns. Please enter the fingerprint of the public key ROSE shall use to verify the digital signature."
   }
 };

@@ -36,7 +36,7 @@
   },
 
   "diaryPage": {
-    "subHeader": "Here you can take notes on everything that attracted your attention",
+    "subHeader": "Here you can take notes of everything that attracted your attention",
     "messageHeader": "No diary entries available",
     "messageContent": "Drop me a line"
   },
@@ -48,7 +48,7 @@
   },
 
   "backupPage": {
-    "subHeader": "Here you can review and download all data recorded and collected by ROSE. If you press the \"Download\" you can store all data to a file."
+    "subHeader": "Here you can review and download all data recorded and collected by ROSE. If you press the \"Download\" button you can store all data in a file locally on your computer."
   },
 
   "aboutPage": {

@@ -3,6 +3,8 @@ export default {
   and: "and",
   yes: "Yes",
   no: "No",
+  on: "On",
+  off: "Off",
 
   action: {
     save: "Save",

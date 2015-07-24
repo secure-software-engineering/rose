@@ -36,7 +36,7 @@
   },
 
   "diaryPage": {
-    "subHeader": "Here you can make a note of everything else that attracted your attention",
+    "subHeader": "Here you can take notes on everything that attracted your attention",
     "messageHeader": "No diary entries available",
     "messageContent": "Drop me a line"
   },
@@ -48,14 +48,14 @@
   },
 
   "backupPage": {
-    "subHeader": "Here you can review, save or restore all data you supplied or which was recorded by ROSE"
+    "subHeader": "Here you can review and download all data recorded and collected by ROSE. If you press the \"Download\" you can store all data to a file."
   },
 
   "aboutPage": {
     "subHeader": "Information about ROSE",
     "messageHeader": "",
     "messageContent": "",
-    "infoText": "ROSE is a browser extension to support empirical Field studies by recording users' interactions with the social network Facebook for a limited period of time. Please consider the help page for further information on ROSE's functioning.",
+    "infoText": "ROSE is a browser extension to support empirical field studies by recording users' interactions with the social network Facebook for a limited period of time. Please consider the help page for further information on ROSE's functioning.",
     "furtherQuestions": "For questions about ROSE feel free to contact <a href=\"mailto: andreas.poller@ sit.fraunhofer.de \">Andreas Poller, andreas.poller@sit.fraunhofer.de</a>"
   },
 

@@ -1,1 +1,1 @@
-module.exports=function(){require("kango/storage").uninstall()};
+module.exports=function(){var e=require("kango/storage");e.uninstall()};

@@ -1,6 +1,15 @@
 Kango framework changelog
 =========================
 
+Version 1.7.9
+-------------
+- Chrome: Fix "no tab with id" / "no window with id" error messages
+- Firefox 40 compatibility
+- IE: stability improvements
+- IE: KangoEngine.exe doesn't shutdown
+- IE: Content script engine bug fixes
+- Content scripts: Include and Exclude pattern matching fixed
+
 Version 1.7.1
 -------------
 - Firefox 34+ compatibility

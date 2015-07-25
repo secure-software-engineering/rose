@@ -1,1 +1,1 @@
-var getExtensionInfo=function(){var a=new XMLHttpRequest;a.open("GET",safari.extension.baseURI+"extension_info.json",!1);a.overrideMimeType("text/plain");a.send(null);return JSON.parse(a.responseText)};module.exports=new ExtensionInfo(getExtensionInfo());
+var getExtensionInfo=function(){var e=new XMLHttpRequest;return e.open("GET",safari.extension.baseURI+"extension_info.json",!1),e.overrideMimeType("text/plain"),e.send(null),JSON.parse(e.responseText)};module.exports=new ExtensionInfo(getExtensionInfo());

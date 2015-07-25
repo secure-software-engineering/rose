@@ -1,14 +1,14 @@
 .. creating-and-building-browser-extensions:
 
-============================================
- Creating and Building Browser Extensions
-============================================
+========================================
+Creating and Building Browser Extensions
+========================================
 
 Requirements
-============================================
+============
 
 Required software
-------------------------------------------
+-----------------
 * Kango framework: http://kangoextensions.com/kango.html
 * Python 2.7: http://www.python.org/download/
 * Chrome browser: http://www.google.com/chrome
@@ -16,11 +16,11 @@ Required software
 * NSIS installer (IE/Windows only): http://nsis.sourceforge.net/Main_Page
 
 Additional requirements
-------------------------------------------
+-----------------------
 For building a Safari extension you have to `register <http://developer.apple.com/programs/start/register/create.php>`_ as a Safari Developer on Apple website and get Safari developer certificate.
 
 Creating new project
-============================================
+====================
 1. Create a directory for the project (TestExtension for example)
 
 2. Run ``kango.py`` with ``create`` command::
@@ -30,7 +30,7 @@ Creating new project
 After running thus commands you will get extension project you can start to edit.
 
 Adding content script
-============================================
+=====================
 Kango allows you to run :ref:`content-scripts` on any web page opened by user. Content scripts are running for each webpage shown according to @include / @exclude rules from user js metadata block as follow::
 
     // ==UserScript==
@@ -68,7 +68,7 @@ Also add this file in content scripts array in :ref:`extension_info.json<KangoEx
 After building and installing the extension you will see background color blinking on every http webpage you open in your browser.
 
 Adding background script
-============================================
+========================
 :ref:`background-scripts` are running as long as extension is enabled in browser and executed once on each browser start.
 
 Background scripts allows you to use all the :ref:`Kango APIs<api-reference>` in synchronous mode.
@@ -105,7 +105,7 @@ Also add it to :ref:`extension_info.json<KangoExtensionInfo>` like that::
 This will download http://example.com/ page and output the content into console.
 
 Adding a button into browser
-============================================
+============================
 
 To add a button to user browser you have to add ``browser_button`` section to :ref:`extension_info.json<KangoExtensionInfo>` file like follow::
 
@@ -122,9 +122,9 @@ To handle clicks on this button you have to add follow code in one of your backg
     kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, function() {
         kango.console.log('Button clicked!');
     });
-	
+    
 Adding pop-up
-============================================
+=============
 
 You can add a pop-up window to your extension to show on button click. You can open an HTML file in pop-up and access Kango API from it.
 
@@ -138,13 +138,13 @@ To test how popup works create ``popup.html`` with follow content:
         Test
     </body>
     </html>
-	
-and add thus lines to your background script::
+    
+and add the following line to your background script::
 
-    kango.ui.browserButton.setPopup({url:'test.html', width: 710, height:510});
-	
+    kango.ui.browserButton.setPopup({url:'popup.html', width: 710, height:510});
+    
 Building extension
-============================================
+==================
 
 Preparing build for your extensions require you to run ``kango.py`` with ``build`` command as follow::
 

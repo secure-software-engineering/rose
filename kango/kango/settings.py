@@ -2,8 +2,8 @@ import os
 import json
 
 
-VERSION = '1.7.3'
-BUILD = '36447b11bac0'
+VERSION = '1.7.9'
+BUILD = 'e39b6ff2fcc8'
 PACKAGE_ID = 'dev'
 
 KEYWORDS = {

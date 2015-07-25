@@ -1,1 +1,1 @@
-var utils=require("kango/utils"),NotImplementedException=utils.NotImplementedException;function IOptionsPage(){}IOptionsPage.prototype={open:function(){throw new NotImplementedException;}};function getPublicApi(){return utils.createApiWrapper(module.exports,IOptionsPage.prototype)};
+function IOptionsPage(){}function getPublicApi(){return utils.createApiWrapper(module.exports,IOptionsPage.prototype)}var utils=require("kango/utils"),NotImplementedException=utils.NotImplementedException;IOptionsPage.prototype={open:function(){throw new NotImplementedException}};

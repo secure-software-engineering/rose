@@ -10,9 +10,9 @@ def main():
     CommandLineProcessor().process()
 
 if __name__ == '__main__':
-    version_tuple = tuple(sys.version_info[:2])
-    if version_tuple < (2, 7) or version_tuple >= (3, 0):
-        sys.stderr.write('Error: Python %d.%d is not supported. Please use version 2.7 or greater.\n' % version_tuple)
+    version = tuple(sys.version_info[:2])
+    if version < (2, 7) or version >= (3, 0):
+        sys.stderr.write('Error: Python %d.%d is not supported. Please use version 2.7 or greater.\n' % version)
         sys.exit(1)
     
     main()

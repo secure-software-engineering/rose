@@ -19,6 +19,8 @@ You can use any JavaScript libraries in background scipts, just add appropriate 
 
 See :ref:`api-reference` for list of available APIs.
 
+.. note:: ``alert`` function is not available in some browsers, use :js:func:`kango.console.log`.
+
 Sample
 ======
 ::

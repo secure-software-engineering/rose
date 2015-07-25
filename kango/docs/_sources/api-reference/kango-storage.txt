@@ -29,6 +29,7 @@ Summary
    * - :ref:`kango-storage-clear`
      - Delete all the items
 
+
 :note: You can use this module in content scripts.
 	 
 Methods

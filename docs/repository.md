@@ -6,7 +6,9 @@ An observer and extractor repository can be published via HTTP and is identified
 
 Every repository must have one configuration file named `config.json`, reachable at `http://X/Y/config.json` if `http://X/Y/` is the URL of the repository. This configuration file contains a JSON object with the following fields:
 
-* `name`: String. Name of the repository.
+* `name`: String. Name of the repository used in ROSE observers/extractors.
+
+* `descriptiveName`: String. Name used for displaying in the UI.
 
 * `revision`: Int. Revision number of the repository. If the last check performed by the ROSE plugin has synchronized with a repository with a lower revision number than the current one, an update should be performed.
 

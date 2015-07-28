@@ -10,10 +10,9 @@
     "networks": [
         {
             "id": "1",
-            "name": "Facebook",
-            "namespace": "facebook",
+            "name": "facebook",
+            "descriptiveName": "Facebook",
             "identifier": "facebook.com",
-            "isEnabled": true,
             "observers": [
                 {
         "name": "chat",

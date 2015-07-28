@@ -22,14 +22,14 @@ let model = Backbone.Model.extend({
   sync: Backbone.kangoforage.sync('systemConfig'),
   id: '0',
   defaults: {
-    autoUpdateIsEnabled: false,
-    fileName: 'rose-study-configuration.txt',
+    autoUpdateIsEnabled: true,
+    fileName: 'rose-study-configuration.json',
     roseCommentsIsEnabled: true,
     roseCommentsRatingIsEnabled: true,
     salt: 'ROSE',
-    hashLength: 8,
+    hashLength: 5,
     repositoryURL: 'https://secure-software-engineering.github.io/rose/test/base.json',
-    fingerprint: '25E7 69C6 97EC 2C20 DA3B DDE9 F188 CF17 0FA2 34E8'
+    fingerprint: '25E769C697EC2C20DA3BDDE9F188CF170FA234E8'
   }
 });
 

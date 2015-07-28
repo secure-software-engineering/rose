@@ -64,8 +64,7 @@ define('rose/adapters/application', ['exports', 'ember', 'ember-localforage-adap
         });
       }
       return promise;
-    }
-  });
+    } });
 
 });
 define('rose/adapters/comment', ['exports', 'rose/adapters/kango-adapter'], function (exports, KangoAdapter) {
@@ -311,16 +310,10 @@ define('rose/components/liquid-child', ['exports', 'ember'], function (exports, 
 
   exports['default'] = Ember['default'].Component.extend({
     classNames: ['liquid-child'],
-
-    updateElementVisibility: (function () {
-      var visible = this.get('visible');
-      var $container = this.$();
-
-      if ($container && $container.length) {
-        $container.css('visibility', visible ? 'visible' : 'hidden');
-      }
-    }).on('willInsertElement').observes('visible'),
-
+    attributeBindings: ['style'],
+    style: Ember['default'].computed('visible', function () {
+      return new Ember['default'].Handlebars.SafeString(this.get('visible') ? '' : 'visibility:hidden');
+    }),
     tellContainerWeRendered: Ember['default'].on('didInsertElement', function () {
       this.sendAction('didRender', this);
     })
@@ -1004,6 +997,7 @@ define('rose/controllers/application', ['exports', 'ember'], function (exports, 
             return configs.get('firstObject').destroyRecord();
           }
         }).then(function () {
+          kango.dispatchMessage('LoadNetworks', payload.networks);
           return _this.store.createRecord('system-config', payload).save();
         }).then(function () {
           return _this.send('cancelWizard');
@@ -1079,8 +1073,7 @@ define('rose/controllers/interactions', ['exports', 'ember'], function (exports,
 
   exports['default'] = Ember['default'].Controller.extend({
     listSorting: ['createdAt:desc'],
-    sortedList: Ember['default'].computed.sort('model', 'listSorting')
-  });
+    sortedList: Ember['default'].computed.sort('model', 'listSorting') });
 
 });
 define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages'], function (exports, Ember, languages) {
@@ -1170,7 +1163,7 @@ define('rose/helpers/boolean-to-yesno', ['exports', 'ember'], function (exports,
 
   function booleanToYesno(params) {
     var t = this.container.lookup('utils:t');
-    return params[0] ? t('yes') : t('no');
+    return params[0] ? t('on') : t('off');
   }
 
   exports['default'] = Ember['default'].HTMLBars.makeBoundHelper(booleanToYesno);
@@ -1323,26 +1316,10 @@ define('rose/initializers/export-application-global', ['exports', 'ember', 'rose
   exports.initialize = initialize;
 
   function initialize(container, application) {
-    if (config['default'].exportApplicationGlobal !== false) {
-      var value = config['default'].exportApplicationGlobal;
-      var globalName;
+    var classifiedName = Ember['default'].String.classify(config['default'].modulePrefix);
 
-      if (typeof value === 'string') {
-        globalName = value;
-      } else {
-        globalName = Ember['default'].String.classify(config['default'].modulePrefix);
-      }
-
-      if (!window[globalName]) {
-        window[globalName] = application;
-
-        application.reopen({
-          willDestroy: function willDestroy() {
-            this._super.apply(this, arguments);
-            delete window[globalName];
-          }
-        });
-      }
+    if (config['default'].exportApplicationGlobal && !window[classifiedName]) {
+      window[classifiedName] = application;
     }
   }
 
@@ -1571,8 +1548,7 @@ define('rose/locales/de', ['exports'], function (exports) {
       issue8: {
         question: "May I use ROSE for personal purposes after the study ended?",
         answer: "<p>Yes. You may continue using ROSE and process it without hesitation as it does not send any information to the study advisors automatically. Thereto please note the GPL license’s conditions. However, after the study ended we are not able to endorse you by using the software, e.g. providing ROSE updates.</p>"
-      }
-    },
+      } },
 
     // About Page
     about: {
@@ -1625,6 +1601,8 @@ define('rose/locales/en', ['exports'], function (exports) {
     and: "and",
     yes: "Yes",
     no: "No",
+    on: "On",
+    off: "Off",
 
     action: {
       save: "Save",
@@ -1640,7 +1618,7 @@ define('rose/locales/en', ['exports'], function (exports) {
     // Sidebar Menu
     sidebarMenu: {
       diary: "Diary",
-      backup: "Backup",
+      backup: "Data Management",
       settings: "Settings",
       comments: "Comments",
       interactions: "Interactions",
@@ -1649,40 +1627,40 @@ define('rose/locales/en', ['exports'], function (exports) {
       more: "More",
       help: "Help",
       about: "About",
-      extraFeatures: "R&D Features",
+      extraFeatures: "Researcher Features",
       studyCreator: "Study Creator"
     },
 
     // Diary Page
     diary: {
       title: "Diary",
-      subtitle: "Here you can make a note of everything else that attracted your attention"
+      subtitle: "Here you can take notes of everything that attracted your attention"
     },
 
     // Backup Page
     backup: {
-      title: "Data Backup",
-      subtitle: "Here you can review, save or restore all data you supplied or which was recorded by ROSE"
+      title: "Data Management",
+      subtitle: "Here you can review and download all data recorded and collected by ROSE. If you press the \"Download\" button you can store all data in a file locally on your computer."
     },
 
     // Settings Page
     settings: {
       title: "Settings",
-      subtitle: "Here you can manage your ROSE settings",
+      subtitle: "On this page you can manage the configuration of ROSE.",
       language: "Language",
-      languageLabel: "Whats the purpose of this settings?",
-      commentReminder: "Comment Reminder",
-      commentReminderLabel: "Whats the purpose of this settings?",
+      languageLabel: "Choose your preferred language. ROSE can also adopt the browser language (\"auto detect\" option).",
+      commentReminder: "Comment reminder",
+      commentReminderLabel: "ROSE can ocassionally display reminders to remember you to comment on your actions if that is required by the study you are participating in. You can deactivate this features if it disturbs you.",
       extraFeatures: "Features for researchers and developers",
-      extraFeaturesLabel: "Whats the purpose of this settings?",
-      resetRose: "Reset ROSE",
-      resetRoseLabel: "Whats the purpose of this settings?"
+      extraFeaturesLabel: "ROSE has additional features for field researchers and ROSE developers. These features are normally not visible, but can be activated here.",
+      resetRose: "Reset ROSE configuration",
+      resetRoseLabel: "Here you can reset ROSE's configurations. The initialization wizard will appear again asking you to load either a default configuration or a specific study configuration file."
     },
 
     // Comments Page
     comments: {
       title: "Comments",
-      subtitle: "Have a look at all your comments",
+      subtitle: "All comments you have entered using the comment sidebar.",
 
       you: "You",
       commentedOn: "commented on"
@@ -1691,14 +1669,14 @@ define('rose/locales/en', ['exports'], function (exports) {
     // Interactions Page
     interactions: {
       title: "Interactions",
-      subtitle: "All your recent interactions",
+      subtitle: "All your recent interactions for this social media page recorded by ROSE.",
       actionOn: "action on"
     },
 
     // Privacy Settings Page
     privacySettings: {
       title: "Privacy Settings",
-      subtitle: "Have a look at your privacy settings"
+      subtitle: "Your privacy settings for this social media page recorded by ROSE."
     },
 
     // Help Page
@@ -1737,14 +1715,13 @@ define('rose/locales/en', ['exports'], function (exports) {
       issue8: {
         question: "May I use ROSE for personal purposes after the study ended?",
         answer: "<p>Yes. You may continue using ROSE and process it without hesitation as it does not send any information to the study advisors automatically. Thereto please note the GPL license’s conditions. However, after the study ended we are not able to endorse you by using the software, e.g. providing ROSE updates.</p>"
-      }
-    },
+      } },
 
     // About Page
     about: {
       title: "About ROSE",
       subtitle: "Information about ROSE",
-      description: "ROSE is a browser extension to support empirical Field studies by recording users' interactions with the social network Facebook for a limited period of time. Please consider the help page for further information on ROSE's functioning.",
+      description: "ROSE is a browser extension to support empirical field studies by recording users' interactions with social media pages for a limited period of time. Please consider the help page for further information on ROSE's functioning.",
       developedBy: "is developed by",
 
       address: {
@@ -1760,24 +1737,24 @@ define('rose/locales/en', ['exports'], function (exports) {
     // Study Creator Page
     studyCreator: {
       title: "Study Creator",
-      subtitle: "LALALALALALALa",
+      subtitle: "With this page you can create a tailored configuration file for your study. You can distribute this configuration file to you study participants; by loading this file into their installations of ROSE participants can adapt their ROSE instances to the specific needs of your empirical study.",
 
-      roseComments: "ROSE Comments",
-      roseCommentsDesc: "Check if the ROSE Comments function should be available",
-      roseCommentsRating: "ROSE Comments Rating",
-      roseCommentsRatingDesc: "Check if the ROSE Comments rating function should be available",
-      salt: "Salt",
-      saltDesc: "Whats the purpose of this settings?",
-      hashLength: "Hash Length",
-      hashLengthDesc: "Whats the purpose of this settings?",
-      repositoryUrl: "Repository URL",
-      repositoryUrlDesc: "Whats the purpose of this settings?",
-      autoUpdate: "Automatically Update Observers from Repository",
-      autoUpdateDesc: "Whats the purpose of this settings?",
-      exportConfig: "Export Configuration",
-      exportConfigDesc: "Export configuration to file",
-      fingerprint: "Fingerprint",
-      fingerprintDesc: "Whats the purpose of this settings?"
+      roseComments: "In-situ comments",
+      roseCommentsDesc: "Check this if ROSE's in-situ comment function should be available to participants. Currently the in-situ comment function works only for Facebook.",
+      roseCommentsRating: "Add in-situ rating option",
+      roseCommentsRatingDesc: "Check this if the in-situ comment function should also ask for rating content.",
+      salt: "Cryptographic salt for content identifiers",
+      saltDesc: "ROSE records pseudonymous identifiers for user content that allow researchers to re-identify content without a need to reveal it. These identfiers are derived from user-entered content and a cryptographic salt. As a cryptographic salt you can enter any arbitray text string, for example \"ROSE123\" or whatever else you like. However, make sure that in case you investigate a group of participants all use the same salt in their ROSE configuration. Otherwise you can not correlate identifiers among participants afterwards.",
+      hashLength: "Content identifier length",
+      hashLengthDesc: "Here you can specify the length of the pseudonymous identifiers created by ROSE. You need to balance participants' privacy and the uniqueness of identifiers: the shorter the identifier the more secure they are; the longer the identifiers the more unique they are. Every digit adds a factor of 16 to the space of possible identifiers for your study. For example, setting the option to 4 allows for 16*16*16*16=65536 unique identifiers for your study. 5 is a good value if you are unsure how to use this option.",
+      repositoryUrl: "URL of pattern repository",
+      repositoryUrlDesc: "ROSE gets its patterns to match user interactions to specific interaction types from a pattern repository. Here you can enter the URL of this repository.",
+      autoUpdate: "Automatically update patterns during study",
+      autoUpdateDesc: "While the patterns are usually only pushed to ROSE when the configuration file is loaded into participants' instances of ROSE, it is also possible to continously update them while the study is running. This might be necessary for long-term studies, if the user interface of the investigated social media site changes.",
+      exportConfig: "Export configuration file",
+      exportConfigDesc: "Here you can export a configuration file with all the settings entered on this page. Your participants can load this file into their installations of ROSE.",
+      fingerprint: "Pattern repository signing key fingerprint",
+      fingerprintDesc: "For reasons of security, the patterns stored in the pattern repository need to be signed with a RSA private key. This signature is validated before ROSE loads any patterns. Please enter the fingerprint of the public key ROSE shall use to verify the digital signature."
     }
   };
 
@@ -2543,8 +2520,7 @@ define('rose/pods/components/high-chart/component', ['exports', 'ember'], functi
             step: true
           },
           yAxis: {
-            type: 'logarithmic'
-          }
+            type: 'logarithmic' }
         },
 
         rangeSelector: {
@@ -4738,7 +4714,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
           var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, null);
           dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "growDuration": get(env, context, "growDuration"), "growPixelsPerSecond": get(env, context, "growPixelsPerSecond"), "growEasing": get(env, context, "growEasing"), "enableGrowth": get(env, context, "enableGrowth")}, child0, null);
+          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass")}, child0, null);
           return fragment;
         }
       };
@@ -5212,7 +5188,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
           var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, null);
           dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "growDuration": get(env, context, "growDuration"), "growPixelsPerSecond": get(env, context, "growPixelsPerSecond"), "growEasing": get(env, context, "growEasing"), "enableGrowth": get(env, context, "enableGrowth")}, child0, null);
+          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass")}, child0, null);
           return fragment;
         }
       };
@@ -5274,8 +5250,6 @@ define('rose/templates/components/liquid-measured', ['exports'], function (expor
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
         return el0;
       },
       render: function render(context, env, contextualElement) {
@@ -5299,6 +5273,7 @@ define('rose/templates/components/liquid-measured', ['exports'], function (expor
           fragment = this.build(dom);
         }
         var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
+        dom.insertBoundary(fragment, null);
         dom.insertBoundary(fragment, 0);
         content(env, morph0, context, "yield");
         return fragment;
@@ -5538,7 +5513,7 @@ define('rose/templates/components/liquid-outlet', ['exports'], function (exports
         var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
         dom.insertBoundary(fragment, null);
         dom.insertBoundary(fragment, 0);
-        block(env, morph0, context, "liquid-with", [get(env, context, "outletState")], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "use": get(env, context, "use"), "name": "liquid-outlet", "containerless": get(env, context, "containerless"), "growDuration": get(env, context, "growDuration"), "growPixelsPerSecond": get(env, context, "growPixelsPerSecond"), "growEasing": get(env, context, "growEasing"), "enableGrowth": get(env, context, "enableGrowth")}, child0, null);
+        block(env, morph0, context, "liquid-with", [get(env, context, "outletState")], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "use": get(env, context, "use"), "name": "liquid-outlet", "containerless": get(env, context, "containerless")}, child0, null);
         return fragment;
       }
     };
@@ -6014,7 +5989,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
           var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, null);
           dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "growDuration": get(env, context, "growDuration"), "growPixelsPerSecond": get(env, context, "growPixelsPerSecond"), "growEasing": get(env, context, "growEasing"), "enableGrowth": get(env, context, "enableGrowth")}, child0, null);
+          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass")}, child0, null);
           return fragment;
         }
       };
@@ -10592,7 +10567,7 @@ define('rose/transitions/cross-fade', ['exports', 'liquid-fire'], function (expo
   exports['default'] = crossFade;
   // BEGIN-SNIPPET cross-fade-definition
   function crossFade() {
-    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+    var opts = arguments[0] === undefined ? {} : arguments[0];
 
     liquid_fire.stop(this.oldElement);
     return liquid_fire.Promise.all([liquid_fire.animate(this.oldElement, { opacity: 0 }, opts), liquid_fire.animate(this.newElement, { opacity: [opts.maxOpacity || 1, 0] }, opts)]);
@@ -10604,6 +10579,11 @@ define('rose/transitions/default', ['exports', 'liquid-fire'], function (exports
   'use strict';
 
 
+
+  // This is what we run when no animation is asked for. It just sets
+  // the newly-added element to visible (because we always start them
+  // out invisible so that transitions can control their initial
+  // appearance).
   exports['default'] = defaultTransition;
   function defaultTransition() {
     if (this.newElement) {
@@ -10619,18 +10599,21 @@ define('rose/transitions/explode', ['exports', 'ember', 'liquid-fire'], function
 
 
 
+  // Explode is not, by itself, an animation. It exists to pull apart
+  // other elements so that each of the pieces can be targeted by
+  // animations.
+
   exports['default'] = explode;
 
   function explode() {
     var _this = this;
 
-    var seenElements = {};
-    var sawBackgroundPiece = false;
-
     for (var _len = arguments.length, pieces = Array(_len), _key = 0; _key < _len; _key++) {
       pieces[_key] = arguments[_key];
     }
 
+    var seenElements = {};
+    var sawBackgroundPiece = false;
     var promises = pieces.map(function (piece) {
       if (piece.matchBy) {
         return matchAndExplode(_this, piece, seenElements);
@@ -10756,17 +10739,13 @@ define('rose/transitions/explode', ['exports', 'ember', 'liquid-fire'], function
       return liquid_fire.Promise.resolve();
     }
 
-    var oldPrefix = piece.pickOld || piece.pick || "";
-    var newPrefix = piece.pickNew || piece.pick || "";
-
-    var hits = Ember['default'].A(context.oldElement.find(oldPrefix + "[" + piece.matchBy + "]").toArray());
+    var hits = Ember['default'].A(context.oldElement.find("[" + piece.matchBy + "]").toArray());
     return liquid_fire.Promise.all(hits.map(function (elt) {
       var propValue = Ember['default'].$(elt).attr(piece.matchBy);
       var selector = "[" + piece.matchBy + "=" + propValue + "]";
-      if (context.newElement.find("" + newPrefix + selector).length > 0) {
+      if (context.newElement.find(selector).length > 0) {
         return explodePiece(context, {
-          pickOld: oldPrefix + "[" + piece.matchBy + "=" + propValue + "]",
-          pickNew: newPrefix + "[" + piece.matchBy + "=" + propValue + "]",
+          pick: selector,
           use: piece.use
         }, seen);
       } else {
@@ -10787,7 +10766,7 @@ define('rose/transitions/fade', ['exports', 'liquid-fire'], function (exports, l
   function fade() {
     var _this = this;
 
-    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+    var opts = arguments[0] === undefined ? {} : arguments[0];
 
     var firstStep;
     var outOpts = opts;
@@ -10847,7 +10826,7 @@ define('rose/transitions/fly-to', ['exports', 'liquid-fire'], function (exports,
   function flyTo() {
     var _this = this;
 
-    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+    var opts = arguments[0] === undefined ? {} : arguments[0];
 
     if (!this.newElement) {
       return liquid_fire.Promise.resolve();
@@ -10859,27 +10838,17 @@ define('rose/transitions/fly-to', ['exports', 'liquid-fire'], function (exports,
     var oldOffset = this.oldElement.offset();
     var newOffset = this.newElement.offset();
 
-    if (opts.movingSide === 'new') {
-      var motion = {
-        translateX: [0, oldOffset.left - newOffset.left],
-        translateY: [0, oldOffset.top - newOffset.top],
-        outerWidth: [this.newElement.outerWidth(), this.oldElement.outerWidth()],
-        outerHeight: [this.newElement.outerHeight(), this.oldElement.outerHeight()]
-      };
-      this.oldElement.css({ visibility: 'hidden' });
-      return liquid_fire.animate(this.newElement, motion, opts);
-    } else {
-      var motion = {
-        translateX: newOffset.left - oldOffset.left,
-        translateY: newOffset.top - oldOffset.top,
-        outerWidth: this.newElement.outerWidth(),
-        outerHeight: this.newElement.outerHeight()
-      };
-      this.newElement.css({ visibility: 'hidden' });
-      return liquid_fire.animate(this.oldElement, motion, opts).then(function () {
-        _this.newElement.css({ visibility: '' });
-      });
-    }
+    var motion = {
+      translateX: newOffset.left - oldOffset.left,
+      translateY: newOffset.top - oldOffset.top,
+      outerWidth: this.newElement.outerWidth(),
+      outerHeight: this.newElement.outerHeight()
+    };
+
+    this.newElement.css({ visibility: 'hidden' });
+    return liquid_fire.animate(this.oldElement, motion, opts).then(function () {
+      _this.newElement.css({ visibility: '' });
+    });
   }
 
 });
@@ -10948,7 +10917,7 @@ define('rose/transitions/scale', ['exports', 'liquid-fire'], function (exports, 
   function scale() {
     var _this = this;
 
-    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+    var opts = arguments[0] === undefined ? {} : arguments[0];
 
     return liquid_fire.animate(this.oldElement, { scale: [0.2, 1] }, opts).then(function () {
       return liquid_fire.animate(_this.newElement, { scale: [1, 0.2] }, opts);
@@ -10961,11 +10930,11 @@ define('rose/transitions/scroll-then', ['exports', 'ember'], function (exports, 
   'use strict';
 
   exports['default'] = function (nextTransitionName, options) {
+    var _this = this;
+
     for (var _len = arguments.length, rest = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
       rest[_key - 2] = arguments[_key];
     }
-
-    var _this = this;
 
     Ember['default'].assert('You must provide a transition name as the first argument to scrollThen. Example: this.use(\'scrollThen\', \'toLeft\')', 'string' === typeof nextTransitionName);
 
@@ -11060,7 +11029,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.54198fcc"});
+  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.a7504310"});
 }
 
 /* jshint ignore:end */

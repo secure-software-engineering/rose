@@ -60025,13 +60025,12 @@ define("ember/resolver",
     };
   }
 
-  var create = (Object.create || Ember.create);
-  if (!(create && !create(null).hasOwnProperty)) {
+  if (!(Object.create && !Object.create(null).hasOwnProperty)) {
     throw new Error("This browser does not support Object.create(null), please polyfil with es5-sham: http://git.io/yBU2rg");
   }
 
   function makeDictionary() {
-    var cache = create(null);
+    var cache = Object.create(null);
     cache['_dict'] = null;
     delete cache['_dict'];
     return cache;
@@ -60078,7 +60077,7 @@ define("ember/resolver",
 
   function resolveOther(parsedName) {
     /*jshint validthis:true */
-
+    
     // Temporarily disabling podModulePrefix deprecation
     /*
     if (!this._deprecatedPodModulePrefix) {
@@ -60097,22 +60096,23 @@ define("ember/resolver",
     var normalizedModuleName = this.findModuleName(parsedName);
 
     if (normalizedModuleName) {
-      var defaultExport = this._extractDefaultExport(normalizedModuleName, parsedName);
+      var module = require(normalizedModuleName, null, null, true /* force sync */);
 
-      if (defaultExport === undefined) {
+      if (module && module['default']) { module = module['default']; }
+
+      if (module === undefined) {
         throw new Error(" Expected to find: '" + parsedName.fullName + "' within '" + normalizedModuleName + "' but got 'undefined'. Did you forget to `export default` within '" + normalizedModuleName + "'?");
       }
 
-      if (this.shouldWrapInClassFactory(defaultExport, parsedName)) {
-        defaultExport = classFactory(defaultExport);
+      if (this.shouldWrapInClassFactory(module, parsedName)) {
+        module = classFactory(module);
       }
 
-      return defaultExport;
+      return module;
     } else {
       return this._super(parsedName);
     }
   }
-
   // Ember.DefaultResolver docs:
   //   https://github.com/emberjs/ember.js/blob/master/packages/ember-application/lib/system/resolver.js
   var Resolver = Ember.DefaultResolver.extend({
@@ -60318,50 +60318,6 @@ define("ember/resolver",
       }
 
       Ember.Logger.info(symbol, parsedName.fullName, padding, description);
-    },
-
-    knownForType: function(type) {
-      var moduleEntries = requirejs.entries;
-      var moduleKeys = (Object.keys || Ember.keys)(moduleEntries);
-
-      var items = makeDictionary();
-      for (var index = 0, length = moduleKeys.length; index < length; index++) {
-        var moduleName = moduleKeys[index];
-        var fullname = this.translateToContainerFullname(type, moduleName);
-
-        if (fullname) {
-          items[fullname] = true;
-        }
-      }
-
-      return items;
-    },
-
-    translateToContainerFullname: function(type, moduleName) {
-      var prefix = this.prefix({ type: type });
-      var pluralizedType = this.pluralize(type);
-      var nonPodRegExp = new RegExp('^' + prefix + '/' + pluralizedType + '/(.+)$');
-      var podRegExp = new RegExp('^' + prefix + '/(.+)/' + type + '$');
-      var matches;
-
-
-      if ((matches = moduleName.match(podRegExp))) {
-        return type + ':' + matches[1];
-      }
-
-      if ((matches = moduleName.match(nonPodRegExp))) {
-        return type + ':' + matches[1];
-      }
-    },
-
-    _extractDefaultExport: function(normalizedModuleName) {
-      var module = require(normalizedModuleName, null, null, true /* force sync */);
-
-      if (module && module['default']) {
-        module = module['default'];
-      }
-
-      return module;
     }
   });
 
@@ -73831,7 +73787,7 @@ define("ember/load-initializers",
 
 ;/*!
     localForage -- Offline Storage, Improved
-    Version 1.2.4
+    Version 1.2.2
     https://mozilla.github.io/localForage
     (c) 2013-2015 Mozilla, Apache License 2.0
 */
@@ -74526,9 +74482,6 @@ requireModule('promise/polyfill').polyfill();
     // verbose ways of binary <-> string data storage.
     var BASE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
-    var BLOB_TYPE_PREFIX = '~~local_forage_type~';
-    var BLOB_TYPE_PREFIX_REGEX = /^~~local_forage_type~([^~]+)~/;
-
     var SERIALIZED_MARKER = '__lfsc__:';
     var SERIALIZED_MARKER_LENGTH = SERIALIZED_MARKER.length;
 
@@ -74546,37 +74499,6 @@ requireModule('promise/polyfill').polyfill();
     var TYPE_FLOAT64ARRAY = 'fl64';
     var TYPE_SERIALIZED_MARKER_LENGTH = SERIALIZED_MARKER_LENGTH +
                                         TYPE_ARRAYBUFFER.length;
-
-    // Get out of our habit of using `window` inline, at least.
-    var globalObject = this;
-
-    // Abstracts constructing a Blob object, so it also works in older
-    // browsers that don't support the native Blob constructor. (i.e.
-    // old QtWebKit versions, at least).
-    function _createBlob(parts, properties) {
-        parts = parts || [];
-        properties = properties || {};
-
-        try {
-            return new Blob(parts, properties);
-        } catch (err) {
-            if (err.name !== 'TypeError') {
-                throw err;
-            }
-
-            var BlobBuilder = globalObject.BlobBuilder ||
-                              globalObject.MSBlobBuilder ||
-                              globalObject.MozBlobBuilder ||
-                              globalObject.WebKitBlobBuilder;
-
-            var builder = new BlobBuilder();
-            for (var i = 0; i < parts.length; i += 1) {
-                builder.append(parts[i]);
-            }
-
-            return builder.getBlob(properties.type);
-        }
-    }
 
     // Serialize a value, afterwards executing a callback (which usually
     // instructs the `setItem()` callback/promise to be executed). This is how
@@ -74634,9 +74556,7 @@ requireModule('promise/polyfill').polyfill();
             var fileReader = new FileReader();
 
             fileReader.onload = function() {
-                // Backwards-compatible prefix for the blob type.
-                var str = BLOB_TYPE_PREFIX + value.type + '~' +
-                    bufferToString(this.result);
+                var str = bufferToString(this.result);
 
                 callback(SERIALIZED_MARKER + TYPE_BLOB + str);
             };
@@ -74646,8 +74566,8 @@ requireModule('promise/polyfill').polyfill();
             try {
                 callback(JSON.stringify(value));
             } catch (e) {
-                console.error("Couldn't convert value into a JSON string: ",
-                              value);
+                window.console.error("Couldn't convert value into a JSON " +
+                                     'string: ', value);
 
                 callback(null, e);
             }
@@ -74678,14 +74598,6 @@ requireModule('promise/polyfill').polyfill();
         var type = value.substring(SERIALIZED_MARKER_LENGTH,
                                    TYPE_SERIALIZED_MARKER_LENGTH);
 
-        var blobType;
-        // Backwards-compatible blob type serialization strategy.
-        // DBs created with older versions of localForage will simply not have the blob type.
-        if (type === TYPE_BLOB && BLOB_TYPE_PREFIX_REGEX.test(serializedString)) {
-            var matcher = serializedString.match(BLOB_TYPE_PREFIX_REGEX);
-            blobType = matcher[1];
-            serializedString = serializedString.substring(matcher[0].length);
-        }
         var buffer = stringToBuffer(serializedString);
 
         // Return the right type based on the code/type set during
@@ -74694,7 +74606,7 @@ requireModule('promise/polyfill').polyfill();
             case TYPE_ARRAYBUFFER:
                 return buffer;
             case TYPE_BLOB:
-                return _createBlob([buffer], {type: blobType});
+                return new Blob([buffer]);
             case TYPE_INT8ARRAY:
                 return new Int8Array(buffer);
             case TYPE_UINT8ARRAY:
@@ -74782,7 +74694,7 @@ requireModule('promise/polyfill').polyfill();
         bufferToString: bufferToString
     };
 
-    if (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
         module.exports = localforageSerializer;
     } else if (typeof define === 'function' && define.amd) {
         define('localforageSerializer', function() {
@@ -74800,7 +74712,7 @@ requireModule('promise/polyfill').polyfill();
     // Originally found in https://github.com/mozilla-b2g/gaia/blob/e8f624e4cc9ea945727278039b3bc9bcb9f8667a/shared/js/async_storage.js
 
     // Promises!
-    var Promise = (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') ?
+    var Promise = (typeof module !== 'undefined' && module.exports) ?
                   require('promise') : this.Promise;
 
     // Initialize IndexedDB; fall back to vendor-prefixed versions if needed.
@@ -74811,159 +74723,6 @@ requireModule('promise/polyfill').polyfill();
     // If IndexedDB isn't available, we get outta here!
     if (!indexedDB) {
         return;
-    }
-
-    var DETECT_BLOB_SUPPORT_STORE = 'local-forage-detect-blob-support';
-    var supportsBlobs;
-
-    // Abstracts constructing a Blob object, so it also works in older
-    // browsers that don't support the native Blob constructor. (i.e.
-    // old QtWebKit versions, at least).
-    function _createBlob(parts, properties) {
-        parts = parts || [];
-        properties = properties || {};
-        try {
-            return new Blob(parts, properties);
-        } catch (e) {
-            if (e.name !== 'TypeError') {
-                throw e;
-            }
-            var BlobBuilder = window.BlobBuilder ||
-                window.MSBlobBuilder ||
-                window.MozBlobBuilder ||
-                window.WebKitBlobBuilder;
-            var builder = new BlobBuilder();
-            for (var i = 0; i < parts.length; i += 1) {
-                builder.append(parts[i]);
-            }
-            return builder.getBlob(properties.type);
-        }
-    }
-
-    // Transform a binary string to an array buffer, because otherwise
-    // weird stuff happens when you try to work with the binary string directly.
-    // It is known.
-    // From http://stackoverflow.com/questions/14967647/ (continues on next line)
-    // encode-decode-image-with-base64-breaks-image (2013-04-21)
-    function _binStringToArrayBuffer(bin) {
-        var length = bin.length;
-        var buf = new ArrayBuffer(length);
-        var arr = new Uint8Array(buf);
-        for (var i = 0; i < length; i++) {
-            arr[i] = bin.charCodeAt(i);
-        }
-        return buf;
-    }
-
-    // Fetch a blob using ajax. This reveals bugs in Chrome < 43.
-    // For details on all this junk:
-    // https://github.com/nolanlawson/state-of-binary-data-in-the-browser#readme
-    function _blobAjax(url) {
-        return new Promise(function(resolve, reject) {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', url);
-            xhr.withCredentials = true;
-            xhr.responseType = 'arraybuffer';
-
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState !== 4) {
-                    return;
-                }
-                if (xhr.status === 200) {
-                    return resolve({
-                        response: xhr.response,
-                        type: xhr.getResponseHeader('Content-Type')
-                    });
-                }
-                reject({status: xhr.status, response: xhr.response});
-            };
-            xhr.send();
-        });
-    }
-
-    //
-    // Detect blob support. Chrome didn't support it until version 38.
-    // In version 37 they had a broken version where PNGs (and possibly
-    // other binary types) aren't stored correctly, because when you fetch
-    // them, the content type is always null.
-    //
-    // Furthermore, they have some outstanding bugs where blobs occasionally
-    // are read by FileReader as null, or by ajax as 404s.
-    //
-    // Sadly we use the 404 bug to detect the FileReader bug, so if they
-    // get fixed independently and released in different versions of Chrome,
-    // then the bug could come back. So it's worthwhile to watch these issues:
-    // 404 bug: https://code.google.com/p/chromium/issues/detail?id=447916
-    // FileReader bug: https://code.google.com/p/chromium/issues/detail?id=447836
-    //
-    function _checkBlobSupportWithoutCaching(idb) {
-        return new Promise(function(resolve, reject) {
-            var blob = _createBlob([''], {type: 'image/png'});
-            var txn = idb.transaction([DETECT_BLOB_SUPPORT_STORE], 'readwrite');
-            txn.objectStore(DETECT_BLOB_SUPPORT_STORE).put(blob, 'key');
-            txn.oncomplete = function() {
-                // have to do it in a separate transaction, else the correct
-                // content type is always returned
-                var blobTxn = idb.transaction([DETECT_BLOB_SUPPORT_STORE],
-                    'readwrite');
-                var getBlobReq = blobTxn.objectStore(
-                    DETECT_BLOB_SUPPORT_STORE).get('key');
-                getBlobReq.onerror = reject;
-                getBlobReq.onsuccess = function(e) {
-
-                    var storedBlob = e.target.result;
-                    var url = URL.createObjectURL(storedBlob);
-
-                    _blobAjax(url).then(function(res) {
-                        resolve(!!(res && res.type === 'image/png'));
-                    }, function() {
-                        resolve(false);
-                    }).then(function() {
-                        URL.revokeObjectURL(url);
-                    });
-                };
-            };
-        })["catch"](function() {
-            return false; // error, so assume unsupported
-        });
-    }
-
-    function _checkBlobSupport(idb) {
-        if (typeof supportsBlobs === 'boolean') {
-            return Promise.resolve(supportsBlobs);
-        }
-        return _checkBlobSupportWithoutCaching(idb).then(function(value) {
-            supportsBlobs = value;
-            return supportsBlobs;
-        });
-    }
-
-    // encode a blob for indexeddb engines that don't support blobs
-    function _encodeBlob(blob) {
-        return new Promise(function(resolve, reject) {
-            var reader = new FileReader();
-            reader.onerror = reject;
-            reader.onloadend = function(e) {
-                var base64 = btoa(e.target.result || '');
-                resolve({
-                    __local_forage_encoded_blob: true,
-                    data: base64,
-                    type: blob.type
-                });
-            };
-            reader.readAsBinaryString(blob);
-        });
-    }
-
-    // decode an encoded blob
-    function _decodeBlob(encodedBlob) {
-        var arrayBuff = _binStringToArrayBuffer(atob(encodedBlob.data));
-        return _createBlob([arrayBuff], { type: encodedBlob.type});
-    }
-
-    // is this one of our fancy encoded blobs?
-    function _isEncodedBlob(value) {
-        return value && value.__local_forage_encoded_blob;
     }
 
     // Open the IndexedDB database (automatically creates one if one didn't
@@ -74985,13 +74744,9 @@ requireModule('promise/polyfill').polyfill();
             openreq.onerror = function() {
                 reject(openreq.error);
             };
-            openreq.onupgradeneeded = function(e) {
+            openreq.onupgradeneeded = function() {
                 // First time setup: create an empty object store
                 openreq.result.createObjectStore(dbInfo.storeName);
-                if (e.oldVersion <= 1) {
-                    // added when support for blob shims was added
-                    openreq.result.createObjectStore(DETECT_BLOB_SUPPORT_STORE);
-                }
             };
             openreq.onsuccess = function() {
                 dbInfo.db = openreq.result;
@@ -75023,9 +74778,7 @@ requireModule('promise/polyfill').polyfill();
                     if (value === undefined) {
                         value = null;
                     }
-                    if (_isEncodedBlob(value)) {
-                        value = _decodeBlob(value);
-                    }
+
                     resolve(value);
                 };
 
@@ -75035,7 +74788,7 @@ requireModule('promise/polyfill').polyfill();
             })["catch"](reject);
         });
 
-        executeCallback(promise, callback);
+        executeDeferedCallback(promise, callback);
         return promise;
     }
 
@@ -75056,11 +74809,7 @@ requireModule('promise/polyfill').polyfill();
                     var cursor = req.result;
 
                     if (cursor) {
-                        var value = cursor.value;
-                        if (_isEncodedBlob(value)) {
-                            value = _decodeBlob(value);
-                        }
-                        var result = iterator(value, cursor.key, iterationNumber++);
+                        var result = iterator(cursor.value, cursor.key, iterationNumber++);
 
                         if (result !== void(0)) {
                             resolve(result);
@@ -75078,7 +74827,7 @@ requireModule('promise/polyfill').polyfill();
             })["catch"](reject);
         });
 
-        executeCallback(promise, callback);
+        executeDeferedCallback(promise, callback);
 
         return promise;
     }
@@ -75094,16 +74843,8 @@ requireModule('promise/polyfill').polyfill();
         }
 
         var promise = new Promise(function(resolve, reject) {
-            var dbInfo;
             self.ready().then(function() {
-                dbInfo = self._dbInfo;
-                return _checkBlobSupport(dbInfo.db);
-            }).then(function(blobSupport) {
-                if (!blobSupport && value instanceof Blob) {
-                    return _encodeBlob(value);
-                }
-                return value;
-            }).then(function(value) {
+                var dbInfo = self._dbInfo;
                 var transaction = dbInfo.db.transaction(dbInfo.storeName, 'readwrite');
                 var store = transaction.objectStore(dbInfo.storeName);
 
@@ -75130,13 +74871,12 @@ requireModule('promise/polyfill').polyfill();
                     resolve(value);
                 };
                 transaction.onabort = transaction.onerror = function() {
-                    var err = req.error ? req.error : req.transaction.error;
-                    reject(err);
+                    reject(req.error);
                 };
             })["catch"](reject);
         });
 
-        executeCallback(promise, callback);
+        executeDeferedCallback(promise, callback);
         return promise;
     }
 
@@ -75170,16 +74910,19 @@ requireModule('promise/polyfill').polyfill();
                     reject(req.error);
                 };
 
-                // The request will be also be aborted if we've exceeded our storage
-                // space.
-                transaction.onabort = function() {
-                    var err = req.error ? req.error : req.transaction.error;
-                    reject(err);
+                // The request will be aborted if we've exceeded our storage
+                // space. In this case, we will reject with a specific
+                // "QuotaExceededError".
+                transaction.onabort = function(event) {
+                    var error = event.target.error;
+                    if (error === 'QuotaExceededError') {
+                        reject(error);
+                    }
                 };
             })["catch"](reject);
         });
 
-        executeCallback(promise, callback);
+        executeDeferedCallback(promise, callback);
         return promise;
     }
 
@@ -75198,13 +74941,12 @@ requireModule('promise/polyfill').polyfill();
                 };
 
                 transaction.onabort = transaction.onerror = function() {
-                    var err = req.error ? req.error : req.transaction.error;
-                    reject(err);
+                    reject(req.error);
                 };
             })["catch"](reject);
         });
 
-        executeCallback(promise, callback);
+        executeDeferedCallback(promise, callback);
         return promise;
     }
 
@@ -75329,6 +75071,29 @@ requireModule('promise/polyfill').polyfill();
         }
     }
 
+    function executeDeferedCallback(promise, callback) {
+        if (callback) {
+            promise.then(function(result) {
+                deferCallback(callback, result);
+            }, function(error) {
+                callback(error);
+            });
+        }
+    }
+
+    // Under Chrome the callback is called before the changes (save, clear)
+    // are actually made. So we use a defer function which wait that the
+    // call stack to be empty.
+    // For more info : https://github.com/mozilla/localForage/issues/175
+    // Pull request : https://github.com/mozilla/localForage/pull/178
+    function deferCallback(callback, result) {
+        if (callback) {
+            return setTimeout(function() {
+                return callback(null, result);
+            }, 0);
+        }
+    }
+
     var asyncStorage = {
         _driver: 'asyncStorage',
         _initStorage: _initStorage,
@@ -75342,7 +75107,7 @@ requireModule('promise/polyfill').polyfill();
         keys: keys
     };
 
-    if (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
         module.exports = asyncStorage;
     } else if (typeof define === 'function' && define.amd) {
         define('asyncStorage', function() {
@@ -75360,7 +75125,7 @@ requireModule('promise/polyfill').polyfill();
     'use strict';
 
     // Promises!
-    var Promise = (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') ?
+    var Promise = (typeof module !== 'undefined' && module.exports) ?
                   require('promise') : this.Promise;
 
     var globalObject = this;
@@ -75397,7 +75162,7 @@ requireModule('promise/polyfill').polyfill();
 
     // Find out what kind of module setup we have; if none, we'll just attach
     // localForage to the main window.
-    if (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
         moduleType = ModuleType.EXPORT;
     } else if (typeof define === 'function' && define.amd) {
         moduleType = ModuleType.DEFINE;
@@ -75694,7 +75459,7 @@ requireModule('promise/polyfill').polyfill();
     'use strict';
 
     // Promises!
-    var Promise = (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') ?
+    var Promise = (typeof module !== 'undefined' && module.exports) ?
                   require('promise') : this.Promise;
 
     var globalObject = this;
@@ -75718,7 +75483,7 @@ requireModule('promise/polyfill').polyfill();
 
     // Find out what kind of module setup we have; if none, we'll just attach
     // localForage to the main window.
-    if (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
         moduleType = ModuleType.EXPORT;
     } else if (typeof define === 'function' && define.amd) {
         moduleType = ModuleType.DEFINE;
@@ -75903,9 +75668,8 @@ requireModule('promise/polyfill').polyfill();
                             }, function(t, error) {
                                 reject(error);
                             });
-                        }, function(sqlError) {
-                            // The transaction failed; check
-                            // to see if it's a quota error.
+                        }, function(sqlError) { // The transaction failed; check
+                                                // to see if it's a quota error.
                             if (sqlError.code === sqlError.QUOTA_ERR) {
                                 // We reject the callback outright for now, but
                                 // it's worth trying to re-run the transaction.
@@ -75941,8 +75705,8 @@ requireModule('promise/polyfill').polyfill();
                 var dbInfo = self._dbInfo;
                 dbInfo.db.transaction(function(t) {
                     t.executeSql('DELETE FROM ' + dbInfo.storeName +
-                                 ' WHERE key = ?', [key],
-                                 function() {
+                                 ' WHERE key = ?', [key], function() {
+
                         resolve();
                     }, function(t, error) {
 
@@ -76102,8 +75866,7 @@ requireModule('promise/polyfill').polyfill();
     'use strict';
 
     // Promises!
-    var Promise = (typeof module !== 'undefined' && module.exports &&
-                   typeof require !== 'undefined') ?
+    var Promise = (typeof module !== 'undefined' && module.exports) ?
                   require('promise') : this.Promise;
 
     // Custom drivers are stored here when `defineDriver()` is called.
@@ -76156,7 +75919,7 @@ requireModule('promise/polyfill').polyfill();
 
     // Find out what kind of module setup we have; if none, we'll just attach
     // localForage to the main window.
-    if (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
         moduleType = ModuleType.EXPORT;
     } else if (typeof define === 'function' && define.amd) {
         moduleType = ModuleType.DEFINE;
@@ -76427,39 +76190,43 @@ requireModule('promise/polyfill').polyfill();
             self._ready = null;
 
             if (isLibraryDriver(driverName)) {
-                var driverPromise = new Promise(function(resolve/*, reject*/) {
-                    // We allow localForage to be declared as a module or as a
-                    // library available without AMD/require.js.
-                    if (moduleType === ModuleType.DEFINE) {
-                        require([driverName], resolve);
-                    } else if (moduleType === ModuleType.EXPORT) {
-                        // Making it browserify friendly
-                        switch (driverName) {
-                            case self.INDEXEDDB:
-                                resolve(require('./drivers/indexeddb'));
-                                break;
-                            case self.LOCALSTORAGE:
-                                resolve(require('./drivers/localstorage'));
-                                break;
-                            case self.WEBSQL:
-                                resolve(require('./drivers/websql'));
-                                break;
-                        }
-                    } else {
-                        resolve(globalObject[driverName]);
+                // We allow localForage to be declared as a module or as a
+                // library available without AMD/require.js.
+                if (moduleType === ModuleType.DEFINE) {
+                    require([driverName], function(lib) {
+                        self._extend(lib);
+
+                        resolve();
+                    });
+
+                    return;
+                } else if (moduleType === ModuleType.EXPORT) {
+                    // Making it browserify friendly
+                    var driver;
+                    switch (driverName) {
+                        case self.INDEXEDDB:
+                            driver = require('./drivers/indexeddb');
+                            break;
+                        case self.LOCALSTORAGE:
+                            driver = require('./drivers/localstorage');
+                            break;
+                        case self.WEBSQL:
+                            driver = require('./drivers/websql');
                     }
-                });
-                driverPromise.then(function(driver) {
+
                     self._extend(driver);
-                    resolve();
-                });
+                } else {
+                    self._extend(globalObject[driverName]);
+                }
             } else if (CustomDrivers[driverName]) {
                 self._extend(CustomDrivers[driverName]);
-                resolve();
             } else {
                 self._driverSet = Promise.reject(error);
                 reject(error);
+                return;
             }
+
+            resolve();
         });
 
         function setDriverToConfig() {
@@ -76517,7 +76284,7 @@ requireModule('promise/polyfill').polyfill();
 }).call(window);
 
 ;//! moment.js
-//! version : 2.10.3
+//! version : 2.10.2
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com
@@ -76540,12 +76307,28 @@ requireModule('promise/polyfill').polyfill();
         hookCallback = callback;
     }
 
+    function defaultParsingFlags() {
+        // We need to deep clone this object.
+        return {
+            empty           : false,
+            unusedTokens    : [],
+            unusedInput     : [],
+            overflow        : -2,
+            charsLeftOver   : 0,
+            nullInput       : false,
+            invalidMonth    : null,
+            invalidFormat   : false,
+            userInvalidated : false,
+            iso             : false
+        };
+    }
+
     function isArray(input) {
         return Object.prototype.toString.call(input) === '[object Array]';
     }
 
     function isDate(input) {
-        return input instanceof Date || Object.prototype.toString.call(input) === '[object Date]';
+        return Object.prototype.toString.call(input) === '[object Date]' || input instanceof Date;
     }
 
     function map(arr, fn) {
@@ -76582,45 +76365,21 @@ requireModule('promise/polyfill').polyfill();
         return createLocalOrUTC(input, format, locale, strict, true).utc();
     }
 
-    function defaultParsingFlags() {
-        // We need to deep clone this object.
-        return {
-            empty           : false,
-            unusedTokens    : [],
-            unusedInput     : [],
-            overflow        : -2,
-            charsLeftOver   : 0,
-            nullInput       : false,
-            invalidMonth    : null,
-            invalidFormat   : false,
-            userInvalidated : false,
-            iso             : false
-        };
-    }
-
-    function getParsingFlags(m) {
-        if (m._pf == null) {
-            m._pf = defaultParsingFlags();
-        }
-        return m._pf;
-    }
-
     function valid__isValid(m) {
         if (m._isValid == null) {
-            var flags = getParsingFlags(m);
             m._isValid = !isNaN(m._d.getTime()) &&
-                flags.overflow < 0 &&
-                !flags.empty &&
-                !flags.invalidMonth &&
-                !flags.nullInput &&
-                !flags.invalidFormat &&
-                !flags.userInvalidated;
+                m._pf.overflow < 0 &&
+                !m._pf.empty &&
+                !m._pf.invalidMonth &&
+                !m._pf.nullInput &&
+                !m._pf.invalidFormat &&
+                !m._pf.userInvalidated;
 
             if (m._strict) {
                 m._isValid = m._isValid &&
-                    flags.charsLeftOver === 0 &&
-                    flags.unusedTokens.length === 0 &&
-                    flags.bigHour === undefined;
+                    m._pf.charsLeftOver === 0 &&
+                    m._pf.unusedTokens.length === 0 &&
+                    m._pf.bigHour === undefined;
             }
         }
         return m._isValid;
@@ -76629,10 +76388,10 @@ requireModule('promise/polyfill').polyfill();
     function valid__createInvalid (flags) {
         var m = create_utc__createUTC(NaN);
         if (flags != null) {
-            extend(getParsingFlags(m), flags);
+            extend(m._pf, flags);
         }
         else {
-            getParsingFlags(m).userInvalidated = true;
+            m._pf.userInvalidated = true;
         }
 
         return m;
@@ -76668,7 +76427,7 @@ requireModule('promise/polyfill').polyfill();
             to._offset = from._offset;
         }
         if (typeof from._pf !== 'undefined') {
-            to._pf = getParsingFlags(from);
+            to._pf = from._pf;
         }
         if (typeof from._locale !== 'undefined') {
             to._locale = from._locale;
@@ -76703,7 +76462,7 @@ requireModule('promise/polyfill').polyfill();
     }
 
     function isMoment (obj) {
-        return obj instanceof Moment || (obj != null && obj._isAMomentObject != null);
+        return obj instanceof Moment || (obj != null && hasOwnProp(obj, '_isAMomentObject'));
     }
 
     function toInt(argumentForCoercion) {
@@ -77141,7 +76900,7 @@ requireModule('promise/polyfill').polyfill();
         if (month != null) {
             array[MONTH] = month;
         } else {
-            getParsingFlags(config).invalidMonth = input;
+            config._pf.invalidMonth = input;
         }
     });
 
@@ -77225,7 +76984,7 @@ requireModule('promise/polyfill').polyfill();
         var overflow;
         var a = m._a;
 
-        if (a && getParsingFlags(m).overflow === -2) {
+        if (a && m._pf.overflow === -2) {
             overflow =
                 a[MONTH]       < 0 || a[MONTH]       > 11  ? MONTH :
                 a[DATE]        < 1 || a[DATE]        > daysInMonth(a[YEAR], a[MONTH]) ? DATE :
@@ -77235,11 +76994,11 @@ requireModule('promise/polyfill').polyfill();
                 a[MILLISECOND] < 0 || a[MILLISECOND] > 999 ? MILLISECOND :
                 -1;
 
-            if (getParsingFlags(m)._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
+            if (m._pf._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
                 overflow = DATE;
             }
 
-            getParsingFlags(m).overflow = overflow;
+            m._pf.overflow = overflow;
         }
 
         return m;
@@ -77252,12 +77011,10 @@ requireModule('promise/polyfill').polyfill();
     }
 
     function deprecate(msg, fn) {
-        var firstTime = true,
-            msgWithStack = msg + '\n' + (new Error()).stack;
-
+        var firstTime = true;
         return extend(function () {
             if (firstTime) {
-                warn(msgWithStack);
+                warn(msg);
                 firstTime = false;
             }
             return fn.apply(this, arguments);
@@ -77302,7 +77059,7 @@ requireModule('promise/polyfill').polyfill();
             match = from_string__isoRegex.exec(string);
 
         if (match) {
-            getParsingFlags(config).iso = true;
+            config._pf.iso = true;
             for (i = 0, l = isoDates.length; i < l; i++) {
                 if (isoDates[i][1].exec(string)) {
                     // match[5] should be 'T' or undefined
@@ -77582,7 +77339,7 @@ requireModule('promise/polyfill').polyfill();
             yearToUse = defaults(config._a[YEAR], currentDate[YEAR]);
 
             if (config._dayOfYear > daysInYear(yearToUse)) {
-                getParsingFlags(config)._overflowDayOfYear = true;
+                config._pf._overflowDayOfYear = true;
             }
 
             date = createUTCDate(yearToUse, 0, config._dayOfYear);
@@ -77678,7 +77435,7 @@ requireModule('promise/polyfill').polyfill();
         }
 
         config._a = [];
-        getParsingFlags(config).empty = true;
+        config._pf.empty = true;
 
         // This array is used to make a Date, either with `new Date` or `Date.UTC`
         var string = '' + config._i,
@@ -77694,7 +77451,7 @@ requireModule('promise/polyfill').polyfill();
             if (parsedInput) {
                 skipped = string.substr(0, string.indexOf(parsedInput));
                 if (skipped.length > 0) {
-                    getParsingFlags(config).unusedInput.push(skipped);
+                    config._pf.unusedInput.push(skipped);
                 }
                 string = string.slice(string.indexOf(parsedInput) + parsedInput.length);
                 totalParsedInputLength += parsedInput.length;
@@ -77702,29 +77459,27 @@ requireModule('promise/polyfill').polyfill();
             // don't parse if it's not a known token
             if (formatTokenFunctions[token]) {
                 if (parsedInput) {
-                    getParsingFlags(config).empty = false;
+                    config._pf.empty = false;
                 }
                 else {
-                    getParsingFlags(config).unusedTokens.push(token);
+                    config._pf.unusedTokens.push(token);
                 }
                 addTimeToArrayFromToken(token, parsedInput, config);
             }
             else if (config._strict && !parsedInput) {
-                getParsingFlags(config).unusedTokens.push(token);
+                config._pf.unusedTokens.push(token);
             }
         }
 
         // add remaining unparsed input length to the string
-        getParsingFlags(config).charsLeftOver = stringLength - totalParsedInputLength;
+        config._pf.charsLeftOver = stringLength - totalParsedInputLength;
         if (string.length > 0) {
-            getParsingFlags(config).unusedInput.push(string);
+            config._pf.unusedInput.push(string);
         }
 
         // clear _12h flag if hour is <= 12
-        if (getParsingFlags(config).bigHour === true &&
-                config._a[HOUR] <= 12 &&
-                config._a[HOUR] > 0) {
-            getParsingFlags(config).bigHour = undefined;
+        if (config._pf.bigHour === true && config._a[HOUR] <= 12) {
+            config._pf.bigHour = undefined;
         }
         // handle meridiem
         config._a[HOUR] = meridiemFixWrap(config._locale, config._a[HOUR], config._meridiem);
@@ -77768,7 +77523,7 @@ requireModule('promise/polyfill').polyfill();
             currentScore;
 
         if (config._f.length === 0) {
-            getParsingFlags(config).invalidFormat = true;
+            config._pf.invalidFormat = true;
             config._d = new Date(NaN);
             return;
         }
@@ -77779,6 +77534,7 @@ requireModule('promise/polyfill').polyfill();
             if (config._useUTC != null) {
                 tempConfig._useUTC = config._useUTC;
             }
+            tempConfig._pf = defaultParsingFlags();
             tempConfig._f = config._f[i];
             configFromStringAndFormat(tempConfig);
 
@@ -77787,12 +77543,12 @@ requireModule('promise/polyfill').polyfill();
             }
 
             // if there is any input that was not parsed add a penalty for that format
-            currentScore += getParsingFlags(tempConfig).charsLeftOver;
+            currentScore += tempConfig._pf.charsLeftOver;
 
             //or tokens
-            currentScore += getParsingFlags(tempConfig).unusedTokens.length * 10;
+            currentScore += tempConfig._pf.unusedTokens.length * 10;
 
-            getParsingFlags(tempConfig).score = currentScore;
+            tempConfig._pf.score = currentScore;
 
             if (scoreToBeat == null || currentScore < scoreToBeat) {
                 scoreToBeat = currentScore;
@@ -77835,8 +77591,6 @@ requireModule('promise/polyfill').polyfill();
             configFromStringAndArray(config);
         } else if (format) {
             configFromStringAndFormat(config);
-        } else if (isDate(input)) {
-            config._d = input;
         } else {
             configFromInput(config);
         }
@@ -77889,6 +77643,7 @@ requireModule('promise/polyfill').polyfill();
         c._i = input;
         c._f = format;
         c._strict = strict;
+        c._pf = defaultParsingFlags();
 
         return createFromConfig(c);
     }
@@ -78462,25 +78217,11 @@ requireModule('promise/polyfill').polyfill();
     }
 
     function from (time, withoutSuffix) {
-        if (!this.isValid()) {
-            return this.localeData().invalidDate();
-        }
         return create__createDuration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
     }
 
     function fromNow (withoutSuffix) {
         return this.from(local__createLocal(), withoutSuffix);
-    }
-
-    function to (time, withoutSuffix) {
-        if (!this.isValid()) {
-            return this.localeData().invalidDate();
-        }
-        return create__createDuration({from: this, to: time}).locale(this.locale()).humanize(!withoutSuffix);
-    }
-
-    function toNow (withoutSuffix) {
-        return this.to(local__createLocal(), withoutSuffix);
     }
 
     function locale (key) {
@@ -78585,11 +78326,11 @@ requireModule('promise/polyfill').polyfill();
     }
 
     function parsingFlags () {
-        return extend({}, getParsingFlags(this));
+        return extend({}, this._pf);
     }
 
     function invalidAt () {
-        return getParsingFlags(this).overflow;
+        return this._pf.overflow;
     }
 
     addFormatToken(0, ['gg', 2], 0, function () {
@@ -78740,7 +78481,7 @@ requireModule('promise/polyfill').polyfill();
         if (weekday != null) {
             week.d = weekday;
         } else {
-            getParsingFlags(config).invalidWeekday = input;
+            config._pf.invalidWeekday = input;
         }
     });
 
@@ -78865,7 +78606,7 @@ requireModule('promise/polyfill').polyfill();
     });
     addParseToken(['h', 'hh'], function (input, array, config) {
         array[HOUR] = toInt(input);
-        getParsingFlags(config).bigHour = true;
+        config._pf.bigHour = true;
     });
 
     // LOCALES
@@ -78982,8 +78723,6 @@ requireModule('promise/polyfill').polyfill();
     momentPrototype__proto.format       = format;
     momentPrototype__proto.from         = from;
     momentPrototype__proto.fromNow      = fromNow;
-    momentPrototype__proto.to           = to;
-    momentPrototype__proto.toNow        = toNow;
     momentPrototype__proto.get          = getSet;
     momentPrototype__proto.invalidAt    = invalidAt;
     momentPrototype__proto.isAfter      = isAfter;
@@ -79172,7 +78911,7 @@ requireModule('promise/polyfill').polyfill();
         }
         // Lenient ordinal parsing accepts just a number in addition to
         // number + (possibly) stuff coming from _ordinalParseLenient.
-        this._ordinalParseLenient = new RegExp(this._ordinalParse.source + '|' + (/\d{1,2}/).source);
+        this._ordinalParseLenient = new RegExp(this._ordinalParse.source + '|' + /\d{1,2}/.source);
     }
 
     var prototype__proto = Locale.prototype;
@@ -79389,13 +79128,13 @@ requireModule('promise/polyfill').polyfill();
             // handle milliseconds separately because of floating point math errors (issue #1867)
             days = this._days + Math.round(yearsToDays(this._months / 12));
             switch (units) {
-                case 'week'   : return days / 7     + milliseconds / 6048e5;
-                case 'day'    : return days         + milliseconds / 864e5;
-                case 'hour'   : return days * 24    + milliseconds / 36e5;
-                case 'minute' : return days * 1440  + milliseconds / 6e4;
-                case 'second' : return days * 86400 + milliseconds / 1000;
+                case 'week'   : return days / 7            + milliseconds / 6048e5;
+                case 'day'    : return days                + milliseconds / 864e5;
+                case 'hour'   : return days * 24           + milliseconds / 36e5;
+                case 'minute' : return days * 24 * 60      + milliseconds / 6e4;
+                case 'second' : return days * 24 * 60 * 60 + milliseconds / 1000;
                 // Math.floor prevents floating point math errors here
-                case 'millisecond': return Math.floor(days * 864e5) + milliseconds;
+                case 'millisecond': return Math.floor(days * 24 * 60 * 60 * 1000) + milliseconds;
                 default: throw new Error('Unknown unit ' + units);
             }
         }
@@ -79596,7 +79335,7 @@ requireModule('promise/polyfill').polyfill();
     // Side effect imports
 
 
-    utils_hooks__hooks.version = '2.10.3';
+    utils_hooks__hooks.version = '2.10.2';
 
     setHookCallback(local__createLocal);
 
@@ -83549,7 +83288,7 @@ return function (global, window, document, undefined) {
 Velocity, however, doesn't make this distinction. Thus, converting to or from the % unit with these subproperties
 will produce an inaccurate conversion value. The same issue exists with the cx/cy attributes of SVG circles and ellipses. */
 ; /*
- * # Semantic UI - 1.12.3
+ * # Semantic UI - 1.12.1
  * https://github.com/Semantic-Org/Semantic-UI
  * http://www.semantic-ui.com/
  *
@@ -83559,7 +83298,7 @@ will produce an inaccurate conversion value. The same issue exists with the cx/c
  *
  */
 /*!
- * # Semantic UI 1.12.3 - Site
+ * # Semantic UI 1.12.1 - Site
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -84046,7 +83785,7 @@ $.extend($.expr[ ":" ], {
 
 })( jQuery, window , document );
 /*!
- * # Semantic UI 1.12.3 - Form Validation
+ * # Semantic UI 1.12.1 - Form Validation
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -85165,7 +84904,7 @@ $.fn.form.settings = {
 })( jQuery, window , document );
 
 /*!
- * # Semantic UI 1.12.3 - Accordion
+ * # Semantic UI 1.12.1 - Accordion
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -85744,7 +85483,7 @@ $.extend( $.easing, {
 
 
 /*!
- * # Semantic UI 1.12.3 - Checkbox
+ * # Semantic UI 1.12.1 - Checkbox
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -85838,9 +85577,9 @@ $.fn.checkbox = function(parameters) {
         },
 
         refresh: function() {
-          $module = $(element);
-          $label  = $(element).find(selector.label).first();
-          $input  = $(element).find(selector.input);
+          $module = $(this);
+          $label  = $(this).find(selector.label).first();
+          $input  = $(this).find(selector.input);
         },
 
         observeChanges: function() {
@@ -86254,7 +85993,7 @@ $.fn.checkbox.settings = {
 })( jQuery, window , document );
 
 /*!
- * # Semantic UI 1.12.3 - Dimmer
+ * # Semantic UI 1.12.1 - Dimmer
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -86923,7 +86662,7 @@ $.fn.dimmer.settings = {
 
 })( jQuery, window , document );
 /*!
- * # Semantic UI 1.12.3 - Dropdown
+ * # Semantic UI 1.12.1 - Dropdown
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -87509,8 +87248,8 @@ $.fn.dropdown = function(parameters) {
                     .closest(selector.item)
                       .addClass(className.selected)
                   ;
-                  event.preventDefault();
                 }
+                event.preventDefault();
               }
               // right arrow (show sub-menu)
               if(pressedKey == keys.rightArrow) {
@@ -87524,8 +87263,8 @@ $.fn.dropdown = function(parameters) {
                     .find(selector.item).eq(0)
                       .addClass(className.selected)
                   ;
-                  event.preventDefault();
                 }
+                event.preventDefault();
               }
               // up arrow (traverse menu up)
               if(pressedKey == keys.upArrow) {
@@ -88732,7 +88471,7 @@ $.extend( $.easing, {
 })( jQuery, window , document );
 
 /*!
- * # Semantic UI 1.12.3 - Modal
+ * # Semantic UI 1.12.1 - Modal
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -89593,7 +89332,7 @@ $.fn.modal.settings = {
 })( jQuery, window , document );
 
 /*!
- * # Semantic UI 1.12.3 - Nag
+ * # Semantic UI 1.12.1 - Nag
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -90071,7 +89810,7 @@ $.fn.nag.settings = {
 })( jQuery, window , document );
 
 /*!
- * # Semantic UI 1.12.3 - Popup
+ * # Semantic UI 1.12.1 - Popup
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -91296,7 +91035,7 @@ $.extend( $.easing, {
 })( jQuery, window , document );
 
 /*!
- * # Semantic UI 1.12.3 - Progress
+ * # Semantic UI 1.12.1 - Progress
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -92081,7 +91820,7 @@ $.fn.progress.settings = {
 
 })( jQuery, window , document );
 /*!
- * # Semantic UI 1.12.3 - Rating
+ * # Semantic UI 1.12.1 - Rating
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -92533,7 +92272,7 @@ $.fn.rating.settings = {
 })( jQuery, window , document );
 
 /*!
- * # Semantic UI 1.12.3 - Search
+ * # Semantic UI 1.12.1 - Search
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -93630,7 +93369,7 @@ $.fn.search.settings = {
 })( jQuery, window , document );
 
 /*!
- * # Semantic UI 1.12.3 - Shape
+ * # Semantic UI 1.12.1 - Shape
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -94460,7 +94199,7 @@ $.fn.shape.settings = {
 
 })( jQuery, window , document );
 /*!
- * # Semantic UI 1.12.3 - Sidebar
+ * # Semantic UI 1.12.1 - Sidebar
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -95550,7 +95289,7 @@ $.extend( $.easing, {
 })( jQuery, window , document );
 
 /*!
- * # Semantic UI 1.12.3 - Sticky
+ * # Semantic UI 1.12.1 - Sticky
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -96362,7 +96101,7 @@ $.fn.sticky.settings = {
 
 })( jQuery, window , document );
 /*!
- * # Semantic UI 1.12.3 - Tab
+ * # Semantic UI 1.12.1 - Tab
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -97164,7 +96903,7 @@ $.fn.tab.settings = {
 
 })( jQuery, window , document );
 /*!
- * # Semantic UI 1.12.3 - Transition
+ * # Semantic UI 1.12.1 - Transition
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -98203,7 +97942,7 @@ $.fn.transition.settings = {
 })( jQuery, window , document );
 
 /*!
- * # Semantic UI 1.12.3 - Video
+ * # Semantic UI 1.12.1 - Video
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -98744,7 +98483,7 @@ $.fn.video.settings.templates = {
 })( jQuery, window , document );
 
 /*!
- * # Semantic UI 1.12.3 - API
+ * # Semantic UI 1.12.1 - API
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -99615,7 +99354,7 @@ $.api.settings.api = {};
 
 })( jQuery, window , document );
 /*!
- * # Semantic UI 1.12.3 - State
+ * # Semantic UI 1.12.1 - State
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -100311,7 +100050,7 @@ $.fn.state.settings = {
 })( jQuery, window , document );
 
 /*!
- * # Semantic UI 1.12.3 - Visibility
+ * # Semantic UI 1.12.1 - Visibility
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -101408,7 +101147,7 @@ $.fn.visibility.settings = {
 })( jQuery, window , document );
 ;/* FileSaver.js
  * A saveAs() FileSaver implementation.
- * 1.1.20150716
+ * 2015-03-04
  *
  * By Eli Grey, http://eligrey.com
  * License: X11/MIT
@@ -101420,10 +101159,16 @@ $.fn.visibility.settings = {
 
 /*! @source http://purl.eligrey.com/github/FileSaver.js/blob/master/FileSaver.js */
 
-var saveAs = saveAs || (function(view) {
+var saveAs = saveAs
+  // IE 10+ (native saveAs)
+  || (typeof navigator !== "undefined" &&
+      navigator.msSaveOrOpenBlob && navigator.msSaveOrOpenBlob.bind(navigator))
+  // Everyone else
+  || (function(view) {
 	"use strict";
 	// IE <10 is explicitly unsupported
-	if (typeof navigator !== "undefined" && /MSIE [1-9]\./.test(navigator.userAgent)) {
+	if (typeof navigator !== "undefined" &&
+	    /MSIE [1-9]\./.test(navigator.userAgent)) {
 		return;
 	}
 	var
@@ -101435,7 +101180,11 @@ var saveAs = saveAs || (function(view) {
 		, save_link = doc.createElementNS("http://www.w3.org/1999/xhtml", "a")
 		, can_use_save_link = "download" in save_link
 		, click = function(node) {
-			var event = new MouseEvent("click");
+			var event = doc.createEvent("MouseEvents");
+			event.initMouseEvent(
+				"click", true, false, view, 0, 0, 0, 0, 0
+				, false, false, false, false, 0, null
+			);
 			node.dispatchEvent(event);
 		}
 		, webkit_req_fs = view.webkitRequestFileSystem
@@ -101479,17 +101228,7 @@ var saveAs = saveAs || (function(view) {
 				}
 			}
 		}
-		, auto_bom = function(blob) {
-			// prepend BOM for UTF-8 XML and text/* types (including HTML)
-			if (/^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(blob.type)) {
-				return new Blob(["\ufeff", blob], {type: blob.type});
-			}
-			return blob;
-		}
-		, FileSaver = function(blob, name, no_auto_bom) {
-			if (!no_auto_bom) {
-				blob = auto_bom(blob);
-			}
+		, FileSaver = function(blob, name) {
 			// First try a.download, then web filesystem, then object URLs
 			var
 				  filesaver = this
@@ -101537,13 +101276,15 @@ var saveAs = saveAs || (function(view) {
 				object_url = get_URL().createObjectURL(blob);
 				save_link.href = object_url;
 				save_link.download = name;
-				setTimeout(function() {
-					click(save_link);
-					dispatch_all();
-					revoke(object_url);
-					filesaver.readyState = filesaver.DONE;
-				});
+				click(save_link);
+				filesaver.readyState = filesaver.DONE;
+				dispatch_all();
+				revoke(object_url);
 				return;
+			}
+			// prepend BOM for UTF-8 XML and text/plain types
+			if (/^\s*(?:text\/(?:plain|xml)|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(blob.type)) {
+				blob = new Blob(["\ufeff", blob], {type: blob.type});
 			}
 			// Object and web filesystem URLs have a problem saving in Google Chrome when
 			// viewed in a tab, so I force save with application/octet-stream
@@ -101613,20 +101354,10 @@ var saveAs = saveAs || (function(view) {
 			}), fs_error);
 		}
 		, FS_proto = FileSaver.prototype
-		, saveAs = function(blob, name, no_auto_bom) {
-			return new FileSaver(blob, name, no_auto_bom);
+		, saveAs = function(blob, name) {
+			return new FileSaver(blob, name);
 		}
 	;
-	// IE 10+ (native saveAs)
-	if (typeof navigator !== "undefined" && navigator.msSaveOrOpenBlob) {
-		return function(blob, name, no_auto_bom) {
-			if (!no_auto_bom) {
-				blob = auto_bom(blob);
-			}
-			return navigator.msSaveOrOpenBlob(blob, name || "download");
-		};
-	}
-
 	FS_proto.abort = function() {
 		var filesaver = this;
 		filesaver.readyState = filesaver.DONE;
@@ -124316,15 +124047,6 @@ define('liquid-fire/dsl', ['exports', 'liquid-fire/animate', 'liquid-fire/rule',
           return new Action['default'](nameOrHandler, args, { reversed: true });
         }
       },
-      useAndReverse: {
-        value: function useAndReverse(nameOrHandler) {
-          for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-            args[_key - 1] = arguments[_key];
-          }
-
-          return [this.use.apply(this, [nameOrHandler].concat(args)), this.reverse.apply(this, [nameOrHandler].concat(args))];
-        }
-      },
       onInitialRender: {
         value: function onInitialRender() {
           return new Constraint['default']("firstTime", "yes");
@@ -124599,12 +124321,12 @@ define('liquid-fire/growable', ['exports', 'ember', 'liquid-fire/promise'], func
       return Ember['default'].$.Velocity(elt[0], target, {
         duration: this._durationFor(have[dimension], want[dimension]),
         queue: false,
-        easing: this.get("growEasing") || this.constructor.prototype.growEasing
+        easing: this.get("growEasing")
       });
     },
 
     _durationFor: function _durationFor(before, after) {
-      return Math.min(this.get("growDuration") || this.constructor.prototype.growDuration, 1000 * Math.abs(before - after) / this.get("growPixelsPerSecond") || this.constructor.prototype.growPixelsPerSecond);
+      return Math.min(this.get("growDuration"), 1000 * Math.abs(before - after) / this.get("growPixelsPerSecond"));
     }
 
   });

@@ -75,6 +75,4 @@ kango.addMessageListener('LoadNetworks', function(event) {
         extractorEngine.register();
       }});
     }});
-
-
 });

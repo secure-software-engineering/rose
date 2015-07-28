@@ -33,6 +33,16 @@ export default {
     studyCreator: "Study Creator"
   },
 
+  wizard: {
+    header: "Welcome to Rose",
+    description: "In this step we first need to configure Rose to work properly.",
+    configOptions: "Choose one option to configure Rose.",
+    defaultConfig: "Take the default configuration.",
+    fileConfig: "Select a configuration file...",
+    fileConfigBtn: "Choose file",
+    urlConfig: "Specifiy a URL to an Rose repository..."
+  },
+
   // Diary Page
   diary: {
     title: "Diary",

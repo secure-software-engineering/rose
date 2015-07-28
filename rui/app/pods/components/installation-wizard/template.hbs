@@ -1,19 +1,50 @@
 <div class="ui two column centered grid">
   <div class="column">
-    <div class="ui segment">
+    <div class="ui segment form">
       <h2 class="ui dividing header">
         <i class="download icon"></i>
         <div class="content">
-          Welcome to ROSE
-          <div class="sub header">Where all your dreams come true</div>
+          {{t "wizard.header"}}
+          <div class="sub header">{{t "wizard.description"}}</div>
         </div>
       </h2>
 
-      <h4>Study Configuration File</h4>
-      <button class="ui basic button left floated" {{action 'cancel'}}>Cancel</button>
-      {{#file-input-button onread="saveConfig"}}
-        Choose File
-      {{/file-input-button}}
+      <div class="ui two column stackable grid">
+        <div class="field column">
+          <div class="ui radio checkbox disabled">
+            <input type="radio" name="configOption" checked="" tabindex="0" class="hidden">
+            <label>{{t "wizard.defaultConfig"}}</label>
+          </div>
+        </div>
+        <div class="column"></div>
+        <div class="field column">
+          <div class="ui radio checkbox checked">
+            <input type="radio" name="configOption" tabindex="0" class="hidden">
+            <label>{{t "wizard.fileConfig"}}</label>
+          </div>
+        </div>
+        <div class="column">
+          {{#file-input-button onread="saveConfig"}}
+            {{t "wizard.fileConfigBtn"}}
+          {{/file-input-button}}
+        </div>
+        <div class="field column">
+          <div class="ui radio checkbox disabled">
+            <input type="radio" name="configOption" tabindex="0" class="hidden">
+            <label>{{t "wizard.urlConfig"}}</label>
+          </div>
+        </div>
+        <div class="column">
+          <div class="ui action inline input">
+            {{input type="text"
+                    insert-newline="fetchBaseFile"}}
+
+            <button class="ui icon disabled button {{if baseFileIsLoading "loading"}}" {{action "fetchBaseFile"}}>
+              <i class="search icon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

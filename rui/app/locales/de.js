@@ -3,6 +3,8 @@ export default {
   and: "and",
   yes: "Yes",
   no: "No",
+  on: "On",
+  off: "Off",
 
   action: {
     save: "Save",
@@ -31,6 +33,16 @@ export default {
     studyCreator: "Study Creator"
   },
 
+  wizard: {
+    header: "Welcome to Rose",
+    description: "In this step we first need to configure Rose to work properly.",
+    configOptions: "Choose one option to configure Rose.",
+    defaultConfig: "Take the default configuration.",
+    fileConfig: "Select a configuration file...",
+    fileConfigBtn: "Choose file",
+    urlConfig: "Specifiy a URL to an Rose repository..."
+  },
+
   // Diary Page
   diary: {
     title: "Diary",
@@ -48,9 +60,13 @@ export default {
     title: "Einstellungen",
     subtitle: "Hier können Sie Ihre ROSE Einstellungen anpassen",
     language: "Language",
+    languageLabel: "Choose your preferred language. ROSE can also adopt the browser language (\"auto detect\" option).",
     commentReminder: "Comment Reminder",
+    commentReminderLabel: "ROSE can ocassionally display reminders to remember you to comment on your actions if that is required by the study you are participating in. You can deactivate this features if it disturbs you.",
     extraFeatures: "Extra Features",
-    resetRose: "ROSE Zurücksetzen"
+    extraFeaturesLabel: "ROSE has additional features for field researchers and ROSE developers. These features are normally not visible, but can be activated here.",
+    resetRose: "ROSE Zurücksetzen",
+    resetRoseLabel: "Here you can reset ROSE's configurations. The initialization wizard will appear again asking you to load either a default configuration or a specific study configuration file."
   },
 
   // Comments Page

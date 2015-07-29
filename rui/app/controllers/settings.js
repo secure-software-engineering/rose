@@ -5,8 +5,7 @@ export default Ember.Controller.extend({
   availableLanguages: languages,
 
   changeI18nLanguage: function() {
-    const application = this.container.lookup('application:main');
-    Ember.set(application, 'locale', this.get('userSettings.currentLanguage'));
+    this.set('i18n.locale', this.get('userSettings.currentLanguage'));
   }.observes('userSettings.currentLanguage'),
 
   onChange: function() {

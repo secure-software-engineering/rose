@@ -64,7 +64,8 @@ define('rose/adapters/application', ['exports', 'ember', 'ember-localforage-adap
         });
       }
       return promise;
-    } });
+    }
+  });
 
 });
 define('rose/adapters/comment', ['exports', 'rose/adapters/kango-adapter'], function (exports, KangoAdapter) {
@@ -96,7 +97,7 @@ define('rose/adapters/kango-adapter', ['exports', 'ember', 'ember-data'], functi
       var collectionNamespace = this.collectionNamespace;
       var modelNamespace = this.modelNamespace;
       var id = snapshot.id;
-      var serializer = store.serializerFor(type.typeKey);
+      var serializer = store.serializerFor(snapshot.modelName);
       var recordHash = serializer.serialize(snapshot, { includeId: true });
 
       return new Ember['default'].RSVP.Promise(function (resolve) {
@@ -179,7 +180,7 @@ define('rose/adapters/kango-adapter', ['exports', 'ember', 'ember-data'], functi
       var id = snapshot.id;
       var modelNamespace = this.modelNamespace;
 
-      var serializer = store.serializerFor(type.typeKey);
+      var serializer = store.serializerFor(snapshot.modelName);
       var recordHash = serializer.serialize(snapshot, { includeId: true });
 
       return new Ember['default'].RSVP.Promise(function (resolve, reject) {
@@ -310,10 +311,16 @@ define('rose/components/liquid-child', ['exports', 'ember'], function (exports, 
 
   exports['default'] = Ember['default'].Component.extend({
     classNames: ['liquid-child'],
-    attributeBindings: ['style'],
-    style: Ember['default'].computed('visible', function () {
-      return new Ember['default'].Handlebars.SafeString(this.get('visible') ? '' : 'visibility:hidden');
-    }),
+
+    updateElementVisibility: (function () {
+      var visible = this.get('visible');
+      var $container = this.$();
+
+      if ($container && $container.length) {
+        $container.css('visibility', visible ? 'visible' : 'hidden');
+      }
+    }).on('willInsertElement').observes('visible'),
+
     tellContainerWeRendered: Ember['default'].on('didInsertElement', function () {
       this.sendAction('didRender', this);
     })
@@ -325,8 +332,8 @@ define('rose/components/liquid-container', ['exports', 'ember', 'liquid-fire/gro
   'use strict';
 
   exports['default'] = Ember['default'].Component.extend(Growable['default'], {
-    classNames: ["liquid-container"],
-    classNameBindings: ["liquidAnimating"],
+    classNames: ['liquid-container'],
+    classNameBindings: ['liquidAnimating'],
 
     lockSize: function lockSize(elt, want) {
       elt.outerWidth(want.width);
@@ -338,11 +345,11 @@ define('rose/components/liquid-container', ['exports', 'ember', 'liquid-fire/gro
 
       var doUnlock = function doUnlock() {
         if (!_this.isDestroyed) {
-          _this.set("liquidAnimating", false);
+          _this.set('liquidAnimating', false);
         }
         var elt = _this.$();
         if (elt) {
-          elt.css({ width: "", height: "" });
+          elt.css({ width: '', height: '' });
         }
       };
       if (this._scaling) {
@@ -352,7 +359,7 @@ define('rose/components/liquid-container', ['exports', 'ember', 'liquid-fire/gro
       }
     },
 
-    startMonitoringSize: Ember['default'].on("didInsertElement", function () {
+    startMonitoringSize: Ember['default'].on('didInsertElement', function () {
       this._wasInserted = true;
     }),
 
@@ -374,11 +381,12 @@ define('rose/components/liquid-container', ['exports', 'ember', 'liquid-fire/gro
 
         // Apply '.liquid-animating' to liquid-container allowing
         // any customizable CSS control while an animating is occuring
-        this.set("liquidAnimating", true);
+        this.set('liquidAnimating', true);
       },
 
       afterChildInsertion: function afterChildInsertion(versions) {
         var elt = this.$();
+        var enableGrowth = this.get('enableGrowth') !== false;
 
         // Measure  children
         var sizes = [];
@@ -394,7 +402,14 @@ define('rose/components/liquid-container', ['exports', 'ember', 'liquid-fire/gro
         var have = this._cachedSize || want;
 
         // Make ourself absolute
-        this.lockSize(elt, have);
+        if (enableGrowth) {
+          this.lockSize(elt, have);
+        } else {
+          this.lockSize(elt, {
+            height: Math.max(want.height, have.height),
+            width: Math.max(want.width, have.width)
+          });
+        }
 
         // Make the children absolute and fixed size.
         for (i = 0; i < versions.length; i++) {
@@ -402,7 +417,9 @@ define('rose/components/liquid-container', ['exports', 'ember', 'liquid-fire/gro
         }
 
         // Kick off our growth animation
-        this._scaling = this.animateGrowth(elt, have, want);
+        if (enableGrowth) {
+          this._scaling = this.animateGrowth(elt, have, want);
+        }
       },
 
       afterTransition: function afterTransition(versions) {
@@ -426,7 +443,7 @@ define('rose/components/liquid-container', ['exports', 'ember', 'liquid-fire/gro
     elt.outerWidth(size.width);
     elt.outerHeight(size.height);
     elt.css({
-      position: "absolute",
+      position: 'absolute',
       top: pos.top,
       left: pos.left
     });
@@ -434,7 +451,7 @@ define('rose/components/liquid-container', ['exports', 'ember', 'liquid-fire/gro
 
   function goStatic(version) {
     if (version.view) {
-      version.view.$().css({ width: "", height: "", position: "" });
+      version.view.$().css({ width: '', height: '', position: '' });
     }
   }
 
@@ -464,7 +481,7 @@ define('rose/components/liquid-measured', ['exports', 'liquid-fire/mutation-obse
 
       // This prevents margin collapse
       this.$().css({
-        overflow: "auto"
+        overflow: 'auto'
       });
 
       this.didMutate();
@@ -472,17 +489,17 @@ define('rose/components/liquid-measured', ['exports', 'liquid-fire/mutation-obse
       this.observer = new MutationObserver['default'](function (mutations) {
         self.didMutate(mutations);
       });
-      this.observer.observe(this.get("element"), {
+      this.observer.observe(this.get('element'), {
         attributes: true,
         subtree: true,
         childList: true,
         characterData: true
       });
-      this.$().bind("webkitTransitionEnd", function () {
+      this.$().bind('webkitTransitionEnd', function () {
         self.didMutate();
       });
       // Chrome Memory Leak: https://bugs.webkit.org/show_bug.cgi?id=93661
-      window.addEventListener("unload", function () {
+      window.addEventListener('unload', function () {
         self.willDestroyElement();
       });
     },
@@ -493,14 +510,14 @@ define('rose/components/liquid-measured', ['exports', 'liquid-fire/mutation-obse
       }
     },
 
-    transitionMap: Ember['default'].inject.service("liquid-fire-transitions"),
+    transitionMap: Ember['default'].inject.service('liquid-fire-transitions'),
 
     didMutate: function didMutate() {
       // by incrementing the running transitions counter here we prevent
       // tests from falling through the gap between the time they
       // triggered mutation the time we may actually animate in
       // response.
-      var tmap = this.get("transitionMap");
+      var tmap = this.get('transitionMap');
       tmap.incrementRunningTransitions();
       Ember['default'].run.next(this, function () {
         this._didMutate();
@@ -513,10 +530,11 @@ define('rose/components/liquid-measured', ['exports', 'liquid-fire/mutation-obse
       if (!elt || !elt[0]) {
         return;
       }
-      this.set("measurements", measure(elt));
+      this.set('measurements', measure(elt));
     }
 
   });
+
   function measure($elt) {
     var width, height;
 
@@ -559,7 +577,7 @@ define('rose/components/liquid-modal', ['exports', 'ember'], function (exports, 
           name = current.get('name'),
           container = this.get('container'),
           component = container.lookup('component-lookup:main').lookupFactory(name);
-      Ember['default'].assert('Tried to render a modal using component \'' + name + '\', but couldn\'t find it.', !!component);
+      Ember['default'].assert("Tried to render a modal using component '" + name + "', but couldn't find it.", !!component);
 
       var args = Ember['default'].copy(current.get('params'));
 
@@ -569,17 +587,17 @@ define('rose/components/liquid-modal', ['exports', 'ember'], function (exports, 
 
       // set source so we can bind other params to it
       args._source = Ember['default'].computed(function () {
-        return current.get('source');
+        return current.get("source");
       });
 
-      var otherParams = current.get('options.otherParams');
+      var otherParams = current.get("options.otherParams");
       var from, to;
       for (from in otherParams) {
         to = otherParams[from];
-        args[to] = Ember['default'].computed.alias('_source.' + from);
+        args[to] = Ember['default'].computed.alias("_source." + from);
       }
 
-      var actions = current.get('options.actions') || {};
+      var actions = current.get("options.actions") || {};
 
       // Override sendAction in the modal component so we can intercept and
       // dynamically dispatch to the controller as expected
@@ -590,7 +608,7 @@ define('rose/components/liquid-modal', ['exports', 'ember'], function (exports, 
           return;
         }
 
-        var controller = current.get('source');
+        var controller = current.get("source");
         var args = Array.prototype.slice.call(arguments, 1);
         args.unshift(actionName);
         controller.send.apply(controller, args);
@@ -655,24 +673,24 @@ define('rose/components/liquid-spacer', ['exports', 'rose/components/liquid-meas
     enabled: true,
 
     didInsertElement: function didInsertElement() {
-      var child = this.$("> div");
+      var child = this.$('> div');
       var measurements = this.myMeasurements(liquid_measured.measure(child));
       this.$().css({
-        overflow: "hidden",
+        overflow: 'hidden',
         outerWidth: measurements.width,
         outerHeight: measurements.height
       });
     },
 
-    sizeChange: Ember['default'].observer("measurements", function () {
-      if (!this.get("enabled")) {
+    sizeChange: Ember['default'].observer('measurements', function () {
+      if (!this.get('enabled')) {
         return;
       }
       var elt = this.$();
       if (!elt || !elt[0]) {
         return;
       }
-      var want = this.myMeasurements(this.get("measurements"));
+      var want = this.myMeasurements(this.get('measurements'));
       var have = liquid_measured.measure(this.$());
       this.animateGrowth(elt, have, want);
     }),
@@ -682,8 +700,8 @@ define('rose/components/liquid-spacer', ['exports', 'rose/components/liquid-meas
     myMeasurements: function myMeasurements(childMeasurements) {
       var elt = this.$();
       return {
-        width: childMeasurements.width + sumCSS(elt, padding("width")) + sumCSS(elt, border("width")),
-        height: childMeasurements.height + sumCSS(elt, padding("height")) + sumCSS(elt, border("height"))
+        width: childMeasurements.width + sumCSS(elt, padding('width')) + sumCSS(elt, border('width')),
+        height: childMeasurements.height + sumCSS(elt, padding('height')) + sumCSS(elt, border('height'))
       };
       //if (this.$().css('box-sizing') === 'border-box') {
     }
@@ -691,17 +709,17 @@ define('rose/components/liquid-spacer', ['exports', 'rose/components/liquid-meas
   });
 
   function sides(dimension) {
-    return dimension === "width" ? ["Left", "Right"] : ["Top", "Bottom"];
+    return dimension === 'width' ? ['Left', 'Right'] : ['Top', 'Bottom'];
   }
 
   function padding(dimension) {
     var s = sides(dimension);
-    return ["padding" + s[0], "padding" + s[1]];
+    return ['padding' + s[0], 'padding' + s[1]];
   }
 
   function border(dimension) {
     var s = sides(dimension);
-    return ["border" + s[0] + "Width", "border" + s[1] + "Width"];
+    return ['border' + s[0] + 'Width', 'border' + s[1] + 'Width'];
   }
 
   function sumCSS(elt, fields) {
@@ -725,14 +743,14 @@ define('rose/components/liquid-versions', ['exports', 'ember', 'liquid-fire/embe
 
   exports['default'] = Ember['default'].Component.extend({
     tagName: "",
-    name: "liquid-versions",
+    name: 'liquid-versions',
 
-    transitionMap: Ember['default'].inject.service("liquid-fire-transitions"),
+    transitionMap: Ember['default'].inject.service('liquid-fire-transitions'),
 
-    appendVersion: Ember['default'].on("init", Ember['default'].observer("value", function () {
-      var versions = get(this, "versions");
+    appendVersion: Ember['default'].on('init', Ember['default'].observer('value', function () {
+      var versions = get(this, 'versions');
       var firstTime = false;
-      var newValue = get(this, "value");
+      var newValue = get(this, 'value');
       var oldValue;
 
       if (!versions) {
@@ -748,16 +766,16 @@ define('rose/components/liquid-versions', ['exports', 'ember', 'liquid-fire/embe
         return;
       }
 
-      this.notifyContainer("willTransition", versions);
+      this.notifyContainer('willTransition', versions);
       var newVersion = {
         value: newValue,
-        shouldRender: newValue || get(this, "renderWhenFalse")
+        shouldRender: newValue || get(this, 'renderWhenFalse')
       };
       versions.unshiftObject(newVersion);
 
       this.firstTime = firstTime;
       if (firstTime) {
-        set(this, "versions", versions);
+        set(this, 'versions', versions);
       }
 
       if (!newVersion.shouldRender && !firstTime) {
@@ -768,24 +786,24 @@ define('rose/components/liquid-versions', ['exports', 'ember', 'liquid-fire/embe
     _transition: function _transition() {
       var _this = this;
 
-      var versions = get(this, "versions");
+      var versions = get(this, 'versions');
       var transition;
       var firstTime = this.firstTime;
       this.firstTime = false;
 
-      this.notifyContainer("afterChildInsertion", versions);
+      this.notifyContainer('afterChildInsertion', versions);
 
-      transition = get(this, "transitionMap").transitionFor({
+      transition = get(this, 'transitionMap').transitionFor({
         versions: versions,
         parentElement: Ember['default'].$(ember_internals.containingElement(this)),
-        use: get(this, "use"),
+        use: get(this, 'use'),
         // Using strings instead of booleans here is an
         // optimization. The constraint system can match them more
         // efficiently, since it treats boolean constraints as generic
         // "match anything truthy/falsy" predicates, whereas string
         // checks are a direct object property lookup.
-        firstTime: firstTime ? "yes" : "no",
-        helperName: get(this, "name")
+        firstTime: firstTime ? 'yes' : 'no',
+        helperName: get(this, 'name')
       });
 
       if (this._runningTransition) {
@@ -812,7 +830,7 @@ define('rose/components/liquid-versions', ['exports', 'ember', 'liquid-fire/embe
     },
 
     notifyContainer: function notifyContainer(method, versions) {
-      var target = get(this, "notify");
+      var target = get(this, 'notify');
       if (target) {
         target.send(method, versions);
       }
@@ -820,8 +838,8 @@ define('rose/components/liquid-versions', ['exports', 'ember', 'liquid-fire/embe
 
     actions: {
       childDidRender: function childDidRender(child) {
-        var version = get(child, "version");
-        set(version, "view", child);
+        var version = get(child, 'version');
+        set(version, 'view', child);
         this._transition();
       }
     }
@@ -834,7 +852,7 @@ define('rose/components/liquid-with', ['exports', 'ember'], function (exports, E
   'use strict';
 
   exports['default'] = Ember['default'].Component.extend({
-    name: "liquid-with"
+    name: 'liquid-with'
   });
 
 });
@@ -851,7 +869,7 @@ define('rose/components/lm-container', ['exports', 'ember', 'liquid-fire/tabbabl
   */
 
   var lastOpenedModal = null;
-  Ember['default'].$(document).on("focusin", handleTabIntoBrowser);
+  Ember['default'].$(document).on('focusin', handleTabIntoBrowser);
 
   function handleTabIntoBrowser() {
     if (lastOpenedModal) {
@@ -860,8 +878,8 @@ define('rose/components/lm-container', ['exports', 'ember', 'liquid-fire/tabbabl
   }
 
   exports['default'] = Ember['default'].Component.extend({
-    classNames: ["lm-container"],
-    attributeBindings: ["tabindex"],
+    classNames: ['lm-container'],
+    attributeBindings: ['tabindex'],
     tabindex: 0,
 
     keyUp: function keyUp(event) {
@@ -888,13 +906,13 @@ define('rose/components/lm-container', ['exports', 'ember', 'liquid-fire/tabbabl
     },
 
     focus: function focus() {
-      if (this.get("element").contains(document.activeElement)) {
+      if (this.get('element').contains(document.activeElement)) {
         // just let it be if we already contain the activeElement
         return;
       }
-      var target = this.$("[autofocus]");
+      var target = this.$('[autofocus]');
       if (!target.length) {
-        target = this.$(":tabbable");
+        target = this.$(':tabbable');
       }
 
       if (!target.length) {
@@ -905,21 +923,21 @@ define('rose/components/lm-container', ['exports', 'ember', 'liquid-fire/tabbabl
     },
 
     constrainTabNavigation: function constrainTabNavigation(event) {
-      var tabbable = this.$(":tabbable");
-      var finalTabbable = tabbable[event.shiftKey ? "first" : "last"]()[0];
+      var tabbable = this.$(':tabbable');
+      var finalTabbable = tabbable[event.shiftKey ? 'first' : 'last']()[0];
       var leavingFinalTabbable = finalTabbable === document.activeElement ||
       // handle immediate shift+tab after opening with mouse
-      this.get("element") === document.activeElement;
+      this.get('element') === document.activeElement;
       if (!leavingFinalTabbable) {
         return;
       }
       event.preventDefault();
-      tabbable[event.shiftKey ? "last" : "first"]()[0].focus();
+      tabbable[event.shiftKey ? 'last' : 'first']()[0].focus();
     },
 
     click: function click(event) {
-      if (event.target === this.get("element")) {
-        this.sendAction("clickAway");
+      if (event.target === this.get('element')) {
+        this.sendAction('clickAway');
       }
     }
   });
@@ -1007,6 +1025,13 @@ define('rose/controllers/application', ['exports', 'ember'], function (exports, 
   });
 
 });
+define('rose/controllers/array', ['exports', 'ember'], function (exports, Ember) {
+
+	'use strict';
+
+	exports['default'] = Ember['default'].Controller;
+
+});
 define('rose/controllers/backup', ['exports', 'ember'], function (exports, Ember) {
 
   'use strict';
@@ -1020,6 +1045,8 @@ define('rose/controllers/backup', ['exports', 'ember'], function (exports, Ember
       models.forEach(function (model) {
         result[model.type.typeKey] = model.content;
       });
+
+      result['export-date'] = new Date().toJSON();
 
       return JSON.stringify(result, null, 4);
     }).property('model'),
@@ -1073,7 +1100,15 @@ define('rose/controllers/interactions', ['exports', 'ember'], function (exports,
 
   exports['default'] = Ember['default'].Controller.extend({
     listSorting: ['createdAt:desc'],
-    sortedList: Ember['default'].computed.sort('model', 'listSorting') });
+    sortedList: Ember['default'].computed.sort('model', 'listSorting')
+  });
+
+});
+define('rose/controllers/object', ['exports', 'ember'], function (exports, Ember) {
+
+	'use strict';
+
+	exports['default'] = Ember['default'].Controller;
 
 });
 define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages'], function (exports, Ember, languages) {
@@ -1084,8 +1119,7 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
     availableLanguages: languages['default'],
 
     changeI18nLanguage: (function () {
-      var application = this.container.lookup('application:main');
-      Ember['default'].set(application, 'locale', this.get('userSettings.currentLanguage'));
+      this.set('i18n.locale', this.get('userSettings.currentLanguage'));
     }).observes('userSettings.currentLanguage'),
 
     onChange: (function () {
@@ -1099,6 +1133,10 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
 
       confirm: function confirm() {
         this.send('openModal', 'modal/confirm-reset');
+      },
+
+      manualUpdate: function manualUpdate() {
+        kango.dispatchMessage('LoadNetworks');
       }
     }
   });
@@ -1155,15 +1193,14 @@ define('rose/controllers/study-creator', ['exports', 'ember'], function (exports
   });
 
 });
-define('rose/helpers/boolean-to-yesno', ['exports', 'ember'], function (exports, Ember) {
+define('rose/helpers/boolean-to-yesno', ['exports', 'ember', 'ember-i18n'], function (exports, Ember, ember_i18n) {
 
   'use strict';
 
   exports.booleanToYesno = booleanToYesno;
 
   function booleanToYesno(params) {
-    var t = this.container.lookup('utils:t');
-    return params[0] ? t('on') : t('off');
+    return params[0] ? ember_i18n.translationMacro('on') : ember_i18n.translationMacro('off');
   }
 
   exports['default'] = Ember['default'].HTMLBars.makeBoundHelper(booleanToYesno);
@@ -1183,7 +1220,7 @@ define('rose/helpers/liquid-bind', ['exports', 'liquid-fire/ember-internals'], f
 
 	'use strict';
 
-	exports['default'] = ember_internals.makeHelperShim("liquid-bind");
+	exports['default'] = ember_internals.makeHelperShim('liquid-bind');
 
 });
 define('rose/helpers/liquid-if', ['exports', 'liquid-fire/ember-internals'], function (exports, ember_internals) {
@@ -1200,7 +1237,7 @@ define('rose/helpers/liquid-outlet', ['exports', 'liquid-fire/ember-internals'],
 
   'use strict';
 
-  exports['default'] = ember_internals.makeHelperShim("liquid-outlet", function (params, hash) {
+  exports['default'] = ember_internals.makeHelperShim('liquid-outlet', function (params, hash) {
     hash._outletName = params[0] || "main";
   });
 
@@ -1220,44 +1257,7 @@ define('rose/helpers/liquid-with', ['exports', 'liquid-fire/ember-internals'], f
 
 	'use strict';
 
-	exports['default'] = ember_internals.makeHelperShim("liquid-with");
-
-});
-define('rose/helpers/t', ['exports', 'ember-cli-i18n/utils/stream'], function (exports, Stream) {
-
-  'use strict';
-
-
-
-  exports['default'] = tHelper;
-  function tHelper(params, hash, options, env) {
-    var view = env.data.view;
-    var path = params.shift();
-
-    var container = view.container;
-    var t = container.lookup('utils:t');
-    var application = container.lookup('application:main');
-
-    var stream = new Stream['default'](function () {
-      return t(path, params);
-    });
-
-    // bind any arguments that are Streams
-    for (var i = 0, l = params.length; i < l; i++) {
-      var param = params[i];
-      if (param && param.isStream) {
-        param.subscribe(stream.notify, stream);
-      };
-    }
-
-    application.localeStream.subscribe(stream.notify, stream);
-
-    if (path.isStream) {
-      path.subscribe(stream.notify, stream);
-    }
-
-    return stream;
-  }
+	exports['default'] = ember_internals.makeHelperShim('liquid-with');
 
 });
 define('rose/initializers/app-version', ['exports', 'rose/config/environment', 'ember'], function (exports, config, Ember) {
@@ -1279,11 +1279,28 @@ define('rose/initializers/app-version', ['exports', 'rose/config/environment', '
   };
 
 });
+define('rose/initializers/ember-i18n', ['exports', 'rose/instance-initializers/ember-i18n'], function (exports, instanceInitializer) {
+
+  'use strict';
+
+  exports['default'] = {
+    name: instanceInitializer['default'].name,
+
+    initialize: function initialize(registry, application) {
+      if (application.instanceInitializer) {
+        return;
+      }
+
+      instanceInitializer['default'].initialize(application);
+    }
+  };
+
+});
 define('rose/initializers/ember-moment', ['exports', 'ember-moment/helpers/moment', 'ember-moment/helpers/ago', 'ember-moment/helpers/duration', 'ember'], function (exports, moment, ago, duration, Ember) {
 
   'use strict';
 
-  var initialize = function initialize() {
+  var initialize = function initialize() /* container, app */{
     var registerHelper;
 
     if (Ember['default'].HTMLBars) {
@@ -1304,7 +1321,6 @@ define('rose/initializers/ember-moment', ['exports', 'ember-moment/helpers/momen
 
     initialize: initialize
   };
-  /* container, app */
 
   exports.initialize = initialize;
 
@@ -1316,10 +1332,26 @@ define('rose/initializers/export-application-global', ['exports', 'ember', 'rose
   exports.initialize = initialize;
 
   function initialize(container, application) {
-    var classifiedName = Ember['default'].String.classify(config['default'].modulePrefix);
+    if (config['default'].exportApplicationGlobal !== false) {
+      var value = config['default'].exportApplicationGlobal;
+      var globalName;
 
-    if (config['default'].exportApplicationGlobal && !window[classifiedName]) {
-      window[classifiedName] = application;
+      if (typeof value === 'string') {
+        globalName = value;
+      } else {
+        globalName = Ember['default'].String.classify(config['default'].modulePrefix);
+      }
+
+      if (!window[globalName]) {
+        window[globalName] = application;
+
+        application.reopen({
+          willDestroy: function willDestroy() {
+            this._super.apply(this, arguments);
+            delete window[globalName];
+          }
+        });
+      }
     }
   }
 
@@ -1330,6 +1362,16 @@ define('rose/initializers/export-application-global', ['exports', 'ember', 'rose
 
     initialize: initialize
   };
+
+});
+define('rose/initializers/i18n', ['exports', 'ember-i18n-inject/initializers/i18n'], function (exports, i18n) {
+
+	'use strict';
+
+
+
+	exports.default = i18n.default;
+	exports.initialize = i18n.initialize;
 
 });
 define('rose/initializers/kango-api', ['exports'], function (exports) {
@@ -1359,40 +1401,8 @@ define('rose/initializers/liquid-fire', ['exports', 'liquid-fire/router-dsl-ext'
   // This initializer exists only to make sure that the following import
   // happens before the app boots.
   exports['default'] = {
-    name: "liquid-fire",
+    name: 'liquid-fire',
     initialize: function initialize() {}
-  };
-
-});
-define('rose/initializers/t', ['exports', 'ember', 'ember-cli-i18n/utils/t', 'rose/helpers/t', 'ember-cli-i18n/utils/stream'], function (exports, Ember, T, tHelper, Stream) {
-
-  'use strict';
-
-  exports.initialize = initialize;
-
-  function initialize(container, application) {
-    Ember['default'].HTMLBars._registerHelper('t', tHelper['default']);
-
-    application.localeStream = new Stream['default'](function () {
-      return application.get('locale');
-    });
-
-    Ember['default'].addObserver(application, 'locale', function () {
-      application.localeStream.notify();
-    });
-
-    application.register('utils:t', T['default']);
-    application.inject('route', 't', 'utils:t');
-    application.inject('model', 't', 'utils:t');
-    application.inject('component', 't', 'utils:t');
-    application.inject('controller', 't', 'utils:t');
-  }
-
-  ;
-
-  exports['default'] = {
-    name: 't',
-    initialize: initialize
   };
 
 });
@@ -1414,11 +1424,9 @@ define('rose/initializers/user-settings', ['exports', 'ember'], function (export
         } else {
           config = configs.get('firstObject');
         }
-        container.register('userSettings:main', config, { instantiate: false, singleton: true });
-        container.injection('controller', 'userSettings', 'userSettings:main');
-        container.injection('route', 'userSettings', 'userSettings:main');
-
-        Ember['default'].set(application, 'locale', config.get('currentLanguage'));
+        application.register('userSettings:main', config, { instantiate: false, singleton: true });
+        application.inject('controller', 'userSettings', 'userSettings:main');
+        application.inject('route', 'userSettings', 'userSettings:main');
 
         application.advanceReadiness();
       });
@@ -1431,7 +1439,55 @@ define('rose/initializers/user-settings', ['exports', 'ember'], function (export
   };
 
 });
-define('rose/locales/de', ['exports'], function (exports) {
+define('rose/instance-initializers/ember-i18n', ['exports', 'ember', 'ember-i18n/legacy-helper', 'ember-i18n/helper', 'rose/config/environment'], function (exports, Ember, legacyHelper, Helper, ENV) {
+
+  'use strict';
+
+  exports['default'] = {
+    name: 'ember-i18n',
+
+    initialize: function initialize(instance) {
+      var defaultLocale = (ENV['default'].i18n || {}).defaultLocale;
+      if (defaultLocale === undefined) {
+        Ember['default'].warn('ember-i18n did not find a default locale; falling back to "en".');
+        defaultLocale = 'en';
+      }
+      instance.container.lookup('service:i18n').set('locale', defaultLocale);
+
+      if (legacyHelper['default'] != null) {
+        Ember['default'].HTMLBars._registerHelper('t', legacyHelper['default']);
+      }
+
+      if (Helper['default'] != null) {
+        instance.registry.register('helper:t', Helper['default']);
+      }
+    }
+  };
+
+});
+define('rose/locales/de/config', ['exports'], function (exports) {
+
+  'use strict';
+
+  // Ember-I18n inclues configuration for common locales. Most users
+  // can safely delete this file. Use it if you need to override behavior
+  // for a locale or define behavior for a locale that Ember-I18n
+  // doesn't know about.
+  exports['default'] = {
+    // rtl: [true|FALSE],
+    //
+    // pluralForm: function(count) {
+    //   if (count === 0) { return 'zero'; }
+    //   if (count === 1) { return 'one'; }
+    //   if (count === 2) { return 'two'; }
+    //   if (count < 5) { return 'few'; }
+    //   if (count >= 5) { return 'many'; }
+    //   return 'other';
+    // }
+  };
+
+});
+define('rose/locales/de/translations', ['exports'], function (exports) {
 
   'use strict';
 
@@ -1564,7 +1620,8 @@ define('rose/locales/de', ['exports'], function (exports) {
       issue8: {
         question: "May I use ROSE for personal purposes after the study ended?",
         answer: "<p>Yes. You may continue using ROSE and process it without hesitation as it does not send any information to the study advisors automatically. Thereto please note the GPL license’s conditions. However, after the study ended we are not able to endorse you by using the software, e.g. providing ROSE updates.</p>"
-      } },
+      }
+    },
 
     // About Page
     about: {
@@ -1585,8 +1642,8 @@ define('rose/locales/de', ['exports'], function (exports) {
 
     // Study Creator Page
     studyCreator: {
-      title: "Study Creator",
-      subtitle: "LALALALALALALa",
+      title: 'Study Creator',
+      subtitle: 'LALALALALALALa',
 
       roseComments: "ROSE Comments",
       roseCommentsDesc: "Check if the ROSE Comments function should be available",
@@ -1608,7 +1665,29 @@ define('rose/locales/de', ['exports'], function (exports) {
   };
 
 });
-define('rose/locales/en', ['exports'], function (exports) {
+define('rose/locales/en/config', ['exports'], function (exports) {
+
+  'use strict';
+
+  // Ember-I18n inclues configuration for common locales. Most users
+  // can safely delete this file. Use it if you need to override behavior
+  // for a locale or define behavior for a locale that Ember-I18n
+  // doesn't know about.
+  exports['default'] = {
+    // rtl: [true|FALSE],
+    //
+    // pluralForm: function(count) {
+    //   if (count === 0) { return 'zero'; }
+    //   if (count === 1) { return 'one'; }
+    //   if (count === 2) { return 'two'; }
+    //   if (count < 5) { return 'few'; }
+    //   if (count >= 5) { return 'many'; }
+    //   return 'other';
+    // }
+  };
+
+});
+define('rose/locales/en/translations', ['exports'], function (exports) {
 
   'use strict';
 
@@ -1628,7 +1707,9 @@ define('rose/locales/en', ['exports'], function (exports) {
       unhide: "Unhide",
       "delete": "Delete",
       download: "Download",
-      details: "Details"
+      details: "Details",
+      reset: "Reset",
+      update: "Update"
     },
 
     // Sidebar Menu
@@ -1741,7 +1822,8 @@ define('rose/locales/en', ['exports'], function (exports) {
       issue8: {
         question: "May I use ROSE for personal purposes after the study ended?",
         answer: "<p>Yes. You may continue using ROSE and process it without hesitation as it does not send any information to the study advisors automatically. Thereto please note the GPL license’s conditions. However, after the study ended we are not able to endorse you by using the software, e.g. providing ROSE updates.</p>"
-      } },
+      }
+    },
 
     // About Page
     about: {
@@ -1762,8 +1844,8 @@ define('rose/locales/en', ['exports'], function (exports) {
 
     // Study Creator Page
     studyCreator: {
-      title: "Study Creator",
-      subtitle: "With this page you can create a tailored configuration file for your study. You can distribute this configuration file to you study participants; by loading this file into their installations of ROSE participants can adapt their ROSE instances to the specific needs of your empirical study.",
+      title: 'Study Creator',
+      subtitle: 'With this page you can create a tailored configuration file for your study. You can distribute this configuration file to you study participants; by loading this file into their installations of ROSE participants can adapt their ROSE instances to the specific needs of your empirical study.',
 
       roseComments: "In-situ comments",
       roseCommentsDesc: "Check this if ROSE's in-situ comment function should be available to participants. Currently the in-situ comment function works only for Facebook.",
@@ -1938,7 +2020,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -1988,7 +2070,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child1 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2031,7 +2113,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child2 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2096,7 +2178,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child3 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2147,7 +2229,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child4 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2198,7 +2280,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child5 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2248,7 +2330,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -2387,7 +2469,7 @@ define('rose/pods/components/file-input-button/template', ['exports'], function 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -2472,7 +2554,7 @@ define('rose/pods/components/file-input/template', ['exports'], function (export
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -2546,7 +2628,8 @@ define('rose/pods/components/high-chart/component', ['exports', 'ember'], functi
             step: true
           },
           yAxis: {
-            type: 'logarithmic' }
+            type: 'logarithmic'
+          }
         },
 
         rangeSelector: {
@@ -2656,7 +2739,7 @@ define('rose/pods/components/high-chart/template', ['exports'], function (export
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -2722,7 +2805,7 @@ define('rose/pods/components/installation-wizard/template', ['exports'], functio
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -2764,7 +2847,7 @@ define('rose/pods/components/installation-wizard/template', ['exports'], functio
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -2813,7 +2896,7 @@ define('rose/pods/components/installation-wizard/template', ['exports'], functio
         var el4 = dom.createTextNode("\n\n      ");
         dom.appendChild(el3, el4);
         var el4 = dom.createElement("div");
-        dom.setAttribute(el4,"class","ui two column stackable grid fields");
+        dom.setAttribute(el4,"class","ui two column stackable grid");
         var el5 = dom.createTextNode("\n        ");
         dom.appendChild(el4, el5);
         var el5 = dom.createElement("div");
@@ -3053,7 +3136,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 1,
         cachedFragment: null,
         hasRendered: false,
@@ -3109,7 +3192,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child1 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3159,7 +3242,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child2 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3207,7 +3290,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child3 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3272,7 +3355,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child4 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3323,7 +3406,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child5 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3374,7 +3457,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child6 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3424,7 +3507,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -3608,7 +3691,7 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3662,7 +3745,7 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
     var child1 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3709,7 +3792,7 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
     var child2 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -3755,7 +3838,7 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -3928,6 +4011,10 @@ define('rose/routes/application', ['exports', 'ember', 'semantic-ui-ember/mixins
   'use strict';
 
   exports['default'] = Ember['default'].Route.extend(SemanticRouteMixin['default'], {
+    afterModel: function afterModel() {
+      this.set('i18n.locale', this.get('userSettings.currentLanguage'));
+    },
+
     actions: {
       resetRose: function resetRose() {
         var _this = this;
@@ -3960,7 +4047,7 @@ define('rose/routes/backup', ['exports', 'ember'], function (exports, Ember) {
 
   exports['default'] = Ember['default'].Route.extend({
     model: function model() {
-      var promises = [this.store.find('comment'), this.store.find('interaction'), this.store.find('diary-entry'), this.store.find('user-setting'), getItem('click-activity-records'), getItem('mousemove-activity-records'), getItem('window-activity-records'), getItem('scroll-activity-records'), getItem('fb-login-activity-records')];
+      var promises = [this.store.find('comment'), this.store.find('interaction'), this.store.find('diary-entry'), this.store.find('user-setting'), getItem('click-activity-records'), getItem('mousemove-activity-records'), getItem('window-activity-records'), getItem('scroll-activity-records'), getItem('fb-login-activity-records'), getItem('install-date'), getItem('rose-data-version')];
 
       return Ember['default'].RSVP.all(promises);
     }
@@ -4061,6 +4148,13 @@ define('rose/routes/study-creator', ['exports', 'ember'], function (exports, Emb
   });
 
 });
+define('rose/services/i18n', ['exports', 'ember-i18n/service'], function (exports, Service) {
+
+	'use strict';
+
+	exports['default'] = Service['default'];
+
+});
 define('rose/services/liquid-fire-modals', ['exports', 'liquid-fire/modals'], function (exports, Modals) {
 
 	'use strict';
@@ -4082,7 +4176,7 @@ define('rose/templates/about', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -4272,7 +4366,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -4315,7 +4409,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child1 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -4398,7 +4492,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -4445,7 +4539,7 @@ define('rose/templates/backup', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -4558,7 +4652,7 @@ define('rose/templates/comments', ['exports'], function (exports) {
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 1,
         cachedFragment: null,
         hasRendered: false,
@@ -4601,7 +4695,7 @@ define('rose/templates/comments', ['exports'], function (exports) {
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -4690,7 +4784,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
       var child0 = (function() {
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.3",
+          revision: "Ember@1.12.1",
           blockParams: 1,
           cachedFragment: null,
           hasRendered: false,
@@ -4731,7 +4825,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -4774,7 +4868,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
         var child0 = (function() {
           return {
             isHTMLBars: true,
-            revision: "Ember@1.11.3",
+            revision: "Ember@1.12.1",
             blockParams: 1,
             cachedFragment: null,
             hasRendered: false,
@@ -4815,7 +4909,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
         }());
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.3",
+          revision: "Ember@1.12.1",
           blockParams: 1,
           cachedFragment: null,
           hasRendered: false,
@@ -4856,7 +4950,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -4889,14 +4983,14 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
           var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, null);
           dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass")}, child0, null);
+          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "growDuration": get(env, context, "growDuration"), "growPixelsPerSecond": get(env, context, "growPixelsPerSecond"), "growEasing": get(env, context, "growEasing"), "enableGrowth": get(env, context, "enableGrowth")}, child0, null);
           return fragment;
         }
       };
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -4943,7 +5037,7 @@ define('rose/templates/components/liquid-container', ['exports'], function (expo
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -4993,7 +5087,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
         var child0 = (function() {
           return {
             isHTMLBars: true,
-            revision: "Ember@1.11.3",
+            revision: "Ember@1.12.1",
             blockParams: 0,
             cachedFragment: null,
             hasRendered: false,
@@ -5036,7 +5130,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
         var child1 = (function() {
           return {
             isHTMLBars: true,
-            revision: "Ember@1.11.3",
+            revision: "Ember@1.12.1",
             blockParams: 0,
             cachedFragment: null,
             hasRendered: false,
@@ -5078,7 +5172,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
         }());
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.3",
+          revision: "Ember@1.12.1",
           blockParams: 1,
           cachedFragment: null,
           hasRendered: false,
@@ -5119,7 +5213,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -5163,7 +5257,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
           var child0 = (function() {
             return {
               isHTMLBars: true,
-              revision: "Ember@1.11.3",
+              revision: "Ember@1.12.1",
               blockParams: 0,
               cachedFragment: null,
               hasRendered: false,
@@ -5206,7 +5300,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
           var child1 = (function() {
             return {
               isHTMLBars: true,
-              revision: "Ember@1.11.3",
+              revision: "Ember@1.12.1",
               blockParams: 0,
               cachedFragment: null,
               hasRendered: false,
@@ -5248,7 +5342,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
           }());
           return {
             isHTMLBars: true,
-            revision: "Ember@1.11.3",
+            revision: "Ember@1.12.1",
             blockParams: 1,
             cachedFragment: null,
             hasRendered: false,
@@ -5289,7 +5383,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
         }());
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.3",
+          revision: "Ember@1.12.1",
           blockParams: 1,
           cachedFragment: null,
           hasRendered: false,
@@ -5330,7 +5424,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -5363,14 +5457,14 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
           var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, null);
           dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass")}, child0, null);
+          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "growDuration": get(env, context, "growDuration"), "growPixelsPerSecond": get(env, context, "growPixelsPerSecond"), "growEasing": get(env, context, "growEasing"), "enableGrowth": get(env, context, "enableGrowth")}, child0, null);
           return fragment;
         }
       };
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -5417,13 +5511,15 @@ define('rose/templates/components/liquid-measured', ['exports'], function (expor
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
       build: function build(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         return el0;
       },
@@ -5448,7 +5544,6 @@ define('rose/templates/components/liquid-measured', ['exports'], function (expor
           fragment = this.build(dom);
         }
         var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-        dom.insertBoundary(fragment, null);
         dom.insertBoundary(fragment, 0);
         content(env, morph0, context, "yield");
         return fragment;
@@ -5466,7 +5561,7 @@ define('rose/templates/components/liquid-modal', ['exports'], function (exports)
       var child0 = (function() {
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.3",
+          revision: "Ember@1.12.1",
           blockParams: 0,
           cachedFragment: null,
           hasRendered: false,
@@ -5518,7 +5613,7 @@ define('rose/templates/components/liquid-modal', ['exports'], function (exports)
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 1,
         cachedFragment: null,
         hasRendered: false,
@@ -5566,7 +5661,7 @@ define('rose/templates/components/liquid-modal', ['exports'], function (exports)
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -5614,7 +5709,7 @@ define('rose/templates/components/liquid-outlet', ['exports'], function (exports
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 1,
         cachedFragment: null,
         hasRendered: false,
@@ -5655,7 +5750,7 @@ define('rose/templates/components/liquid-outlet', ['exports'], function (exports
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -5688,7 +5783,7 @@ define('rose/templates/components/liquid-outlet', ['exports'], function (exports
         var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
         dom.insertBoundary(fragment, null);
         dom.insertBoundary(fragment, 0);
-        block(env, morph0, context, "liquid-with", [get(env, context, "outletState")], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "use": get(env, context, "use"), "name": "liquid-outlet", "containerless": get(env, context, "containerless")}, child0, null);
+        block(env, morph0, context, "liquid-with", [get(env, context, "outletState")], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "use": get(env, context, "use"), "name": "liquid-outlet", "containerless": get(env, context, "containerless"), "growDuration": get(env, context, "growDuration"), "growPixelsPerSecond": get(env, context, "growPixelsPerSecond"), "growEasing": get(env, context, "growEasing"), "enableGrowth": get(env, context, "enableGrowth")}, child0, null);
         return fragment;
       }
     };
@@ -5703,7 +5798,7 @@ define('rose/templates/components/liquid-spacer', ['exports'], function (exports
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -5745,7 +5840,7 @@ define('rose/templates/components/liquid-spacer', ['exports'], function (exports
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -5795,7 +5890,7 @@ define('rose/templates/components/liquid-versions', ['exports'], function (expor
         var child0 = (function() {
           return {
             isHTMLBars: true,
-            revision: "Ember@1.11.3",
+            revision: "Ember@1.12.1",
             blockParams: 0,
             cachedFragment: null,
             hasRendered: false,
@@ -5835,7 +5930,7 @@ define('rose/templates/components/liquid-versions', ['exports'], function (expor
         }());
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.3",
+          revision: "Ember@1.12.1",
           blockParams: 0,
           cachedFragment: null,
           hasRendered: false,
@@ -5875,7 +5970,7 @@ define('rose/templates/components/liquid-versions', ['exports'], function (expor
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 1,
         cachedFragment: null,
         hasRendered: false,
@@ -5916,7 +6011,7 @@ define('rose/templates/components/liquid-versions', ['exports'], function (expor
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -5965,7 +6060,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
       var child0 = (function() {
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.3",
+          revision: "Ember@1.12.1",
           blockParams: 1,
           cachedFragment: null,
           hasRendered: false,
@@ -6006,7 +6101,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -6049,7 +6144,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
         var child0 = (function() {
           return {
             isHTMLBars: true,
-            revision: "Ember@1.11.3",
+            revision: "Ember@1.12.1",
             blockParams: 1,
             cachedFragment: null,
             hasRendered: false,
@@ -6090,7 +6185,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
         }());
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.3",
+          revision: "Ember@1.12.1",
           blockParams: 1,
           cachedFragment: null,
           hasRendered: false,
@@ -6131,7 +6226,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -6164,14 +6259,14 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
           var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, null);
           dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass")}, child0, null);
+          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "growDuration": get(env, context, "growDuration"), "growPixelsPerSecond": get(env, context, "growPixelsPerSecond"), "growEasing": get(env, context, "growEasing"), "enableGrowth": get(env, context, "enableGrowth")}, child0, null);
           return fragment;
         }
       };
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -6218,7 +6313,7 @@ define('rose/templates/components/ui-checkbox', ['exports'], function (exports) 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -6274,7 +6369,7 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -6317,7 +6412,7 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
     var child1 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -6359,7 +6454,7 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
       var child0 = (function() {
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.3",
+          revision: "Ember@1.12.1",
           blockParams: 0,
           cachedFragment: null,
           hasRendered: false,
@@ -6401,7 +6496,7 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -6443,7 +6538,7 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
       var child0 = (function() {
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.3",
+          revision: "Ember@1.12.1",
           blockParams: 0,
           cachedFragment: null,
           hasRendered: false,
@@ -6485,7 +6580,7 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -6526,7 +6621,7 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
     var child4 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -6568,7 +6663,7 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -6638,7 +6733,7 @@ define('rose/templates/components/ui-radio', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -6694,7 +6789,7 @@ define('rose/templates/diary', ['exports'], function (exports) {
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 1,
         cachedFragment: null,
         hasRendered: false,
@@ -6737,7 +6832,7 @@ define('rose/templates/diary', ['exports'], function (exports) {
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -6881,7 +6976,7 @@ define('rose/templates/help', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -7069,7 +7164,7 @@ define('rose/templates/index', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -7118,7 +7213,7 @@ define('rose/templates/interactions', ['exports'], function (exports) {
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 1,
         cachedFragment: null,
         hasRendered: false,
@@ -7161,7 +7256,7 @@ define('rose/templates/interactions', ['exports'], function (exports) {
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -7248,7 +7343,7 @@ define('rose/templates/modal/confirm-reset', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -7336,7 +7431,7 @@ define('rose/templates/privacysettings', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -7412,7 +7507,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -7538,8 +7633,34 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("button");
+        dom.setAttribute(el3,"class","ui button");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("button");
         dom.setAttribute(el3,"class","ui red button");
-        var el4 = dom.createTextNode("Reset");
+        var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n  ");
@@ -7579,6 +7700,8 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var element4 = dom.childAt(element1, [5]);
         var element5 = dom.childAt(element1, [7]);
         var element6 = dom.childAt(element5, [5]);
+        var element7 = dom.childAt(element1, [9]);
+        var element8 = dom.childAt(element7, [5]);
         var morph0 = dom.createMorphAt(element0,1,1);
         var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
         var morph2 = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
@@ -7592,6 +7715,10 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var morph10 = dom.createMorphAt(element4,5,5);
         var morph11 = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
         var morph12 = dom.createMorphAt(dom.childAt(element5, [3]),0,0);
+        var morph13 = dom.createMorphAt(element6,0,0);
+        var morph14 = dom.createMorphAt(dom.childAt(element7, [1]),0,0);
+        var morph15 = dom.createMorphAt(dom.childAt(element7, [3]),0,0);
+        var morph16 = dom.createMorphAt(element8,0,0);
         inline(env, morph0, context, "t", ["settings.title"], {});
         inline(env, morph1, context, "t", ["settings.subtitle"], {});
         inline(env, morph2, context, "t", ["settings.language"], {});
@@ -7603,9 +7730,14 @@ define('rose/templates/settings', ['exports'], function (exports) {
         inline(env, morph8, context, "t", ["settings.extraFeatures"], {});
         inline(env, morph9, context, "t", ["settings.extraFeaturesLabel"], {});
         inline(env, morph10, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.developerModeIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "userSettings.developerModeIsEnabled")], {}), "action": "saveSettings"});
-        inline(env, morph11, context, "t", ["settings.resetRose"], {});
-        inline(env, morph12, context, "t", ["settings.resetRoseLabel"], {});
-        element(env, element6, context, "action", ["confirm"], {});
+        inline(env, morph11, context, "t", ["settings.manualUpdate"], {});
+        inline(env, morph12, context, "t", ["settings.manualUpdateLabel"], {});
+        element(env, element6, context, "action", ["manualUpdate"], {});
+        inline(env, morph13, context, "t", ["action.update"], {});
+        inline(env, morph14, context, "t", ["settings.resetRose"], {});
+        inline(env, morph15, context, "t", ["settings.resetRoseLabel"], {});
+        element(env, element8, context, "action", ["confirm"], {});
+        inline(env, morph16, context, "t", ["action.reset"], {});
         return fragment;
       }
     };
@@ -7620,7 +7752,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child0 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -7656,7 +7788,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child1 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -7699,7 +7831,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child2 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -7742,7 +7874,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child3 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -7785,7 +7917,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child4 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -7828,7 +7960,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child5 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -7871,7 +8003,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child6 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -7914,7 +8046,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child7 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -7957,7 +8089,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child8 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -8000,7 +8132,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child9 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -8043,7 +8175,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child10 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -8086,7 +8218,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child11 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -8129,7 +8261,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child12 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -8173,7 +8305,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
       var child0 = (function() {
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.3",
+          revision: "Ember@1.12.1",
           blockParams: 0,
           cachedFragment: null,
           hasRendered: false,
@@ -8215,7 +8347,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -8279,7 +8411,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child14 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -8322,7 +8454,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child15 = (function() {
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 0,
         cachedFragment: null,
         hasRendered: false,
@@ -8364,7 +8496,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -8558,7 +8690,7 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
       var child0 = (function() {
         return {
           isHTMLBars: true,
-          revision: "Ember@1.11.3",
+          revision: "Ember@1.12.1",
           blockParams: 0,
           cachedFragment: null,
           hasRendered: false,
@@ -8607,7 +8739,7 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
       }());
       return {
         isHTMLBars: true,
-        revision: "Ember@1.11.3",
+        revision: "Ember@1.12.1",
         blockParams: 1,
         cachedFragment: null,
         hasRendered: false,
@@ -8648,7 +8780,7 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
     }());
     return {
       isHTMLBars: true,
-      revision: "Ember@1.11.3",
+      revision: "Ember@1.12.1",
       blockParams: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -9175,55 +9307,6 @@ define('rose/tests/controllers/study-creator.jshint', function () {
   });
 
 });
-define('rose/tests/ember-cli-i18n-test', ['ember', 'rose/config/environment'], function (Ember, config) {
-
-  'use strict';
-
-  /* globals requirejs, require */
-
-  if (window.QUnit) {
-    var keys = Ember['default'].keys;
-
-    var locales, defaultLocale;
-    module('ember-cli-i18n', {
-      setup: function setup() {
-        var localRegExp = new RegExp(config['default'].modulePrefix + '/locales/(.+)');
-        var match, moduleName;
-
-        locales = {};
-
-        for (moduleName in requirejs.entries) {
-          if (match = moduleName.match(localRegExp)) {
-            locales[match[1]] = require(moduleName)['default'];
-          }
-        }
-
-        defaultLocale = locales[config['default'].APP.defaultLocale];
-      }
-    });
-
-    test('locales all contain the same keys', function () {
-      var knownLocales = keys(locales);
-      if (knownLocales.length === 1) {
-        expect(0);
-        return;
-      }
-
-      for (var i = 0, l = knownLocales.length; i < l; i++) {
-        var currentLocale = locales[knownLocales[i]];
-
-        if (currentLocale === defaultLocale) {
-          continue;
-        }
-
-        for (var translationKey in defaultLocale) {
-          ok(currentLocale[translationKey], '`' + translationKey + '` should exist in the `' + knownLocales[i] + '` locale.');
-        }
-      }
-    });
-  }
-
-});
 define('rose/tests/helpers/boolean-to-yesno.jshint', function () {
 
   'use strict';
@@ -9311,23 +9394,43 @@ define('rose/tests/initializers/user-settings.jshint', function () {
   });
 
 });
-define('rose/tests/locales/de.jshint', function () {
+define('rose/tests/locales/de/config.jshint', function () {
 
   'use strict';
 
-  module('JSHint - locales');
-  test('locales/de.js should pass jshint', function() { 
-    ok(true, 'locales/de.js should pass jshint.'); 
+  module('JSHint - locales/de');
+  test('locales/de/config.js should pass jshint', function() { 
+    ok(false, 'locales/de/config.js should pass jshint.\nlocales/de/config.js: line 16, col 2, Missing semicolon.\n\n1 error'); 
   });
 
 });
-define('rose/tests/locales/en.jshint', function () {
+define('rose/tests/locales/de/translations.jshint', function () {
 
   'use strict';
 
-  module('JSHint - locales');
-  test('locales/en.js should pass jshint', function() { 
-    ok(true, 'locales/en.js should pass jshint.'); 
+  module('JSHint - locales/de');
+  test('locales/de/translations.js should pass jshint', function() { 
+    ok(true, 'locales/de/translations.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/locales/en/config.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - locales/en');
+  test('locales/en/config.js should pass jshint', function() { 
+    ok(false, 'locales/en/config.js should pass jshint.\nlocales/en/config.js: line 16, col 2, Missing semicolon.\n\n1 error'); 
+  });
+
+});
+define('rose/tests/locales/en/translations.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - locales/en');
+  test('locales/en/translations.js should pass jshint', function() { 
+    ok(true, 'locales/en/translations.js should pass jshint.'); 
   });
 
 });
@@ -9622,16 +9725,16 @@ define('rose/tests/unit/adapters/application-test', ['ember-qunit'], function (e
 
   'use strict';
 
-  ember_qunit.moduleFor('adapter:application', 'ApplicationAdapter', {});
+  ember_qunit.moduleFor('adapter:application', 'ApplicationAdapter', {
+    // Specify the other units that are required for this test.
+    // needs: ['serializer:foo']
+  });
 
   // Replace this with your real tests.
   ember_qunit.test('it exists', function (assert) {
     var adapter = this.subject();
     assert.ok(adapter);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['serializer:foo']
 
 });
 define('rose/tests/unit/adapters/application-test.jshint', function () {
@@ -9648,16 +9751,16 @@ define('rose/tests/unit/adapters/comment-test', ['ember-qunit'], function (ember
 
   'use strict';
 
-  ember_qunit.moduleFor('adapter:comment', 'CommentAdapter', {});
+  ember_qunit.moduleFor('adapter:comment', 'CommentAdapter', {
+    // Specify the other units that are required for this test.
+    // needs: ['serializer:foo']
+  });
 
   // Replace this with your real tests.
   ember_qunit.test('it exists', function (assert) {
     var adapter = this.subject();
     assert.ok(adapter);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['serializer:foo']
 
 });
 define('rose/tests/unit/adapters/comment-test.jshint', function () {
@@ -9674,16 +9777,16 @@ define('rose/tests/unit/adapters/interaction-test', ['ember-qunit'], function (e
 
   'use strict';
 
-  ember_qunit.moduleFor('adapter:interaction', 'InteractionAdapter', {});
+  ember_qunit.moduleFor('adapter:interaction', 'InteractionAdapter', {
+    // Specify the other units that are required for this test.
+    // needs: ['serializer:foo']
+  });
 
   // Replace this with your real tests.
   ember_qunit.test('it exists', function (assert) {
     var adapter = this.subject();
     assert.ok(adapter);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['serializer:foo']
 
 });
 define('rose/tests/unit/adapters/interaction-test.jshint', function () {
@@ -9700,16 +9803,16 @@ define('rose/tests/unit/adapters/kango-adapter-test', ['ember-qunit'], function 
 
   'use strict';
 
-  ember_qunit.moduleFor('adapter:kango-adapter', 'KangoAdapterAdapter', {});
+  ember_qunit.moduleFor('adapter:kango-adapter', 'KangoAdapterAdapter', {
+    // Specify the other units that are required for this test.
+    // needs: ['serializer:foo']
+  });
 
   // Replace this with your real tests.
   ember_qunit.test('it exists', function (assert) {
     var adapter = this.subject();
     assert.ok(adapter);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['serializer:foo']
 
 });
 define('rose/tests/unit/adapters/kango-adapter-test.jshint', function () {
@@ -9726,16 +9829,16 @@ define('rose/tests/unit/adapters/system-config-test', ['ember-qunit'], function 
 
   'use strict';
 
-  ember_qunit.moduleFor('adapter:system-config', 'Unit | Adapter | system config', {});
+  ember_qunit.moduleFor('adapter:system-config', 'Unit | Adapter | system config', {
+    // Specify the other units that are required for this test.
+    // needs: ['serializer:foo']
+  });
 
   // Replace this with your real tests.
   ember_qunit.test('it exists', function (assert) {
     var adapter = this.subject();
     assert.ok(adapter);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['serializer:foo']
 
 });
 define('rose/tests/unit/adapters/system-config-test.jshint', function () {
@@ -9752,16 +9855,16 @@ define('rose/tests/unit/adapters/user-setting-test', ['ember-qunit'], function (
 
   'use strict';
 
-  ember_qunit.moduleFor('adapter:user-setting', 'UserSettingAdapter', {});
+  ember_qunit.moduleFor('adapter:user-setting', 'UserSettingAdapter', {
+    // Specify the other units that are required for this test.
+    // needs: ['serializer:foo']
+  });
 
   // Replace this with your real tests.
   ember_qunit.test('it exists', function (assert) {
     var adapter = this.subject();
     assert.ok(adapter);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['serializer:foo']
 
 });
 define('rose/tests/unit/adapters/user-setting-test.jshint', function () {
@@ -9778,16 +9881,16 @@ define('rose/tests/unit/controllers/application-test', ['ember-qunit'], function
 
   'use strict';
 
-  ember_qunit.moduleFor('controller:application', {});
+  ember_qunit.moduleFor('controller:application', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   // Replace this with your real tests.
   ember_qunit.test('it exists', function (assert) {
     var controller = this.subject();
     assert.ok(controller);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/controllers/application-test.jshint', function () {
@@ -9804,16 +9907,16 @@ define('rose/tests/unit/controllers/backup-test', ['ember-qunit'], function (emb
 
   'use strict';
 
-  ember_qunit.moduleFor('controller:backup', {});
+  ember_qunit.moduleFor('controller:backup', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   // Replace this with your real tests.
   ember_qunit.test('it exists', function (assert) {
     var controller = this.subject();
     assert.ok(controller);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/controllers/backup-test.jshint', function () {
@@ -9830,16 +9933,16 @@ define('rose/tests/unit/controllers/comments-test', ['ember-qunit'], function (e
 
   'use strict';
 
-  ember_qunit.moduleFor('controller:comments', {});
+  ember_qunit.moduleFor('controller:comments', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   // Replace this with your real tests.
   ember_qunit.test('it exists', function (assert) {
     var controller = this.subject();
     assert.ok(controller);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/controllers/comments-test.jshint', function () {
@@ -9856,16 +9959,16 @@ define('rose/tests/unit/controllers/diary-test', ['ember-qunit'], function (embe
 
   'use strict';
 
-  ember_qunit.moduleFor('controller:diary', {});
+  ember_qunit.moduleFor('controller:diary', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   // Replace this with your real tests.
   ember_qunit.test('it exists', function (assert) {
     var controller = this.subject();
     assert.ok(controller);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/controllers/diary-test.jshint', function () {
@@ -9882,16 +9985,16 @@ define('rose/tests/unit/controllers/interactions-test', ['ember-qunit'], functio
 
   'use strict';
 
-  ember_qunit.moduleFor('controller:interactions', {});
+  ember_qunit.moduleFor('controller:interactions', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   // Replace this with your real tests.
   ember_qunit.test('it exists', function (assert) {
     var controller = this.subject();
     assert.ok(controller);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/controllers/interactions-test.jshint', function () {
@@ -9908,16 +10011,16 @@ define('rose/tests/unit/controllers/settings-test', ['ember-qunit'], function (e
 
   'use strict';
 
-  ember_qunit.moduleFor('controller:settings', {});
+  ember_qunit.moduleFor('controller:settings', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   // Replace this with your real tests.
   ember_qunit.test('it exists', function (assert) {
     var controller = this.subject();
     assert.ok(controller);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/controllers/settings-test.jshint', function () {
@@ -9934,16 +10037,16 @@ define('rose/tests/unit/controllers/study-creator-test', ['ember-qunit'], functi
 
   'use strict';
 
-  ember_qunit.moduleFor('controller:study-creator', {});
+  ember_qunit.moduleFor('controller:study-creator', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   // Replace this with your real tests.
   ember_qunit.test('it exists', function (assert) {
     var controller = this.subject();
     assert.ok(controller);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/controllers/study-creator-test.jshint', function () {
@@ -10235,7 +10338,10 @@ define('rose/tests/unit/pods/components/diary-entry/component-test', ['ember-qun
 
   'use strict';
 
-  ember_qunit.moduleForComponent('diary-entry', {});
+  ember_qunit.moduleForComponent('diary-entry', {
+    // Specify the other units that are required for this test
+    // needs: ['component:foo', 'helper:bar']
+  });
 
   ember_qunit.test('it renders', function (assert) {
     assert.expect(2);
@@ -10248,9 +10354,6 @@ define('rose/tests/unit/pods/components/diary-entry/component-test', ['ember-qun
     this.render();
     assert.equal(component._state, 'inDOM');
   });
-
-  // Specify the other units that are required for this test
-  // needs: ['component:foo', 'helper:bar']
 
 });
 define('rose/tests/unit/pods/components/diary-entry/component-test.jshint', function () {
@@ -10399,7 +10502,10 @@ define('rose/tests/unit/pods/components/rose-comment/component-test', ['ember-qu
 
   'use strict';
 
-  ember_qunit.moduleForComponent('rose-comment', {});
+  ember_qunit.moduleForComponent('rose-comment', {
+    // Specify the other units that are required for this test
+    // needs: ['component:foo', 'helper:bar']
+  });
 
   ember_qunit.test('it renders', function (assert) {
     assert.expect(2);
@@ -10412,9 +10518,6 @@ define('rose/tests/unit/pods/components/rose-comment/component-test', ['ember-qu
     this.render();
     assert.equal(component._state, 'inDOM');
   });
-
-  // Specify the other units that are required for this test
-  // needs: ['component:foo', 'helper:bar']
 
 });
 define('rose/tests/unit/pods/components/rose-comment/component-test.jshint', function () {
@@ -10431,7 +10534,10 @@ define('rose/tests/unit/pods/components/rose-interaction/component-test', ['embe
 
   'use strict';
 
-  ember_qunit.moduleForComponent('rose-interaction', {});
+  ember_qunit.moduleForComponent('rose-interaction', {
+    // Specify the other units that are required for this test
+    // needs: ['component:foo', 'helper:bar']
+  });
 
   ember_qunit.test('it renders', function (assert) {
     assert.expect(2);
@@ -10444,9 +10550,6 @@ define('rose/tests/unit/pods/components/rose-interaction/component-test', ['embe
     this.render();
     assert.equal(component._state, 'inDOM');
   });
-
-  // Specify the other units that are required for this test
-  // needs: ['component:foo', 'helper:bar']
 
 });
 define('rose/tests/unit/pods/components/rose-interaction/component-test.jshint', function () {
@@ -10463,15 +10566,15 @@ define('rose/tests/unit/routes/about-test', ['ember-qunit'], function (ember_qun
 
   'use strict';
 
-  ember_qunit.moduleFor('route:about', {});
+  ember_qunit.moduleFor('route:about', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   ember_qunit.test('it exists', function (assert) {
     var route = this.subject();
     assert.ok(route);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/routes/about-test.jshint', function () {
@@ -10488,15 +10591,15 @@ define('rose/tests/unit/routes/application-test', ['ember-qunit'], function (emb
 
   'use strict';
 
-  ember_qunit.moduleFor('route:application', 'Unit | Route | application', {});
+  ember_qunit.moduleFor('route:application', 'Unit | Route | application', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   ember_qunit.test('it exists', function (assert) {
     var route = this.subject();
     assert.ok(route);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/routes/application-test.jshint', function () {
@@ -10513,15 +10616,15 @@ define('rose/tests/unit/routes/backup-test', ['ember-qunit'], function (ember_qu
 
   'use strict';
 
-  ember_qunit.moduleFor('route:backup', {});
+  ember_qunit.moduleFor('route:backup', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   ember_qunit.test('it exists', function (assert) {
     var route = this.subject();
     assert.ok(route);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/routes/backup-test.jshint', function () {
@@ -10538,15 +10641,15 @@ define('rose/tests/unit/routes/comments-test', ['ember-qunit'], function (ember_
 
   'use strict';
 
-  ember_qunit.moduleFor('route:comments', {});
+  ember_qunit.moduleFor('route:comments', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   ember_qunit.test('it exists', function (assert) {
     var route = this.subject();
     assert.ok(route);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/routes/comments-test.jshint', function () {
@@ -10563,15 +10666,15 @@ define('rose/tests/unit/routes/diary-test', ['ember-qunit'], function (ember_qun
 
   'use strict';
 
-  ember_qunit.moduleFor('route:diary', {});
+  ember_qunit.moduleFor('route:diary', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   ember_qunit.test('it exists', function (assert) {
     var route = this.subject();
     assert.ok(route);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/routes/diary-test.jshint', function () {
@@ -10588,15 +10691,15 @@ define('rose/tests/unit/routes/help-test', ['ember-qunit'], function (ember_quni
 
   'use strict';
 
-  ember_qunit.moduleFor('route:help', {});
+  ember_qunit.moduleFor('route:help', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   ember_qunit.test('it exists', function (assert) {
     var route = this.subject();
     assert.ok(route);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/routes/help-test.jshint', function () {
@@ -10613,15 +10716,15 @@ define('rose/tests/unit/routes/index-test', ['ember-qunit'], function (ember_qun
 
   'use strict';
 
-  ember_qunit.moduleFor('route:index', 'Unit | Route | index', {});
+  ember_qunit.moduleFor('route:index', 'Unit | Route | index', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   ember_qunit.test('it exists', function (assert) {
     var route = this.subject();
     assert.ok(route);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/routes/index-test.jshint', function () {
@@ -10638,15 +10741,15 @@ define('rose/tests/unit/routes/interactions-test', ['ember-qunit'], function (em
 
   'use strict';
 
-  ember_qunit.moduleFor('route:interactions', {});
+  ember_qunit.moduleFor('route:interactions', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   ember_qunit.test('it exists', function (assert) {
     var route = this.subject();
     assert.ok(route);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/routes/interactions-test.jshint', function () {
@@ -10663,15 +10766,15 @@ define('rose/tests/unit/routes/privacysettings-test', ['ember-qunit'], function 
 
   'use strict';
 
-  ember_qunit.moduleFor('route:privacysettings', {});
+  ember_qunit.moduleFor('route:privacysettings', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   ember_qunit.test('it exists', function (assert) {
     var route = this.subject();
     assert.ok(route);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/routes/privacysettings-test.jshint', function () {
@@ -10688,15 +10791,15 @@ define('rose/tests/unit/routes/settings-test', ['ember-qunit'], function (ember_
 
   'use strict';
 
-  ember_qunit.moduleFor('route:settings', {});
+  ember_qunit.moduleFor('route:settings', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   ember_qunit.test('it exists', function (assert) {
     var route = this.subject();
     assert.ok(route);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/routes/settings-test.jshint', function () {
@@ -10713,15 +10816,15 @@ define('rose/tests/unit/routes/study-creator-test', ['ember-qunit'], function (e
 
   'use strict';
 
-  ember_qunit.moduleFor('route:study-creator', {});
+  ember_qunit.moduleFor('route:study-creator', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
 
   ember_qunit.test('it exists', function (assert) {
     var route = this.subject();
     assert.ok(route);
   });
-
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
 
 });
 define('rose/tests/unit/routes/study-creator-test.jshint', function () {
@@ -10742,11 +10845,13 @@ define('rose/transitions/cross-fade', ['exports', 'liquid-fire'], function (expo
   exports['default'] = crossFade;
   // BEGIN-SNIPPET cross-fade-definition
   function crossFade() {
-    var opts = arguments[0] === undefined ? {} : arguments[0];
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
     liquid_fire.stop(this.oldElement);
     return liquid_fire.Promise.all([liquid_fire.animate(this.oldElement, { opacity: 0 }, opts), liquid_fire.animate(this.newElement, { opacity: [opts.maxOpacity || 1, 0] }, opts)]);
-  } // END-SNIPPET
+  }
+
+  // END-SNIPPET
 
 });
 define('rose/transitions/default', ['exports', 'liquid-fire'], function (exports, liquid_fire) {
@@ -10754,15 +10859,10 @@ define('rose/transitions/default', ['exports', 'liquid-fire'], function (exports
   'use strict';
 
 
-
-  // This is what we run when no animation is asked for. It just sets
-  // the newly-added element to visible (because we always start them
-  // out invisible so that transitions can control their initial
-  // appearance).
   exports['default'] = defaultTransition;
   function defaultTransition() {
     if (this.newElement) {
-      this.newElement.css({ visibility: "" });
+      this.newElement.css({ visibility: '' });
     }
     return liquid_fire.Promise.resolve();
   }
@@ -10774,21 +10874,18 @@ define('rose/transitions/explode', ['exports', 'ember', 'liquid-fire'], function
 
 
 
-  // Explode is not, by itself, an animation. It exists to pull apart
-  // other elements so that each of the pieces can be targeted by
-  // animations.
-
   exports['default'] = explode;
 
   function explode() {
     var _this = this;
 
+    var seenElements = {};
+    var sawBackgroundPiece = false;
+
     for (var _len = arguments.length, pieces = Array(_len), _key = 0; _key < _len; _key++) {
       pieces[_key] = arguments[_key];
     }
 
-    var seenElements = {};
-    var sawBackgroundPiece = false;
     var promises = pieces.map(function (piece) {
       if (piece.matchBy) {
         return matchAndExplode(_this, piece, seenElements);
@@ -10801,10 +10898,10 @@ define('rose/transitions/explode', ['exports', 'ember', 'liquid-fire'], function
     });
     if (!sawBackgroundPiece) {
       if (this.newElement) {
-        this.newElement.css({ visibility: "" });
+        this.newElement.css({ visibility: '' });
       }
       if (this.oldElement) {
-        this.oldElement.css({ visibility: "hidden" });
+        this.oldElement.css({ visibility: 'hidden' });
       }
     }
     return liquid_fire.Promise.all(promises);
@@ -10816,8 +10913,8 @@ define('rose/transitions/explode', ['exports', 'ember', 'liquid-fire'], function
     var cleanupOld, cleanupNew;
 
     if (selectors[0] || selectors[1]) {
-      cleanupOld = _explodePart(context, "oldElement", childContext, selectors[0], seen);
-      cleanupNew = _explodePart(context, "newElement", childContext, selectors[1], seen);
+      cleanupOld = _explodePart(context, 'oldElement', childContext, selectors[0], seen);
+      cleanupNew = _explodePart(context, 'newElement', childContext, selectors[1], seen);
       if (!cleanupOld && !cleanupNew) {
         return liquid_fire.Promise.resolve();
       }
@@ -10853,19 +10950,19 @@ define('rose/transitions/explode', ['exports', 'ember', 'liquid-fire'], function
         newChild = child.clone();
 
         // Hide the original element
-        child.css({ visibility: "hidden" });
+        child.css({ visibility: 'hidden' });
 
         // If the original element's parent was hidden, hide our clone
         // too.
-        if (elt.css("visibility") === "hidden") {
-          newChild.css({ visibility: "hidden" });
+        if (elt.css('visibility') === 'hidden') {
+          newChild.css({ visibility: 'hidden' });
         }
         newChild.appendTo(elt.parent());
         newChild.outerWidth(width);
         newChild.outerHeight(height);
         var newParentOffset = newChild.offsetParent().offset();
         newChild.css({
-          position: "absolute",
+          position: 'absolute',
           top: childOffset.top - newParentOffset.top,
           left: childOffset.left - newParentOffset.left,
           margin: 0
@@ -10875,7 +10972,7 @@ define('rose/transitions/explode', ['exports', 'ember', 'liquid-fire'], function
         childContext[field] = newChild;
         return function cleanup() {
           newChild.remove();
-          child.css({ visibility: "" });
+          child.css({ visibility: '' });
         };
       }
     }
@@ -10893,7 +10990,7 @@ define('rose/transitions/explode', ['exports', 'ember', 'liquid-fire'], function
       name = piece.use;
       args = [];
     }
-    if (typeof name === "function") {
+    if (typeof name === 'function') {
       func = name;
     } else {
       func = context.lookup(name);
@@ -10914,13 +11011,17 @@ define('rose/transitions/explode', ['exports', 'ember', 'liquid-fire'], function
       return liquid_fire.Promise.resolve();
     }
 
-    var hits = Ember['default'].A(context.oldElement.find("[" + piece.matchBy + "]").toArray());
+    var oldPrefix = piece.pickOld || piece.pick || '';
+    var newPrefix = piece.pickNew || piece.pick || '';
+
+    var hits = Ember['default'].A(context.oldElement.find(oldPrefix + "[" + piece.matchBy + "]").toArray());
     return liquid_fire.Promise.all(hits.map(function (elt) {
       var propValue = Ember['default'].$(elt).attr(piece.matchBy);
       var selector = "[" + piece.matchBy + "=" + propValue + "]";
-      if (context.newElement.find(selector).length > 0) {
+      if (context.newElement.find("" + newPrefix + selector).length > 0) {
         return explodePiece(context, {
-          pick: selector,
+          pickOld: oldPrefix + "[" + piece.matchBy + "=" + propValue + "]",
+          pickNew: newPrefix + "[" + piece.matchBy + "=" + propValue + "]",
           use: piece.use
         }, seen);
       } else {
@@ -10941,7 +11042,7 @@ define('rose/transitions/fade', ['exports', 'liquid-fire'], function (exports, l
   function fade() {
     var _this = this;
 
-    var opts = arguments[0] === undefined ? {} : arguments[0];
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
     var firstStep;
     var outOpts = opts;
@@ -11001,7 +11102,7 @@ define('rose/transitions/fly-to', ['exports', 'liquid-fire'], function (exports,
   function flyTo() {
     var _this = this;
 
-    var opts = arguments[0] === undefined ? {} : arguments[0];
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
     if (!this.newElement) {
       return liquid_fire.Promise.resolve();
@@ -11013,17 +11114,27 @@ define('rose/transitions/fly-to', ['exports', 'liquid-fire'], function (exports,
     var oldOffset = this.oldElement.offset();
     var newOffset = this.newElement.offset();
 
-    var motion = {
-      translateX: newOffset.left - oldOffset.left,
-      translateY: newOffset.top - oldOffset.top,
-      outerWidth: this.newElement.outerWidth(),
-      outerHeight: this.newElement.outerHeight()
-    };
-
-    this.newElement.css({ visibility: 'hidden' });
-    return liquid_fire.animate(this.oldElement, motion, opts).then(function () {
-      _this.newElement.css({ visibility: '' });
-    });
+    if (opts.movingSide === 'new') {
+      var motion = {
+        translateX: [0, oldOffset.left - newOffset.left],
+        translateY: [0, oldOffset.top - newOffset.top],
+        outerWidth: [this.newElement.outerWidth(), this.oldElement.outerWidth()],
+        outerHeight: [this.newElement.outerHeight(), this.oldElement.outerHeight()]
+      };
+      this.oldElement.css({ visibility: 'hidden' });
+      return liquid_fire.animate(this.newElement, motion, opts);
+    } else {
+      var motion = {
+        translateX: newOffset.left - oldOffset.left,
+        translateY: newOffset.top - oldOffset.top,
+        outerWidth: this.newElement.outerWidth(),
+        outerHeight: this.newElement.outerHeight()
+      };
+      this.newElement.css({ visibility: 'hidden' });
+      return liquid_fire.animate(this.oldElement, motion, opts).then(function () {
+        _this.newElement.css({ visibility: '' });
+      });
+    }
   }
 
 });
@@ -11062,7 +11173,7 @@ define('rose/transitions/move-over', ['exports', 'liquid-fire'], function (expor
     return firstStep.then(function () {
       var bigger = biggestSize(_this, measure);
       oldParams[property] = bigger * direction + 'px';
-      newParams[property] = ['0px', -1 * bigger * direction + 'px'];
+      newParams[property] = ["0px", -1 * bigger * direction + 'px'];
 
       return liquid_fire.Promise.all([liquid_fire.animate(_this.oldElement, oldParams, opts), liquid_fire.animate(_this.newElement, newParams, opts, 'moving-in')]);
     });
@@ -11092,7 +11203,7 @@ define('rose/transitions/scale', ['exports', 'liquid-fire'], function (exports, 
   function scale() {
     var _this = this;
 
-    var opts = arguments[0] === undefined ? {} : arguments[0];
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
     return liquid_fire.animate(this.oldElement, { scale: [0.2, 1] }, opts).then(function () {
       return liquid_fire.animate(_this.newElement, { scale: [1, 0.2] }, opts);
@@ -11105,13 +11216,13 @@ define('rose/transitions/scroll-then', ['exports', 'ember'], function (exports, 
   'use strict';
 
   exports['default'] = function (nextTransitionName, options) {
-    var _this = this;
-
     for (var _len = arguments.length, rest = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
       rest[_key - 2] = arguments[_key];
     }
 
-    Ember['default'].assert('You must provide a transition name as the first argument to scrollThen. Example: this.use(\'scrollThen\', \'toLeft\')', 'string' === typeof nextTransitionName);
+    var _this = this;
+
+    Ember['default'].assert("You must provide a transition name as the first argument to scrollThen. Example: this.use('scrollThen', 'toLeft')", 'string' === typeof nextTransitionName);
 
     var el = document.getElementsByTagName('html');
     var nextTransition = this.lookup(nextTransitionName);
@@ -11119,7 +11230,7 @@ define('rose/transitions/scroll-then', ['exports', 'ember'], function (exports, 
       options = {};
     }
 
-    Ember['default'].assert('The second argument to scrollThen is passed to Velocity\'s scroll function and must be an object', 'object' === typeof options);
+    Ember['default'].assert("The second argument to scrollThen is passed to Velocity's scroll function and must be an object", 'object' === typeof options);
 
     // set scroll options via: this.use('scrollThen', 'ToLeft', {easing: 'spring'})
     options = Ember['default'].merge({ duration: 500, offset: 0 }, options);
@@ -11138,7 +11249,7 @@ define('rose/transitions/to-down', ['exports', 'rose/transitions/move-over'], fu
   'use strict';
 
   exports['default'] = function (opts) {
-    return moveOver['default'].call(this, "y", 1, opts);
+    return moveOver['default'].call(this, 'y', 1, opts);
   }
 
 });
@@ -11147,7 +11258,7 @@ define('rose/transitions/to-left', ['exports', 'rose/transitions/move-over'], fu
   'use strict';
 
   exports['default'] = function (opts) {
-    return moveOver['default'].call(this, "x", -1, opts);
+    return moveOver['default'].call(this, 'x', -1, opts);
   }
 
 });
@@ -11156,7 +11267,7 @@ define('rose/transitions/to-right', ['exports', 'rose/transitions/move-over'], f
   'use strict';
 
   exports['default'] = function (opts) {
-    return moveOver['default'].call(this, "x", 1, opts);
+    return moveOver['default'].call(this, 'x', 1, opts);
   }
 
 });
@@ -11165,8 +11276,22 @@ define('rose/transitions/to-up', ['exports', 'rose/transitions/move-over'], func
   'use strict';
 
   exports['default'] = function (opts) {
-    return moveOver['default'].call(this, "y", -1, opts);
+    return moveOver['default'].call(this, 'y', -1, opts);
   }
+
+});
+define('rose/utils/i18n/compile-template', ['exports', 'ember-i18n/compile-template'], function (exports, compileTemplate) {
+
+	'use strict';
+
+	exports['default'] = compileTemplate['default'];
+
+});
+define('rose/utils/i18n/missing-message', ['exports', 'ember-i18n/missing-message'], function (exports, missingMessage) {
+
+	'use strict';
+
+	exports['default'] = missingMessage['default'];
 
 });
 define('rose/views/ui-modal', ['exports', 'semantic-ui-ember/views/ui-modal'], function (exports, Modal) {
@@ -11204,7 +11329,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"defaultLocale":"en","name":"rose","version":"0.0.0.30f34733"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.87107663"});
 }
 
 /* jshint ignore:end */

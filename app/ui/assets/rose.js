@@ -7389,7 +7389,7 @@ define('rose/templates/interactions', ['exports'], function (exports) {
         var morph2 = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
         inline(env, morph0, context, "t", ["interactions.title"], {});
         inline(env, morph1, context, "t", ["interactions.subtitle"], {});
-        block(env, morph2, context, "each", [get(env, context, "model")], {}, child0, null);
+        block(env, morph2, context, "each", [get(env, context, "sortedList")], {}, child0, null);
         return fragment;
       }
     };
@@ -11389,7 +11389,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.87107663"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.bf860fb3"});
 }
 
 /* jshint ignore:end */

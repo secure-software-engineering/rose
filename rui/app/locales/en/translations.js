@@ -14,7 +14,9 @@ export default {
     unhide: "Unhide",
     delete: "Delete",
     download: "Download",
-    details: "Details"
+    details: "Details",
+    reset: "Reset",
+    update: "Update"
   },
 
   // Sidebar Menu

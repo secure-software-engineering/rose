@@ -36,8 +36,14 @@
   </div>
 
   <div class="field">
+    <label>{{t "settings.manualUpdate"}}</label>
+    <p>{{t "settings.manualUpdateLabel"}}</p>
+    <button class="ui button" {{action "manualUpdate"}}>{{t "action.update"}}</button>
+  </div>
+
+  <div class="field">
     <label>{{t "settings.resetRose"}}</label>
     <p>{{t "settings.resetRoseLabel"}}</p>
-    <button class="ui red button" {{action 'confirm'}}>Reset</button>
+    <button class="ui red button" {{action "confirm"}}>{{t "action.reset"}}</button>
   </div>
 </div>

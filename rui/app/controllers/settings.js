@@ -19,6 +19,10 @@ export default Ember.Controller.extend({
 
     confirm() {
       this.send('openModal', 'modal/confirm-reset');
+    },
+
+    manualUpdate() {
+      kango.dispatchMessage('LoadNetworks');
     }
   }
 });

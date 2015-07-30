@@ -6,7 +6,7 @@ export default DS.Adapter.extend({
     const collectionNamespace = this.collectionNamespace;
     const modelNamespace = this.modelNamespace;
     const id = snapshot.id;
-    const serializer = store.serializerFor(type.typeKey);
+    const serializer = store.serializerFor(snapshot.modelName);
     const recordHash = serializer.serialize(snapshot, { includeId: true });
 
     return new Ember.RSVP.Promise(function (resolve) {
@@ -91,7 +91,7 @@ export default DS.Adapter.extend({
     const id = snapshot.id;
     const modelNamespace = this.modelNamespace;
 
-    const serializer = store.serializerFor(type.typeKey);
+    const serializer = store.serializerFor(snapshot.modelName);
     const recordHash = serializer.serialize(snapshot, { includeId: true });
 
     return new Ember.RSVP.Promise(function(resolve, reject) {

@@ -5,3 +5,4 @@ kango-runtime/src/common
 *.pyc
 *.sublime-*
 semantic
+.DS_Store

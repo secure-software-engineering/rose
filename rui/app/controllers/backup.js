@@ -10,6 +10,8 @@ export default Ember.Controller.extend({
       result[model.type.typeKey] = model.content;
     });
 
+    result['export-date'] = new Date().toJSON();
+
     return JSON.stringify(result, null, 4);
   }.property('model'),
 

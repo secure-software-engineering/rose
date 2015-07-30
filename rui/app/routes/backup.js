@@ -24,7 +24,9 @@ export default Ember.Route.extend({
       getItem('mousemove-activity-records'),
       getItem('window-activity-records'),
       getItem('scroll-activity-records'),
-      getItem('fb-login-activity-records')
+      getItem('fb-login-activity-records'),
+      getItem('install-date'),
+      getItem('rose-data-version')
     ];
 
     return Ember.RSVP.all(promises);

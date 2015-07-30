@@ -29,12 +29,22 @@ import ExtractorCollection from 'rose/collections/extractors';
 import WindowTracker from 'rose/activity-trackers/window';
 
 /* Background Script */
-(function() {
+(async function() {
 
   //*******************************//
   // Careful deletes all Rose data //
   //*******************************//
   // localforage.clear();
+
+  const installDate = await localforage.getItem('install-date')
+  if (!installDate) {
+    await localforage.setItem('install-date', new Date().toJSON());
+  }
+
+  const roseDataVersion = await localforage.getItem('rose-data-version')
+  if (!roseDataVersion) {
+    await localforage.setItem('rose-data-version', '3.0');
+  }
 
   WindowTracker.start();
 })();

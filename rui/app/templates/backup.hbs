@@ -8,9 +8,21 @@
 
 <div class="ui form">
   <div class="field">
-    {{textarea readonly=true value=jsonData}}
+    <label>{{t "backup.resetData"}}</label>
+    <p>{{t "backup.resetDataLabel"}}</p>
+
+    <button class="ui primary button" {{action "resetData"}}>
+      {{t "action.reset"}}
+    </button>
   </div>
 
+  <div class="field">
+    <label>{{t "backup.export"}}</label>
+    <p>{{t "backup.exportLabel"}}</p>
+    {{textarea readonly=true value=jsonData}}
+    <div></div>
+
+  </div>
   <button class="ui primary button" {{action "download"}}>
     {{t "action.download"}}
   </button>

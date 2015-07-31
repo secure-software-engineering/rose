@@ -7,13 +7,18 @@
   },
 
   "sidebar": {
-    "infoText": "Tell us what you are commenting on (picture, link, status update, ...) Tell us who posted/shared it (you, a friend, a user who is not your friend, a page, ...) Tell us why you decided to share something with a certain audience.",
+    "infoText": "Please rate the following scales based on how you feel <b>right at this moment</b>.",
     "ratingEntertain": "How entertaining is this content to you",
     "ratingAppropriate": "Do you think it is appropriate to show this content on Facebook",
-    "ratingConcentration": "How well were you concentrating",
-    "ratingInteresting": "Did you find the content you were just reading interesting",
-    "ratingEnjoy": "Did you enjoy what you were just reading",
-    "questionNotice": "Why did you notice this post?",
+    "ratingConcentration": "Concentration",
+    "ratingInteresting": "Interest",
+    "ratingEnjoy": "Enjoyment",
+    "questionContext": "You are currently viewing",
+    "optionContextNewsfeed": "Newsfeed",
+    "optionContextPersonalProfile": "Personal profile",
+    "optionContextPublicPage": "Public page",
+    "questionKnown": "Is this post about a topic that you have already been interested in?",
+    "questionNotice": "What made you decide to read this post?",
     "questionQuality": "Did you examine the quality of the information? If so, how?"
   }
 }

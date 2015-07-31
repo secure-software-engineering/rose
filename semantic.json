@@ -31,7 +31,8 @@
     "rating",
     "sidebar",
     "item",
-    "popup"
+    "popup",
+    "checkbox"
   ],
   "version": "1.12.3"
 }

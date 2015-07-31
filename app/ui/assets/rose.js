@@ -11389,7 +11389,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.bf860fb3"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.e4d532db"});
 }
 
 /* jshint ignore:end */

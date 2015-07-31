@@ -125,6 +125,7 @@ export default (function () {
       if ($(pageletIds[i]).length) {
         this._injectCommentRibbon();
         $('.ui.sidebar').sidebar();
+        $('.ui.radio.checkbox').checkbox();
         break;
       }
     }
@@ -138,8 +139,15 @@ export default (function () {
       return Handlebars.compile(source);
     }).then(function(template) {
       $('body > div').wrapAll( '<div class="pusher" />');
-      $('body').prepend(template());
+      try {
+        var tpl = template();
+      }
+      catch(e) {
+        console.log(e);
+      }
+      $('body').prepend(tpl);
       $('.ui.sidebar').sidebar();
+      $('.ui.radio.checkbox').checkbox();
       if(this._configs.get('roseCommentsRatingIsEnabled')) {
         $('.ui.rating').rating();
       }

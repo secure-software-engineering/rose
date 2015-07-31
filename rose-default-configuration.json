@@ -426,17 +426,19 @@
     "extractors": [
     {
         "name": "status-update",
+        "network": "facebook",
+        "version": "0.2",
         "fields": [
             {
                 "name": "sharerId",
-                "selector": "> div > a",
+                "selector": "> div > div > a",
                 "attr": "href",
                 "match": ".+profile\\\\.php\\\\?id=\\\\d+(?=\\\\&)|.+(?=\\\\?)|.+",
                 "hash": true
             },
             {
                 "name": "contentId",
-                "selector": "> div.clearfix > div > div > div > div > div > span > span > a:first-child",
+                "selector": "> div > div.clearfix > div > div > div > div > div > span > span > a:first-child",
                 "match": ".+(?=\\\\?)|.+",
                 "attr": "href",
                 "hash": true
@@ -445,6 +447,8 @@
     },
     {
         "name": "user-link",
+        "network": "facebook",
+        "version": "0.1",
         "fields": [
             {
                 "name": "userId",
@@ -456,6 +460,8 @@
     },
     {
         "name": "chat-user-link",
+        "network": "facebook",
+        "version": "0.1",
         "fields": [
             {
                 "name": "userId",
@@ -469,6 +475,7 @@
     {
         "name": "privacy-settings",
         "network": "facebook",
+        "version": "0.1",
         "type": "url",
         "informationUrl": "https://www.facebook.com/settings/?tab=privacy",
         "interval": 5000,

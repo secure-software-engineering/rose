@@ -43,7 +43,7 @@ import WindowTracker from 'rose/activity-trackers/window';
 
   const roseDataVersion = await localforage.getItem('rose-data-version')
   if (!roseDataVersion) {
-    await localforage.setItem('rose-data-version', '1.3');
+    await localforage.setItem('rose-data-version', '2.0');
   }
 
   WindowTracker.start();

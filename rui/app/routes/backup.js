@@ -5,7 +5,7 @@ let getItem = (key) => {
     kango.invokeAsyncCallback('localforage.getItem', key, (data) => {
       resolve({
         type: {
-          typeKey: key
+          modelName: key
         },
         content: data
       });

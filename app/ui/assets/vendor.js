@@ -122115,7 +122115,7 @@ define('ember-localforage-adapter/adapters/localforage', ['exports', 'ember', 'e
           }
 
           if (allowRecursive) {
-            adapter.loadRelationships(type, record).then(function (finalRecord) {
+            adapter.loadRelationships(store, type, record).then(function (finalRecord) {
               resolve(finalRecord);
             });
           } else {
@@ -122140,7 +122140,7 @@ define('ember-localforage-adapter/adapters/localforage', ['exports', 'ember', 'e
         });
       }).then(function (records) {
         if (records.get("length")) {
-          return adapter.loadRelationshipsForMany(type, records);
+          return adapter.loadRelationshipsForMany(store, type, records);
         } else {
           return records;
         }
@@ -122168,7 +122168,7 @@ define('ember-localforage-adapter/adapters/localforage', ['exports', 'ember', 'e
           var results = adapter.query(namespace.records, query);
 
           if (results.get("length")) {
-            results = adapter.loadRelationshipsForMany(type, results);
+            results = adapter.loadRelationshipsForMany(store, type, results);
           }
 
           resolve(results);
@@ -122313,7 +122313,7 @@ define('ember-localforage-adapter/adapters/localforage', ['exports', 'ember', 'e
     },
 
     modelNamespace: function modelNamespace(type) {
-      return type.url || type.typeKey;
+      return type.url || type.modelName;
     },
 
     /**
@@ -122355,15 +122355,16 @@ define('ember-localforage-adapter/adapters/localforage', ['exports', 'ember', 'e
      *
      * @method loadRelationships
      * @private
+     * @param {DS.Store} store
      * @param {DS.Model} type
      * @param {Object} record
      */
-    loadRelationships: function loadRelationships(type, record) {
+    loadRelationships: function loadRelationships(store, type, record) {
       var adapter = this;
 
       return new Ember['default'].RSVP.Promise(function (resolve, reject) {
         var resultJSON = {},
-            typeKey = type.typeKey,
+            modelName = type.modelName,
             relationshipNames,
             relationships,
             relationshipPromises = [];
@@ -122400,11 +122401,14 @@ define('ember-localforage-adapter/adapters/localforage', ['exports', 'ember', 'e
            * In this case, cart belongsTo customer and its id is present in the
            * main payload. We find each of these records and add them to _embedded.
            */
-          if (relationEmbeddedId) {
+          var embeddedAlways = adapter.isEmbeddedAlways(store, type.modelName, relationProp.key);
+
+          // For embeddedAlways-style data, we assume the data to be present already, so no further loading is needed.
+          if (relationEmbeddedId && !embeddedAlways) {
             if (relationType === "belongsTo" || relationType === "hasOne") {
-              promise = adapter.find(null, relationModel, relationEmbeddedId, opts);
+              promise = adapter.find(store, relationModel, relationEmbeddedId, opts);
             } else if (relationType === "hasMany") {
-              promise = adapter.findMany(null, relationModel, relationEmbeddedId, opts);
+              promise = adapter.findMany(store, relationModel, relationEmbeddedId, opts);
             }
 
             embedPromise = new Ember['default'].RSVP.Promise(function (resolve, reject) {
@@ -122497,10 +122501,11 @@ define('ember-localforage-adapter/adapters/localforage', ['exports', 'ember', 'e
      *
      * @method loadRelationshipsForMany
      * @private
+     * @param {DS.Store} store
      * @param {DS.Model} type
      * @param {Object} recordsArray
      */
-    loadRelationshipsForMany: function loadRelationshipsForMany(type, recordsArray) {
+    loadRelationshipsForMany: function loadRelationshipsForMany(store, type, recordsArray) {
       var adapter = this;
 
       return new Ember['default'].RSVP.Promise(function (resolve, reject) {
@@ -122534,7 +122539,7 @@ define('ember-localforage-adapter/adapters/localforage', ['exports', 'ember', 'e
            */
           recordsToBeLoaded = recordsToBeLoaded.slice(1);
 
-          var promise = adapter.loadRelationships(type, record);
+          var promise = adapter.loadRelationships(store, type, record);
 
           promise.then(function (recordWithRelationships) {
             recordsWithRelationships.push(recordWithRelationships);
@@ -122568,6 +122573,16 @@ define('ember-localforage-adapter/adapters/localforage', ['exports', 'ember', 'e
       } else {
         return relationships;
       }
+    },
+
+    isEmbeddedAlways: function isEmbeddedAlways(store, modelName, relationKey) {
+      if (store === undefined || store === null) {
+        return false;
+      }
+
+      var serializer = store.serializerFor(modelName);
+      var embeddedAlways = typeof serializer.hasEmbeddedAlwaysOption === "function" && serializer.hasEmbeddedAlwaysOption(relationKey);
+      return embeddedAlways;
     }
   });
 
@@ -122575,7 +122590,7 @@ define('ember-localforage-adapter/adapters/localforage', ['exports', 'ember', 'e
     var adapter = this;
     return this.queue.attach(function (resolve, reject) {
       adapter._namespaceForType(type).then(function (namespaceRecords) {
-        var serializer = store.serializerFor(type.typeKey);
+        var serializer = store.serializerFor(type.modelName);
         var recordHash = serializer.serialize(snapshot, { includeId: true });
         // update(id comes from snapshot) or create(id comes from serialization)
         var id = snapshot.id || recordHash.id;

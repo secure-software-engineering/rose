@@ -7,7 +7,7 @@ export default Ember.Controller.extend({
     var models = this.get('model');
 
     models.forEach(function (model) {
-      result[model.type.typeKey] = model.content;
+      result[model.type.modelName] = model.content;
     });
 
     result['export-date'] = new Date().toJSON();

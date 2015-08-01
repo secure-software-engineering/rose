@@ -35,7 +35,7 @@
     "ember-export-application-global": "^1.0.3",
     "ember-i18n": "4.1.1",
     "ember-i18n-inject": "0.0.1",
-    "ember-localforage-adapter": "0.6.9",
+    "ember-localforage-adapter": "0.7.3",
     "ember-moment": "1.1.1",
     "liquid-fire": "^0.19.3",
     "semantic-ui-ember": "0.0.1-rc.8"

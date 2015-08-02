@@ -53,19 +53,36 @@ body.pushable {
   box-sizing: inherit;
 }
 
+.ui.sidebar {
+  font-size: 120% !important;
+}
+
+.ui.form .grouped.fields>label, .ui.checkbox label, .ui.checkbox .box, .ui.checkbox label {
+ font-size: 90%;
+}
+
 .ui.star.rating {
     padding-top: 10px;
     padding-bottom: 5px;
     float: right;
 }
 
-.ui.form textarea, .ui textarea {
+.ui.form .inline.fields>label {
+    line-height: 1.3;
+}
+
+.ui.form textarea:not([rows]), .ui.form textarea, .ui textarea {
     height: 5em;
     min-height: 5em;
+    padding: 0;
+}
+
+.ui.fluid.button, .ui.fluid.buttons {
+    width: auto;
 }
 
 .rose.comment {
-    margin: -5px 0 5px 0 !important;
+    margin-top: 4px !important;
     opacity: 0.25;
     -webkit-transition: opacity 0.3s;
     -moz-transition: opacity 0.3s;
@@ -75,7 +92,7 @@ body.pushable {
 }
 
 .ui.ribbon.label {
-    left: -1.6rem;
+    left: -1rem;
 }
 
 .rose.comment.timeline {

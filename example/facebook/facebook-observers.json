@@ -36,8 +36,8 @@
         "name": "unlike-comment",
         "network": "facebook",
         "type": "click",
-        "priority": 1,
-        "version": "0.2",
+        "priority": 2,
+        "version": "0.3",
         "patterns": [
             {
                 "node": ".UFICommentActions .UFILikeLink:contains(\"Unlike\"), .UFICommentActions .UFILikeLink:contains(\"Gefällt mir nicht mehr\")",
@@ -50,8 +50,8 @@
         "name": "unlike-content",
         "network": "facebook",
         "type": "click",
-        "priority": 2,
-        "version": "0.3",
+        "priority": 3,
+        "version": "0.4",
         "patterns": [
             {
                 "node": ".UFILinkBright span",
@@ -64,8 +64,8 @@
         "name": "unlike-photo",
         "network": "facebook",
         "type": "click",
-        "priority": 2,
-        "version": "0.2",
+        "priority": 4,
+        "version": "0.3",
         "patterns": [
             {
                 "node": ".fbPhotosPhotoLike span.unlike",
@@ -85,8 +85,8 @@
         "name": "unlike-page",
         "network": "facebook",
         "type": "click",
-        "priority": 3,
-        "version": "0.1",
+        "priority": 5,
+        "version": "0.2",
         "patterns": [
             {
                 "node": ".PageLikeButton:contains(\"Unlike\"), .PageLikeButton:contains(\"Gefällt mir nicht mehr\")",
@@ -98,8 +98,8 @@
         "name": "like-comment",
         "network": "facebook",
         "type": "click",
-        "priority": 4,
-        "version": "0.2",
+        "priority": 6,
+        "version": "0.3",
         "patterns": [
             {
                 "node": ".UFICommentActions .UFILikeLink:contains(\"Like\"), .UFICommentActions .UFILikeLink:contains(\"Gefällt mir\")",
@@ -112,8 +112,8 @@
         "name": "like-content",
         "network": "facebook",
         "type": "click",
-        "priority": 5,
-        "version": "0.3",
+        "priority": 7,
+        "version": "0.4",
         "patterns": [
             {
                 "node": ".UFILikeLink span",
@@ -126,8 +126,8 @@
         "name": "like-photo",
         "network": "facebook",
         "type": "click",
-        "priority": 2,
-        "version": "0.2",
+        "priority": 8,
+        "version": "0.3",
         "patterns": [
             {
                 "node": ".fbPhotosPhotoLike span.like",
@@ -147,8 +147,8 @@
         "name": "like-page",
         "network": "facebook",
         "type": "click",
-        "priority": 1,
-        "version": "0.1",
+        "priority": 9,
+        "version": "0.2",
         "patterns": [
             {
                 "node": ".PageLikeButton:contains(\"Like\"), .PageLikeButton:contains(\"Gefällt mir\"),.PageLikeButton:contains(\"Like\") *, .PageLikeButton:contains(\"Gefällt mir\") *",
@@ -160,8 +160,8 @@
         "name": "view-profile",
         "network": "facebook",
         "type": "click",
-        "priority": 5,
-        "version": "0.2",
+        "priority": 10,
+        "version": "0.3",
         "patterns": [
             {
                 "node": "a.friendHovercard * , a[data-hovercard*=\"user\"] *, a[href*=\"=ufi\"] *, a.titlebarText, a[href*=\"=ufi\"][data-hovercard], a[data-hovercard*=\"user\"], .webMessengerMessageGroup strong > a, #webMessengerHeaderName a",
@@ -174,8 +174,8 @@
         "name": "comment-reply",
         "network": "facebook",
         "type": "input",
-        "priority": 6,
-        "version": "0.1",
+        "priority": 2,
+        "version": "0.2",
         "patterns": [
             {
                 "node": ".UFIReplyList *",
@@ -188,22 +188,8 @@
         "name": "comment-content",
         "network": "facebook",
         "type": "input",
-        "priority": 7,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": ".UFIAddCommentInput *",
-                "container": ".userContentWrapper",
-                "extractor": "status-update"
-            }
-        ]
-    },
-    {
-        "name": "comment-content",
-        "network": "facebook",
-        "type": "input",
-        "priority": 7,
-        "version": "0.1",
+        "priority": 3,
+        "version": "0.2",
         "patterns": [
             {
                 "node": ".UFIAddCommentInput *",
@@ -224,8 +210,8 @@
         "name": "upload-photo",
         "network": "facebook",
         "type": "click",
-        "priority": 8,
-        "version": "0.1",
+        "priority": 11,
+        "version": "0.2",
         "patterns": [
             {
                 "node": "form[action*=\"upload/photos\"] button[type=\"submit\"]",
@@ -237,8 +223,8 @@
         "name": "upload-video",
         "network": "facebook",
         "type": "click",
-        "priority": 8,
-        "version": "0.1",
+        "priority": 12,
+        "version": "0.2",
         "patterns": [
             {
                 "node": "form[action*=\"video/upload\"] + div form[action=\"#\"] button[type=\"submit\"]",
@@ -254,8 +240,8 @@
         "name": "update-status",
         "network": "facebook",
         "type": "click",
-        "priority": 9,
-        "version": "0.1",
+        "priority": 13,
+        "version": "0.2",
         "patterns": [
             {
                 "node": "form[action*=updatestatus] button[type=\"submit\"]",
@@ -267,8 +253,8 @@
         "name": "share-status",
         "network": "facebook",
         "type": "click",
-        "priority": 9,
-        "version": "0.1",
+        "priority": 14,
+        "version": "0.2",
         "patterns": [
             {
                 "node": "a[ajaxify*=\"share/dialog/submit\"] *, a[ajaxify*=\"share/dialog/submit\"]",
@@ -284,8 +270,8 @@
         "name": "create-event",
         "network": "facebook",
         "type": "click",
-        "priority": 10,
-        "version": "0.1",
+        "priority": 15,
+        "version": "0.2",
         "patterns": [
             {
                 "node": "form[action*=\"plans/create\"] button[type=\"submit\"]",
@@ -297,8 +283,8 @@
         "name": "join-event",
         "network": "facebook",
         "type": "click",
-        "priority": 9,
-        "version": "0.1",
+        "priority": 16,
+        "version": "0.2",
         "patterns": [
             {
                 "node": "a[ajaxify*=\"/join.php\"] *, a[ajaxify*=\"/join.php\"], a[ajaxify*=\"response=join\"]",
@@ -310,8 +296,8 @@
         "name": "associate-event",
         "network": "facebook",
         "type": "click",
-        "priority": 9,
-        "version": "0.1",
+        "priority": 17,
+        "version": "0.2",
         "patterns": [
             {
                 "node": "a[ajaxify*=\"/associate.php\"] *, a[ajaxify*=\"/associate.php\"]",
@@ -323,8 +309,8 @@
         "name": "decline-event",
         "network": "facebook",
         "type": "click",
-        "priority": 9,
-        "version": "0.1",
+        "priority": 18,
+        "version": "0.2",
         "patterns": [
             {
                 "node": "a[ajaxify*=\"/decline.php\"] *, a[ajaxify*=\"/decline.php\"]",
@@ -336,8 +322,8 @@
         "name": "friend-request-add",
         "network": "facebook",
         "type": "click",
-        "priority": 9,
-        "version": "0.1",
+        "priority": 19,
+        "version": "0.2",
         "patterns": [
             {
                 "node": ".stickyHeaderWrap .button.FriendRequestAdd, .stickyHeaderWrap button.FriendRequestAdd *, .uiBoxWhite .button.FriendRequestAdd, .uiBoxWhite button.FriendRequestAdd *",
@@ -361,8 +347,8 @@
         "name": "unfriend",
         "network": "facebook",
         "type": "click",
-        "priority": 10,
-        "version": "0.1",
+        "priority": 20,
+        "version": "0.2",
         "patterns": [
             {
                 "node": ".FriendListUnfriend *",
@@ -378,8 +364,8 @@
         "name": "friend-request-confirm",
         "network": "facebook",
         "type": "click",
-        "priority": 11,
-        "version": "0.1",
+        "priority": 21,
+        "version": "0.2",
         "patterns": [
             {
                 "node": ".requestStatus button[name=\"actions[accept]\"]",
@@ -395,8 +381,8 @@
         "name": "friend-request-reject",
         "network": "facebook",
         "type": "click",
-        "priority": 12,
-        "version": "0.1",
+        "priority": 22,
+        "version": "0.2",
         "patterns": [
             {
                 "node": ".requestStatus button[name=\"actions[reject]\"]",

@@ -54,7 +54,7 @@ export default {
   // Backup Page
   backup: {
     title: "Data Management",
-    subtitle: "Here you can review and download all data recorded and collected by ROSE. If you press the \"Download\" button you can store all data in a file locally on your computer."
+    subtitle: "Here you can review, download and wipe all data recorded and collected by ROSE. If you press the \"Download\" button you can store all data in a file locally on your computer."
   },
 
   // Settings Page
@@ -64,7 +64,7 @@ export default {
     language: "Language",
     languageLabel: "Choose your preferred language. ROSE can also adopt the browser language (\"auto detect\" option).",
     commentReminder: "Comment reminder",
-    commentReminderLabel: "ROSE can ocassionally display reminders to remember you to comment on your actions if that is required by the study you are participating in. You can deactivate this features if it disturbs you.",
+    commentReminderLabel: "ROSE can ocassionally display reminders to remind you to comment on your actions if that is required by the study you are participating in. You can deactivate this features if it disturbs you.",
     extraFeatures: "Features for researchers and developers",
     extraFeaturesLabel: "ROSE has additional features for field researchers and ROSE developers. These features are normally not visible, but can be activated here.",
     resetRose: "Reset ROSE configuration",
@@ -83,7 +83,7 @@ export default {
   // Interactions Page
   interactions: {
     title: "Interactions",
-    subtitle: "All your recent interactions for this social media page recorded by ROSE.",
+    subtitle: "All your recent interactions on this social media page recorded by ROSE.",
     actionOn: "action on"
   },
 

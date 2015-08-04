@@ -42,6 +42,7 @@ export default (function () {
   FacebookUI.prototype._configs = new SystemConfigModel();
   FacebookUI.prototype._settings = new UserSettingsModel();
   FacebookUI.prototype._statusUpdateExtractor = {};
+  FacebookUI.prototype._commentMode = true;
 
   function FacebookUI() {
     this._configs.fetch();
@@ -131,6 +132,15 @@ export default (function () {
     }
   };
 
+  FacebookUI.prototype.startSurvey = function(_this) {
+    _this._commentMode = false;
+    //Show sidebar
+    $('.ui.sidebar > .form').hide();
+    $('.ui.rating').rating('set rating', 0);
+    $('.ui.sidebar').sidebar('push page');
+    $('.ui.sidebar').sidebar('show');
+  };
+
   FacebookUI.prototype._injectSidebar = function() {
     if ($('.ui.sidebar').length > 0) {
       return;
@@ -210,6 +220,8 @@ export default (function () {
         }
 
         //Show sidebar
+        this._commentMode = true;
+        $('.ui.sidebar > .form').show();
         $('.ui.sidebar').sidebar('push page');
         $('.ui.sidebar').sidebar('show');
 
@@ -268,6 +280,8 @@ export default (function () {
 
     //Save a comment
     $('body').on('click', '.sidebar .save.button', function() {
+      debugger;
+      if (this._commentMode) {
         var comment = {};
         comment.text = [];
         $('.sidebar textarea').each(function getVals(i) {
@@ -283,6 +297,17 @@ export default (function () {
         this._activeComment.save();
         $('.ui.sidebar').sidebar('hide');
         $('.ui.sidebar.uncover').sidebar('hide');
+      }
+      else {
+        var engage = {};
+        engage.engage = true;
+        engage.rating = $('.ui.rating').rating('get rating') || [];
+        engage.network = 'facebook';
+        engage.createdAt = (new Date()).toJSON();
+        $('.ui.sidebar').sidebar('hide');
+        $('.ui.sidebar.uncover').sidebar('hide');
+        this._comments.create(engage);
+      }
     }.bind(this));
 
   };

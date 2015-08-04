@@ -89,6 +89,7 @@
         "Backbone": true,
         "Handlebars": true,
         "i18n": true,
-        "RSVP": true
+        "RSVP": true,
+        "_":    true
     }
 }

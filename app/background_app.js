@@ -25,6 +25,8 @@ import log from 'rose/log';
 import ExtractorEngine from 'rose/extractor-engine';
 import ObserverCollection from 'rose/collections/observers';
 import ExtractorCollection from 'rose/collections/extractors';
+// import SystemConfigs from 'rose/models/system-config';
+import Updater from 'rose/updater';
 
 import WindowTracker from 'rose/activity-trackers/window';
 
@@ -47,6 +49,9 @@ import WindowTracker from 'rose/activity-trackers/window';
   }
 
   WindowTracker.start();
+
+
+  // setTimeout(Updater.update,5000);
 })();
 
 kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, function(event) {
@@ -59,13 +64,23 @@ kango.addMessageListener('LoadNetworks', function(event) {
     /*
      * Store Observers and extractors in storage
      * FIX: Updater loads observers
+     * Fix: Remove old networks
      */
     var extractorCol = new ExtractorCollection();
     var observerCol = new ObserverCollection();
     var networks = event.data;
 
+
     observerCol.fetch({success: () => {
+    //   observerCol.each((model) => {
+    //     observerCol.remove(model);
+    //     model.destroy();
+    //   });
       extractorCol.fetch({success: () => {
+      //   extractorCol.each((model) => {
+      //     extractorCol.remove(model);
+      //     model.destroy();
+      //   });
         for (var i = 0; i < networks.length; i++) {
           if(networks[i].observers !== undefined) {
             for (var j = 0; j < networks[i].observers.length; j++) {

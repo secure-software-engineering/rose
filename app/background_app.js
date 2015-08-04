@@ -50,7 +50,9 @@ import EngageTracker from 'rose/activity-trackers/engage';
   }
 
   WindowTracker.start();
+
   EngageTracker.start();
+
 
   // setTimeout(Updater.update,5000);
 })();

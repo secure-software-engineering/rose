@@ -139,8 +139,10 @@ export default (function () {
       return Handlebars.compile(source);
     }).then(function(template) {
       $('body > div').wrapAll( '<div class="pusher" />');
+
+      var tpl;
       try {
-        var tpl = template();
+        tpl = template();
       }
       catch(e) {
         console.log(e);
@@ -150,6 +152,7 @@ export default (function () {
       $('.ui.radio.checkbox').checkbox();
       if(this._configs.get('roseCommentsRatingIsEnabled')) {
         $('.ui.rating').rating();
+        $('.ui.rating').prepend('<div class="ui mini horizontal label">(low)</div>').append('<div class="ui mini horizontal label">(high)</div>');
       }
       else {
         $('.ui.rating').remove();
@@ -254,6 +257,7 @@ export default (function () {
               this._activeComment = this._comments.create({contentId: extractorResult.contentId, sharerId: extractorResult.sharerId, createdAt: (new Date()).toJSON()});
             }
             $('.sidebar textarea').val('');
+            $('.ui.checkbox').checkbox('uncheck');
             if(this._configs.get('roseCommentsRatingIsEnabled')) {
               $('.ui.rating').rating('set rating', 0);
             }

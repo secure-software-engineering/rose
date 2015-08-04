@@ -221,18 +221,31 @@ export default (function () {
                 $('.sidebar textarea:eq(' + i + ')').val(activeComment.text[i]);
               }
             }
+            else {
+              $('.sidebar textarea').val('');
+            }
 
             if(this._configs.get('roseCommentsRatingIsEnabled')) {
 
-              if (activeComment.rating) {
-                for (var i = 0, len = activeComment.rating.length; i < len;  i++) {
-                  $('.ui.rating:eq(' + i + ')').rating('set rating', activeComment.rating[i]);
+              if (activeComment.rating !== undefined) {
+                for (var j = 0; j < activeComment.rating.length;  j++) {
+                  $('.ui.rating:eq(' + j + ')').rating('set rating', activeComment.rating[j]);
                 }
               }
               else {
                 $('.ui.rating').rating('set rating', 0);
               }
             }
+
+            $('.ui.checkbox').checkbox('uncheck');
+            if (activeComment.checkbox !== undefined) {
+              for (var k = 0; k < activeComment.checkbox.length;  k++) {
+                if (activeComment.checkbox[k]) {
+                  $('.ui.checkbox:eq(' + k + ')').checkbox('check');
+                }
+              }
+            }
+
           } else {
             if(extractorResult.sharerId === undefined) {
               this._activeComment = this._comments.create({contentId: extractorResult.contentId, createdAt: (new Date()).toJSON()});
@@ -259,6 +272,7 @@ export default (function () {
         if(this._configs.get('roseCommentsRatingIsEnabled')) {
           comment.rating = $('.ui.rating').rating('get rating') || [];
         }
+        comment.checkbox = $('.ui.checkbox').checkbox('is checked');
         comment.network = 'facebook';
         comment.updatedAt = (new Date()).toJSON();
         this._activeComment.set(comment);

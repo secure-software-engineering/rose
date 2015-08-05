@@ -23,6 +23,7 @@ let model = Backbone.Model.extend({
   id: '0',
   defaults: {
     autoUpdateIsEnabled: true,
+    timestamp: 0,
     fileName: 'rose-study-configuration.json',
     roseCommentsIsEnabled: true,
     roseCommentsRatingIsEnabled: true,

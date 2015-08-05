@@ -59,7 +59,12 @@ kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, fu
     kango.browser.tabs.create({url: kango.io.getResourceUrl('ui/index.html')});
 });
 
-kango.addMessageListener('LoadNetworks', function(event) {
+
+kango.addMessageListener('Update', () => {
+  Updater.update();
+});
+
+kango.addMessageListener('LoadNetworks', (event) => {
     console.log(event.target, ' says: ', event.data);
 
     /*

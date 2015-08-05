@@ -7,32 +7,31 @@ let configs = new ConfigModel();
 let update = () => {
   configs.fetch({success: () => {
     //request repo url and update observer/extractor accordingly
+    // FIXME: use url from configs
     // $.get(configs.get('repositoryURL'), function(data) {
     $.get('https://secure-software-engineering.github.io/rose/example/base.json', function(data) {
 
       console.log(data);
 
-      //verfiy timestamp and signature
-      //iterate through networks
+      // FIXME: verfiy signature
 
+      if (configs.get('timestamp') < data.timestamp) {
 
-      let lastUpadte = 1436534468580;
-      if (lastUpadte < data.timestamp) {
-
+        // iterate through networks
+        // FIXME: use networks from configs
         // let networks = this.configs.get(networks);
         let networks = [{ id: 1, name: 'Facebook', descriptiveName: 'Facebook', identifier: 'facebook.com'}];
         for (var n = networks.length - 1; n >= 0; n--) {
-          debugger;
           let remoteNetwork = _.findWhere(data.networks, {id: networks[n].id, name: networks[n].name});
 
           if (remoteNetwork !== undefined) {
             //request observer file
-            $.get('https://secure-software-engineering.github.io/rose/example/' + remoteNetwork.observers, function(observers) {
+            $.get(data.url + remoteNetwork.observers, function(observers) {
               console.log(observers);
               updateByVersion(new ObserverCollection(), observers);
             });
             //request extractor file
-            $.get('https://secure-software-engineering.github.io/rose/example/' + remoteNetwork.extractors, function(extractors) {
+            $.get(data.url + remoteNetwork.extractors, function(extractors) {
               console.log(extractors);
               updateByVersion(new ExtractorCollection(), extractors);
             });
@@ -70,14 +69,15 @@ let compareVersion = (version1, version2) => {
 
 let updateByVersion = (collection, newCollection) => {
   collection.fetch({success: () => {
-         debugger;
     collection.each((model) => {
       let remoteModel = _.findWhere(newCollection, {name: model.get('name'), network: model.get('network')});
       if (remoteModel !== undefined && compareVersion(model.get('version'), remoteModel.version)) {
         model.save(remoteModel);
         console.log('updated observer/extractor');
       }
-      else console.log('no update');
+      else {
+        console.log('no update');
+      }
     });
   }});
 };

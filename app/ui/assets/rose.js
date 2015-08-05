@@ -1043,7 +1043,7 @@ define('rose/controllers/backup', ['exports', 'ember'], function (exports, Ember
       var models = this.get('model');
 
       models.forEach(function (model) {
-        result[model.type.typeKey] = model.content;
+        result[model.type.modelName] = model.content;
       });
 
       result['export-date'] = new Date().toJSON();
@@ -1136,7 +1136,7 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
       },
 
       manualUpdate: function manualUpdate() {
-        kango.dispatchMessage('LoadNetworks');
+        kango.dispatchMessage('Update');
       }
     }
   });
@@ -1747,7 +1747,7 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
     // Backup Page
     backup: {
       title: "Data Management",
-      subtitle: "Here you can review and download all data recorded and collected by ROSE. If you press the \"Download\" button you can store all data in a file locally on your computer."
+      subtitle: "Here you can review, download and wipe all data recorded and collected by ROSE. If you press the \"Download\" button you can store all data in a file locally on your computer."
     },
 
     // Settings Page
@@ -1757,7 +1757,7 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
       language: "Language",
       languageLabel: "Choose your preferred language. ROSE can also adopt the browser language (\"auto detect\" option).",
       commentReminder: "Comment reminder",
-      commentReminderLabel: "ROSE can ocassionally display reminders to remember you to comment on your actions if that is required by the study you are participating in. You can deactivate this features if it disturbs you.",
+      commentReminderLabel: "ROSE can ocassionally display reminders to remind you to comment on your actions if that is required by the study you are participating in. You can deactivate this features if it disturbs you.",
       extraFeatures: "Features for researchers and developers",
       extraFeaturesLabel: "ROSE has additional features for field researchers and ROSE developers. These features are normally not visible, but can be activated here.",
       resetRose: "Reset ROSE configuration",
@@ -1776,7 +1776,7 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
     // Interactions Page
     interactions: {
       title: "Interactions",
-      subtitle: "All your recent interactions for this social media page recorded by ROSE.",
+      subtitle: "All your recent interactions on this social media page recorded by ROSE.",
       actionOn: "action on"
     },
 
@@ -4037,7 +4037,7 @@ define('rose/routes/backup', ['exports', 'ember'], function (exports, Ember) {
       kango.invokeAsyncCallback('localforage.getItem', key, function (data) {
         resolve({
           type: {
-            typeKey: key
+            modelName: key
           },
           content: data
         });
@@ -11389,7 +11389,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.e4d532db"});
+  require("rose/app")["default"].create({"name":"rose","version":"3.0.0beta5"});
 }
 
 /* jshint ignore:end */

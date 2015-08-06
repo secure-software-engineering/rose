@@ -1,6 +1,8 @@
 [
     {
         "name": "status-update",
+        "network": "facebook",
+        "version": "0.1",
         "fields": [
             {
                 "name": "sharerId",
@@ -20,6 +22,8 @@
     },
     {
         "name": "user-link",
+        "network": "facebook",
+        "version": "0.1",
         "fields": [
             {
                 "name": "userId",
@@ -31,6 +35,8 @@
     },
     {
         "name": "chat-user-link",
+        "network": "facebook",
+        "version": "0.1",
         "fields": [
             {
                 "name": "userId",
@@ -48,6 +54,8 @@
         "informationUrl": "https://www.facebook.com/settings/?tab=privacy",
         "interval": 5000,
         "container": ".fbSettingsSections",
+        "network": "facebook",
+        "version": "0.1",
         "fields": [
             {
                 "name": "viewFuturePosts",

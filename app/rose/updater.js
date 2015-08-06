@@ -8,9 +8,7 @@ let configs = new ConfigModel();
 let update = () => {
   configs.fetch({success: () => {
     //request repo url and update observer/extractor accordingly
-    // FIXME: use url from configs
-    // $.get(configs.get('repositoryURL'), function(data) {
-    $.get('https://secure-software-engineering.github.io/rose/example/base.json', function(data) {
+    $.get(configs.get('repositoryURL'), function(data) {
 
       console.log(data);
 

@@ -3,7 +3,7 @@
     "roseCommentsRatingIsEnabled": true,
     "salt": "ROSE",
     "hashLength": 5,
-    "repositoryUrl": "https://secure-software-engineering.github.io/rose/example/base.json",
+    "repositoryURL": "https://secure-software-engineering.github.io/rose/example/base.json",
     "autoUpdateIsEnabled": true,
     "updateInterval": 28800,
     "fileName": "rose-default-configuration.json",

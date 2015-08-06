@@ -28,7 +28,7 @@ export default Ember.Controller.extend({
       const self = this;
       self.set('baseFileIsLoading', true);
 
-      Ember.$.getJSON(this.get('model.repositoryUrl'))
+      Ember.$.getJSON(this.get('model.repositoryURL'))
         .then(function(data) {
           data.networks.forEach(function (nw) {
             let network = self.store.createRecord('network', nw);

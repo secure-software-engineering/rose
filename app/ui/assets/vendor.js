@@ -72681,7 +72681,7 @@ define("ember/load-initializers",
 
 ;/*!
     localForage -- Offline Storage, Improved
-    Version 1.2.4
+    Version 1.2.7
     https://mozilla.github.io/localForage
     (c) 2013-2015 Mozilla, Apache License 2.0
 */
@@ -74610,8 +74610,8 @@ requireModule('promise/polyfill').polyfill();
                                          dbInfo.description, dbInfo.size);
             } catch (e) {
                 return self.setDriver(self.LOCALSTORAGE).then(function() {
-    return self._initStorage(options);
-}).then(resolve)["catch"](reject);
+                    return self._initStorage(options);
+                }).then(resolve)["catch"](reject);
             }
 
             // Create our key/value table if it doesn't exist.

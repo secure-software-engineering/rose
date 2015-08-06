@@ -20,6 +20,7 @@ export default Ember.Controller.extend({
         })
         .then(() => {
           kango.dispatchMessage('LoadNetworks', payload.networks);
+          delete payload.networks;
           return this.store.createRecord('system-config', payload).save();
         })
         .then(() => this.send('cancelWizard'));

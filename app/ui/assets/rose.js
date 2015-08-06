@@ -231,6 +231,16 @@ define('rose/adapters/kango-adapter', ['exports', 'ember', 'ember-data'], functi
   }
 
 });
+define('rose/adapters/network', ['exports', 'rose/adapters/kango-adapter'], function (exports, KangoAdapter) {
+
+  'use strict';
+
+  exports['default'] = KangoAdapter['default'].extend({
+    collectionNamespace: 'Networks',
+    modelNamespace: 'Network'
+  });
+
+});
 define('rose/adapters/system-config', ['exports', 'rose/adapters/kango-adapter'], function (exports, KangoAdapter) {
 
   'use strict';
@@ -1016,6 +1026,7 @@ define('rose/controllers/application', ['exports', 'ember'], function (exports, 
           }
         }).then(function () {
           kango.dispatchMessage('LoadNetworks', payload.networks);
+          delete payload.networks;
           return _this.store.createRecord('system-config', payload).save();
         }).then(function () {
           return _this.send('cancelWizard');
@@ -1176,7 +1187,7 @@ define('rose/controllers/study-creator', ['exports', 'ember'], function (exports
         var self = this;
         self.set('baseFileIsLoading', true);
 
-        Ember['default'].$.getJSON(this.get('model.repositoryUrl')).then(function (data) {
+        Ember['default'].$.getJSON(this.get('model.repositoryURL')).then(function (data) {
           data.networks.forEach(function (nw) {
             var network = self.store.createRecord('network', nw);
             self.get('model.networks').addObject(network);
@@ -1928,7 +1939,8 @@ define('rose/models/network', ['exports', 'ember-data'], function (exports, DS) 
 
   exports['default'] = DS['default'].Model.extend({
     name: DS['default'].attr('string'),
-    namespace: DS['default'].attr('string'),
+    descriptiveName: DS['default'].attr('string'),
+    identifier: DS['default'].attr('string'),
     isEnabled: DS['default'].attr('boolean')
   });
 
@@ -1942,7 +1954,7 @@ define('rose/models/study-creator-setting', ['exports', 'ember-data'], function 
     roseCommentsRatingIsEnabled: DS['default'].attr('boolean'),
     salt: DS['default'].attr('string'),
     hashLength: DS['default'].attr('number', { defaultValue: 8 }),
-    repositoryUrl: DS['default'].attr('string'),
+    repositoryURL: DS['default'].attr('string'),
     autoUpdateIsEnabled: DS['default'].attr('boolean'),
     fileName: DS['default'].attr('string', { defaultValue: 'rose-study-configuration.txt' }),
     networks: DS['default'].hasMany('network', { async: true }),
@@ -1961,7 +1973,9 @@ define('rose/models/system-config', ['exports', 'ember-data'], function (exports
     salt: DS['default'].attr('string'),
     hashLength: DS['default'].attr('number'),
     repositoryURL: DS['default'].attr('string'),
-    fingerprint: DS['default'].attr('string')
+    updateInterval: DS['default'].attr('number'),
+    fingerprint: DS['default'].attr('string'),
+    timestamp: DS['default'].attr('number')
   });
 
 });
@@ -9267,6 +9281,16 @@ define('rose/tests/adapters/kango-adapter.jshint', function () {
   });
 
 });
+define('rose/tests/adapters/network.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - adapters');
+  test('adapters/network.js should pass jshint', function() { 
+    ok(true, 'adapters/network.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/adapters/system-config.jshint', function () {
 
   'use strict';
@@ -11389,7 +11413,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"3.0.0beta5"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.d3d182aa"});
 }
 
 /* jshint ignore:end */

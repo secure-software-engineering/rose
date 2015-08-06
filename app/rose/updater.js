@@ -20,7 +20,7 @@ let update = () => {
         // iterate through networks
         // FIXME: use networks from configs
         // let networks = this.configs.get(networks);
-        let networks = [{ id: 1, name: 'Facebook', descriptiveName: 'Facebook', identifier: 'facebook.com'}];
+        let networks = [{ id: 1, name: 'facebook', descriptiveName: 'Facebook', identifier: 'facebook.com'}];
         for (var n = networks.length - 1; n >= 0; n--) {
           let remoteNetwork = _.findWhere(data.networks, {id: networks[n].id, name: networks[n].name});
 
@@ -34,6 +34,8 @@ let update = () => {
             $.get(data.url + remoteNetwork.extractors, function(extractors) {
               console.log(extractors);
               updateByVersion(new ExtractorCollection(), extractors);
+
+              //call ExtratorEngine to start
             });
 
           }
@@ -82,4 +84,29 @@ let updateByVersion = (collection, newCollection) => {
   }});
 };
 
-export default {update};
+let load = (networks) => {
+  var extractorCol = new ExtractorCollection();
+  var observerCol = new ObserverCollection();
+
+  observerCol.fetch({success: () => {
+    extractorCol.fetch({success: () => {
+      for (var i = 0; i < networks.length; i++) {
+        if(networks[i].observers !== undefined) {
+          for (var j = 0; j < networks[i].observers.length; j++) {
+            //verify
+            observerCol.create(networks[i].observers[j]);
+          }
+        }
+        if(networks[i].extractors !== undefined) {
+          for (var k = 0; k < networks[i].extractors.length; k++) {
+            //verify
+            extractorCol.create(networks[i].extractors[k]);
+          }
+          //call extractorEngine to start
+        }
+      }
+    }});
+  }});
+};
+
+export default {update, load};

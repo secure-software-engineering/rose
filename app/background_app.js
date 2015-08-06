@@ -23,7 +23,6 @@ import 'babelify/polyfill';
 
 import log from 'rose/log';
 import ExtractorEngine from 'rose/extractor-engine';
-import ObserverCollection from 'rose/collections/observers';
 import ExtractorCollection from 'rose/collections/extractors';
 // import SystemConfigs from 'rose/models/system-config';
 import Updater from 'rose/updater';
@@ -64,45 +63,13 @@ kango.addMessageListener('Update', () => {
 });
 
 kango.addMessageListener('LoadNetworks', (event) => {
-    console.log(event.target, ' says: ', event.data);
+    Updater.load(event.data);
+});
 
-    /*
-     * Store Observers and extractors in storage
-     * FIX: Updater loads observers
-     * Fix: Remove old networks
-     */
-    var extractorCol = new ExtractorCollection();
-    var observerCol = new ObserverCollection();
-    var networks = event.data;
-
-
-    observerCol.fetch({success: () => {
-    //   observerCol.each((model) => {
-    //     observerCol.remove(model);
-    //     model.destroy();
-    //   });
-      extractorCol.fetch({success: () => {
-      //   extractorCol.each((model) => {
-      //     extractorCol.remove(model);
-      //     model.destroy();
-      //   });
-        for (var i = 0; i < networks.length; i++) {
-          if(networks[i].observers !== undefined) {
-            for (var j = 0; j < networks[i].observers.length; j++) {
-              //verify
-              observerCol.create(networks[i].observers[j]);
-            }
-          }
-          if(networks[i].extractors !== undefined) {
-            for (var k = 0; k < networks[i].extractors.length; k++) {
-              //verify
-              extractorCol.create(networks[i].extractors[k]);
-            }
-          }
-        }
-        //call to start extractorengine
-        var extractorEngine = new ExtractorEngine(extractorCol);
-        extractorEngine.register();
-      }});
-    }});
+kango.addMessageListener('StartExtractorEngine', (event) => {
+  let extractorCol = new ExtractorCollection();
+  extractorCol.fetch({success: (extractorCol) => {
+    let extractorEngine = new ExtractorEngine(extractorCol);
+    extractorEngine.register();
+  }});
 });

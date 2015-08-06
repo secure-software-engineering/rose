@@ -1,6 +1,7 @@
 import ConfigModel from 'rose/models/system-config';
 import ObserverCollection from 'rose/collections/observers';
 import ExtractorCollection from 'rose/collections/extractors';
+import NetworkCollection from 'rose/collections/networks';
 
 let configs = new ConfigModel();
 
@@ -18,28 +19,30 @@ let update = () => {
       if (configs.get('timestamp') < data.timestamp) {
 
         // iterate through networks
-        // FIXME: use networks from configs
-        // let networks = this.configs.get(networks);
-        let networks = [{ id: 1, name: 'facebook', descriptiveName: 'Facebook', identifier: 'facebook.com'}];
-        for (var n = networks.length - 1; n >= 0; n--) {
-          let remoteNetwork = _.findWhere(data.networks, {id: networks[n].id, name: networks[n].name});
+        let networks = new NetworkCollection();
+        networks.fetch({success: () => {
+          networks.each((network) => {
 
-          if (remoteNetwork !== undefined) {
-            //request observer file
-            $.get(data.url + remoteNetwork.observers, function(observers) {
-              console.log(observers);
-              updateByVersion(new ObserverCollection(), observers);
-            });
-            //request extractor file
-            $.get(data.url + remoteNetwork.extractors, function(extractors) {
-              console.log(extractors);
-              updateByVersion(new ExtractorCollection(), extractors);
+            let remoteNetwork = _.findWhere(data.networks, {name: network.get('name')});
 
-              //call ExtratorEngine to start
-            });
+            if (remoteNetwork !== undefined) {
+              //request observer file
+              $.get(data.url + remoteNetwork.observers, function(observers) {
+                console.log(observers);
+                updateByVersion(new ObserverCollection(), observers);
+              });
+              //request extractor file
+              $.get(data.url + remoteNetwork.extractors, function(extractors) {
+                console.log(extractors);
+                updateByVersion(new ExtractorCollection(), extractors);
 
-          }
-        }
+                //call ExtratorEngine to start
+              });
+            }
+
+          });
+        }});
+
       }
 
     });
@@ -62,7 +65,7 @@ let compareVersion = (version1, version2) => {
             result = true;
             break;
         }
-        if(version1[i] !== version2[i]){
+        if(version1[i] !== version2[i]) {
             break;
         }
     }
@@ -87,24 +90,29 @@ let updateByVersion = (collection, newCollection) => {
 let load = (networks) => {
   var extractorCol = new ExtractorCollection();
   var observerCol = new ObserverCollection();
+  var networkCol = new NetworkCollection();
 
-  observerCol.fetch({success: () => {
-    extractorCol.fetch({success: () => {
-      for (var i = 0; i < networks.length; i++) {
-        if(networks[i].observers !== undefined) {
-          for (var j = 0; j < networks[i].observers.length; j++) {
-            //verify
-            observerCol.create(networks[i].observers[j]);
+  networkCol.fetch({success: () => {
+    observerCol.fetch({success: () => {
+      extractorCol.fetch({success: () => {
+        for (var i = 0; i < networks.length; i++) {
+          if(networks[i].observers !== undefined) {
+            for (var j = 0; j < networks[i].observers.length; j++) {
+              observerCol.create(networks[i].observers[j]);
+            }
           }
-        }
-        if(networks[i].extractors !== undefined) {
-          for (var k = 0; k < networks[i].extractors.length; k++) {
-            //verify
-            extractorCol.create(networks[i].extractors[k]);
+          if(networks[i].extractors !== undefined) {
+            for (var k = 0; k < networks[i].extractors.length; k++) {
+              extractorCol.create(networks[i].extractors[k]);
+            }
+            //call extractorEngine to start
           }
-          //call extractorEngine to start
+
+          delete networks[i].observers;
+          delete networks[i].extractors;
+          networkCol.create(networks[i]);
         }
-      }
+      }});
     }});
   }});
 };

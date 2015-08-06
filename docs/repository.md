@@ -1,46 +1,56 @@
 # Repository
 
-An observer and extractor repository can be published via HTTP and is identified by a URL. It contains a configuration (or status) file and multiple directories. Every instance of the ROSE plugin is configured to synchronize its observers and extractors with one repository.
+An observer and extractor repository can be published via HTTP and is identified by a URL. It contains a configuration (or status) file and multiple directories. Every instance of the ROSE plugin can be configured and sequentially synchronized its observers and extractors with a repository.
 
 ## Configuration File
 
-Every repository must have one configuration file named `config.json`, reachable at `http://X/Y/config.json` if `http://X/Y/` is the URL of the repository. This configuration file contains a JSON object with the following fields:
+Every repository must have one configuration file named `rose3config.json`, reachable at `http://X/Y/config.json` if `http://X/Y/` is the URL of the repository. This configuration file contains a JSON object with the following fields:
 
-* `name`: String. Name of the repository used in ROSE observers/extractors.
+### User Settings
 
-* `descriptiveName`: String. Name used for displaying in the UI.
+* `roseCommentsIsEnabled`: Boolean. Wether or not commenting inside networks is enabled by default or not. (This can be changed by the user.)
 
-* `revision`: Int. Revision number of the repository. If the last check performed by the ROSE plugin has synchronized with a repository with a lower revision number than the current one, an update should be performed.
+* `roseCommentsRatingIsEnabled`: String. Boolean. Wether or not rating inside the commenting function is enabled by default or not. (This can be changed by the user.)
 
-* `observers`: Array. An array containing information on the available observer files in this repository. See below how the elements of this array are structured.
+* `autoUpdateIsEnabled`: Boolean. Wether or not ROSE automatically synchronizes its observers/extractors with the repository in an predefined interval. (This can be changed by the user.)
 
-* `extractors`: Array. An array containing information on the available extractor files in this repository. See below how the elements of this array are structured.
+* `updateInterval`: Number. The timespan until ROSE checks again for updates from the repository. (This can be changed by the user.)
 
-## `observers` Array
+### Internal Configurations
 
-The `observers` array consists of JSON objects containing the following fields:
+* `salt`: String. A preconfigured salt to ensure safer hashes.
 
-* `name`: String. Name of the observer.
+* `hashLength`: Number. The length of the hashes ROSE generates.
 
-* `filename`: String. Name of the file the observer's information are stored in.
+* `repositoryUrl`: String. An http url to this repository folder.
 
-* `version`: String. Version number of the observer in *major.minor.build* format.
+* `fileName`: String. The name of this configuration file.
 
-An observer with the filename `filename` should be located at `http://X/Y/observers/filename` if `http://X/Y/` is the URL of the repository.
+* `fingerprint`: String. A fingerprint of public key, which is used to sign the files in this repository.
 
-## `extractors` Array
+* `timestamp`: Number. A timestamp of the last change in this repository. If the last update in an ROSE distribution is older then the current timestamp in the repository, an update should be performed.
 
-The `extractors` array consists of JSON objects containing the following fields:
+* `networks`: Array. A array of all the networks, which can be configured to be tracked by ROSE.
 
-* `name`: String. Name of the extractor.
+## A Network
 
-* `filename`: String. Name of the file the extractor's information are stored in.
+One object in the networks array has the following attributes:
 
-* `version`: String. Version number of the extractor in *major.minor.build* format.
+* `name`: String. Name of the network used in ROSE observers/extractors and other modules.
 
-An extractor with the filename `filename` should be located at `http://X/Y/extractors/filename` if `http://X/Y/` is the URL of the repository.
+* `descriptiveName`: String. Name used for displaying a network in the UI.
+
+* `identifier`: String. An domainname identifier for ROSE to identify a network. (e.g., `"facebook.com"`)
+
+* `observers`: String. A filepath relative to the location of this configuration file to a json file holding an array of observers for one particular network. See the observer documentation for specifications.
+
+* `extractors`: String. A filepath relative to the location of this configuration file to a json file holding an array extractors for one particular network. See the extractor documentation for specifications.
 
 ## Changelog
+
+2015-09-06 Felix Epp <felix.epp@sit.fraunhofer.de>
+* All configuration fields in the repository.
+* Observers/extractors stored in one file per network.
 
 2014-05-18 Sebastian Ruhleder <sebastian.ruhleder@googlemail.com>
 

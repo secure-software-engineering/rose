@@ -26,7 +26,7 @@
         "bower_components/rsvp/rsvp.js",
         "bower_components/handlebars/handlebars.js",
         "bower_components/i18next/i18next.js",
-        "content_app1.js"
+        "content_app.js"
     ],
     "browser_button": {
         "caption": "ROSE",

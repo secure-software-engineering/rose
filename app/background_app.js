@@ -40,6 +40,7 @@ import WindowTracker from 'rose/activity-trackers/window';
   const installDate = await localforage.getItem('install-date')
   if (!installDate) {
     await localforage.setItem('install-date', new Date().toJSON());
+    kango.browser.tabs.create({url: kango.io.getResourceUrl('ui/index.html')});
   }
 
   const roseDataVersion = await localforage.getItem('rose-data-version')

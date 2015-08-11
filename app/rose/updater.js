@@ -47,27 +47,27 @@ let update = () => {
   }});
 };
 
-let compareVersion = (version1, version2) => {
+let compareVersion = (oldVersion, newVersion) => {
 
     var result = false;
 
-    version1 = version1.split('.');
-    version2 = version2.split('.');
+    oldVersion = oldVersion.split('.');
+    newVersion = newVersion.split('.');
 
-    for(var i=0; i < (Math.max(version1.length,version2.length)); i++){
+    for(var i=0; i < (Math.max(oldVersion.length,newVersion.length)); i++){
 
-        if(version1[i] === undefined){ version1[i] = 0; }
-        if(version2[i] === undefined){ version2[i] = 0; }
+        if(oldVersion[i] === undefined){ oldVersion[i] = 0; }
+        if(newVersion[i] === undefined){ newVersion[i] = 0; }
 
-        if(Number(version1[i]) < Number(version2[i])){
+        if(Number(oldVersion[i]) < Number(newVersion[i])){
             result = true;
             break;
         }
-        if(version1[i] !== version2[i]) {
+        if(oldVersion[i] !== newVersion[i]) {
             break;
         }
     }
-    return(result);
+    return result;
 };
 
 let updateByVersion = (collection, newCollection) => {

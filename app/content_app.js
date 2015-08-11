@@ -52,6 +52,7 @@ import FBLoginTracker from 'rose/activity-trackers/facebook-login';
           if (networkName === 'facebook' && configs.get('roseCommentsIsEnabled')) {
             var facebookUI = new FacebookUI();
             facebookUI.redrawUI();
+            // setTimeout(facebookUI.startSurvey, 5000, facebookUI);
           }
 
           ClickTracker.start();

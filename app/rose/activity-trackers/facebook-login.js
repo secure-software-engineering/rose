@@ -50,7 +50,8 @@ let store = function() {
 };
 
 let checkStatus = async function() {
-  let loginTmp = ($.cookie('c_user')) ? true : false;
+  let id = $.cookie('c_user');
+  let loginTmp = (id) ? id : false;
 
   if (login !== loginTmp) {
     login = loginTmp;

@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { sha1 as hash } from '../crypto';
+
 let type = 'fb-login';
 let login = false;
 
@@ -50,7 +52,8 @@ let store = function() {
 };
 
 let checkStatus = async function() {
-  let loginTmp = ($.cookie('c_user')) ? true : false;
+  let id = hash($.cookie('c_user'));
+  let loginTmp = (id) ? id : false;
 
   if (login !== loginTmp) {
     login = loginTmp;

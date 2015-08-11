@@ -8,7 +8,7 @@ An observer is denoted as a JSON object. The skeleton of an observer contains th
 
 * `name`: String. The `name` field denotes the observer's name. It is advised to use hyphenated words to name an observer, e.g. `this-is-a-name`. The name should reflect an action. In combination with the `network` field, this field identifies an observer.
 
-* `network`: String. The `network` field denotes the network the observer belongs to. The following values are allowed in this field: `facebook`, `gplus`, `twitter`.
+* `network`: String. The `network` field denotes the network the observer belongs to.
 
 * `version`: String. The `version` field denotes the observer's development version, specified in a *major.minor* versioning scheme.
 
@@ -66,6 +66,10 @@ Does an observer match, this user interaction is save to storage. An `interactio
 ```
 
 ## Changelog
+
+2015-09-06 Felix Epp <felix.epp@sit.fraunhofer.de>
+
+* Removed obsolete restrictions
 
 2015-06-23 Felix A. Epp <work@felixepp.de>
 

@@ -3,518 +3,519 @@
     "roseCommentsRatingIsEnabled": true,
     "salt": "ROSE",
     "hashLength": 5,
-    "repositoryUrl": "http://secure-software-engineering.github.io/rose/example/base.json",
+    "repositoryURL": "https://secure-software-engineering.github.io/rose/example/base.json",
     "autoUpdateIsEnabled": true,
+    "updateInterval": 28800,
     "fileName": "rose-default-configuration.json",
     "fingerprint": "25E769C697EC2C20DA3BDDE9F188CF170FA234E8",
+    "timestamp": 1437753156000,
     "networks": [
         {
-            "id": "1",
             "name": "facebook",
             "descriptiveName": "Facebook",
             "identifier": "facebook.com",
             "observers": [
                 {
-        "name": "chat",
-        "network": "facebook",
-        "type": "input",
-        "priority": 1,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": ".fbNubFlyoutInner textarea.uiTextareaAutogrow",
-                "container": ".fbNubFlyoutInner",
-                "extractor": "chat-user-link"
-            },
-            {
-                "node": "#pagelet_web_messenger textarea.uiTextareaAutogrow",
-                "container": "#pagelet_web_messenger div[role=\"main\"]",
-                "extractor": "chat-user-link"
-            }
-        ]
-    },
-    {
-        "name": "chat-reply",
-        "network": "facebook",
-        "type": "click",
-        "priority": 1,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": "#pagelet_web_messenger .uiButtonConfirm input",
-                "container": "#pagelet_web_messenger div[role=\"main\"]",
-                "extractor": "chat-user-link"
-            }
-        ]
-    },
-    {
-        "name": "unlike-comment",
-        "network": "facebook",
-        "type": "click",
-        "priority": 1,
-        "version": "0.2",
-        "patterns": [
-            {
-                "node": ".UFICommentActions .UFILikeLink:contains(\"Unlike\"), .UFICommentActions .UFILikeLink:contains(\"Gefällt mir nicht mehr\")",
-                "container": ".userContentWrapper",
-                "extractor": "status-update"
-            }
-        ]
-    },
-    {
-        "name": "unlike-content",
-        "network": "facebook",
-        "type": "click",
-        "priority": 2,
-        "version": "0.3",
-        "patterns": [
-            {
-                "node": ".UFILinkBright span",
-                "container": ".userContentWrapper",
-                "extractor": "status-update"
-            }
-        ]
-    },
-    {
-        "name": "unlike-photo",
-        "network": "facebook",
-        "type": "click",
-        "priority": 2,
-        "version": "0.2",
-        "patterns": [
-            {
-                "node": ".fbPhotosPhotoLike span.unlike",
-                "container": ".fbPhotoSnowliftPopup"
-            },
-            {
-                "node": ".UFILikeLink span:contains(\"Unlike\"), .UFILikeLink span:contains(\"Gefällt mir nicht mehr\")",
-                "container": "#fbPhotoPageContainer"
-            },
-            {
-                "node": ".UFILikeLink span:contains(\"Unlike\"), .UFILikeLink span:contains(\"Gefällt mir nicht mehr\")",
-                "container": ".fbPhotoSnowliftPopup"
-            }
-        ]
-    },
-    {
-        "name": "unlike-page",
-        "network": "facebook",
-        "type": "click",
-        "priority": 3,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": ".PageLikeButton:contains(\"Unlike\"), .PageLikeButton:contains(\"Gefällt mir nicht mehr\")",
-                "container": ".PageLikeButton"
-            }
-        ]
-    },
-    {
-        "name": "like-comment",
-        "network": "facebook",
-        "type": "click",
-        "priority": 4,
-        "version": "0.2",
-        "patterns": [
-            {
-                "node": ".UFICommentActions .UFILikeLink:contains(\"Like\"), .UFICommentActions .UFILikeLink:contains(\"Gefällt mir\")",
-                "container": ".userContentWrapper",
-                "extractor": "status-update"
-            }
-        ]
-    },
-    {
-        "name": "like-content",
-        "network": "facebook",
-        "type": "click",
-        "priority": 5,
-        "version": "0.3",
-        "patterns": [
-            {
-                "node": ".UFILikeLink span",
-                "container": ".userContentWrapper",
-                "extractor": "status-update"
-            }
-        ]
-    },
-    {
-        "name": "like-photo",
-        "network": "facebook",
-        "type": "click",
-        "priority": 2,
-        "version": "0.2",
-        "patterns": [
-            {
-                "node": ".fbPhotosPhotoLike span.like",
-                "container": ".fbPhotoSnowliftPopup"
-            },
-            {
-                "node": ".UFILikeLink span:contains(\"Like\"), .UFILikeLink span:contains(\"Gefällt mir\")",
-                "container": "#fbPhotoPageContainer"
-            },
-            {
-                "node": ".UFILikeLink span:contains(\"Like\"), .UFILikeLink span:contains(\"Gefällt mir\")",
-                "container": ".fbPhotoSnowliftPopup"
-            }
-        ]
-    },
-    {
-        "name": "like-page",
-        "network": "facebook",
-        "type": "click",
-        "priority": 1,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": ".PageLikeButton:contains(\"Like\"), .PageLikeButton:contains(\"Gefällt mir\"),.PageLikeButton:contains(\"Like\") *, .PageLikeButton:contains(\"Gefällt mir\") *",
-                "container": ".PageLikeButton"
-            }
-        ]
-    },
-    {
-        "name": "view-profile",
-        "network": "facebook",
-        "type": "click",
-        "priority": 5,
-        "version": "0.2",
-        "patterns": [
-            {
-                "node": "a.friendHovercard * , a[data-hovercard*=\"user\"] *, a[href*=\"=ufi\"] *, a.titlebarText, a[href*=\"=ufi\"][data-hovercard], a[data-hovercard*=\"user\"], .webMessengerMessageGroup strong > a, #webMessengerHeaderName a",
-                "container": "a",
-                "extractor": "user-link"
-            }
-        ]
-    },
-    {
-        "name": "comment-reply",
-        "network": "facebook",
-        "type": "input",
-        "priority": 6,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": ".UFIReplyList *",
-                "container": ".userContentWrapper",
-                "extractor": "status-update"
-            }
-        ]
-    },
-    {
-        "name": "comment-content",
-        "network": "facebook",
-        "type": "input",
-        "priority": 7,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": ".UFIAddCommentInput *",
-                "container": ".userContentWrapper",
-                "extractor": "status-update"
-            }
-        ]
-    },
-    {
-        "name": "comment-content",
-        "network": "facebook",
-        "type": "input",
-        "priority": 7,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": ".UFIAddCommentInput *",
-                "container": ".userContentWrapper",
-                "extractor": "status-update"
-            },
-            {
-                "node": ".UFIAddCommentInput *",
-                "container": ".fbPhotoSnowliftContainer"
-            },
-            {
-                "node": ".UFIAddCommentInput *",
-                "container": ".fbxPhotoContentContainer"
-            }
-        ]
-    },
-    {
-        "name": "upload-photo",
-        "network": "facebook",
-        "type": "click",
-        "priority": 8,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": "form[action*=\"upload/photos\"] button[type=\"submit\"]",
-                "container": "form"
-            }
-        ]
-    },
-    {
-        "name": "upload-video",
-        "network": "facebook",
-        "type": "click",
-        "priority": 8,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": "form[action*=\"video/upload\"] + div form[action=\"#\"] button[type=\"submit\"]",
-                "container": "form[action=\"#\"]"
-            },
-            {
-                "node": "div:contains(\"Upload Video\") ~ div button[type=\"submit\"]",
-                "container": "div[role=\"dialog\"]"
-            }
-        ]
-    },
-    {
-        "name": "update-status",
-        "network": "facebook",
-        "type": "click",
-        "priority": 9,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": "form[action*=updatestatus] button[type=\"submit\"]",
-                "container": "form[action*=updatestatus]"
-            }
-        ]
-    },
-    {
-        "name": "share-status",
-        "network": "facebook",
-        "type": "click",
-        "priority": 9,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": "a[ajaxify*=\"share/dialog/submit\"] *, a[ajaxify*=\"share/dialog/submit\"]",
-                "container": "a"
-            },
-            {
-                "node": "form[action*=\"sharer/submit\"] button[type=\"submit\"]",
-                "container": "form[action*=\"sharer/submit\"]"
-            }
-        ]
-    },
-    {
-        "name": "create-event",
-        "network": "facebook",
-        "type": "click",
-        "priority": 10,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": "form[action*=\"plans/create\"] button[type=\"submit\"]",
-                "container": "form[action*=\"plans/create\"]"
-            }
-        ]
-    },
-    {
-        "name": "join-event",
-        "network": "facebook",
-        "type": "click",
-        "priority": 9,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": "a[ajaxify*=\"/join.php\"] *, a[ajaxify*=\"/join.php\"], a[ajaxify*=\"response=join\"]",
-                "container": "a"
-            }
-        ]
-    },
-    {
-        "name": "associate-event",
-        "network": "facebook",
-        "type": "click",
-        "priority": 9,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": "a[ajaxify*=\"/associate.php\"] *, a[ajaxify*=\"/associate.php\"]",
-                "container": "a"
-            }
-        ]
-    },
-    {
-        "name": "decline-event",
-        "network": "facebook",
-        "type": "click",
-        "priority": 9,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": "a[ajaxify*=\"/decline.php\"] *, a[ajaxify*=\"/decline.php\"]",
-                "container": "a"
-            }
-        ]
-    },
-    {
-        "name": "friend-request-add",
-        "network": "facebook",
-        "type": "click",
-        "priority": 9,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": ".stickyHeaderWrap .button.FriendRequestAdd, .stickyHeaderWrap button.FriendRequestAdd *, .uiBoxWhite .button.FriendRequestAdd, .uiBoxWhite button.FriendRequestAdd *",
-                "container": "#globalContainer"
-            },
-            {
-                "node": ".friendBrowserListUnit button.FriendRequestAdd, .friendBrowserListUnit button.FriendRequestAdd *",
-                "container": ".uiProfileBlockContent"
-            },
-            {
-                "node": ".hovercardButtonGroup button.FriendRequestAdd, .hovercardButtonGroup button.FriendRequestAdd *",
-                "container": ".uiContextualLayer > div > div > i + div"
-            },
-            {
-                "node": "button.FriendRequestAdd, button.FriendRequestAdd *",
-                "container": ".clearfix"
-            }
-        ]
-    },
-    {
-        "name": "unfriend",
-        "network": "facebook",
-        "type": "click",
-        "priority": 10,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": ".FriendListUnfriend *",
-                "container": "#globalContainer"
-            },
-            {
-                "node": ".FriendListUnfriend *",
-                "container": "will never be reached"
-            }
-        ]
-    },
-    {
-        "name": "friend-request-confirm",
-        "network": "facebook",
-        "type": "click",
-        "priority": 11,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": ".requestStatus button[name=\"actions[accept]\"]",
-                "container": ".requestStatus"
-            },
-            {
-                "node": "#pagelet_above_header_timeline a[role=\"button\"][ajaxify*=\"add_friend\"], .stickyHeaderWrap a[role=\"button\"][ajaxify*=\"add_friend\"], .requestResponseMenu li.accept *",
-                "container": "#globalContainer"
-            }
-        ]
-    },
-    {
-        "name": "friend-request-reject",
-        "network": "facebook",
-        "type": "click",
-        "priority": 12,
-        "version": "0.1",
-        "patterns": [
-            {
-                "node": ".requestStatus button[name=\"actions[reject]\"]",
-                "container": ".requestStatus"
-            },
-            {
-                "node": "#pagelet_above_header_timeline a[role=\"button\"][ajaxify*=\"reject\"], .stickyHeaderWrap a[role=\"button\"][ajaxify*=\"reject\"], .requestResponseMenu li.reject *",
-                "container": "#globalContainer"
-            }
-        ]
-    }],
-    "extractors": [
-    {
-        "name": "status-update",
-        "network": "facebook",
-        "version": "0.2",
-        "fields": [
-            {
-                "name": "sharerId",
-                "selector": "> div > div > a",
-                "attr": "href",
-                "match": ".+profile\\\\.php\\\\?id=\\\\d+(?=\\\\&)|.+(?=\\\\?)|.+",
-                "hash": true
-            },
-            {
-                "name": "contentId",
-                "selector": "> div > div.clearfix > div > div > div > div > div > span > span > a:first-child",
-                "match": ".+(?=\\\\?)|.+",
-                "attr": "href",
-                "hash": true
-            }
-        ]
-    },
-    {
-        "name": "user-link",
-        "network": "facebook",
-        "version": "0.1",
-        "fields": [
-            {
-                "name": "userId",
-                "attr": "href",
-                "match": ".+profile\\\\.php\\\\?id=\\\\d+(?=\\\\&)|.+(?=\\\\?)|.+",
-                "hash": true
-            }
-        ]
-    },
-    {
-        "name": "chat-user-link",
-        "network": "facebook",
-        "version": "0.1",
-        "fields": [
-            {
-                "name": "userId",
-                "selector": "h4.titlebarTextWrapper > a.titlebarText, #webMessengerHeaderName a",
-                "attr": "href",
-                "match": ".+profile\\\\.php\\\\?id=\\\\d+(?=\\\\&)|.+(?=\\\\?)|.+",
-                "hash": true
-            }
-        ]
-    },
-    {
-        "name": "privacy-settings",
-        "network": "facebook",
-        "version": "0.1",
-        "type": "url",
-        "informationUrl": "https://www.facebook.com/settings/?tab=privacy",
-        "interval": 5000,
-        "container": ".fbSettingsSections",
-        "fields": [
-            {
-                "name": "viewFuturePosts",
-                "attr": "content",
-                "selector": ".fbSettingsSectionsItem:nth-child(1) .fbSettingsListItem:nth-child(1) .fbSettingsListItemContent > div:last-child"
-            },
-            {
-                "name": "sendFriendRequests",
-                "attr": "content",
-                "selector": ".fbSettingsSectionsItem:nth-child(2) .fbSettingsListItem:nth-child(1) .fbSettingsListItemContent > div:last-child"
-            },
-            {
-                "name": "MessageFilter",
-                "attr": "content",
-                "selector": ".fbSettingsSectionsItem:nth-child(2) .fbSettingsListItem:nth-child(2) .fbSettingsListItemContent > div:last-child"
-            },
-            {
-                "name": "EMailLookup",
-                "attr": "content",
-                "selector": ".fbSettingsSectionsItem:nth-child(3) .fbSettingsListItem:nth-child(1) .fbSettingsListItemContent > div:last-child"
-            },
-            {
-                "name": "PhonenumberLookup",
-                "attr": "content",
-                "selector": ".fbSettingsSectionsItem:nth-child(3) .fbSettingsListItem:nth-child(2) .fbSettingsListItemContent > div:last-child"
-            },
-            {
-                "name": "SearchEngines",
-                "attr": "content",
-                "selector": ".fbSettingsSectionsItem:nth-child(3) .fbSettingsListItem:nth-child(3) .fbSettingsListItemContent > div:last-child"
-            }
-        ]
-    }
-]
-
+                    "name": "chat",
+                    "network": "facebook",
+                    "type": "input",
+                    "priority": 1,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": ".fbNubFlyoutInner textarea.uiTextareaAutogrow",
+                            "container": ".fbNubFlyoutInner",
+                            "extractor": "chat-user-link"
+                        },
+                        {
+                            "node": "#pagelet_web_messenger textarea.uiTextareaAutogrow",
+                            "container": "#pagelet_web_messenger div[role=\"main\"]",
+                            "extractor": "chat-user-link"
+                        }
+                    ]
+                },
+                {
+                    "name": "chat-reply",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 1,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": "#pagelet_web_messenger .uiButtonConfirm input",
+                            "container": "#pagelet_web_messenger div[role=\"main\"]",
+                            "extractor": "chat-user-link"
+                        }
+                    ]
+                },
+                {
+                    "name": "unlike-comment",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 1,
+                    "version": "0.2",
+                    "patterns": [
+                        {
+                            "node": ".UFICommentActions .UFILikeLink:contains(\"Unlike\"), .UFICommentActions .UFILikeLink:contains(\"Gefällt mir nicht mehr\")",
+                            "container": ".userContentWrapper",
+                            "extractor": "status-update"
+                        }
+                    ]
+                },
+                {
+                    "name": "unlike-content",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 2,
+                    "version": "0.3",
+                    "patterns": [
+                        {
+                            "node": ".UFILinkBright span",
+                            "container": ".userContentWrapper",
+                            "extractor": "status-update"
+                        }
+                    ]
+                },
+                {
+                    "name": "unlike-photo",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 2,
+                    "version": "0.2",
+                    "patterns": [
+                        {
+                            "node": ".fbPhotosPhotoLike span.unlike",
+                            "container": ".fbPhotoSnowliftPopup"
+                        },
+                        {
+                            "node": ".UFILikeLink span:contains(\"Unlike\"), .UFILikeLink span:contains(\"Gefällt mir nicht mehr\")",
+                            "container": "#fbPhotoPageContainer"
+                        },
+                        {
+                            "node": ".UFILikeLink span:contains(\"Unlike\"), .UFILikeLink span:contains(\"Gefällt mir nicht mehr\")",
+                            "container": ".fbPhotoSnowliftPopup"
+                        }
+                    ]
+                },
+                {
+                    "name": "unlike-page",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 3,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": ".PageLikeButton:contains(\"Unlike\"), .PageLikeButton:contains(\"Gefällt mir nicht mehr\")",
+                            "container": ".PageLikeButton"
+                        }
+                    ]
+                },
+                {
+                    "name": "like-comment",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 4,
+                    "version": "0.2",
+                    "patterns": [
+                        {
+                            "node": ".UFICommentActions .UFILikeLink:contains(\"Like\"), .UFICommentActions .UFILikeLink:contains(\"Gefällt mir\")",
+                            "container": ".userContentWrapper",
+                            "extractor": "status-update"
+                        }
+                    ]
+                },
+                {
+                    "name": "like-content",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 5,
+                    "version": "0.3",
+                    "patterns": [
+                        {
+                            "node": ".UFILikeLink span",
+                            "container": ".userContentWrapper",
+                            "extractor": "status-update"
+                        }
+                    ]
+                },
+                {
+                    "name": "like-photo",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 2,
+                    "version": "0.2",
+                    "patterns": [
+                        {
+                            "node": ".fbPhotosPhotoLike span.like",
+                            "container": ".fbPhotoSnowliftPopup"
+                        },
+                        {
+                            "node": ".UFILikeLink span:contains(\"Like\"), .UFILikeLink span:contains(\"Gefällt mir\")",
+                            "container": "#fbPhotoPageContainer"
+                        },
+                        {
+                            "node": ".UFILikeLink span:contains(\"Like\"), .UFILikeLink span:contains(\"Gefällt mir\")",
+                            "container": ".fbPhotoSnowliftPopup"
+                        }
+                    ]
+                },
+                {
+                    "name": "like-page",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 1,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": ".PageLikeButton:contains(\"Like\"), .PageLikeButton:contains(\"Gefällt mir\"),.PageLikeButton:contains(\"Like\") *, .PageLikeButton:contains(\"Gefällt mir\") *",
+                            "container": ".PageLikeButton"
+                        }
+                    ]
+                },
+                {
+                    "name": "view-profile",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 5,
+                    "version": "0.2",
+                    "patterns": [
+                        {
+                            "node": "a.friendHovercard * , a[data-hovercard*=\"user\"] *, a[href*=\"=ufi\"] *, a.titlebarText, a[href*=\"=ufi\"][data-hovercard], a[data-hovercard*=\"user\"], .webMessengerMessageGroup strong > a, #webMessengerHeaderName a",
+                            "container": "a",
+                            "extractor": "user-link"
+                        }
+                    ]
+                },
+                {
+                    "name": "comment-reply",
+                    "network": "facebook",
+                    "type": "input",
+                    "priority": 6,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": ".UFIReplyList *",
+                            "container": ".userContentWrapper",
+                            "extractor": "status-update"
+                        }
+                    ]
+                },
+                {
+                    "name": "comment-content",
+                    "network": "facebook",
+                    "type": "input",
+                    "priority": 7,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": ".UFIAddCommentInput *",
+                            "container": ".userContentWrapper",
+                            "extractor": "status-update"
+                        }
+                    ]
+                },
+                {
+                    "name": "comment-content",
+                    "network": "facebook",
+                    "type": "input",
+                    "priority": 7,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": ".UFIAddCommentInput *",
+                            "container": ".userContentWrapper",
+                            "extractor": "status-update"
+                        },
+                        {
+                            "node": ".UFIAddCommentInput *",
+                            "container": ".fbPhotoSnowliftContainer"
+                        },
+                        {
+                            "node": ".UFIAddCommentInput *",
+                            "container": ".fbxPhotoContentContainer"
+                        }
+                    ]
+                },
+                {
+                    "name": "upload-photo",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 8,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": "form[action*=\"upload/photos\"] button[type=\"submit\"]",
+                            "container": "form"
+                        }
+                    ]
+                },
+                {
+                    "name": "upload-video",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 8,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": "form[action*=\"video/upload\"] + div form[action=\"#\"] button[type=\"submit\"]",
+                            "container": "form[action=\"#\"]"
+                        },
+                        {
+                            "node": "div:contains(\"Upload Video\") ~ div button[type=\"submit\"]",
+                            "container": "div[role=\"dialog\"]"
+                        }
+                    ]
+                },
+                {
+                    "name": "update-status",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 9,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": "form[action*=updatestatus] button[type=\"submit\"]",
+                            "container": "form[action*=updatestatus]"
+                        }
+                    ]
+                },
+                {
+                    "name": "share-status",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 9,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": "a[ajaxify*=\"share/dialog/submit\"] *, a[ajaxify*=\"share/dialog/submit\"]",
+                            "container": "a"
+                        },
+                        {
+                            "node": "form[action*=\"sharer/submit\"] button[type=\"submit\"]",
+                            "container": "form[action*=\"sharer/submit\"]"
+                        }
+                    ]
+                },
+                {
+                    "name": "create-event",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 10,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": "form[action*=\"plans/create\"] button[type=\"submit\"]",
+                            "container": "form[action*=\"plans/create\"]"
+                        }
+                    ]
+                },
+                {
+                    "name": "join-event",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 9,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": "a[ajaxify*=\"/join.php\"] *, a[ajaxify*=\"/join.php\"], a[ajaxify*=\"response=join\"]",
+                            "container": "a"
+                        }
+                    ]
+                },
+                {
+                    "name": "associate-event",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 9,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": "a[ajaxify*=\"/associate.php\"] *, a[ajaxify*=\"/associate.php\"]",
+                            "container": "a"
+                        }
+                    ]
+                },
+                {
+                    "name": "decline-event",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 9,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": "a[ajaxify*=\"/decline.php\"] *, a[ajaxify*=\"/decline.php\"]",
+                            "container": "a"
+                        }
+                    ]
+                },
+                {
+                    "name": "friend-request-add",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 9,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": ".stickyHeaderWrap .button.FriendRequestAdd, .stickyHeaderWrap button.FriendRequestAdd *, .uiBoxWhite .button.FriendRequestAdd, .uiBoxWhite button.FriendRequestAdd *",
+                            "container": "#globalContainer"
+                        },
+                        {
+                            "node": ".friendBrowserListUnit button.FriendRequestAdd, .friendBrowserListUnit button.FriendRequestAdd *",
+                            "container": ".uiProfileBlockContent"
+                        },
+                        {
+                            "node": ".hovercardButtonGroup button.FriendRequestAdd, .hovercardButtonGroup button.FriendRequestAdd *",
+                            "container": ".uiContextualLayer > div > div > i + div"
+                        },
+                        {
+                            "node": "button.FriendRequestAdd, button.FriendRequestAdd *",
+                            "container": ".clearfix"
+                        }
+                    ]
+                },
+                {
+                    "name": "unfriend",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 10,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": ".FriendListUnfriend *",
+                            "container": "#globalContainer"
+                        },
+                        {
+                            "node": ".FriendListUnfriend *",
+                            "container": "will never be reached"
+                        }
+                    ]
+                },
+                {
+                    "name": "friend-request-confirm",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 11,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": ".requestStatus button[name=\"actions[accept]\"]",
+                            "container": ".requestStatus"
+                        },
+                        {
+                            "node": "#pagelet_above_header_timeline a[role=\"button\"][ajaxify*=\"add_friend\"], .stickyHeaderWrap a[role=\"button\"][ajaxify*=\"add_friend\"], .requestResponseMenu li.accept *",
+                            "container": "#globalContainer"
+                        }
+                    ]
+                },
+                {
+                    "name": "friend-request-reject",
+                    "network": "facebook",
+                    "type": "click",
+                    "priority": 12,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": ".requestStatus button[name=\"actions[reject]\"]",
+                            "container": ".requestStatus"
+                        },
+                        {
+                            "node": "#pagelet_above_header_timeline a[role=\"button\"][ajaxify*=\"reject\"], .stickyHeaderWrap a[role=\"button\"][ajaxify*=\"reject\"], .requestResponseMenu li.reject *",
+                            "container": "#globalContainer"
+                        }
+                    ]
+                }
+            ],
+            "extractors": [
+                {
+                    "name": "status-update",
+                    "network": "facebook",
+                    "version": "0.2",
+                    "fields": [
+                        {
+                            "name": "sharerId",
+                            "selector": "> div > div > a",
+                            "attr": "href",
+                            "match": ".+profile\\\\.php\\\\?id=\\\\d+(?=\\\\&)|.+(?=\\\\?)|.+",
+                            "hash": true
+                        },
+                        {
+                            "name": "contentId",
+                            "selector": "> div > div.clearfix > div > div > div > div > div > span > span > a:first-child",
+                            "match": ".+(?=\\\\?)|.+",
+                            "attr": "href",
+                            "hash": true
+                        }
+                    ]
+                },
+                {
+                    "name": "user-link",
+                    "network": "facebook",
+                    "version": "0.1",
+                    "fields": [
+                        {
+                            "name": "userId",
+                            "attr": "href",
+                            "match": ".+profile\\\\.php\\\\?id=\\\\d+(?=\\\\&)|.+(?=\\\\?)|.+",
+                            "hash": true
+                        }
+                    ]
+                },
+                {
+                    "name": "chat-user-link",
+                    "network": "facebook",
+                    "version": "0.1",
+                    "fields": [
+                        {
+                            "name": "userId",
+                            "selector": "h4.titlebarTextWrapper > a.titlebarText, #webMessengerHeaderName a",
+                            "attr": "href",
+                            "match": ".+profile\\\\.php\\\\?id=\\\\d+(?=\\\\&)|.+(?=\\\\?)|.+",
+                            "hash": true
+                        }
+                    ]
+                },
+                {
+                    "name": "privacy-settings",
+                    "network": "facebook",
+                    "version": "0.1",
+                    "type": "url",
+                    "informationUrl": "https://www.facebook.com/settings/?tab=privacy",
+                    "interval": 5000,
+                    "container": ".fbSettingsSections",
+                    "fields": [
+                        {
+                            "name": "viewFuturePosts",
+                            "attr": "content",
+                            "selector": ".fbSettingsSectionsItem:nth-child(1) .fbSettingsListItem:nth-child(1) .fbSettingsListItemContent > div:last-child"
+                        },
+                        {
+                            "name": "sendFriendRequests",
+                            "attr": "content",
+                            "selector": ".fbSettingsSectionsItem:nth-child(2) .fbSettingsListItem:nth-child(1) .fbSettingsListItemContent > div:last-child"
+                        },
+                        {
+                            "name": "MessageFilter",
+                            "attr": "content",
+                            "selector": ".fbSettingsSectionsItem:nth-child(2) .fbSettingsListItem:nth-child(2) .fbSettingsListItemContent > div:last-child"
+                        },
+                        {
+                            "name": "EMailLookup",
+                            "attr": "content",
+                            "selector": ".fbSettingsSectionsItem:nth-child(3) .fbSettingsListItem:nth-child(1) .fbSettingsListItemContent > div:last-child"
+                        },
+                        {
+                            "name": "PhonenumberLookup",
+                            "attr": "content",
+                            "selector": ".fbSettingsSectionsItem:nth-child(3) .fbSettingsListItem:nth-child(2) .fbSettingsListItemContent > div:last-child"
+                        },
+                        {
+                            "name": "SearchEngines",
+                            "attr": "content",
+                            "selector": ".fbSettingsSectionsItem:nth-child(3) .fbSettingsListItem:nth-child(3) .fbSettingsListItemContent > div:last-child"
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }

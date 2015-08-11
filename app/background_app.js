@@ -27,7 +27,6 @@ import ObserverCollection from 'rose/collections/observers';
 import ExtractorCollection from 'rose/collections/extractors';
 
 import WindowTracker from 'rose/activity-trackers/window';
-import EngageTracker from 'rose/activity-trackers/engage';
 
 /* Background Script */
 (async function() {

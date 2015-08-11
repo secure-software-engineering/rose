@@ -7,5 +7,7 @@ export default DS.Model.extend({
   salt: DS.attr('string'),
   hashLength: DS.attr('number'),
   repositoryURL: DS.attr('string'),
-  fingerprint: DS.attr('string')
+  updateInterval: DS.attr('number'),
+  fingerprint: DS.attr('string'),
+  timestamp: DS.attr('number')
 });

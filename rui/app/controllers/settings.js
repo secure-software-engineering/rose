@@ -22,7 +22,7 @@ export default Ember.Controller.extend({
     },
 
     manualUpdate() {
-      kango.dispatchMessage('LoadNetworks');
+      kango.dispatchMessage('Update');
     }
   }
 });

@@ -1,6 +1,6 @@
 # Extractors
 
-Extractors contain information on how to extract user data from a social network. An extractor is identified by a name and is linked to a social network. The extractor captures appropriate user data and stores it in storage either from an url in a predefined interval or from an user interaction.
+Extractors contain information on how to extract user data from a social network. An extractor is identified by a name and is linked to a social network. The extractor captures appropriate user data and stores it in storage either from an url in a predefined interval or from a user interaction.
 
 ## General Structure
 
@@ -22,9 +22,9 @@ An extractor is denoted as a JSON object. The skeleton of an extractor contains 
 
 * `fields`: String. Each field represents a datum that is extrated and stored to database. It constists of the following fiels:
     * `name`: String. With this name the datum is stored in to db.
-    * `selector`: String. A JQuery selector to identified a html to contains the requested datum.
-    * `attr`: String. Either a HTML Attribute name which will be extracted from the element or the string `content` to obtain the innerHTML of the element.
-    * `match`: String. A RegEx without scope definition. The extract os matched by this RegEx to clean urls or else.
+    * `selector`: String. A JQuery selector to identified a html element that contains the requested datum.
+    * `attr`: String. Either a HTML attribute name which will be extracted from the element or the literal string `content` to obtain the innerHTML of the element.
+    * `match`: String. A RegEx without scope definition. The extract is matched by this RegEx to clean urls or else.
     * `hash`: Boolean. If true the extract is hashed to secure the participants privacy.
 
 An example for a skeleton of an observer is:
@@ -49,6 +49,9 @@ An example for a skeleton of an observer is:
 
 ## Changelog
 
+2015-09-06 Felix Epp <felix.epp@sit.fraunhofer.de>
+
+* Typos
 
 2015-05-26 Felix Epp <work@felixepp.de>
 

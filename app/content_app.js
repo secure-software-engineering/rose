@@ -24,6 +24,7 @@ import 'babelify/polyfill';
 import ObserverEngine from 'rose/observer-engine';
 import FacebookUI from 'rose/facebook-ui';
 import SystemConfigModel from 'rose/models/system-config';
+import NetworkCollection from 'rose/collections/networks';
 
 import ClickTracker from 'rose/activity-trackers/click';
 import MouseMoveTracker from 'rose/activity-trackers/mousemove';
@@ -33,46 +34,48 @@ import FBLoginTracker from 'rose/activity-trackers/facebook-login';
 /* Content Script */
 (function() {
   var configs = new SystemConfigModel();
-  configs.fetch(); //wait for success
+  var networks = new NetworkCollection();
+  configs.fetch({success: () => {
+    networks.fetch({success: () => {
+      networks.find((network) => {
 
-  //Check for network
-  /**
-   * URL identifiers of social networks.
-   * FIXME: identifiers should load from settings
-   */
-  var identifiers = {
-    facebook: 'facebook.com',
-    gplus: 'plus.google.com'
-  };
+        // Detect network by its domain in the current origin of this page
+        if ((new RegExp('^https:\/\/[\w\.\-]*(' + network.get('identifier').replace(/\./g, '\\$&') + ')$')).test(window.location.origin)) {
+          let networkName = network.get('name');
 
-  // Detect network, if possible
-  for (var name in identifiers) {
-    var networkDomain = identifiers[name];
+          /* Observer Engine
+           * ----------------
+           * Start observer engine.
+           */
+          ObserverEngine.register(networkName);
 
           if (networkName === 'facebook' && configs.get('roseCommentsIsEnabled')) {
             var facebookUI = new FacebookUI();
             facebookUI.redrawUI();
+            // setTimeout(facebookUI.startSurvey, 5000, facebookUI);
           }
 
-      /* Observer Engine
-       * ----------------
-       *
-       * Start observer engine.
-       */
-      ObserverEngine.register(name);
+          ClickTracker.start();
+          MouseMoveTracker.start();
+          ScrollTracker.start();
+          FBLoginTracker.start();
 
-      if (name === 'facebook' && configs.get('roseCommentsIsEnabled')) {
-        var facebookUI = new FacebookUI();
-        facebookUI.redrawUI();
-      }
+          return true;
+        }
+      });
+    }});
+  }}); //wait for success
 
-      ClickTracker.start();
-      MouseMoveTracker.start();
-      ScrollTracker.start();
-      FBLoginTracker.start();
-
-      break;
-    }
+kango.addMessageListener('TriggerSurvey', function(event) {
+  if (event.data && facebookUI !== undefined) {
+    facebookUI.startSurvey(facebookUI);
   }
+  else {
+    alert('Trigger ' + (event.data ? 'Survey 1 (Engage), but you are not on FB' : 'Survey 2 (Disengage)'));
+    console.log(window);
+  }
+});
+
+
 
 })();

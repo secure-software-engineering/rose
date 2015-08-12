@@ -23,10 +23,12 @@ import 'babelify/polyfill';
 
 import log from 'rose/log';
 import ExtractorEngine from 'rose/extractor-engine';
-import ObserverCollection from 'rose/collections/observers';
 import ExtractorCollection from 'rose/collections/extractors';
+// import SystemConfigs from 'rose/models/system-config';
+import Updater from 'rose/updater';
 
 import WindowTracker from 'rose/activity-trackers/window';
+import EngageTracker from 'rose/activity-trackers/engage';
 
 /* Background Script */
 (async function() {
@@ -39,6 +41,7 @@ import WindowTracker from 'rose/activity-trackers/window';
   const installDate = await localforage.getItem('install-date')
   if (!installDate) {
     await localforage.setItem('install-date', new Date().toJSON());
+    kango.browser.tabs.create({url: kango.io.getResourceUrl('ui/index.html')});
   }
 
   const roseDataVersion = await localforage.getItem('rose-data-version')
@@ -47,43 +50,42 @@ import WindowTracker from 'rose/activity-trackers/window';
   }
 
   WindowTracker.start();
+
   EngageTracker.start();
+
+
+  // setTimeout(Updater.update,5000);
 })();
 
 kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, function(event) {
     kango.browser.tabs.create({url: kango.io.getResourceUrl('ui/index.html')});
 });
 
-kango.addMessageListener('LoadNetworks', function(event) {
-    console.log(event.target, ' says: ', event.data);
 
-    /*
-     * Store Observers and extractors in storage
-     * FIX: Updater loads observers
-     */
-    var extractorCol = new ExtractorCollection();
-    var observerCol = new ObserverCollection();
-    var networks = event.data;
+kango.addMessageListener('Update', () => {
+  Updater.update();
+});
 
-    observerCol.fetch({success: () => {
-      extractorCol.fetch({success: () => {
-        for (var i = 0; i < networks.length; i++) {
-          if(networks[i].observers !== undefined) {
-            for (var j = 0; j < networks[i].observers.length; j++) {
-              //verify
-              observerCol.create(networks[i].observers[j]);
-            }
-          }
-          if(networks[i].extractors !== undefined) {
-            for (var k = 0; k < networks[i].extractors.length; k++) {
-              //verify
-              extractorCol.create(networks[i].extractors[k]);
-            }
-          }
-        }
-        //call to start extractorengine
-        var extractorEngine = new ExtractorEngine(extractorCol);
-        extractorEngine.register();
-      }});
-    }});
+kango.addMessageListener('LoadNetworks', (event) => {
+    Updater.load(event.data);
+});
+
+kango.addMessageListener('TriggerSurvey', (event) => {
+  if (event.data) {
+    kango.browser.tabs.getCurrent(function(tab) {
+        // tab is KangoBrowserTab object
+      tab.dispatchMessage('TriggerSurvey');
+    });
+  }
+  else {
+    //trigger survey 2
+  }
+});
+
+kango.addMessageListener('StartExtractorEngine', (event) => {
+  let extractorCol = new ExtractorCollection();
+  extractorCol.fetch({success: (extractorCol) => {
+    let extractorEngine = new ExtractorEngine(extractorCol);
+    extractorEngine.register();
+  }});
 });

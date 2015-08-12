@@ -26,6 +26,7 @@ let _windowActivities;
 let _pageActivities;
 let _engageActivities;
 let lastEngage,lastDisengage,_currentTime,_surveyTime;
+let running = false;
 
 let store = function(engage) {
       _engageActivities = _engageActivities || [];
@@ -35,10 +36,14 @@ let store = function(engage) {
         value: engage
       });
 
-      kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', _engageActivities);
+      kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', _engageActivities, () => {
+        running = false;
+      });
 };
 
 let check = () => {
+  if (running) return;
+  running = true;
   kango.invokeAsyncCallback('localforage.getItem', 'window-activity-records', checkAnyTabPresent);
 };
 
@@ -51,6 +56,9 @@ let checkAnyTabPresent = (windowActivities) => {
   _windowActivities = _.sortBy(_windowActivities, 'date').reverse();
   if (_windowActivities[0].date > _surveyTime) {
     kango.invokeAsyncCallback('localforage.getItem', 'engage-activity-records', checkSurveyInterval);
+  }
+  else {
+    running = false;
   }
 };
 
@@ -73,6 +81,7 @@ let checkSurveyInterval = (engageActivities) => {
     kango.invokeAsyncCallback('localforage.getItem', 'scroll-activity-records', getMousemoveActivity);
   }
   else {
+    running = false;
     console.log('both surveys done');
   }
 
@@ -213,6 +222,7 @@ let checkConditions = (clickActivities) => {
   }
   else {
     console.log(logData);
+    running = false;
     return;
   }
 
@@ -224,6 +234,9 @@ let checkConditions = (clickActivities) => {
     kango.browser.tabs.getCurrent(function(tab) {
       tab.dispatchMessage('TriggerSurvey',engage);
     });
+  }
+  else {
+    running = false;
   }
 };
 

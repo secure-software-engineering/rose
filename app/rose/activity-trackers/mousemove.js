@@ -61,7 +61,7 @@ let start = function() {
     lastPosition = currentPosition;
   });
 
-  setInterval(store, 60000);
+  setInterval(store, 20000);
 };
 
 export default {

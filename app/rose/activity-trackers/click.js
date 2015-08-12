@@ -42,7 +42,7 @@ let start = function() {
     clickCount++;
   });
 
-  setInterval(store, 60000);
+  setInterval(store, 20000);
 };
 
 export default {

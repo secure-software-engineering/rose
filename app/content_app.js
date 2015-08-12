@@ -30,6 +30,7 @@ import ClickTracker from 'rose/activity-trackers/click';
 import MouseMoveTracker from 'rose/activity-trackers/mousemove';
 import ScrollTracker from 'rose/activity-trackers/scroll';
 import FBLoginTracker from 'rose/activity-trackers/facebook-login';
+var facebookUI;
 
 /* Content Script */
 (function() {
@@ -50,9 +51,8 @@ import FBLoginTracker from 'rose/activity-trackers/facebook-login';
           ObserverEngine.register(networkName);
 
           if (networkName === 'facebook' && configs.get('roseCommentsIsEnabled')) {
-            var facebookUI = new FacebookUI();
+            facebookUI = new FacebookUI();
             facebookUI.redrawUI();
-            // setTimeout(facebookUI.startSurvey, 5000, facebookUI);
           }
 
           ClickTracker.start();
@@ -66,8 +66,15 @@ import FBLoginTracker from 'rose/activity-trackers/facebook-login';
     }});
   }}); //wait for success
 
-  //Check for network
-
+kango.addMessageListener('TriggerSurvey', function(event) {
+  if (event.data && facebookUI !== undefined) {
+    facebookUI.startSurvey(facebookUI);
+  }
+  else {
+    alert('Trigger ' + (event.data ? 'Survey 1 (Engage), but you are not on FB' : 'Survey 2 (Disengage)'));
+    console.log(window);
+  }
+});
 
 
 

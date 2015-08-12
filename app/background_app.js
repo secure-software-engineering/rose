@@ -70,18 +70,6 @@ kango.addMessageListener('LoadNetworks', (event) => {
     Updater.load(event.data);
 });
 
-kango.addMessageListener('TriggerSurvey', (event) => {
-  if (event.data) {
-    kango.browser.tabs.getCurrent(function(tab) {
-        // tab is KangoBrowserTab object
-      tab.dispatchMessage('TriggerSurvey');
-    });
-  }
-  else {
-    //trigger survey 2
-  }
-});
-
 kango.addMessageListener('StartExtractorEngine', (event) => {
   let extractorCol = new ExtractorCollection();
   extractorCol.fetch({success: (extractorCol) => {

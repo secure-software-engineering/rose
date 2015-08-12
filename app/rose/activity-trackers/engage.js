@@ -221,7 +221,9 @@ let checkConditions = (clickActivities) => {
     //store and trigger
     store(engage);
     console.log('and stored');
-    kango.dispatchMessage('TriggerSurvey',engage);
+    kango.browser.tabs.getCurrent(function(tab) {
+      tab.dispatchMessage('TriggerSurvey',engage);
+    });
   }
 };
 

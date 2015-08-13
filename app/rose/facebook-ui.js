@@ -214,10 +214,6 @@ export default (function () {
         // Receive id for content element
         var $container = $(evt.currentTarget).siblings('.userContentWrapper');
         var extractorResult = ExtractorEngine.extractFieldsFromContainer($container, this._statusUpdateExtractor);
-        if (extractorResult.contentId === undefined) {
-          console.error('Could not obtain contentId!');
-          return;
-        }
 
         //Show sidebar
         this._commentMode = true;
@@ -228,6 +224,7 @@ export default (function () {
         //Check if comment for this content exists and set form
         this._activeComment = undefined;
         this._comments.fetch({success: function onCommentsFetched(){
+          console.log(extractorResult);
           this._activeComment = this._comments.findWhere({contentId: extractorResult.contentId});
           if (this._activeComment !== undefined) {
             var activeComment = this._activeComment.toJSON();
@@ -262,11 +259,17 @@ export default (function () {
             }
 
           } else {
-            if(extractorResult.sharerId === undefined) {
-              this._activeComment = this._comments.create({contentId: extractorResult.contentId, createdAt: (new Date()).toJSON()});
+            if (extractorResult.contentId !== undefined) {
+              if(extractorResult.sharerId === undefined) {
+                this._activeComment = this._comments.create({contentId: extractorResult.contentId, createdAt: (new Date()).toJSON()});
+              }
+              else {
+                this._activeComment = this._comments.create({contentId: extractorResult.contentId, sharerId: extractorResult.sharerId, createdAt: (new Date()).toJSON()});
+              }
             }
             else {
-              this._activeComment = this._comments.create({contentId: extractorResult.contentId, sharerId: extractorResult.sharerId, createdAt: (new Date()).toJSON()});
+              console.error('Could not obtain contentId!');
+                this._activeComment = this._comments.create({contentId: null, createdAt: (new Date()).toJSON()});
             }
             $('.sidebar textarea').val('');
             $('.ui.checkbox').checkbox('uncheck');

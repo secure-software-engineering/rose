@@ -43,6 +43,7 @@ export default (function () {
   FacebookUI.prototype._settings = new UserSettingsModel();
   FacebookUI.prototype._statusUpdateExtractor = {};
   FacebookUI.prototype._commentMode = true;
+  FacebookUI.prototype._ready = false;
 
   function FacebookUI() {
     this._configs.fetch();
@@ -167,6 +168,7 @@ export default (function () {
       else {
         $('.ui.rating').remove();
       }
+      this._ready = true;
     }.bind(this));
   };
 
@@ -283,7 +285,6 @@ export default (function () {
 
     //Save a comment
     $('body').on('click', '.sidebar .save.button', function() {
-      debugger;
       if (this._commentMode) {
         var comment = {};
         comment.text = [];

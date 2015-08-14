@@ -65,6 +65,7 @@ let checkStatus = async function() {
   let windows = await getAllWindows();
 
   for (let window of windows) {
+    if (activeTmp) break;
     let tabs = await getTabs(window);
 
     for (let tab of tabs) {
@@ -75,6 +76,7 @@ let checkStatus = async function() {
 
         if (window.isActive() && tab.isActive()) {
           activeTmp = true;
+          break;
         }
       }
     }

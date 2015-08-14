@@ -64,18 +64,27 @@ import FBLoginTracker from 'rose/activity-trackers/facebook-login';
         }
       });
     }});
-  }}); //wait for success
+  }});
+})();
+
+let limit = 0;
+let startSurvey1 = () => {
+    if (facebookUI !== undefined && facebookUI._ready) {
+        facebookUI.startSurvey(facebookUI);
+    }
+    else {
+      if (limit < 15) {
+        limit++;
+        setTimeout(startSurvey1, 1000);
+      }
+    }
+};
 
 kango.addMessageListener('TriggerSurvey', function(event) {
-  if (event.data && facebookUI !== undefined) {
-    facebookUI.startSurvey(facebookUI);
+  if (event.data){
+    startSurvey1();
   }
   else {
-    alert('Trigger ' + (event.data ? 'Survey 1 (Engage), but you are not on FB' : 'Survey 2 (Disengage)'));
-    console.log(window);
+    alert('Trigger Survey 2 (Disengage)');
   }
 });
-
-
-
-})();

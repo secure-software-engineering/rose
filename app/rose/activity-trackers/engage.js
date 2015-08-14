@@ -58,6 +58,7 @@ let checkAnyTabPresent = (windowActivities) => {
     kango.invokeAsyncCallback('localforage.getItem', 'engage-activity-records', checkSurveyInterval);
   }
   else {
+    console.log('No Tabs open in the survey cycle');
     running = false;
   }
 };

@@ -42,6 +42,7 @@ export default (function () {
   FacebookUI.prototype._configs = new SystemConfigModel();
   FacebookUI.prototype._settings = new UserSettingsModel();
   FacebookUI.prototype._statusUpdateExtractor = {};
+  FacebookUI.prototype._templates = [];
 
   function FacebookUI() {
     this._configs.fetch();
@@ -181,18 +182,25 @@ export default (function () {
 
   FacebookUI.prototype._getTemplate = function(template) {
     var promise;
+    var cachedTemplates = this._templates;
     promise = new RSVP.Promise(function(resolve) {
-      var details, resource;
-      resource = 'res/templates/' + template + '.hbs';
-      details = {
-        url: resource,
-        method: 'GET',
-        async: false,
-        contentType: 'text'
-      };
-      return kango.xhr.send(details, function(data) {
-        return resolve(data.response);
-      });
+      if (cachedTemplates[template] !== undefined) {
+        return resolve(cachedTemplates[template]);
+      }
+      else {
+        var details, resource;
+        resource = 'res/templates/' + template + '.hbs';
+        details = {
+          url: resource,
+          method: 'GET',
+          async: false,
+          contentType: 'text'
+        };
+        return kango.xhr.send(details, function(data) {
+          cachedTemplates[template] = data.response;
+          return resolve(data.response);
+        });
+      }
     });
     return promise;
   };

@@ -13,6 +13,14 @@ export default Ember.Route.extend(SemanticRouteMixin, {
     this.set('i18n.locale', this.get('settings.user.currentLanguage'));
   },
 
+  setupController(controller, model) {
+    this._super(controller, model)
+
+    return this.store.find('network').then((networks) => {
+      controller.set('networks', networks);
+    })
+  },
+
   actions: {
     resetConfig() {
       let settings = this.get('settings.user');

@@ -15,50 +15,23 @@
   <div class="header item">
     {{t "sidebarMenu.networks"}}
   </div>
-  <div class="item">
-    Facebook
-    <div class="menu">
-      {{#link-to "comments" "facebook" class="item"}}
-        {{t "sidebarMenu.comments"}}
-      {{/link-to}}
-      {{#link-to "interactions" "facebook" class="item"}}
-        {{t "sidebarMenu.interactions"}}
-      {{/link-to}}
-      {{#link-to "privacysettings" "facebook" class="item"}}
-        {{t "sidebarMenu.privacySettings"}}
-      {{/link-to}}
-    </div>
-  </div>
 
-  <div class="item">
-    Google+
-    <div class="menu">
-      {{#link-to "comments" "google" class="item"}}
-        {{t "sidebarMenu.comments"}}
-      {{/link-to}}
-      {{#link-to "interactions" "google" class="item"}}
-        {{t "sidebarMenu.interactions"}}
-      {{/link-to}}
-      {{#link-to "privacysettings" "google" class="item"}}
-        {{t "sidebarMenu.privacySettings"}}
-      {{/link-to}}
+  {{#each networks as |network|}}
+    <div class="item">
+      {{network.descriptiveName}}
+      <div class="menu">
+        {{#link-to "comments" network.name class="item"}}
+          {{t "sidebarMenu.comments"}}
+        {{/link-to}}
+        {{#link-to "interactions" network.name class="item"}}
+          {{t "sidebarMenu.interactions"}}
+        {{/link-to}}
+        {{#link-to "privacysettings" network.name class="item"}}
+          {{t "sidebarMenu.privacySettings"}}
+        {{/link-to}}
+      </div>
     </div>
-  </div>
-
-  <div class="item">
-    Twitter
-    <div class="menu">
-      {{#link-to "comments" "twitter" class="item"}}
-        {{t "sidebarMenu.comments"}}
-      {{/link-to}}
-      {{#link-to "interactions" "twitter" class="item"}}
-        {{t "sidebarMenu.interactions"}}
-      {{/link-to}}
-      {{#link-to "privacysettings" "twitter" class="item"}}
-        {{t "sidebarMenu.privacySettings"}}
-      {{/link-to}}
-    </div>
-  </div>
+  {{/each}}
 
   <div class="header item">
     {{t "sidebarMenu.more"}}

@@ -4049,6 +4049,14 @@ define('rose/routes/application', ['exports', 'ember', 'semantic-ui-ember/mixins
       this.set('i18n.locale', this.get('settings.user.currentLanguage'));
     },
 
+    setupController: function setupController(controller, model) {
+      this._super(controller, model);
+
+      return this.store.find('network').then(function (networks) {
+        controller.set('networks', networks);
+      });
+    },
+
     actions: {
       resetConfig: function resetConfig() {
         var _this = this;
@@ -4560,7 +4568,7 @@ define('rose/templates/application', ['exports'], function (exports) {
           var morph0 = dom.createMorphAt(dom.childAt(element0, [1]),1,1);
           var morph1 = dom.createMorphAt(dom.childAt(element0, [3, 1]),1,1);
           var morph2 = dom.createMorphAt(fragment,3,3,contextualElement);
-          inline(env, morph0, context, "render", ["sidebar-menu"], {});
+          inline(env, morph0, context, "partial", ["sidebar-menu"], {});
           content(env, morph1, context, "outlet");
           inline(env, morph2, context, "outlet", ["modal"], {});
           return fragment;
@@ -8212,25 +8220,176 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
       };
     }());
     var child4 = (function() {
+      var child0 = (function() {
+        return {
+          isHTMLBars: true,
+          revision: "Ember@1.12.1",
+          blockParams: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          build: function build(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("          ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          render: function render(context, env, contextualElement) {
+            var dom = env.dom;
+            var hooks = env.hooks, inline = hooks.inline;
+            dom.detectNamespace(contextualElement);
+            var fragment;
+            if (env.useFragmentCache && dom.canClone) {
+              if (this.cachedFragment === null) {
+                fragment = this.build(dom);
+                if (this.hasRendered) {
+                  this.cachedFragment = fragment;
+                } else {
+                  this.hasRendered = true;
+                }
+              }
+              if (this.cachedFragment) {
+                fragment = dom.cloneNode(this.cachedFragment, true);
+              }
+            } else {
+              fragment = this.build(dom);
+            }
+            var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
+            inline(env, morph0, context, "t", ["sidebarMenu.comments"], {});
+            return fragment;
+          }
+        };
+      }());
+      var child1 = (function() {
+        return {
+          isHTMLBars: true,
+          revision: "Ember@1.12.1",
+          blockParams: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          build: function build(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("          ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          render: function render(context, env, contextualElement) {
+            var dom = env.dom;
+            var hooks = env.hooks, inline = hooks.inline;
+            dom.detectNamespace(contextualElement);
+            var fragment;
+            if (env.useFragmentCache && dom.canClone) {
+              if (this.cachedFragment === null) {
+                fragment = this.build(dom);
+                if (this.hasRendered) {
+                  this.cachedFragment = fragment;
+                } else {
+                  this.hasRendered = true;
+                }
+              }
+              if (this.cachedFragment) {
+                fragment = dom.cloneNode(this.cachedFragment, true);
+              }
+            } else {
+              fragment = this.build(dom);
+            }
+            var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
+            inline(env, morph0, context, "t", ["sidebarMenu.interactions"], {});
+            return fragment;
+          }
+        };
+      }());
+      var child2 = (function() {
+        return {
+          isHTMLBars: true,
+          revision: "Ember@1.12.1",
+          blockParams: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          build: function build(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("          ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          render: function render(context, env, contextualElement) {
+            var dom = env.dom;
+            var hooks = env.hooks, inline = hooks.inline;
+            dom.detectNamespace(contextualElement);
+            var fragment;
+            if (env.useFragmentCache && dom.canClone) {
+              if (this.cachedFragment === null) {
+                fragment = this.build(dom);
+                if (this.hasRendered) {
+                  this.cachedFragment = fragment;
+                } else {
+                  this.hasRendered = true;
+                }
+              }
+              if (this.cachedFragment) {
+                fragment = dom.cloneNode(this.cachedFragment, true);
+              }
+            } else {
+              fragment = this.build(dom);
+            }
+            var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
+            inline(env, morph0, context, "t", ["sidebarMenu.privacySettings"], {});
+            return fragment;
+          }
+        };
+      }());
       return {
         isHTMLBars: true,
         revision: "Ember@1.12.1",
-        blockParams: 0,
+        blockParams: 1,
         cachedFragment: null,
         hasRendered: false,
         build: function build(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
+          var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","item");
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("div");
+          dom.setAttribute(el2,"class","menu");
+          var el3 = dom.createTextNode("\n");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("      ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n");
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
+        render: function render(context, env, contextualElement, blockArguments) {
           var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
+          var hooks = env.hooks, set = hooks.set, content = hooks.content, get = hooks.get, block = hooks.block;
           dom.detectNamespace(contextualElement);
           var fragment;
           if (env.useFragmentCache && dom.canClone) {
@@ -8248,357 +8407,22 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
           } else {
             fragment = this.build(dom);
           }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.comments"], {});
+          var element1 = dom.childAt(fragment, [1]);
+          var element2 = dom.childAt(element1, [3]);
+          var morph0 = dom.createMorphAt(element1,1,1);
+          var morph1 = dom.createMorphAt(element2,1,1);
+          var morph2 = dom.createMorphAt(element2,2,2);
+          var morph3 = dom.createMorphAt(element2,3,3);
+          set(env, context, "network", blockArguments[0]);
+          content(env, morph0, context, "network.descriptiveName");
+          block(env, morph1, context, "link-to", ["comments", get(env, context, "network.name")], {"class": "item"}, child0, null);
+          block(env, morph2, context, "link-to", ["interactions", get(env, context, "network.name")], {"class": "item"}, child1, null);
+          block(env, morph3, context, "link-to", ["privacysettings", get(env, context, "network.name")], {"class": "item"}, child2, null);
           return fragment;
         }
       };
     }());
     var child5 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.interactions"], {});
-          return fragment;
-        }
-      };
-    }());
-    var child6 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.privacySettings"], {});
-          return fragment;
-        }
-      };
-    }());
-    var child7 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.comments"], {});
-          return fragment;
-        }
-      };
-    }());
-    var child8 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.interactions"], {});
-          return fragment;
-        }
-      };
-    }());
-    var child9 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.privacySettings"], {});
-          return fragment;
-        }
-      };
-    }());
-    var child10 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.comments"], {});
-          return fragment;
-        }
-      };
-    }());
-    var child11 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.interactions"], {});
-          return fragment;
-        }
-      };
-    }());
-    var child12 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.privacySettings"], {});
-          return fragment;
-        }
-      };
-    }());
-    var child13 = (function() {
       var child0 = (function() {
         return {
           isHTMLBars: true,
@@ -8705,7 +8529,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
         }
       };
     }());
-    var child14 = (function() {
+    var child6 = (function() {
       return {
         isHTMLBars: true,
         revision: "Ember@1.12.1",
@@ -8748,7 +8572,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
         }
       };
     }());
-    var child15 = (function() {
+    var child7 = (function() {
       return {
         isHTMLBars: true,
         revision: "Ember@1.12.1",
@@ -8822,73 +8646,11 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
         var el3 = dom.createTextNode("\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","item");
-        var el3 = dom.createTextNode("\n    Facebook\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3,"class","menu");
-        var el4 = dom.createTextNode("\n");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("    ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","item");
-        var el3 = dom.createTextNode("\n    Google+\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3,"class","menu");
-        var el4 = dom.createTextNode("\n");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("    ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","item");
-        var el3 = dom.createTextNode("\n    Twitter\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3,"class","menu");
-        var el4 = dom.createTextNode("\n");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("    ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
         dom.setAttribute(el2,"class","header item");
@@ -8932,46 +8694,27 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
         } else {
           fragment = this.build(dom);
         }
-        var element1 = dom.childAt(fragment, [0]);
-        var element2 = dom.childAt(element1, [8, 1]);
-        var element3 = dom.childAt(element1, [10, 1]);
-        var element4 = dom.childAt(element1, [12, 1]);
-        var morph0 = dom.createMorphAt(element1,1,1);
-        var morph1 = dom.createMorphAt(element1,2,2);
-        var morph2 = dom.createMorphAt(element1,3,3);
-        var morph3 = dom.createMorphAt(element1,4,4);
-        var morph4 = dom.createMorphAt(dom.childAt(element1, [6]),1,1);
-        var morph5 = dom.createMorphAt(element2,1,1);
-        var morph6 = dom.createMorphAt(element2,2,2);
-        var morph7 = dom.createMorphAt(element2,3,3);
-        var morph8 = dom.createMorphAt(element3,1,1);
-        var morph9 = dom.createMorphAt(element3,2,2);
-        var morph10 = dom.createMorphAt(element3,3,3);
-        var morph11 = dom.createMorphAt(element4,1,1);
-        var morph12 = dom.createMorphAt(element4,2,2);
-        var morph13 = dom.createMorphAt(element4,3,3);
-        var morph14 = dom.createMorphAt(dom.childAt(element1, [14]),1,1);
-        var morph15 = dom.createMorphAt(element1,16,16);
-        var morph16 = dom.createMorphAt(element1,17,17);
-        var morph17 = dom.createMorphAt(element1,18,18);
+        var element3 = dom.childAt(fragment, [0]);
+        var morph0 = dom.createMorphAt(element3,1,1);
+        var morph1 = dom.createMorphAt(element3,2,2);
+        var morph2 = dom.createMorphAt(element3,3,3);
+        var morph3 = dom.createMorphAt(element3,4,4);
+        var morph4 = dom.createMorphAt(dom.childAt(element3, [6]),1,1);
+        var morph5 = dom.createMorphAt(element3,8,8);
+        var morph6 = dom.createMorphAt(dom.childAt(element3, [10]),1,1);
+        var morph7 = dom.createMorphAt(element3,12,12);
+        var morph8 = dom.createMorphAt(element3,13,13);
+        var morph9 = dom.createMorphAt(element3,14,14);
         block(env, morph0, context, "link-to", ["index"], {"class": "header item"}, child0, null);
         block(env, morph1, context, "link-to", ["diary"], {"class": "item"}, child1, null);
         block(env, morph2, context, "link-to", ["backup"], {"class": "item"}, child2, null);
         block(env, morph3, context, "link-to", ["settings"], {"class": "item"}, child3, null);
         inline(env, morph4, context, "t", ["sidebarMenu.networks"], {});
-        block(env, morph5, context, "link-to", ["comments", "facebook"], {"class": "item"}, child4, null);
-        block(env, morph6, context, "link-to", ["interactions", "facebook"], {"class": "item"}, child5, null);
-        block(env, morph7, context, "link-to", ["privacysettings", "facebook"], {"class": "item"}, child6, null);
-        block(env, morph8, context, "link-to", ["comments", "google"], {"class": "item"}, child7, null);
-        block(env, morph9, context, "link-to", ["interactions", "google"], {"class": "item"}, child8, null);
-        block(env, morph10, context, "link-to", ["privacysettings", "google"], {"class": "item"}, child9, null);
-        block(env, morph11, context, "link-to", ["comments", "twitter"], {"class": "item"}, child10, null);
-        block(env, morph12, context, "link-to", ["interactions", "twitter"], {"class": "item"}, child11, null);
-        block(env, morph13, context, "link-to", ["privacysettings", "twitter"], {"class": "item"}, child12, null);
-        inline(env, morph14, context, "t", ["sidebarMenu.more"], {});
-        block(env, morph15, context, "liquid-if", [get(env, context, "settings.user.developerModeIsEnabled")], {}, child13, null);
-        block(env, morph16, context, "link-to", ["help"], {"class": "item"}, child14, null);
-        block(env, morph17, context, "link-to", ["about"], {"class": "item"}, child15, null);
+        block(env, morph5, context, "each", [get(env, context, "networks")], {}, child4, null);
+        inline(env, morph6, context, "t", ["sidebarMenu.more"], {});
+        block(env, morph7, context, "liquid-if", [get(env, context, "settings.user.developerModeIsEnabled")], {}, child5, null);
+        block(env, morph8, context, "link-to", ["help"], {"class": "item"}, child6, null);
+        block(env, morph9, context, "link-to", ["about"], {"class": "item"}, child7, null);
         return fragment;
       }
     };
@@ -9937,7 +9680,7 @@ define('rose/tests/routes/application.jshint', function () {
 
   module('JSHint - routes');
   test('routes/application.js should pass jshint', function() { 
-    ok(true, 'routes/application.js should pass jshint.'); 
+    ok(false, 'routes/application.js should pass jshint.\nroutes/application.js: line 17, col 35, Missing semicolon.\nroutes/application.js: line 21, col 7, Missing semicolon.\n\n2 errors'); 
   });
 
 });

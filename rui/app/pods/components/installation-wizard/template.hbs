@@ -9,40 +9,32 @@
         </div>
       </h2>
 
-      <div class="ui two column stackable grid">
-        <div class="field column">
-          <div class="ui radio checkbox disabled">
-            <input type="radio" name="configOption" checked="" tabindex="0" class="hidden">
-            <label>{{t "wizard.defaultConfig"}}</label>
+      <div class="ui two cards">
+        <div class="card">
+          <div class="content">
+            <div class="header">{{t "wizard.defaultConfigHeader"}}</div>
+            <div class="description">
+              {{t "wizard.defaultConfigDescription"}}
+            </div>
           </div>
+          <button class="ui primary bottom attached button"
+                  {{action "selectDefaultConfig"}}>
+            {{t "action.select"}}
+          </button>
         </div>
-        <div class="column"></div>
-        <div class="field column">
-          <div class="ui radio checkbox checked">
-            <input type="radio" name="configOption" tabindex="0" class="hidden">
-            <label>{{t "wizard.fileConfig"}}</label>
+        <div class="card">
+          <div class="content">
+            <div class="header">{{t "wizard.fileConfigHeader"}}</div>
+            <div class="description">
+              {{t "wizard.fileConfigDescription"}}
+            </div>
           </div>
-        </div>
-        <div class="column">
-          {{#file-input-button onread="saveConfig"}}
+          <button class="ui primary bottom attached button"
+                  {{action 'openFileChooser'}}>
+            <i class="add icon"></i>
             {{t "wizard.fileConfigBtn"}}
-          {{/file-input-button}}
-        </div>
-        <div class="field column">
-          <div class="ui radio checkbox disabled">
-            <input type="radio" name="configOption" tabindex="0" class="hidden">
-            <label>{{t "wizard.urlConfig"}}</label>
-          </div>
-        </div>
-        <div class="column">
-          <div class="ui action inline input">
-            {{input type="text"
-                    insert-newline="fetchBaseFile"}}
-
-            <button class="ui icon disabled button {{if baseFileIsLoading "loading"}}" {{action "fetchBaseFile"}}>
-              <i class="search icon"></i>
-            </button>
-          </div>
+          </button>
+          {{file-input class="hidden" onread='onread'}}
         </div>
       </div>
     </div>

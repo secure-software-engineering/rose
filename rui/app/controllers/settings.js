@@ -5,20 +5,21 @@ export default Ember.Controller.extend({
   availableLanguages: languages,
 
   changeI18nLanguage: function() {
-    this.set('i18n.locale', this.get('userSettings.currentLanguage'));
-  }.observes('userSettings.currentLanguage'),
+    this.set('i18n.locale', this.get('settings.user.currentLanguage'));
+  }.observes('settings.user.currentLanguage'),
 
   onChange: function() {
     this.send('saveSettings');
-  }.observes('userSettings.currentLanguage'),
+  }.observes('settings.user.currentLanguage'),
 
   actions: {
     saveSettings: function() {
-      this.get('userSettings').save();
+      this.get('settings.user').save();
+      this.get('settings.system').save();
     },
 
     confirm() {
-      this.send('openModal', 'modal/confirm-reset');
+      this.send('openModal', 'modal/reset-config');
     },
 
     manualUpdate() {

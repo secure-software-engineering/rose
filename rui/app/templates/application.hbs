@@ -1,4 +1,4 @@
-{{#if userSettings.firstRun}}
+{{#if settings.user.firstRun}}
 
 {{installation-wizard cancel="cancelWizard" onsuccess="saveConfig"}}
 
@@ -6,7 +6,7 @@
 
 <div class="ui page grid">
   <div class="four wide column">
-    {{render "sidebar-menu"}}
+    {{partial "sidebar-menu"}}
   </div>
 
   <div class="twelve wide column">

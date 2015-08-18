@@ -1,0 +1,16 @@
+<i class="close icon"></i>
+<div class="header">
+  {{t "resetConfigModal.question"}}
+</div>
+<div class="content">
+  <p>{{t "resetConfigModal.warning"}}</p>
+</div>
+<div class="actions">
+  <div class="ui black button">
+    {{t "action.cancel"}}
+  </div>
+  <div class="ui positive button"
+       {{action 'resetConfig'}}>
+    {{t "action.confirm"}}
+  </div>
+</div>

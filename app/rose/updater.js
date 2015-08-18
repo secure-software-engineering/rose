@@ -16,6 +16,8 @@ let update = () => {
 
       if (configs.get('timestamp') < data.timestamp) {
 
+        configs.set('timestamp', data.timestamp);
+        configs.save();
         // iterate through networks
         let networks = new NetworkCollection();
         networks.fetch({success: () => {

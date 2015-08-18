@@ -16,6 +16,10 @@ export default Ember.Controller.extend({
   }.property('model'),
 
   actions: {
+    deleteData() {
+      this.send('openModal', 'modal/reset-data');
+    },
+
     download: function () {
       window.saveAs(new Blob([this.get('jsonData')]), 'rose-data.txt');
     }

@@ -15,6 +15,7 @@ export default Ember.Controller.extend({
   actions: {
     saveSettings: function() {
       this.get('settings.user').save();
+      this.get('settings.system').save();
     },
 
     confirm() {

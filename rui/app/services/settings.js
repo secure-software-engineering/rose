@@ -10,7 +10,7 @@ export default Ember.Service.extend({
     setup() {
         const store = this.get('store');
 
-        return store.find('user-setting', { id: 0 })
+        const userSettings = store.find('user-setting', { id: 0 })
             .then((settings) => {
                 if (!isEmpty(settings)) {
                     return settings.get('firstObject');
@@ -21,5 +21,19 @@ export default Ember.Service.extend({
             .then((setting) => {
                 this.set('user', setting);
             });
+
+        const systemSettings = store.find('system-config', { id: 0 })
+            .then((settings) => {
+                if (!isEmpty(settings)) {
+                    return settings.get('firstObject');
+                }
+
+                return store.createRecord('system-config', { id: 0 }).save();
+            })
+            .then((setting) => {
+                this.set('system', setting);
+            });
+
+        return Promise.all([userSettings, systemSettings])
     }
 });

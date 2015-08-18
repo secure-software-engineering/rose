@@ -1011,7 +1011,9 @@ define('rose/controllers/application', ['exports', 'ember'], function (exports, 
       cancelWizard: function cancelWizard() {
         var settings = this.get('settings.user');
         settings.set('firstRun', false);
-        settings.save();
+        settings.save().then(function () {
+          return location.reload();
+        });
       },
 
       saveConfig: function saveConfig(data) {
@@ -1166,6 +1168,7 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
     actions: {
       saveSettings: function saveSettings() {
         this.get('settings.user').save();
+        this.get('settings.system').save();
       },
 
       confirm: function confirm() {
@@ -4054,7 +4057,7 @@ define('rose/routes/application', ['exports', 'ember', 'semantic-ui-ember/mixins
         settings.destroyRecord().then(function () {
           return _this.get('settings').setup();
         }).then(function () {
-          return _this.transitionTo('index');
+          return _this.transitionTo('application');
         });
       }
     }
@@ -4218,7 +4221,7 @@ define('rose/services/settings', ['exports', 'ember'], function (exports, Ember)
 
             var store = this.get('store');
 
-            return store.find('user-setting', { id: 0 }).then(function (settings) {
+            var userSettings = store.find('user-setting', { id: 0 }).then(function (settings) {
                 if (!isEmpty(settings)) {
                     return settings.get('firstObject');
                 }
@@ -4227,6 +4230,18 @@ define('rose/services/settings', ['exports', 'ember'], function (exports, Ember)
             }).then(function (setting) {
                 _this.set('user', setting);
             });
+
+            var systemSettings = store.find('system-config', { id: 0 }).then(function (settings) {
+                if (!isEmpty(settings)) {
+                    return settings.get('firstObject');
+                }
+
+                return store.createRecord('system-config', { id: 0 }).save();
+            }).then(function (setting) {
+                _this.set('system', setting);
+            });
+
+            return Promise.all([userSettings, systemSettings]);
         }
     });
 
@@ -7910,6 +7925,29 @@ define('rose/templates/settings', ['exports'], function (exports) {
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
         var el3 = dom.createElement("button");
         dom.setAttribute(el3,"class","ui red button");
         var el4 = dom.createComment("");
@@ -7953,7 +7991,8 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var element5 = dom.childAt(element1, [7]);
         var element6 = dom.childAt(element5, [5]);
         var element7 = dom.childAt(element1, [9]);
-        var element8 = dom.childAt(element7, [5]);
+        var element8 = dom.childAt(element1, [11]);
+        var element9 = dom.childAt(element8, [5]);
         var morph0 = dom.createMorphAt(element0,1,1);
         var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
         var morph2 = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
@@ -7970,7 +8009,10 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var morph13 = dom.createMorphAt(element6,0,0);
         var morph14 = dom.createMorphAt(dom.childAt(element7, [1]),0,0);
         var morph15 = dom.createMorphAt(dom.childAt(element7, [3]),0,0);
-        var morph16 = dom.createMorphAt(element8,0,0);
+        var morph16 = dom.createMorphAt(element7,5,5);
+        var morph17 = dom.createMorphAt(dom.childAt(element8, [1]),0,0);
+        var morph18 = dom.createMorphAt(dom.childAt(element8, [3]),0,0);
+        var morph19 = dom.createMorphAt(element9,0,0);
         inline(env, morph0, context, "t", ["settings.title"], {});
         inline(env, morph1, context, "t", ["settings.subtitle"], {});
         inline(env, morph2, context, "t", ["settings.language"], {});
@@ -7986,10 +8028,13 @@ define('rose/templates/settings', ['exports'], function (exports) {
         inline(env, morph12, context, "t", ["settings.manualUpdateLabel"], {});
         element(env, element6, context, "action", ["manualUpdate"], {});
         inline(env, morph13, context, "t", ["action.update"], {});
-        inline(env, morph14, context, "t", ["settings.resetRose"], {});
-        inline(env, morph15, context, "t", ["settings.resetRoseLabel"], {});
-        element(env, element8, context, "action", ["confirm"], {});
-        inline(env, morph16, context, "t", ["action.reset"], {});
+        inline(env, morph14, context, "t", ["settings.autoUpdate"], {});
+        inline(env, morph15, context, "t", ["settings.autoUpdateLabel"], {});
+        inline(env, morph16, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "settings.system.autoUpdateIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "settings.system.autoUpdateIsEnabled")], {}), "action": "saveSettings"});
+        inline(env, morph17, context, "t", ["settings.resetRose"], {});
+        inline(env, morph18, context, "t", ["settings.resetRoseLabel"], {});
+        element(env, element9, context, "action", ["confirm"], {});
+        inline(env, morph19, context, "t", ["action.reset"], {});
         return fragment;
       }
     };
@@ -9992,7 +10037,7 @@ define('rose/tests/services/settings.jshint', function () {
 
   module('JSHint - services');
   test('services/settings.js should pass jshint', function() { 
-    ok(false, 'services/settings.js should pass jshint.\nservices/settings.js: line 5, col 9, \'Promise\' is defined but never used.\n\n1 error'); 
+    ok(false, 'services/settings.js should pass jshint.\nservices/settings.js: line 37, col 59, Missing semicolon.\n\n1 error'); 
   });
 
 });

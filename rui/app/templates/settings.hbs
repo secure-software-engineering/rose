@@ -42,6 +42,15 @@
   </div>
 
   <div class="field">
+    <label>{{t "settings.autoUpdate"}}</label>
+    <p>{{t "settings.autoUpdateLabel"}}</p>
+    {{ui-checkbox class="toggle"
+                  checked=settings.system.autoUpdateIsEnabled
+                  label=(boolean-to-yesno settings.system.autoUpdateIsEnabled)
+                  action="saveSettings"}}
+  </div>
+
+  <div class="field">
     <label>{{t "settings.resetRose"}}</label>
     <p>{{t "settings.resetRoseLabel"}}</p>
     <button class="ui red button" {{action "confirm"}}>{{t "action.reset"}}</button>

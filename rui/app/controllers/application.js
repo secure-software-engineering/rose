@@ -5,7 +5,7 @@ export default Ember.Controller.extend({
     cancelWizard() {
       let settings = this.get('settings.user');
       settings.set('firstRun', false);
-      settings.save();
+      settings.save().then(() => location.reload());
     },
 
     saveConfig(data) {

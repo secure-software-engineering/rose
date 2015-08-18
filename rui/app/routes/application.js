@@ -18,7 +18,7 @@ export default Ember.Route.extend(SemanticRouteMixin, {
       let settings = this.get('settings.user');
       settings.destroyRecord()
         .then(() => this.get('settings').setup())
-        .then(() => this.transitionTo('index'));
+        .then(() => this.transitionTo('application'));
     }
   }
 });

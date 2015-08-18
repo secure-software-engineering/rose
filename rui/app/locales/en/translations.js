@@ -16,7 +16,8 @@ export default {
     download: "Download",
     details: "Details",
     reset: "Reset",
-    update: "Update"
+    update: "Update",
+    confirm: "Confirm"
   },
 
   // Sidebar Menu

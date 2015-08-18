@@ -1063,6 +1063,10 @@ define('rose/controllers/backup', ['exports', 'ember'], function (exports, Ember
     }).property('model'),
 
     actions: {
+      deleteData: function deleteData() {
+        this.send('openModal', 'modal/reset-data');
+      },
+
       download: function download() {
         window.saveAs(new Blob([this.get('jsonData')]), 'rose-data.txt');
       }
@@ -1115,6 +1119,28 @@ define('rose/controllers/interactions', ['exports', 'ember'], function (exports,
   });
 
 });
+define('rose/controllers/modal/reset-config', ['exports', 'ember'], function (exports, Ember) {
+
+    'use strict';
+
+    exports['default'] = Ember['default'].Controller.extend({
+        deleteData: false
+    });
+
+});
+define('rose/controllers/modal/reset-data', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  exports['default'] = Ember['default'].Controller.extend({
+    actions: {
+      deleteData: function deleteData() {
+        alert('NEEDS STORAGE REWORK');
+      }
+    }
+  });
+
+});
 define('rose/controllers/object', ['exports', 'ember'], function (exports, Ember) {
 
 	'use strict';
@@ -1143,7 +1169,7 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
       },
 
       confirm: function confirm() {
-        this.send('openModal', 'modal/confirm-reset');
+        this.send('openModal', 'modal/reset-config');
       },
 
       manualUpdate: function manualUpdate() {
@@ -1704,7 +1730,8 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
       download: "Download",
       details: "Details",
       reset: "Reset",
-      update: "Update"
+      update: "Update",
+      confirm: "Confirm"
     },
 
     // Sidebar Menu
@@ -1909,7 +1936,6 @@ define('rose/models/interaction', ['exports', 'ember-data'], function (exports, 
   'use strict';
 
   exports['default'] = DS['default'].Model.extend({
-    contentId: DS['default'].attr('string'),
     createdAt: DS['default'].attr('string'),
     origin: DS['default'].attr(),
     sharerId: DS['default'].attr('string'),
@@ -4021,11 +4047,13 @@ define('rose/routes/application', ['exports', 'ember', 'semantic-ui-ember/mixins
     },
 
     actions: {
-      resetRose: function resetRose() {
+      resetConfig: function resetConfig() {
         var _this = this;
 
-        this.set('userSettings.firstRun', true);
-        this.get('userSettings').save().then(function () {
+        var settings = this.get('settings.user');
+        settings.destroyRecord().then(function () {
+          return _this.get('settings').setup();
+        }).then(function () {
           return _this.transitionTo('index');
         });
       }
@@ -4725,7 +4753,7 @@ define('rose/templates/backup', ['exports'], function (exports) {
         inline(env, morph1, context, "t", ["backup.subtitle"], {});
         inline(env, morph2, context, "t", ["backup.resetData"], {});
         inline(env, morph3, context, "t", ["backup.resetDataLabel"], {});
-        element(env, element3, context, "action", ["resetData"], {});
+        element(env, element3, context, "action", ["deleteData"], {});
         inline(env, morph4, context, "t", ["action.reset"], {});
         inline(env, morph5, context, "t", ["backup.export"], {});
         inline(env, morph6, context, "t", ["backup.exportLabel"], {});
@@ -7430,7 +7458,7 @@ define('rose/templates/interactions', ['exports'], function (exports) {
   }()));
 
 });
-define('rose/templates/modal/confirm-reset', ['exports'], function (exports) {
+define('rose/templates/modal/reset-config', ['exports'], function (exports) {
 
   'use strict';
 
@@ -7450,14 +7478,24 @@ define('rose/templates/modal/confirm-reset', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("div");
         dom.setAttribute(el1,"class","header");
-        var el2 = dom.createTextNode("\n  Are u sure you want to reset all settings?\n");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("div");
         dom.setAttribute(el1,"class","content");
-        var el2 = dom.createTextNode("\n  Content\n");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("p");
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
@@ -7468,17 +7506,20 @@ define('rose/templates/modal/confirm-reset', ['exports'], function (exports) {
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
         dom.setAttribute(el2,"class","ui black button");
-        var el3 = dom.createTextNode("\n    Cancel\n  ");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","ui positive right labeled icon button");
-        var el3 = dom.createTextNode("\n    Ok\n    ");
+        dom.setAttribute(el2,"class","ui positive button");
+        var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
-        var el3 = dom.createElement("i");
-        dom.setAttribute(el3,"class","checkmark icon");
+        var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n  ");
         dom.appendChild(el2, el3);
@@ -7492,7 +7533,7 @@ define('rose/templates/modal/confirm-reset', ['exports'], function (exports) {
       },
       render: function render(context, env, contextualElement) {
         var dom = env.dom;
-        var hooks = env.hooks, element = hooks.element;
+        var hooks = env.hooks, inline = hooks.inline, element = hooks.element;
         dom.detectNamespace(contextualElement);
         var fragment;
         if (env.useFragmentCache && dom.canClone) {
@@ -7510,8 +7551,125 @@ define('rose/templates/modal/confirm-reset', ['exports'], function (exports) {
         } else {
           fragment = this.build(dom);
         }
-        var element0 = dom.childAt(fragment, [6, 3]);
-        element(env, element0, context, "action", ["resetRose"], {});
+        var element0 = dom.childAt(fragment, [6]);
+        var element1 = dom.childAt(element0, [3]);
+        var morph0 = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
+        var morph1 = dom.createMorphAt(dom.childAt(fragment, [4, 1]),0,0);
+        var morph2 = dom.createMorphAt(dom.childAt(element0, [1]),1,1);
+        var morph3 = dom.createMorphAt(element1,1,1);
+        inline(env, morph0, context, "t", ["resetConfigModal.question"], {});
+        inline(env, morph1, context, "t", ["resetConfigModal.warning"], {});
+        inline(env, morph2, context, "t", ["action.cancel"], {});
+        element(env, element1, context, "action", ["resetConfig"], {});
+        inline(env, morph3, context, "t", ["action.confirm"], {});
+        return fragment;
+      }
+    };
+  }()));
+
+});
+define('rose/templates/modal/reset-data', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    return {
+      isHTMLBars: true,
+      revision: "Ember@1.12.1",
+      blockParams: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      build: function build(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("i");
+        dom.setAttribute(el1,"class","close icon");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"class","header");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"class","content");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"class","actions");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","ui black button");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","ui positive button");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      render: function render(context, env, contextualElement) {
+        var dom = env.dom;
+        var hooks = env.hooks, inline = hooks.inline, element = hooks.element;
+        dom.detectNamespace(contextualElement);
+        var fragment;
+        if (env.useFragmentCache && dom.canClone) {
+          if (this.cachedFragment === null) {
+            fragment = this.build(dom);
+            if (this.hasRendered) {
+              this.cachedFragment = fragment;
+            } else {
+              this.hasRendered = true;
+            }
+          }
+          if (this.cachedFragment) {
+            fragment = dom.cloneNode(this.cachedFragment, true);
+          }
+        } else {
+          fragment = this.build(dom);
+        }
+        var element0 = dom.childAt(fragment, [6]);
+        var element1 = dom.childAt(element0, [3]);
+        var morph0 = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
+        var morph1 = dom.createMorphAt(dom.childAt(fragment, [4]),1,1);
+        var morph2 = dom.createMorphAt(dom.childAt(element0, [1]),1,1);
+        var morph3 = dom.createMorphAt(element1,1,1);
+        inline(env, morph0, context, "t", ["resetDataModal.question"], {});
+        inline(env, morph1, context, "t", ["resetDataModal.warning"], {});
+        inline(env, morph2, context, "t", ["action.cancel"], {});
+        element(env, element1, context, "action", ["deleteData"], {});
+        inline(env, morph3, context, "t", ["action.confirm"], {});
         return fragment;
       }
     };
@@ -9391,6 +9549,26 @@ define('rose/tests/controllers/interactions.jshint', function () {
   });
 
 });
+define('rose/tests/controllers/modal/reset-config.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - controllers/modal');
+  test('controllers/modal/reset-config.js should pass jshint', function() { 
+    ok(true, 'controllers/modal/reset-config.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/controllers/modal/reset-data.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - controllers/modal');
+  test('controllers/modal/reset-data.js should pass jshint', function() { 
+    ok(true, 'controllers/modal/reset-data.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/controllers/settings.jshint', function () {
 
   'use strict';
@@ -10118,6 +10296,58 @@ define('rose/tests/unit/controllers/interactions-test.jshint', function () {
   module('JSHint - unit/controllers');
   test('unit/controllers/interactions-test.js should pass jshint', function() { 
     ok(true, 'unit/controllers/interactions-test.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/unit/controllers/modal/confirm-reset-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('controller:modal/confirm-reset', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  // Replace this with your real tests.
+  ember_qunit.test('it exists', function (assert) {
+    var controller = this.subject();
+    assert.ok(controller);
+  });
+
+});
+define('rose/tests/unit/controllers/modal/confirm-reset-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/controllers/modal');
+  test('unit/controllers/modal/confirm-reset-test.js should pass jshint', function() { 
+    ok(true, 'unit/controllers/modal/confirm-reset-test.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/unit/controllers/modal/reset-data-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('controller:modal/reset-data', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  // Replace this with your real tests.
+  ember_qunit.test('it exists', function (assert) {
+    var controller = this.subject();
+    assert.ok(controller);
+  });
+
+});
+define('rose/tests/unit/controllers/modal/reset-data-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/controllers/modal');
+  test('unit/controllers/modal/reset-data-test.js should pass jshint', function() { 
+    ok(true, 'unit/controllers/modal/reset-data-test.js should pass jshint.'); 
   });
 
 });

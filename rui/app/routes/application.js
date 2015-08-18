@@ -14,9 +14,10 @@ export default Ember.Route.extend(SemanticRouteMixin, {
   },
 
   actions: {
-    resetRose() {
-      this.set('userSettings.firstRun', true);
-      this.get('userSettings').save()
+    resetConfig() {
+      let settings = this.get('settings.user');
+      settings.destroyRecord()
+        .then(() => this.get('settings').setup())
         .then(() => this.transitionTo('index'));
     }
   }

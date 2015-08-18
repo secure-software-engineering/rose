@@ -1009,7 +1009,7 @@ define('rose/controllers/application', ['exports', 'ember'], function (exports, 
   exports['default'] = Ember['default'].Controller.extend({
     actions: {
       cancelWizard: function cancelWizard() {
-        var settings = this.get('userSettings');
+        var settings = this.get('settings.user');
         settings.set('firstRun', false);
         settings.save();
       },
@@ -1130,16 +1130,16 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
     availableLanguages: languages['default'],
 
     changeI18nLanguage: (function () {
-      this.set('i18n.locale', this.get('userSettings.currentLanguage'));
-    }).observes('userSettings.currentLanguage'),
+      this.set('i18n.locale', this.get('settings.user.currentLanguage'));
+    }).observes('settings.user.currentLanguage'),
 
     onChange: (function () {
       this.send('saveSettings');
-    }).observes('userSettings.currentLanguage'),
+    }).observes('settings.user.currentLanguage'),
 
     actions: {
       saveSettings: function saveSettings() {
-        this.get('userSettings').save();
+        this.get('settings.user').save();
       },
 
       confirm: function confirm() {
@@ -1417,37 +1417,21 @@ define('rose/initializers/liquid-fire', ['exports', 'liquid-fire/router-dsl-ext'
   };
 
 });
-define('rose/initializers/user-settings', ['exports', 'ember'], function (exports, Ember) {
+define('rose/initializers/settings', ['exports'], function (exports) {
 
-  'use strict';
+    'use strict';
 
-  exports.initialize = initialize;
+    exports.initialize = initialize;
 
-  function initialize(container, application) {
-    application.deferReadiness();
+    function initialize(container, application) {
+        application.inject('route', 'settings', 'service:settings');
+        application.inject('controller', 'settings', 'service:settings');
+    }
 
-    KangoAPI.onReady(function () {
-      var store = container.lookup('store:main');
-      store.find('user-setting').then(function (configs) {
-        var config = undefined;
-        if (Ember['default'].isEmpty(configs)) {
-          config = store.createRecord('user-setting', { id: 0 }).save();
-        } else {
-          config = configs.get('firstObject');
-        }
-        application.register('userSettings:main', config, { instantiate: false, singleton: true });
-        application.inject('controller', 'userSettings', 'userSettings:main');
-        application.inject('route', 'userSettings', 'userSettings:main');
-
-        application.advanceReadiness();
-      });
-    });
-  }
-
-  exports['default'] = {
-    name: 'user-settings',
-    initialize: initialize
-  };
+    exports['default'] = {
+        name: 'settings',
+        initialize: initialize
+    };
 
 });
 define('rose/instance-initializers/ember-i18n', ['exports', 'ember', 'ember-i18n/legacy-helper', 'ember-i18n/helper', 'rose/config/environment'], function (exports, Ember, legacyHelper, Helper, ENV) {
@@ -4024,9 +4008,16 @@ define('rose/routes/application', ['exports', 'ember', 'semantic-ui-ember/mixins
 
   'use strict';
 
+  var Promise = Ember['default'].RSVP.Promise;
+
   exports['default'] = Ember['default'].Route.extend(SemanticRouteMixin['default'], {
+    beforeModel: function beforeModel() {
+      var settings = this.get('settings');
+      return Promise.all([settings.setup()]);
+    },
+
     afterModel: function afterModel() {
-      this.set('i18n.locale', this.get('userSettings.currentLanguage'));
+      this.set('i18n.locale', this.get('settings.user.currentLanguage'));
     },
 
     actions: {
@@ -4181,6 +4172,35 @@ define('rose/services/liquid-fire-transitions', ['exports', 'liquid-fire/transit
 	'use strict';
 
 	exports['default'] = TransitionMap['default'];
+
+});
+define('rose/services/settings', ['exports', 'ember'], function (exports, Ember) {
+
+    'use strict';
+
+    var isEmpty = Ember['default'].isEmpty;
+    var service = Ember['default'].inject.service;
+    var Promise = Ember['default'].RSVP.Promise;
+
+    exports['default'] = Ember['default'].Service.extend({
+        store: service(),
+
+        setup: function setup() {
+            var _this = this;
+
+            var store = this.get('store');
+
+            return store.find('user-setting', { id: 0 }).then(function (settings) {
+                if (!isEmpty(settings)) {
+                    return settings.get('firstObject');
+                }
+
+                return store.createRecord('user-setting', { id: 0 }).save();
+            }).then(function (setting) {
+                _this.set('user', setting);
+            });
+        }
+    });
 
 });
 define('rose/templates/about', ['exports'], function (exports) {
@@ -4539,7 +4559,7 @@ define('rose/templates/application', ['exports'], function (exports) {
         var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
         dom.insertBoundary(fragment, null);
         dom.insertBoundary(fragment, 0);
-        block(env, morph0, context, "if", [get(env, context, "userSettings.firstRun")], {}, child0, child1);
+        block(env, morph0, context, "if", [get(env, context, "settings.user.firstRun")], {}, child0, child1);
         return fragment;
       }
     };
@@ -7797,13 +7817,13 @@ define('rose/templates/settings', ['exports'], function (exports) {
         inline(env, morph1, context, "t", ["settings.subtitle"], {});
         inline(env, morph2, context, "t", ["settings.language"], {});
         inline(env, morph3, context, "t", ["settings.languageLabel"], {});
-        inline(env, morph4, context, "ui-dropdown", [], {"class": "ui selection dropdown", "value": get(env, context, "userSettings.currentLanguage"), "content": get(env, context, "availableLanguages"), "optionLabelPath": "content.language", "optionValuePath": "content.code"});
+        inline(env, morph4, context, "ui-dropdown", [], {"class": "ui selection dropdown", "value": get(env, context, "settings.user.currentLanguage"), "content": get(env, context, "availableLanguages"), "optionLabelPath": "content.language", "optionValuePath": "content.code"});
         inline(env, morph5, context, "t", ["settings.commentReminder"], {});
         inline(env, morph6, context, "t", ["settings.commentReminderLabel"], {});
-        inline(env, morph7, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.commentReminderIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "userSettings.commentReminderIsEnabled")], {}), "action": "saveSettings"});
+        inline(env, morph7, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "settings.user.commentReminderIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "settings.user.commentReminderIsEnabled")], {}), "action": "saveSettings"});
         inline(env, morph8, context, "t", ["settings.extraFeatures"], {});
         inline(env, morph9, context, "t", ["settings.extraFeaturesLabel"], {});
-        inline(env, morph10, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.developerModeIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "userSettings.developerModeIsEnabled")], {}), "action": "saveSettings"});
+        inline(env, morph10, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "settings.user.developerModeIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "settings.user.developerModeIsEnabled")], {}), "action": "saveSettings"});
         inline(env, morph11, context, "t", ["settings.manualUpdate"], {});
         inline(env, morph12, context, "t", ["settings.manualUpdateLabel"], {});
         element(env, element6, context, "action", ["manualUpdate"], {});
@@ -8746,7 +8766,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
         block(env, morph12, context, "link-to", ["interactions", "twitter"], {"class": "item"}, child11, null);
         block(env, morph13, context, "link-to", ["privacysettings", "twitter"], {"class": "item"}, child12, null);
         inline(env, morph14, context, "t", ["sidebarMenu.more"], {});
-        block(env, morph15, context, "liquid-if", [get(env, context, "userSettings.developerModeIsEnabled")], {}, child13, null);
+        block(env, morph15, context, "liquid-if", [get(env, context, "settings.user.developerModeIsEnabled")], {}, child13, null);
         block(env, morph16, context, "link-to", ["help"], {"class": "item"}, child14, null);
         block(env, morph17, context, "link-to", ["about"], {"class": "item"}, child15, null);
         return fragment;
@@ -9468,13 +9488,13 @@ define('rose/tests/initializers/kango-api.jshint', function () {
   });
 
 });
-define('rose/tests/initializers/user-settings.jshint', function () {
+define('rose/tests/initializers/settings.jshint', function () {
 
   'use strict';
 
   module('JSHint - initializers');
-  test('initializers/user-settings.js should pass jshint', function() { 
-    ok(true, 'initializers/user-settings.js should pass jshint.'); 
+  test('initializers/settings.js should pass jshint', function() { 
+    ok(true, 'initializers/settings.js should pass jshint.'); 
   });
 
 });
@@ -9785,6 +9805,16 @@ define('rose/tests/routes/study-creator.jshint', function () {
   module('JSHint - routes');
   test('routes/study-creator.js should pass jshint', function() { 
     ok(true, 'routes/study-creator.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/services/settings.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - services');
+  test('services/settings.js should pass jshint', function() { 
+    ok(false, 'services/settings.js should pass jshint.\nservices/settings.js: line 5, col 9, \'Promise\' is defined but never used.\n\n1 error'); 
   });
 
 });
@@ -10198,6 +10228,41 @@ define('rose/tests/unit/initializers/kango-api-test.jshint', function () {
   module('JSHint - unit/initializers');
   test('unit/initializers/kango-api-test.js should pass jshint', function() { 
     ok(true, 'unit/initializers/kango-api-test.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/unit/initializers/settings-test', ['ember', 'rose/initializers/settings', 'qunit'], function (Ember, settings, qunit) {
+
+  'use strict';
+
+  var registry, application;
+
+  qunit.module('Unit | Initializer | settings', {
+    beforeEach: function beforeEach() {
+      Ember['default'].run(function () {
+        application = Ember['default'].Application.create();
+        registry = application.registry;
+        application.deferReadiness();
+      });
+    }
+  });
+
+  // Replace this with your real tests.
+  qunit.test('it works', function (assert) {
+    settings.initialize(registry, application);
+
+    // you would normally confirm the results of the initializer here
+    assert.ok(true);
+  });
+
+});
+define('rose/tests/unit/initializers/settings-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/initializers');
+  test('unit/initializers/settings-test.js should pass jshint', function() { 
+    ok(true, 'unit/initializers/settings-test.js should pass jshint.'); 
   });
 
 });
@@ -10921,6 +10986,32 @@ define('rose/tests/unit/routes/study-creator-test.jshint', function () {
   });
 
 });
+define('rose/tests/unit/services/settings-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('service:settings', 'Unit | Service | settings', {
+    // Specify the other units that are required for this test.
+    // needs: ['service:foo']
+  });
+
+  // Replace this with your real tests.
+  ember_qunit.test('it exists', function (assert) {
+    var service = this.subject();
+    assert.ok(service);
+  });
+
+});
+define('rose/tests/unit/services/settings-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/services');
+  test('unit/services/settings-test.js should pass jshint', function() { 
+    ok(true, 'unit/services/settings-test.js should pass jshint.'); 
+  });
+
+});
 define('rose/transitions/cross-fade', ['exports', 'liquid-fire'], function (exports, liquid_fire) {
 
   'use strict';
@@ -11413,7 +11504,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.d3d182aa"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.c3e189a7"});
 }
 
 /* jshint ignore:end */

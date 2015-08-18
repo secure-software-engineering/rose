@@ -1,9 +1,16 @@
 import Ember from 'ember';
 import SemanticRouteMixin from 'semantic-ui-ember/mixins/application-route';
 
+const { Promise } = Ember.RSVP;
+
 export default Ember.Route.extend(SemanticRouteMixin, {
+  beforeModel() {
+    let settings = this.get('settings');
+    return Promise.all([settings.setup()]);
+  },
+
   afterModel() {
-    this.set('i18n.locale', this.get('userSettings.currentLanguage'));
+    this.set('i18n.locale', this.get('settings.user.currentLanguage'));
   },
 
   actions: {

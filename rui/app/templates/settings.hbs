@@ -11,7 +11,7 @@
     <label>{{t "settings.language"}}</label>
     <p>{{t "settings.languageLabel"}}</p>
     {{ui-dropdown class="ui selection dropdown"
-                    value=userSettings.currentLanguage
+                    value=settings.user.currentLanguage
                     content=availableLanguages
                     optionLabelPath="content.language"
                     optionValuePath="content.code"}}
@@ -21,8 +21,8 @@
     <label>{{t "settings.commentReminder"}}</label>
     <p>{{t "settings.commentReminderLabel"}}</p>
     {{ui-checkbox class="toggle"
-                  checked=userSettings.commentReminderIsEnabled
-                  label=(boolean-to-yesno userSettings.commentReminderIsEnabled)
+                  checked=settings.user.commentReminderIsEnabled
+                  label=(boolean-to-yesno settings.user.commentReminderIsEnabled)
                   action="saveSettings"}}
   </div>
 
@@ -30,8 +30,8 @@
     <label>{{t "settings.extraFeatures"}}</label>
     <p>{{t "settings.extraFeaturesLabel"}}</p>
     {{ui-checkbox class="toggle"
-                  checked=userSettings.developerModeIsEnabled
-                  label=(boolean-to-yesno userSettings.developerModeIsEnabled)
+                  checked=settings.user.developerModeIsEnabled
+                  label=(boolean-to-yesno settings.user.developerModeIsEnabled)
                   action="saveSettings"}}
   </div>
 

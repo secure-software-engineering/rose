@@ -2503,7 +2503,7 @@ define('rose/pods/components/file-input-button/template', ['exports'], function 
       build: function build(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("button");
-        dom.setAttribute(el1,"class","ui primary right floated button");
+        dom.setAttribute(el1,"class","ui primary bottom attached button");
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createComment("");
@@ -2807,7 +2807,7 @@ define('rose/pods/components/high-chart/template', ['exports'], function (export
   }()));
 
 });
-define('rose/pods/components/installation-wizard/component', ['exports', 'ember'], function (exports, Ember) {
+define('rose/pods/components/installation-wizard/component', ['exports', 'ember', 'ic-ajax'], function (exports, Ember, ic_ajax) {
 
   'use strict';
 
@@ -2819,6 +2819,23 @@ define('rose/pods/components/installation-wizard/component', ['exports', 'ember'
 
       saveConfig: function saveConfig(data) {
         this.sendAction('onsuccess', data);
+      },
+
+      openFileChooser: function openFileChooser() {
+        this.$('input.hidden').click();
+      },
+
+      onread: function onread(data) {
+        this.sendAction('onsuccess', data);
+      },
+
+      selectDefaultConfig: function selectDefaultConfig() {
+        var _this = this;
+
+        var src = kango.io.getResourceUrl('res/defaults/rose-configuration.json');
+        ic_ajax.request(src).then(function (json) {
+          _this.sendAction('onsuccess', json);
+        });
       }
     }
   });
@@ -2829,49 +2846,6 @@ define('rose/pods/components/installation-wizard/template', ['exports'], functio
   'use strict';
 
   exports['default'] = Ember.HTMLBars.template((function() {
-    var child0 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("            ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["wizard.fileConfigBtn"], {});
-          return fragment;
-        }
-      };
-    }());
     return {
       isHTMLBars: true,
       revision: "Ember@1.12.1",
@@ -2923,133 +2897,98 @@ define('rose/pods/components/installation-wizard/template', ['exports'], functio
         var el4 = dom.createTextNode("\n\n      ");
         dom.appendChild(el3, el4);
         var el4 = dom.createElement("div");
-        dom.setAttribute(el4,"class","ui two column stackable grid");
+        dom.setAttribute(el4,"class","ui two cards");
         var el5 = dom.createTextNode("\n        ");
         dom.appendChild(el4, el5);
         var el5 = dom.createElement("div");
-        dom.setAttribute(el5,"class","field column");
+        dom.setAttribute(el5,"class","card");
         var el6 = dom.createTextNode("\n          ");
         dom.appendChild(el5, el6);
         var el6 = dom.createElement("div");
-        dom.setAttribute(el6,"class","ui radio checkbox disabled");
+        dom.setAttribute(el6,"class","content");
         var el7 = dom.createTextNode("\n            ");
         dom.appendChild(el6, el7);
-        var el7 = dom.createElement("input");
-        dom.setAttribute(el7,"type","radio");
-        dom.setAttribute(el7,"name","configOption");
-        dom.setAttribute(el7,"checked","");
-        dom.setAttribute(el7,"tabindex","0");
-        dom.setAttribute(el7,"class","hidden");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n            ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("label");
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","header");
         var el8 = dom.createComment("");
         dom.appendChild(el7, el8);
         dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n          ");
-        dom.appendChild(el6, el7);
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("\n        ");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("div");
-        dom.setAttribute(el5,"class","column");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("div");
-        dom.setAttribute(el5,"class","field column");
-        var el6 = dom.createTextNode("\n          ");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createElement("div");
-        dom.setAttribute(el6,"class","ui radio checkbox checked");
         var el7 = dom.createTextNode("\n            ");
         dom.appendChild(el6, el7);
-        var el7 = dom.createElement("input");
-        dom.setAttribute(el7,"type","radio");
-        dom.setAttribute(el7,"name","configOption");
-        dom.setAttribute(el7,"tabindex","0");
-        dom.setAttribute(el7,"class","hidden");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n            ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("label");
-        var el8 = dom.createComment("");
-        dom.appendChild(el7, el8);
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n          ");
-        dom.appendChild(el6, el7);
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("\n        ");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("div");
-        dom.setAttribute(el5,"class","column");
-        var el6 = dom.createTextNode("\n");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createComment("");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("        ");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("div");
-        dom.setAttribute(el5,"class","field column");
-        var el6 = dom.createTextNode("\n          ");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createElement("div");
-        dom.setAttribute(el6,"class","ui radio checkbox disabled");
-        var el7 = dom.createTextNode("\n            ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("input");
-        dom.setAttribute(el7,"type","radio");
-        dom.setAttribute(el7,"name","configOption");
-        dom.setAttribute(el7,"tabindex","0");
-        dom.setAttribute(el7,"class","hidden");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n            ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("label");
-        var el8 = dom.createComment("");
-        dom.appendChild(el7, el8);
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n          ");
-        dom.appendChild(el6, el7);
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("\n        ");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("div");
-        dom.setAttribute(el5,"class","column");
-        var el6 = dom.createTextNode("\n          ");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createElement("div");
-        dom.setAttribute(el6,"class","ui action inline input");
-        var el7 = dom.createTextNode("\n            ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createComment("");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n\n            ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("button");
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","description");
         var el8 = dom.createTextNode("\n              ");
         dom.appendChild(el7, el8);
-        var el8 = dom.createElement("i");
-        dom.setAttribute(el8,"class","search icon");
+        var el8 = dom.createComment("");
         dom.appendChild(el7, el8);
         var el8 = dom.createTextNode("\n            ");
         dom.appendChild(el7, el8);
         dom.appendChild(el6, el7);
         var el7 = dom.createTextNode("\n          ");
         dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n          ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("button");
+        dom.setAttribute(el6,"class","ui primary bottom attached button");
+        var el7 = dom.createTextNode("\n            ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createComment("");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n          ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n        ");
+        dom.appendChild(el5, el6);
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n        ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createElement("div");
+        dom.setAttribute(el5,"class","card");
+        var el6 = dom.createTextNode("\n          ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6,"class","content");
+        var el7 = dom.createTextNode("\n            ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","header");
+        var el8 = dom.createComment("");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n            ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","description");
+        var el8 = dom.createTextNode("\n              ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createComment("");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n            ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n          ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n          ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("button");
+        dom.setAttribute(el6,"class","ui primary bottom attached button");
+        var el7 = dom.createTextNode("\n            ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("i");
+        dom.setAttribute(el7,"class","add icon");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n            ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createComment("");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n          ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n          ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createComment("");
         dom.appendChild(el5, el6);
         var el6 = dom.createTextNode("\n        ");
         dom.appendChild(el5, el6);
@@ -3072,7 +3011,7 @@ define('rose/pods/components/installation-wizard/template', ['exports'], functio
       },
       render: function render(context, env, contextualElement) {
         var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, block = hooks.block, get = hooks.get, subexpr = hooks.subexpr, concat = hooks.concat, attribute = hooks.attribute, element = hooks.element;
+        var hooks = env.hooks, inline = hooks.inline, element = hooks.element;
         dom.detectNamespace(contextualElement);
         var fragment;
         if (env.useFragmentCache && dom.canClone) {
@@ -3093,26 +3032,32 @@ define('rose/pods/components/installation-wizard/template', ['exports'], functio
         var element0 = dom.childAt(fragment, [0, 1, 1]);
         var element1 = dom.childAt(element0, [1, 3]);
         var element2 = dom.childAt(element0, [3]);
-        if (this.cachedFragment) { dom.repairClonedNode(dom.childAt(element2, [1, 1, 1]),[],true); }
-        var element3 = dom.childAt(element2, [11, 1]);
-        var element4 = dom.childAt(element3, [3]);
+        var element3 = dom.childAt(element2, [1]);
+        var element4 = dom.childAt(element3, [1]);
+        var element5 = dom.childAt(element3, [3]);
+        var element6 = dom.childAt(element2, [3]);
+        var element7 = dom.childAt(element6, [1]);
+        var element8 = dom.childAt(element6, [3]);
         var morph0 = dom.createMorphAt(element1,1,1);
         var morph1 = dom.createMorphAt(dom.childAt(element1, [3]),0,0);
-        var morph2 = dom.createMorphAt(dom.childAt(element2, [1, 1, 3]),0,0);
-        var morph3 = dom.createMorphAt(dom.childAt(element2, [5, 1, 3]),0,0);
-        var morph4 = dom.createMorphAt(dom.childAt(element2, [7]),1,1);
-        var morph5 = dom.createMorphAt(dom.childAt(element2, [9, 1, 3]),0,0);
-        var morph6 = dom.createMorphAt(element3,1,1);
-        var attrMorph0 = dom.createAttrMorph(element4, 'class');
+        var morph2 = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
+        var morph3 = dom.createMorphAt(dom.childAt(element4, [3]),1,1);
+        var morph4 = dom.createMorphAt(element5,1,1);
+        var morph5 = dom.createMorphAt(dom.childAt(element7, [1]),0,0);
+        var morph6 = dom.createMorphAt(dom.childAt(element7, [3]),1,1);
+        var morph7 = dom.createMorphAt(element8,3,3);
+        var morph8 = dom.createMorphAt(element6,5,5);
         inline(env, morph0, context, "t", ["wizard.header"], {});
         inline(env, morph1, context, "t", ["wizard.description"], {});
-        inline(env, morph2, context, "t", ["wizard.defaultConfig"], {});
-        inline(env, morph3, context, "t", ["wizard.fileConfig"], {});
-        block(env, morph4, context, "file-input-button", [], {"onread": "saveConfig"}, child0, null);
-        inline(env, morph5, context, "t", ["wizard.urlConfig"], {});
-        inline(env, morph6, context, "input", [], {"type": "text", "insert-newline": "fetchBaseFile"});
-        attribute(env, attrMorph0, element4, "class", concat(env, ["ui icon disabled button ", subexpr(env, context, "if", [get(env, context, "baseFileIsLoading"), "loading"], {})]));
-        element(env, element4, context, "action", ["fetchBaseFile"], {});
+        inline(env, morph2, context, "t", ["wizard.defaultConfigHeader"], {});
+        inline(env, morph3, context, "t", ["wizard.defaultConfigDescription"], {});
+        element(env, element5, context, "action", ["selectDefaultConfig"], {});
+        inline(env, morph4, context, "t", ["action.select"], {});
+        inline(env, morph5, context, "t", ["wizard.fileConfigHeader"], {});
+        inline(env, morph6, context, "t", ["wizard.fileConfigDescription"], {});
+        element(env, element8, context, "action", ["openFileChooser"], {});
+        inline(env, morph7, context, "t", ["wizard.fileConfigBtn"], {});
+        inline(env, morph8, context, "file-input", [], {"class": "hidden", "onread": "onread"});
         return fragment;
       }
     };
@@ -9786,7 +9731,7 @@ define('rose/tests/services/settings.jshint', function () {
 
   module('JSHint - services');
   test('services/settings.js should pass jshint', function() { 
-    ok(false, 'services/settings.js should pass jshint.\nservices/settings.js: line 37, col 59, Missing semicolon.\n\n1 error'); 
+    ok(true, 'services/settings.js should pass jshint.'); 
   });
 
 });
@@ -11528,7 +11473,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.c3e189a7"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.536ef0cc"});
 }
 
 /* jshint ignore:end */

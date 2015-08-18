@@ -34,6 +34,6 @@ export default Ember.Service.extend({
                 this.set('system', setting);
             });
 
-        return Promise.all([userSettings, systemSettings])
+        return Promise.all([userSettings, systemSettings]);
     }
 });

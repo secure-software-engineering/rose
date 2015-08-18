@@ -3,9 +3,9 @@ import Ember from 'ember';
 export default Ember.Controller.extend({
   actions: {
     cancelWizard() {
-      let settings = this.get('userSettings');
+      let settings = this.get('settings.user');
       settings.set('firstRun', false);
-      settings.save();
+      settings.save().then(() => location.reload());
     },
 
     saveConfig(data) {

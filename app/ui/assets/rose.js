@@ -1009,9 +1009,11 @@ define('rose/controllers/application', ['exports', 'ember'], function (exports, 
   exports['default'] = Ember['default'].Controller.extend({
     actions: {
       cancelWizard: function cancelWizard() {
-        var settings = this.get('userSettings');
+        var settings = this.get('settings.user');
         settings.set('firstRun', false);
-        settings.save();
+        settings.save().then(function () {
+          return location.reload();
+        });
       },
 
       saveConfig: function saveConfig(data) {
@@ -1063,6 +1065,10 @@ define('rose/controllers/backup', ['exports', 'ember'], function (exports, Ember
     }).property('model'),
 
     actions: {
+      deleteData: function deleteData() {
+        this.send('openModal', 'modal/reset-data');
+      },
+
       download: function download() {
         window.saveAs(new Blob([this.get('jsonData')]), 'rose-data.txt');
       }
@@ -1115,6 +1121,28 @@ define('rose/controllers/interactions', ['exports', 'ember'], function (exports,
   });
 
 });
+define('rose/controllers/modal/reset-config', ['exports', 'ember'], function (exports, Ember) {
+
+    'use strict';
+
+    exports['default'] = Ember['default'].Controller.extend({
+        deleteData: false
+    });
+
+});
+define('rose/controllers/modal/reset-data', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  exports['default'] = Ember['default'].Controller.extend({
+    actions: {
+      deleteData: function deleteData() {
+        alert('NEEDS STORAGE REWORK');
+      }
+    }
+  });
+
+});
 define('rose/controllers/object', ['exports', 'ember'], function (exports, Ember) {
 
 	'use strict';
@@ -1130,20 +1158,21 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
     availableLanguages: languages['default'],
 
     changeI18nLanguage: (function () {
-      this.set('i18n.locale', this.get('userSettings.currentLanguage'));
-    }).observes('userSettings.currentLanguage'),
+      this.set('i18n.locale', this.get('settings.user.currentLanguage'));
+    }).observes('settings.user.currentLanguage'),
 
     onChange: (function () {
       this.send('saveSettings');
-    }).observes('userSettings.currentLanguage'),
+    }).observes('settings.user.currentLanguage'),
 
     actions: {
       saveSettings: function saveSettings() {
-        this.get('userSettings').save();
+        this.get('settings.user').save();
+        this.get('settings.system').save();
       },
 
       confirm: function confirm() {
-        this.send('openModal', 'modal/confirm-reset');
+        this.send('openModal', 'modal/reset-config');
       },
 
       manualUpdate: function manualUpdate() {
@@ -1417,37 +1446,21 @@ define('rose/initializers/liquid-fire', ['exports', 'liquid-fire/router-dsl-ext'
   };
 
 });
-define('rose/initializers/user-settings', ['exports', 'ember'], function (exports, Ember) {
+define('rose/initializers/settings', ['exports'], function (exports) {
 
-  'use strict';
+    'use strict';
 
-  exports.initialize = initialize;
+    exports.initialize = initialize;
 
-  function initialize(container, application) {
-    application.deferReadiness();
+    function initialize(container, application) {
+        application.inject('route', 'settings', 'service:settings');
+        application.inject('controller', 'settings', 'service:settings');
+    }
 
-    KangoAPI.onReady(function () {
-      var store = container.lookup('store:main');
-      store.find('user-setting').then(function (configs) {
-        var config = undefined;
-        if (Ember['default'].isEmpty(configs)) {
-          config = store.createRecord('user-setting', { id: 0 }).save();
-        } else {
-          config = configs.get('firstObject');
-        }
-        application.register('userSettings:main', config, { instantiate: false, singleton: true });
-        application.inject('controller', 'userSettings', 'userSettings:main');
-        application.inject('route', 'userSettings', 'userSettings:main');
-
-        application.advanceReadiness();
-      });
-    });
-  }
-
-  exports['default'] = {
-    name: 'user-settings',
-    initialize: initialize
-  };
+    exports['default'] = {
+        name: 'settings',
+        initialize: initialize
+    };
 
 });
 define('rose/instance-initializers/ember-i18n', ['exports', 'ember', 'ember-i18n/legacy-helper', 'ember-i18n/helper', 'rose/config/environment'], function (exports, Ember, legacyHelper, Helper, ENV) {
@@ -1720,7 +1733,8 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
       download: "Download",
       details: "Details",
       reset: "Reset",
-      update: "Update"
+      update: "Update",
+      confirm: "Confirm"
     },
 
     // Sidebar Menu
@@ -1925,7 +1939,6 @@ define('rose/models/interaction', ['exports', 'ember-data'], function (exports, 
   'use strict';
 
   exports['default'] = DS['default'].Model.extend({
-    contentId: DS['default'].attr('string'),
     createdAt: DS['default'].attr('string'),
     origin: DS['default'].attr(),
     sharerId: DS['default'].attr('string'),
@@ -2490,7 +2503,7 @@ define('rose/pods/components/file-input-button/template', ['exports'], function 
       build: function build(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("button");
-        dom.setAttribute(el1,"class","ui primary right floated button");
+        dom.setAttribute(el1,"class","ui primary bottom attached button");
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createComment("");
@@ -2794,7 +2807,7 @@ define('rose/pods/components/high-chart/template', ['exports'], function (export
   }()));
 
 });
-define('rose/pods/components/installation-wizard/component', ['exports', 'ember'], function (exports, Ember) {
+define('rose/pods/components/installation-wizard/component', ['exports', 'ember', 'ic-ajax'], function (exports, Ember, ic_ajax) {
 
   'use strict';
 
@@ -2806,6 +2819,23 @@ define('rose/pods/components/installation-wizard/component', ['exports', 'ember'
 
       saveConfig: function saveConfig(data) {
         this.sendAction('onsuccess', data);
+      },
+
+      openFileChooser: function openFileChooser() {
+        this.$('input.hidden').click();
+      },
+
+      onread: function onread(data) {
+        this.sendAction('onsuccess', data);
+      },
+
+      selectDefaultConfig: function selectDefaultConfig() {
+        var _this = this;
+
+        var src = kango.io.getResourceUrl('res/defaults/rose-configuration.json');
+        ic_ajax.request(src).then(function (json) {
+          _this.sendAction('onsuccess', json);
+        });
       }
     }
   });
@@ -2816,49 +2846,6 @@ define('rose/pods/components/installation-wizard/template', ['exports'], functio
   'use strict';
 
   exports['default'] = Ember.HTMLBars.template((function() {
-    var child0 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("            ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["wizard.fileConfigBtn"], {});
-          return fragment;
-        }
-      };
-    }());
     return {
       isHTMLBars: true,
       revision: "Ember@1.12.1",
@@ -2910,133 +2897,98 @@ define('rose/pods/components/installation-wizard/template', ['exports'], functio
         var el4 = dom.createTextNode("\n\n      ");
         dom.appendChild(el3, el4);
         var el4 = dom.createElement("div");
-        dom.setAttribute(el4,"class","ui two column stackable grid");
+        dom.setAttribute(el4,"class","ui two cards");
         var el5 = dom.createTextNode("\n        ");
         dom.appendChild(el4, el5);
         var el5 = dom.createElement("div");
-        dom.setAttribute(el5,"class","field column");
+        dom.setAttribute(el5,"class","card");
         var el6 = dom.createTextNode("\n          ");
         dom.appendChild(el5, el6);
         var el6 = dom.createElement("div");
-        dom.setAttribute(el6,"class","ui radio checkbox disabled");
+        dom.setAttribute(el6,"class","content");
         var el7 = dom.createTextNode("\n            ");
         dom.appendChild(el6, el7);
-        var el7 = dom.createElement("input");
-        dom.setAttribute(el7,"type","radio");
-        dom.setAttribute(el7,"name","configOption");
-        dom.setAttribute(el7,"checked","");
-        dom.setAttribute(el7,"tabindex","0");
-        dom.setAttribute(el7,"class","hidden");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n            ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("label");
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","header");
         var el8 = dom.createComment("");
         dom.appendChild(el7, el8);
         dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n          ");
-        dom.appendChild(el6, el7);
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("\n        ");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("div");
-        dom.setAttribute(el5,"class","column");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("div");
-        dom.setAttribute(el5,"class","field column");
-        var el6 = dom.createTextNode("\n          ");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createElement("div");
-        dom.setAttribute(el6,"class","ui radio checkbox checked");
         var el7 = dom.createTextNode("\n            ");
         dom.appendChild(el6, el7);
-        var el7 = dom.createElement("input");
-        dom.setAttribute(el7,"type","radio");
-        dom.setAttribute(el7,"name","configOption");
-        dom.setAttribute(el7,"tabindex","0");
-        dom.setAttribute(el7,"class","hidden");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n            ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("label");
-        var el8 = dom.createComment("");
-        dom.appendChild(el7, el8);
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n          ");
-        dom.appendChild(el6, el7);
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("\n        ");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("div");
-        dom.setAttribute(el5,"class","column");
-        var el6 = dom.createTextNode("\n");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createComment("");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("        ");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("div");
-        dom.setAttribute(el5,"class","field column");
-        var el6 = dom.createTextNode("\n          ");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createElement("div");
-        dom.setAttribute(el6,"class","ui radio checkbox disabled");
-        var el7 = dom.createTextNode("\n            ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("input");
-        dom.setAttribute(el7,"type","radio");
-        dom.setAttribute(el7,"name","configOption");
-        dom.setAttribute(el7,"tabindex","0");
-        dom.setAttribute(el7,"class","hidden");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n            ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("label");
-        var el8 = dom.createComment("");
-        dom.appendChild(el7, el8);
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n          ");
-        dom.appendChild(el6, el7);
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("\n        ");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("div");
-        dom.setAttribute(el5,"class","column");
-        var el6 = dom.createTextNode("\n          ");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createElement("div");
-        dom.setAttribute(el6,"class","ui action inline input");
-        var el7 = dom.createTextNode("\n            ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createComment("");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n\n            ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("button");
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","description");
         var el8 = dom.createTextNode("\n              ");
         dom.appendChild(el7, el8);
-        var el8 = dom.createElement("i");
-        dom.setAttribute(el8,"class","search icon");
+        var el8 = dom.createComment("");
         dom.appendChild(el7, el8);
         var el8 = dom.createTextNode("\n            ");
         dom.appendChild(el7, el8);
         dom.appendChild(el6, el7);
         var el7 = dom.createTextNode("\n          ");
         dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n          ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("button");
+        dom.setAttribute(el6,"class","ui primary bottom attached button");
+        var el7 = dom.createTextNode("\n            ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createComment("");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n          ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n        ");
+        dom.appendChild(el5, el6);
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n        ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createElement("div");
+        dom.setAttribute(el5,"class","card");
+        var el6 = dom.createTextNode("\n          ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6,"class","content");
+        var el7 = dom.createTextNode("\n            ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","header");
+        var el8 = dom.createComment("");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n            ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","description");
+        var el8 = dom.createTextNode("\n              ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createComment("");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n            ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n          ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n          ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("button");
+        dom.setAttribute(el6,"class","ui primary bottom attached button");
+        var el7 = dom.createTextNode("\n            ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("i");
+        dom.setAttribute(el7,"class","add icon");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n            ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createComment("");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n          ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n          ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createComment("");
         dom.appendChild(el5, el6);
         var el6 = dom.createTextNode("\n        ");
         dom.appendChild(el5, el6);
@@ -3059,7 +3011,7 @@ define('rose/pods/components/installation-wizard/template', ['exports'], functio
       },
       render: function render(context, env, contextualElement) {
         var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, block = hooks.block, get = hooks.get, subexpr = hooks.subexpr, concat = hooks.concat, attribute = hooks.attribute, element = hooks.element;
+        var hooks = env.hooks, inline = hooks.inline, element = hooks.element;
         dom.detectNamespace(contextualElement);
         var fragment;
         if (env.useFragmentCache && dom.canClone) {
@@ -3080,26 +3032,32 @@ define('rose/pods/components/installation-wizard/template', ['exports'], functio
         var element0 = dom.childAt(fragment, [0, 1, 1]);
         var element1 = dom.childAt(element0, [1, 3]);
         var element2 = dom.childAt(element0, [3]);
-        if (this.cachedFragment) { dom.repairClonedNode(dom.childAt(element2, [1, 1, 1]),[],true); }
-        var element3 = dom.childAt(element2, [11, 1]);
-        var element4 = dom.childAt(element3, [3]);
+        var element3 = dom.childAt(element2, [1]);
+        var element4 = dom.childAt(element3, [1]);
+        var element5 = dom.childAt(element3, [3]);
+        var element6 = dom.childAt(element2, [3]);
+        var element7 = dom.childAt(element6, [1]);
+        var element8 = dom.childAt(element6, [3]);
         var morph0 = dom.createMorphAt(element1,1,1);
         var morph1 = dom.createMorphAt(dom.childAt(element1, [3]),0,0);
-        var morph2 = dom.createMorphAt(dom.childAt(element2, [1, 1, 3]),0,0);
-        var morph3 = dom.createMorphAt(dom.childAt(element2, [5, 1, 3]),0,0);
-        var morph4 = dom.createMorphAt(dom.childAt(element2, [7]),1,1);
-        var morph5 = dom.createMorphAt(dom.childAt(element2, [9, 1, 3]),0,0);
-        var morph6 = dom.createMorphAt(element3,1,1);
-        var attrMorph0 = dom.createAttrMorph(element4, 'class');
+        var morph2 = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
+        var morph3 = dom.createMorphAt(dom.childAt(element4, [3]),1,1);
+        var morph4 = dom.createMorphAt(element5,1,1);
+        var morph5 = dom.createMorphAt(dom.childAt(element7, [1]),0,0);
+        var morph6 = dom.createMorphAt(dom.childAt(element7, [3]),1,1);
+        var morph7 = dom.createMorphAt(element8,3,3);
+        var morph8 = dom.createMorphAt(element6,5,5);
         inline(env, morph0, context, "t", ["wizard.header"], {});
         inline(env, morph1, context, "t", ["wizard.description"], {});
-        inline(env, morph2, context, "t", ["wizard.defaultConfig"], {});
-        inline(env, morph3, context, "t", ["wizard.fileConfig"], {});
-        block(env, morph4, context, "file-input-button", [], {"onread": "saveConfig"}, child0, null);
-        inline(env, morph5, context, "t", ["wizard.urlConfig"], {});
-        inline(env, morph6, context, "input", [], {"type": "text", "insert-newline": "fetchBaseFile"});
-        attribute(env, attrMorph0, element4, "class", concat(env, ["ui icon disabled button ", subexpr(env, context, "if", [get(env, context, "baseFileIsLoading"), "loading"], {})]));
-        element(env, element4, context, "action", ["fetchBaseFile"], {});
+        inline(env, morph2, context, "t", ["wizard.defaultConfigHeader"], {});
+        inline(env, morph3, context, "t", ["wizard.defaultConfigDescription"], {});
+        element(env, element5, context, "action", ["selectDefaultConfig"], {});
+        inline(env, morph4, context, "t", ["action.select"], {});
+        inline(env, morph5, context, "t", ["wizard.fileConfigHeader"], {});
+        inline(env, morph6, context, "t", ["wizard.fileConfigDescription"], {});
+        element(env, element8, context, "action", ["openFileChooser"], {});
+        inline(env, morph7, context, "t", ["wizard.fileConfigBtn"], {});
+        inline(env, morph8, context, "file-input", [], {"class": "hidden", "onread": "onread"});
         return fragment;
       }
     };
@@ -4024,18 +3982,35 @@ define('rose/routes/application', ['exports', 'ember', 'semantic-ui-ember/mixins
 
   'use strict';
 
+  var Promise = Ember['default'].RSVP.Promise;
+
   exports['default'] = Ember['default'].Route.extend(SemanticRouteMixin['default'], {
+    beforeModel: function beforeModel() {
+      var settings = this.get('settings');
+      return Promise.all([settings.setup()]);
+    },
+
     afterModel: function afterModel() {
-      this.set('i18n.locale', this.get('userSettings.currentLanguage'));
+      this.set('i18n.locale', this.get('settings.user.currentLanguage'));
+    },
+
+    setupController: function setupController(controller, model) {
+      this._super(controller, model);
+
+      return this.store.find('network').then(function (networks) {
+        controller.set('networks', networks);
+      });
     },
 
     actions: {
-      resetRose: function resetRose() {
+      resetConfig: function resetConfig() {
         var _this = this;
 
-        this.set('userSettings.firstRun', true);
-        this.get('userSettings').save().then(function () {
-          return _this.transitionTo('index');
+        var settings = this.get('settings.user');
+        settings.destroyRecord().then(function () {
+          return _this.get('settings').setup();
+        }).then(function () {
+          return _this.transitionTo('application');
         });
       }
     }
@@ -4181,6 +4156,47 @@ define('rose/services/liquid-fire-transitions', ['exports', 'liquid-fire/transit
 	'use strict';
 
 	exports['default'] = TransitionMap['default'];
+
+});
+define('rose/services/settings', ['exports', 'ember'], function (exports, Ember) {
+
+    'use strict';
+
+    var isEmpty = Ember['default'].isEmpty;
+    var service = Ember['default'].inject.service;
+    var Promise = Ember['default'].RSVP.Promise;
+
+    exports['default'] = Ember['default'].Service.extend({
+        store: service(),
+
+        setup: function setup() {
+            var _this = this;
+
+            var store = this.get('store');
+
+            var userSettings = store.find('user-setting', { id: 0 }).then(function (settings) {
+                if (!isEmpty(settings)) {
+                    return settings.get('firstObject');
+                }
+
+                return store.createRecord('user-setting', { id: 0 }).save();
+            }).then(function (setting) {
+                _this.set('user', setting);
+            });
+
+            var systemSettings = store.find('system-config', { id: 0 }).then(function (settings) {
+                if (!isEmpty(settings)) {
+                    return settings.get('firstObject');
+                }
+
+                return store.createRecord('system-config', { id: 0 }).save();
+            }).then(function (setting) {
+                _this.set('system', setting);
+            });
+
+            return Promise.all([userSettings, systemSettings]);
+        }
+    });
 
 });
 define('rose/templates/about', ['exports'], function (exports) {
@@ -4497,7 +4513,7 @@ define('rose/templates/application', ['exports'], function (exports) {
           var morph0 = dom.createMorphAt(dom.childAt(element0, [1]),1,1);
           var morph1 = dom.createMorphAt(dom.childAt(element0, [3, 1]),1,1);
           var morph2 = dom.createMorphAt(fragment,3,3,contextualElement);
-          inline(env, morph0, context, "render", ["sidebar-menu"], {});
+          inline(env, morph0, context, "partial", ["sidebar-menu"], {});
           content(env, morph1, context, "outlet");
           inline(env, morph2, context, "outlet", ["modal"], {});
           return fragment;
@@ -4539,7 +4555,7 @@ define('rose/templates/application', ['exports'], function (exports) {
         var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
         dom.insertBoundary(fragment, null);
         dom.insertBoundary(fragment, 0);
-        block(env, morph0, context, "if", [get(env, context, "userSettings.firstRun")], {}, child0, child1);
+        block(env, morph0, context, "if", [get(env, context, "settings.user.firstRun")], {}, child0, child1);
         return fragment;
       }
     };
@@ -4705,7 +4721,7 @@ define('rose/templates/backup', ['exports'], function (exports) {
         inline(env, morph1, context, "t", ["backup.subtitle"], {});
         inline(env, morph2, context, "t", ["backup.resetData"], {});
         inline(env, morph3, context, "t", ["backup.resetDataLabel"], {});
-        element(env, element3, context, "action", ["resetData"], {});
+        element(env, element3, context, "action", ["deleteData"], {});
         inline(env, morph4, context, "t", ["action.reset"], {});
         inline(env, morph5, context, "t", ["backup.export"], {});
         inline(env, morph6, context, "t", ["backup.exportLabel"], {});
@@ -7410,7 +7426,7 @@ define('rose/templates/interactions', ['exports'], function (exports) {
   }()));
 
 });
-define('rose/templates/modal/confirm-reset', ['exports'], function (exports) {
+define('rose/templates/modal/reset-config', ['exports'], function (exports) {
 
   'use strict';
 
@@ -7430,14 +7446,24 @@ define('rose/templates/modal/confirm-reset', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("div");
         dom.setAttribute(el1,"class","header");
-        var el2 = dom.createTextNode("\n  Are u sure you want to reset all settings?\n");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("div");
         dom.setAttribute(el1,"class","content");
-        var el2 = dom.createTextNode("\n  Content\n");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("p");
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
@@ -7448,17 +7474,20 @@ define('rose/templates/modal/confirm-reset', ['exports'], function (exports) {
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
         dom.setAttribute(el2,"class","ui black button");
-        var el3 = dom.createTextNode("\n    Cancel\n  ");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","ui positive right labeled icon button");
-        var el3 = dom.createTextNode("\n    Ok\n    ");
+        dom.setAttribute(el2,"class","ui positive button");
+        var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
-        var el3 = dom.createElement("i");
-        dom.setAttribute(el3,"class","checkmark icon");
+        var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n  ");
         dom.appendChild(el2, el3);
@@ -7472,7 +7501,7 @@ define('rose/templates/modal/confirm-reset', ['exports'], function (exports) {
       },
       render: function render(context, env, contextualElement) {
         var dom = env.dom;
-        var hooks = env.hooks, element = hooks.element;
+        var hooks = env.hooks, inline = hooks.inline, element = hooks.element;
         dom.detectNamespace(contextualElement);
         var fragment;
         if (env.useFragmentCache && dom.canClone) {
@@ -7490,8 +7519,125 @@ define('rose/templates/modal/confirm-reset', ['exports'], function (exports) {
         } else {
           fragment = this.build(dom);
         }
-        var element0 = dom.childAt(fragment, [6, 3]);
-        element(env, element0, context, "action", ["resetRose"], {});
+        var element0 = dom.childAt(fragment, [6]);
+        var element1 = dom.childAt(element0, [3]);
+        var morph0 = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
+        var morph1 = dom.createMorphAt(dom.childAt(fragment, [4, 1]),0,0);
+        var morph2 = dom.createMorphAt(dom.childAt(element0, [1]),1,1);
+        var morph3 = dom.createMorphAt(element1,1,1);
+        inline(env, morph0, context, "t", ["resetConfigModal.question"], {});
+        inline(env, morph1, context, "t", ["resetConfigModal.warning"], {});
+        inline(env, morph2, context, "t", ["action.cancel"], {});
+        element(env, element1, context, "action", ["resetConfig"], {});
+        inline(env, morph3, context, "t", ["action.confirm"], {});
+        return fragment;
+      }
+    };
+  }()));
+
+});
+define('rose/templates/modal/reset-data', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    return {
+      isHTMLBars: true,
+      revision: "Ember@1.12.1",
+      blockParams: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      build: function build(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("i");
+        dom.setAttribute(el1,"class","close icon");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"class","header");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"class","content");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"class","actions");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","ui black button");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","ui positive button");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      render: function render(context, env, contextualElement) {
+        var dom = env.dom;
+        var hooks = env.hooks, inline = hooks.inline, element = hooks.element;
+        dom.detectNamespace(contextualElement);
+        var fragment;
+        if (env.useFragmentCache && dom.canClone) {
+          if (this.cachedFragment === null) {
+            fragment = this.build(dom);
+            if (this.hasRendered) {
+              this.cachedFragment = fragment;
+            } else {
+              this.hasRendered = true;
+            }
+          }
+          if (this.cachedFragment) {
+            fragment = dom.cloneNode(this.cachedFragment, true);
+          }
+        } else {
+          fragment = this.build(dom);
+        }
+        var element0 = dom.childAt(fragment, [6]);
+        var element1 = dom.childAt(element0, [3]);
+        var morph0 = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
+        var morph1 = dom.createMorphAt(dom.childAt(fragment, [4]),1,1);
+        var morph2 = dom.createMorphAt(dom.childAt(element0, [1]),1,1);
+        var morph3 = dom.createMorphAt(element1,1,1);
+        inline(env, morph0, context, "t", ["resetDataModal.question"], {});
+        inline(env, morph1, context, "t", ["resetDataModal.warning"], {});
+        inline(env, morph2, context, "t", ["action.cancel"], {});
+        element(env, element1, context, "action", ["deleteData"], {});
+        inline(env, morph3, context, "t", ["action.confirm"], {});
         return fragment;
       }
     };
@@ -7711,6 +7857,33 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    Last Update: ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
@@ -7775,7 +7948,8 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var element5 = dom.childAt(element1, [7]);
         var element6 = dom.childAt(element5, [5]);
         var element7 = dom.childAt(element1, [9]);
-        var element8 = dom.childAt(element7, [5]);
+        var element8 = dom.childAt(element1, [11]);
+        var element9 = dom.childAt(element8, [5]);
         var morph0 = dom.createMorphAt(element0,1,1);
         var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
         var morph2 = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
@@ -7790,28 +7964,36 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var morph11 = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
         var morph12 = dom.createMorphAt(dom.childAt(element5, [3]),0,0);
         var morph13 = dom.createMorphAt(element6,0,0);
-        var morph14 = dom.createMorphAt(dom.childAt(element7, [1]),0,0);
-        var morph15 = dom.createMorphAt(dom.childAt(element7, [3]),0,0);
-        var morph16 = dom.createMorphAt(element8,0,0);
+        var morph14 = dom.createMorphAt(element5,7,7);
+        var morph15 = dom.createMorphAt(dom.childAt(element7, [1]),0,0);
+        var morph16 = dom.createMorphAt(dom.childAt(element7, [3]),0,0);
+        var morph17 = dom.createMorphAt(element7,5,5);
+        var morph18 = dom.createMorphAt(dom.childAt(element8, [1]),0,0);
+        var morph19 = dom.createMorphAt(dom.childAt(element8, [3]),0,0);
+        var morph20 = dom.createMorphAt(element9,0,0);
         inline(env, morph0, context, "t", ["settings.title"], {});
         inline(env, morph1, context, "t", ["settings.subtitle"], {});
         inline(env, morph2, context, "t", ["settings.language"], {});
         inline(env, morph3, context, "t", ["settings.languageLabel"], {});
-        inline(env, morph4, context, "ui-dropdown", [], {"class": "ui selection dropdown", "value": get(env, context, "userSettings.currentLanguage"), "content": get(env, context, "availableLanguages"), "optionLabelPath": "content.language", "optionValuePath": "content.code"});
+        inline(env, morph4, context, "ui-dropdown", [], {"class": "ui selection dropdown", "value": get(env, context, "settings.user.currentLanguage"), "content": get(env, context, "availableLanguages"), "optionLabelPath": "content.language", "optionValuePath": "content.code"});
         inline(env, morph5, context, "t", ["settings.commentReminder"], {});
         inline(env, morph6, context, "t", ["settings.commentReminderLabel"], {});
-        inline(env, morph7, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.commentReminderIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "userSettings.commentReminderIsEnabled")], {}), "action": "saveSettings"});
+        inline(env, morph7, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "settings.user.commentReminderIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "settings.user.commentReminderIsEnabled")], {}), "action": "saveSettings"});
         inline(env, morph8, context, "t", ["settings.extraFeatures"], {});
         inline(env, morph9, context, "t", ["settings.extraFeaturesLabel"], {});
-        inline(env, morph10, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "userSettings.developerModeIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "userSettings.developerModeIsEnabled")], {}), "action": "saveSettings"});
+        inline(env, morph10, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "settings.user.developerModeIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "settings.user.developerModeIsEnabled")], {}), "action": "saveSettings"});
         inline(env, morph11, context, "t", ["settings.manualUpdate"], {});
         inline(env, morph12, context, "t", ["settings.manualUpdateLabel"], {});
         element(env, element6, context, "action", ["manualUpdate"], {});
         inline(env, morph13, context, "t", ["action.update"], {});
-        inline(env, morph14, context, "t", ["settings.resetRose"], {});
-        inline(env, morph15, context, "t", ["settings.resetRoseLabel"], {});
-        element(env, element8, context, "action", ["confirm"], {});
-        inline(env, morph16, context, "t", ["action.reset"], {});
+        inline(env, morph14, context, "moment", [get(env, context, "settings.system.timestamp")], {});
+        inline(env, morph15, context, "t", ["settings.autoUpdate"], {});
+        inline(env, morph16, context, "t", ["settings.autoUpdateLabel"], {});
+        inline(env, morph17, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "settings.system.autoUpdateIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "settings.system.autoUpdateIsEnabled")], {}), "action": "saveSettings"});
+        inline(env, morph18, context, "t", ["settings.resetRose"], {});
+        inline(env, morph19, context, "t", ["settings.resetRoseLabel"], {});
+        element(env, element9, context, "action", ["confirm"], {});
+        inline(env, morph20, context, "t", ["action.reset"], {});
         return fragment;
       }
     };
@@ -7989,25 +8171,176 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
       };
     }());
     var child4 = (function() {
+      var child0 = (function() {
+        return {
+          isHTMLBars: true,
+          revision: "Ember@1.12.1",
+          blockParams: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          build: function build(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("          ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          render: function render(context, env, contextualElement) {
+            var dom = env.dom;
+            var hooks = env.hooks, inline = hooks.inline;
+            dom.detectNamespace(contextualElement);
+            var fragment;
+            if (env.useFragmentCache && dom.canClone) {
+              if (this.cachedFragment === null) {
+                fragment = this.build(dom);
+                if (this.hasRendered) {
+                  this.cachedFragment = fragment;
+                } else {
+                  this.hasRendered = true;
+                }
+              }
+              if (this.cachedFragment) {
+                fragment = dom.cloneNode(this.cachedFragment, true);
+              }
+            } else {
+              fragment = this.build(dom);
+            }
+            var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
+            inline(env, morph0, context, "t", ["sidebarMenu.comments"], {});
+            return fragment;
+          }
+        };
+      }());
+      var child1 = (function() {
+        return {
+          isHTMLBars: true,
+          revision: "Ember@1.12.1",
+          blockParams: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          build: function build(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("          ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          render: function render(context, env, contextualElement) {
+            var dom = env.dom;
+            var hooks = env.hooks, inline = hooks.inline;
+            dom.detectNamespace(contextualElement);
+            var fragment;
+            if (env.useFragmentCache && dom.canClone) {
+              if (this.cachedFragment === null) {
+                fragment = this.build(dom);
+                if (this.hasRendered) {
+                  this.cachedFragment = fragment;
+                } else {
+                  this.hasRendered = true;
+                }
+              }
+              if (this.cachedFragment) {
+                fragment = dom.cloneNode(this.cachedFragment, true);
+              }
+            } else {
+              fragment = this.build(dom);
+            }
+            var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
+            inline(env, morph0, context, "t", ["sidebarMenu.interactions"], {});
+            return fragment;
+          }
+        };
+      }());
+      var child2 = (function() {
+        return {
+          isHTMLBars: true,
+          revision: "Ember@1.12.1",
+          blockParams: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          build: function build(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("          ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          render: function render(context, env, contextualElement) {
+            var dom = env.dom;
+            var hooks = env.hooks, inline = hooks.inline;
+            dom.detectNamespace(contextualElement);
+            var fragment;
+            if (env.useFragmentCache && dom.canClone) {
+              if (this.cachedFragment === null) {
+                fragment = this.build(dom);
+                if (this.hasRendered) {
+                  this.cachedFragment = fragment;
+                } else {
+                  this.hasRendered = true;
+                }
+              }
+              if (this.cachedFragment) {
+                fragment = dom.cloneNode(this.cachedFragment, true);
+              }
+            } else {
+              fragment = this.build(dom);
+            }
+            var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
+            inline(env, morph0, context, "t", ["sidebarMenu.privacySettings"], {});
+            return fragment;
+          }
+        };
+      }());
       return {
         isHTMLBars: true,
         revision: "Ember@1.12.1",
-        blockParams: 0,
+        blockParams: 1,
         cachedFragment: null,
         hasRendered: false,
         build: function build(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
+          var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","item");
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("div");
+          dom.setAttribute(el2,"class","menu");
+          var el3 = dom.createTextNode("\n");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("      ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n");
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
+        render: function render(context, env, contextualElement, blockArguments) {
           var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
+          var hooks = env.hooks, set = hooks.set, content = hooks.content, get = hooks.get, block = hooks.block;
           dom.detectNamespace(contextualElement);
           var fragment;
           if (env.useFragmentCache && dom.canClone) {
@@ -8025,357 +8358,22 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
           } else {
             fragment = this.build(dom);
           }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.comments"], {});
+          var element1 = dom.childAt(fragment, [1]);
+          var element2 = dom.childAt(element1, [3]);
+          var morph0 = dom.createMorphAt(element1,1,1);
+          var morph1 = dom.createMorphAt(element2,1,1);
+          var morph2 = dom.createMorphAt(element2,2,2);
+          var morph3 = dom.createMorphAt(element2,3,3);
+          set(env, context, "network", blockArguments[0]);
+          content(env, morph0, context, "network.descriptiveName");
+          block(env, morph1, context, "link-to", ["comments", get(env, context, "network.name")], {"class": "item"}, child0, null);
+          block(env, morph2, context, "link-to", ["interactions", get(env, context, "network.name")], {"class": "item"}, child1, null);
+          block(env, morph3, context, "link-to", ["privacysettings", get(env, context, "network.name")], {"class": "item"}, child2, null);
           return fragment;
         }
       };
     }());
     var child5 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.interactions"], {});
-          return fragment;
-        }
-      };
-    }());
-    var child6 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.privacySettings"], {});
-          return fragment;
-        }
-      };
-    }());
-    var child7 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.comments"], {});
-          return fragment;
-        }
-      };
-    }());
-    var child8 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.interactions"], {});
-          return fragment;
-        }
-      };
-    }());
-    var child9 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.privacySettings"], {});
-          return fragment;
-        }
-      };
-    }());
-    var child10 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.comments"], {});
-          return fragment;
-        }
-      };
-    }());
-    var child11 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.interactions"], {});
-          return fragment;
-        }
-      };
-    }());
-    var child12 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.privacySettings"], {});
-          return fragment;
-        }
-      };
-    }());
-    var child13 = (function() {
       var child0 = (function() {
         return {
           isHTMLBars: true,
@@ -8482,7 +8480,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
         }
       };
     }());
-    var child14 = (function() {
+    var child6 = (function() {
       return {
         isHTMLBars: true,
         revision: "Ember@1.12.1",
@@ -8525,7 +8523,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
         }
       };
     }());
-    var child15 = (function() {
+    var child7 = (function() {
       return {
         isHTMLBars: true,
         revision: "Ember@1.12.1",
@@ -8599,73 +8597,11 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
         var el3 = dom.createTextNode("\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","item");
-        var el3 = dom.createTextNode("\n    Facebook\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3,"class","menu");
-        var el4 = dom.createTextNode("\n");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("    ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","item");
-        var el3 = dom.createTextNode("\n    Google+\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3,"class","menu");
-        var el4 = dom.createTextNode("\n");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("    ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","item");
-        var el3 = dom.createTextNode("\n    Twitter\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3,"class","menu");
-        var el4 = dom.createTextNode("\n");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("    ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
         dom.setAttribute(el2,"class","header item");
@@ -8709,46 +8645,27 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
         } else {
           fragment = this.build(dom);
         }
-        var element1 = dom.childAt(fragment, [0]);
-        var element2 = dom.childAt(element1, [8, 1]);
-        var element3 = dom.childAt(element1, [10, 1]);
-        var element4 = dom.childAt(element1, [12, 1]);
-        var morph0 = dom.createMorphAt(element1,1,1);
-        var morph1 = dom.createMorphAt(element1,2,2);
-        var morph2 = dom.createMorphAt(element1,3,3);
-        var morph3 = dom.createMorphAt(element1,4,4);
-        var morph4 = dom.createMorphAt(dom.childAt(element1, [6]),1,1);
-        var morph5 = dom.createMorphAt(element2,1,1);
-        var morph6 = dom.createMorphAt(element2,2,2);
-        var morph7 = dom.createMorphAt(element2,3,3);
-        var morph8 = dom.createMorphAt(element3,1,1);
-        var morph9 = dom.createMorphAt(element3,2,2);
-        var morph10 = dom.createMorphAt(element3,3,3);
-        var morph11 = dom.createMorphAt(element4,1,1);
-        var morph12 = dom.createMorphAt(element4,2,2);
-        var morph13 = dom.createMorphAt(element4,3,3);
-        var morph14 = dom.createMorphAt(dom.childAt(element1, [14]),1,1);
-        var morph15 = dom.createMorphAt(element1,16,16);
-        var morph16 = dom.createMorphAt(element1,17,17);
-        var morph17 = dom.createMorphAt(element1,18,18);
+        var element3 = dom.childAt(fragment, [0]);
+        var morph0 = dom.createMorphAt(element3,1,1);
+        var morph1 = dom.createMorphAt(element3,2,2);
+        var morph2 = dom.createMorphAt(element3,3,3);
+        var morph3 = dom.createMorphAt(element3,4,4);
+        var morph4 = dom.createMorphAt(dom.childAt(element3, [6]),1,1);
+        var morph5 = dom.createMorphAt(element3,8,8);
+        var morph6 = dom.createMorphAt(dom.childAt(element3, [10]),1,1);
+        var morph7 = dom.createMorphAt(element3,12,12);
+        var morph8 = dom.createMorphAt(element3,13,13);
+        var morph9 = dom.createMorphAt(element3,14,14);
         block(env, morph0, context, "link-to", ["index"], {"class": "header item"}, child0, null);
         block(env, morph1, context, "link-to", ["diary"], {"class": "item"}, child1, null);
         block(env, morph2, context, "link-to", ["backup"], {"class": "item"}, child2, null);
         block(env, morph3, context, "link-to", ["settings"], {"class": "item"}, child3, null);
         inline(env, morph4, context, "t", ["sidebarMenu.networks"], {});
-        block(env, morph5, context, "link-to", ["comments", "facebook"], {"class": "item"}, child4, null);
-        block(env, morph6, context, "link-to", ["interactions", "facebook"], {"class": "item"}, child5, null);
-        block(env, morph7, context, "link-to", ["privacysettings", "facebook"], {"class": "item"}, child6, null);
-        block(env, morph8, context, "link-to", ["comments", "google"], {"class": "item"}, child7, null);
-        block(env, morph9, context, "link-to", ["interactions", "google"], {"class": "item"}, child8, null);
-        block(env, morph10, context, "link-to", ["privacysettings", "google"], {"class": "item"}, child9, null);
-        block(env, morph11, context, "link-to", ["comments", "twitter"], {"class": "item"}, child10, null);
-        block(env, morph12, context, "link-to", ["interactions", "twitter"], {"class": "item"}, child11, null);
-        block(env, morph13, context, "link-to", ["privacysettings", "twitter"], {"class": "item"}, child12, null);
-        inline(env, morph14, context, "t", ["sidebarMenu.more"], {});
-        block(env, morph15, context, "liquid-if", [get(env, context, "userSettings.developerModeIsEnabled")], {}, child13, null);
-        block(env, morph16, context, "link-to", ["help"], {"class": "item"}, child14, null);
-        block(env, morph17, context, "link-to", ["about"], {"class": "item"}, child15, null);
+        block(env, morph5, context, "each", [get(env, context, "networks")], {}, child4, null);
+        inline(env, morph6, context, "t", ["sidebarMenu.more"], {});
+        block(env, morph7, context, "liquid-if", [get(env, context, "settings.user.developerModeIsEnabled")], {}, child5, null);
+        block(env, morph8, context, "link-to", ["help"], {"class": "item"}, child6, null);
+        block(env, morph9, context, "link-to", ["about"], {"class": "item"}, child7, null);
         return fragment;
       }
     };
@@ -9371,6 +9288,26 @@ define('rose/tests/controllers/interactions.jshint', function () {
   });
 
 });
+define('rose/tests/controllers/modal/reset-config.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - controllers/modal');
+  test('controllers/modal/reset-config.js should pass jshint', function() { 
+    ok(true, 'controllers/modal/reset-config.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/controllers/modal/reset-data.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - controllers/modal');
+  test('controllers/modal/reset-data.js should pass jshint', function() { 
+    ok(true, 'controllers/modal/reset-data.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/controllers/settings.jshint', function () {
 
   'use strict';
@@ -9468,13 +9405,13 @@ define('rose/tests/initializers/kango-api.jshint', function () {
   });
 
 });
-define('rose/tests/initializers/user-settings.jshint', function () {
+define('rose/tests/initializers/settings.jshint', function () {
 
   'use strict';
 
   module('JSHint - initializers');
-  test('initializers/user-settings.js should pass jshint', function() { 
-    ok(true, 'initializers/user-settings.js should pass jshint.'); 
+  test('initializers/settings.js should pass jshint', function() { 
+    ok(true, 'initializers/settings.js should pass jshint.'); 
   });
 
 });
@@ -9694,7 +9631,7 @@ define('rose/tests/routes/application.jshint', function () {
 
   module('JSHint - routes');
   test('routes/application.js should pass jshint', function() { 
-    ok(true, 'routes/application.js should pass jshint.'); 
+    ok(false, 'routes/application.js should pass jshint.\nroutes/application.js: line 17, col 35, Missing semicolon.\nroutes/application.js: line 21, col 7, Missing semicolon.\n\n2 errors'); 
   });
 
 });
@@ -9785,6 +9722,16 @@ define('rose/tests/routes/study-creator.jshint', function () {
   module('JSHint - routes');
   test('routes/study-creator.js should pass jshint', function() { 
     ok(true, 'routes/study-creator.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/services/settings.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - services');
+  test('services/settings.js should pass jshint', function() { 
+    ok(true, 'services/settings.js should pass jshint.'); 
   });
 
 });
@@ -10091,6 +10038,58 @@ define('rose/tests/unit/controllers/interactions-test.jshint', function () {
   });
 
 });
+define('rose/tests/unit/controllers/modal/confirm-reset-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('controller:modal/confirm-reset', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  // Replace this with your real tests.
+  ember_qunit.test('it exists', function (assert) {
+    var controller = this.subject();
+    assert.ok(controller);
+  });
+
+});
+define('rose/tests/unit/controllers/modal/confirm-reset-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/controllers/modal');
+  test('unit/controllers/modal/confirm-reset-test.js should pass jshint', function() { 
+    ok(true, 'unit/controllers/modal/confirm-reset-test.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/unit/controllers/modal/reset-data-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('controller:modal/reset-data', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  // Replace this with your real tests.
+  ember_qunit.test('it exists', function (assert) {
+    var controller = this.subject();
+    assert.ok(controller);
+  });
+
+});
+define('rose/tests/unit/controllers/modal/reset-data-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/controllers/modal');
+  test('unit/controllers/modal/reset-data-test.js should pass jshint', function() { 
+    ok(true, 'unit/controllers/modal/reset-data-test.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/unit/controllers/settings-test', ['ember-qunit'], function (ember_qunit) {
 
   'use strict';
@@ -10198,6 +10197,41 @@ define('rose/tests/unit/initializers/kango-api-test.jshint', function () {
   module('JSHint - unit/initializers');
   test('unit/initializers/kango-api-test.js should pass jshint', function() { 
     ok(true, 'unit/initializers/kango-api-test.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/unit/initializers/settings-test', ['ember', 'rose/initializers/settings', 'qunit'], function (Ember, settings, qunit) {
+
+  'use strict';
+
+  var registry, application;
+
+  qunit.module('Unit | Initializer | settings', {
+    beforeEach: function beforeEach() {
+      Ember['default'].run(function () {
+        application = Ember['default'].Application.create();
+        registry = application.registry;
+        application.deferReadiness();
+      });
+    }
+  });
+
+  // Replace this with your real tests.
+  qunit.test('it works', function (assert) {
+    settings.initialize(registry, application);
+
+    // you would normally confirm the results of the initializer here
+    assert.ok(true);
+  });
+
+});
+define('rose/tests/unit/initializers/settings-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/initializers');
+  test('unit/initializers/settings-test.js should pass jshint', function() { 
+    ok(true, 'unit/initializers/settings-test.js should pass jshint.'); 
   });
 
 });
@@ -10921,6 +10955,32 @@ define('rose/tests/unit/routes/study-creator-test.jshint', function () {
   });
 
 });
+define('rose/tests/unit/services/settings-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('service:settings', 'Unit | Service | settings', {
+    // Specify the other units that are required for this test.
+    // needs: ['service:foo']
+  });
+
+  // Replace this with your real tests.
+  ember_qunit.test('it exists', function (assert) {
+    var service = this.subject();
+    assert.ok(service);
+  });
+
+});
+define('rose/tests/unit/services/settings-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/services');
+  test('unit/services/settings-test.js should pass jshint', function() { 
+    ok(true, 'unit/services/settings-test.js should pass jshint.'); 
+  });
+
+});
 define('rose/transitions/cross-fade', ['exports', 'liquid-fire'], function (exports, liquid_fire) {
 
   'use strict';
@@ -11413,7 +11473,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.d3d182aa"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.536ef0cc"});
 }
 
 /* jshint ignore:end */

@@ -169,7 +169,6 @@ export default (function () {
       else {
         $('.ui.rating').remove();
       }
-      this._ready = true;
     }.bind(this));
   };
 
@@ -194,25 +193,18 @@ export default (function () {
 
   FacebookUI.prototype._getTemplate = function(template) {
     var promise;
-    var cachedTemplates = this._templates;
     promise = new RSVP.Promise(function(resolve) {
-      if (cachedTemplates[template] !== undefined) {
-        return resolve(cachedTemplates[template]);
-      }
-      else {
-        var details, resource;
-        resource = 'res/templates/' + template + '.hbs';
-        details = {
-          url: resource,
-          method: 'GET',
-          async: false,
-          contentType: 'text'
-        };
-        return kango.xhr.send(details, function(data) {
-          cachedTemplates[template] = data.response;
-          return resolve(data.response);
-        });
-      }
+      var details, resource;
+      resource = 'res/templates/' + template + '.hbs';
+      details = {
+        url: resource,
+        method: 'GET',
+        async: false,
+        contentType: 'text'
+      };
+      return kango.xhr.send(details, function(data) {
+        return resolve(data.response);
+      });
     });
     return promise;
   };
@@ -226,8 +218,6 @@ export default (function () {
         var extractorResult = ExtractorEngine.extractFieldsFromContainer($container, this._statusUpdateExtractor);
 
         //Show sidebar
-        this._commentMode = true;
-        $('.ui.sidebar > .form').show();
         $('.ui.sidebar').sidebar('push page');
         $('.ui.sidebar').sidebar('show');
 
@@ -293,7 +283,6 @@ export default (function () {
 
     //Save a comment
     $('body').on('click', '.sidebar .save.button', function() {
-      if (this._commentMode) {
         var comment = {};
         comment.text = [];
         $('.sidebar textarea').each(function getVals(i) {
@@ -309,17 +298,6 @@ export default (function () {
         this._activeComment.save();
         $('.ui.sidebar').sidebar('hide');
         $('.ui.sidebar.uncover').sidebar('hide');
-      }
-      else {
-        var engage = {};
-        engage.engage = true;
-        engage.rating = $('.ui.rating').rating('get rating') || [];
-        engage.network = 'facebook';
-        engage.createdAt = (new Date()).toJSON();
-        $('.ui.sidebar').sidebar('hide');
-        $('.ui.sidebar.uncover').sidebar('hide');
-        this._comments.create(engage);
-      }
     }.bind(this));
 
   };

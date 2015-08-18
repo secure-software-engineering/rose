@@ -1,0 +1,16 @@
+<i class="close icon"></i>
+<div class="header">
+  {{t "resetDataModal.question"}}
+</div>
+<div class="content">
+  {{t "resetDataModal.warning"}}
+</div>
+<div class="actions">
+  <div class="ui black button">
+    {{t "action.cancel"}}
+  </div>
+  <div class="ui positive button"
+       {{action 'deleteData'}}>
+    {{t "action.confirm"}}
+  </div>
+</div>

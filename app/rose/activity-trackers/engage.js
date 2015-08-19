@@ -110,6 +110,7 @@ let checkConditions = (clickActivities) => {
   _pageActivities = _.union(_pageActivities, clickActivities || []);
   let checkTime = _currentTime - checkInterval;
   let idleTime = _currentTime - idleInterval;
+  let beforIdleTime = _currentTime - idleInterval * 2;
 
   /**
    * group activity by
@@ -123,7 +124,7 @@ let checkConditions = (clickActivities) => {
     else if (activity.date > idleTime) {
       return 'recent';
     }
-    else if (activity.date > _surveyTime) {
+    else if (activity.date > beforIdleTime) {
       return 'old';
     }
     else {
@@ -178,7 +179,7 @@ let checkConditions = (clickActivities) => {
   tmpActivity = _.find(_windowActivities, activityInIntervall(checkTime, idleTime, 'active'));
   let recentActiveTabs = (tmpActivity !== undefined && tmpActivity.value.active);
 
-  tmpActivity = _.find(_windowActivities, activityInIntervall(idleTime, _surveyTime, 'active'));
+  tmpActivity = _.find(_windowActivities, activityInIntervall(idleTime, beforIdleTime, 'active'));
   let oldActiveTabs    = (tmpActivity !== undefined && tmpActivity.value.active);
 
   //openTabs
@@ -187,7 +188,7 @@ let checkConditions = (clickActivities) => {
   tmpActivity = _.find(_windowActivities, activityInIntervall(checkTime, idleTime, 'open'));
   let recentOpenTabs = (tmpActivity !== undefined && tmpActivity.value.open);
 
-  tmpActivity = _.find(_windowActivities, activityInIntervall(idleTime, _surveyTime, 'open'));
+  tmpActivity = _.find(_windowActivities, activityInIntervall(idleTime, beforIdleTime, 'open'));
   let oldOpenTabs = (tmpActivity !== undefined && tmpActivity.value.open);
 
   let anyOpenTabs    = recentOpenTabs || oldOpenTabs;

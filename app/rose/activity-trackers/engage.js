@@ -19,14 +19,17 @@ You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 let type = 'engage';
+let network = 'facebook.com';
 let checkInterval = 5000;
-let idleInterval = 120000;
-let surveyInterval = 3600000;
+let idleInterval = 180000;
+let surveyInterval = 600000;
 let _windowActivities;
-let _pageActivities;
+let _pageActivities = [];
 let _engageActivities;
 let lastEngage,lastDisengage,_currentTime,_surveyTime;
 let running = false;
+
+let token, control, limit;
 
 let store = function(engage) {
       _engageActivities = _engageActivities || [];
@@ -48,6 +51,11 @@ let check = () => {
 };
 
 let checkAnyTabPresent = (windowActivities) => {
+  if (windowActivities === null) {
+    console.log('No Tabs opened ever');
+    running = false;
+    return;
+  }
   _windowActivities = windowActivities;
 
   //check if any tab in the history since surveyinterval is present otherwise quit
@@ -89,17 +97,17 @@ let checkSurveyInterval = (engageActivities) => {
 };
 
 let getMousemoveActivity = (scrollActivities) => {
-  _pageActivities = scrollActivities;
+  _pageActivities = scrollActivities || [];
   kango.invokeAsyncCallback('localforage.getItem', 'mousemove-activity-records', getClickActivity);
 };
 
 let getClickActivity = (mousemoveActivities) => {
-  _pageActivities = _.union(_pageActivities, mousemoveActivities);
+  _pageActivities = _.union(_pageActivities, mousemoveActivities || []);
   kango.invokeAsyncCallback('localforage.getItem', 'click-activity-records', checkConditions);
 };
 
 let checkConditions = (clickActivities) => {
-  _pageActivities = _.union(_pageActivities, clickActivities);
+  _pageActivities = _.union(_pageActivities, clickActivities || []);
   let checkTime = _currentTime - checkInterval;
   let idleTime = _currentTime - idleInterval;
 
@@ -191,38 +199,32 @@ let checkConditions = (clickActivities) => {
 
   //debug
   let logData = {lastEngage, lastDisengage, open, active, recentActiveTabs, oldActiveTabs, recentPageActivity, oldPageActivity, anyOpenTabs};
-
+  console.log(logData);
   /*
    * CHECK CONDITIONS
    */
   let engage;
   if (active && (!recentActiveTabs || !recentPageActivity))  {
     console.log('engaging: a tab is active after no recent activity');
-    console.log(logData);
     engage = true;
   }
   else if (open && !anyOpenTabs) {
     console.log('engaging: a tab is opened after no tab was open');
-    console.log(logData);
     engage = true;
   }
   else if (!open && (recentPageActivity || recentActiveTabs)) {
     console.log('disengaging: last tab is closed after recent activity');
-    console.log(logData);
     engage = false;
   }
   else if (open && !active && !recentActiveTabs && oldActiveTabs) {
     console.log('disengaging: no recent active tabs any more');
-    console.log(logData);
     engage = false;
   }
   else if (active && !recentPageActivity && oldPageActivity) {
     console.log('disengaging: active tab, but no recent page activity');
-    console.log(logData);
     engage = false;
   }
   else {
-    console.log(logData);
     running = false;
     return;
   }
@@ -230,19 +232,48 @@ let checkConditions = (clickActivities) => {
   //store when last dis-/engage has passed longer than survey interval
   if ((!engage && (lastDisengage === undefined || lastDisengage < _surveyTime)) || (engage && (lastEngage === undefined || lastEngage < _surveyTime))) {
     //store and trigger
-    store(engage);
-    console.log('and stored');
-    kango.browser.tabs.getCurrent(function(tab) {
-      tab.dispatchMessage('TriggerSurvey',engage);
-    });
+    token = Date.now();
+    limit = 0;
+    sendTrigger(engage);
   }
   else {
     running = false;
   }
 };
 
+let sendTrigger = (engage) => {
+    if (token === control) {
+      console.log((!engage ? 'Dise' : 'E') + 'ngage survey triggered and stored');
+      store(engage);
+    }
+    else {
+      if (limit < 5) {
+        console.log('Try to reach content script. Attempt: ' + (limit++));
+
+        kango.browser.tabs.getCurrent(function(tab) {
+          if (!engage || (new RegExp('^https:\/\/[\w\.\-]*(' + network.replace(/\./g, '\\$&') + ')(\/|$)')).test(tab.getUrl())) {
+            if (limit % 3 === 0 ) {
+              tab.navigate(tab.getUrl());
+            }
+            else {
+              tab.dispatchMessage('TriggerSurvey', {engage, token});
+            }
+          }
+        });
+        setTimeout(sendTrigger, 1000 + limit*1000, engage);
+      }
+      else {
+        console.log('Failed to reach content script.');
+        running = false;
+      }
+    }
+};
+
 let start = function() {
   setInterval(check, checkInterval);
+  kango.addMessageListener('TriggerSurveyReceived', (event) => {
+    control = event.data;
+  });
 };
 
 export default {

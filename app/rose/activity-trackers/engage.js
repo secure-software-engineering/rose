@@ -23,9 +23,7 @@ let network = 'facebook.com';
 let checkInterval = 5000;
 let idleInterval = 180000;
 let surveyInterval = 600000;
-let _windowActivities;
-let _pageActivities = [];
-let _engageActivities;
+let _windowActivities, _pageActivities, _engageActivities, _loginActivities;
 let lastEngage,lastDisengage,_currentTime,_surveyTime;
 let running = false;
 
@@ -103,11 +101,20 @@ let getMousemoveActivity = (scrollActivities) => {
 
 let getClickActivity = (mousemoveActivities) => {
   _pageActivities = _.union(_pageActivities, mousemoveActivities || []);
-  kango.invokeAsyncCallback('localforage.getItem', 'click-activity-records', checkConditions);
+  kango.invokeAsyncCallback('localforage.getItem', 'click-activity-records', getLoginActivity);
 };
 
-let checkConditions = (clickActivities) => {
+let getLoginActivity = (clickActivities) => {
   _pageActivities = _.union(_pageActivities, clickActivities || []);
+  kango.invokeAsyncCallback('localforage.getItem', 'fb-login-activity-records', checkConditions);
+};
+
+let checkConditions = (loginActivities) => {
+  _loginActivities = loginActivities || [];
+
+  if (_loginActivities !== []) {
+     _loginActivities = _.sortBy(_loginActivities, 'date').reverse();
+  }
   let checkTime = _currentTime - checkInterval;
   let idleTime = _currentTime - idleInterval;
   let beforIdleTime = _currentTime - idleInterval * 2;
@@ -115,7 +122,7 @@ let checkConditions = (clickActivities) => {
   /**
    * group activity by
    * - their activity status
-   * - the date intervals: now, recent(ideltime), old (suvreytime), too_old (not relevant)
+   * - the date intervals: now, recent(idleTime), old (suvreytime), too_old (not relevant)
    */
   let groupByDate = (activity) => {
     if (activity.date > checkTime) {
@@ -198,8 +205,16 @@ let checkConditions = (clickActivities) => {
 
   let oldPageActivity    = (_pageActivities.old !== undefined);
 
+  //login status
+  let logout = false;
+  if (_loginActivities.length > 1) {
+    if (_loginActivities[0].value === false && _loginActivities[1].value !== false && _loginActivities[0].date > idleTime) {
+      logout = true;
+    }
+  }
+
   //debug
-  let logData = {lastEngage, lastDisengage, open, active, recentActiveTabs, oldActiveTabs, recentPageActivity, oldPageActivity, anyOpenTabs};
+  let logData = {lastEngage, lastDisengage, open, active, recentActiveTabs, oldActiveTabs, recentPageActivity, oldPageActivity, anyOpenTabs, logout};
   console.log(logData);
   /*
    * CHECK CONDITIONS
@@ -212,6 +227,10 @@ let checkConditions = (clickActivities) => {
   else if (open && !anyOpenTabs) {
     console.log('engaging: a tab is opened after no tab was open');
     engage = true;
+  }
+  else if (logout === true) {
+    console.log('disengaging: user performed logout');
+    engage = false;
   }
   else if (!open && (recentPageActivity || recentActiveTabs)) {
     console.log('disengaging: last tab is closed after recent activity');

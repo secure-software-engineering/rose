@@ -81,7 +81,8 @@ let startSurvey1 = () => {
 };
 
 kango.addMessageListener('TriggerSurvey', function(event) {
-  if (event.data){
+  kango.dispatchMessage('TriggerSurveyReceived', event.data.token);
+  if (event.data.engage){
     startSurvey1();
   }
   else {

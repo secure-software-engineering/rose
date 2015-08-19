@@ -4099,7 +4099,9 @@ define('rose/routes/interactions', ['exports', 'ember'], function (exports, Embe
 
   exports['default'] = Ember['default'].Route.extend({
     model: function model(params) {
-      return this.store.find('interaction');
+      return this.store.find('interaction').then(function (records) {
+        return records.filterBy('origin.network', params.network_name);
+      });
     }
   });
 
@@ -9691,7 +9693,7 @@ define('rose/tests/routes/interactions.jshint', function () {
 
   module('JSHint - routes');
   test('routes/interactions.js should pass jshint', function() { 
-    ok(false, 'routes/interactions.js should pass jshint.\nroutes/interactions.js: line 4, col 19, \'params\' is defined but never used.\n\n1 error'); 
+    ok(true, 'routes/interactions.js should pass jshint.'); 
   });
 
 });
@@ -11473,7 +11475,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.536ef0cc"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.e55ffe51"});
 }
 
 /* jshint ignore:end */

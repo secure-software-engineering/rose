@@ -52,8 +52,8 @@ let store = function() {
 };
 
 let checkStatus = async function() {
-  let id = hash($.cookie('c_user'));
-  let loginTmp = (id) ? id : false;
+  let id = $.cookie('c_user');
+  let loginTmp = (id) ? hash(id) : false;
 
   if (login !== loginTmp) {
     login = loginTmp;

@@ -1137,7 +1137,29 @@ define('rose/controllers/modal/reset-data', ['exports', 'ember'], function (expo
   exports['default'] = Ember['default'].Controller.extend({
     actions: {
       deleteData: function deleteData() {
-        alert('NEEDS STORAGE REWORK');
+        var _this = this;
+
+        var modelTypes = ['interaction', 'comment'];
+
+        modelTypes.forEach(function (type) {
+          _this.store.find(type).then(function (records) {
+            records.invoke('deleteRecord');
+            return Ember['default'].RSVP.all(records.invoke('save'));
+          }).then(function () {
+            var adapter = _this.store.adapterFor(type);
+            var namespace = adapter.get('collectionNamespace');
+
+            kango.invokeAsyncCallback('localforage.removeItem', namespace);
+          });
+        });
+
+        this.store.find('diary-entry').then(function (records) {
+          return records.invoke('destroyRecord');
+        });
+
+        ['click', 'fb-login', 'mousemove', 'scroll', 'window'].forEach(function (type) {
+          return kango.invokeAsyncCallback('localforage.removeItem', type + '-activity-records');
+        });
       }
     }
   });
@@ -11475,7 +11497,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.e55ffe51"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.8286ae76"});
 }
 
 /* jshint ignore:end */

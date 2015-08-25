@@ -38,8 +38,9 @@ You can build your own copy of ROSE with the folowing steps:
     ```
     npm install
     ```
+    During install you may get asked a few questions. Just choose the defaults. If progress is halted just press return once.
 
-2. Build custom Semantic UI for facebook overlay
+2. Build custom Semantic UI for facebook overlay:
     ```
     git checkout -- semantic.json
     cd semamtic/
@@ -47,7 +48,7 @@ You can build your own copy of ROSE with the folowing steps:
     cd ..
     ```
 
-3. Build ROSE UI based on Ember
+3. Build ROSE UI based on Ember (You can skip this step. A precompiled version is in the repository)
     ```
     cd rui/
     npm install

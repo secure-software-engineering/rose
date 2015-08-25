@@ -7751,6 +7751,73 @@ define('rose/templates/settings', ['exports'], function (exports) {
   'use strict';
 
   exports['default'] = Ember.HTMLBars.template((function() {
+    var child0 = (function() {
+      return {
+        isHTMLBars: true,
+        revision: "Ember@1.12.1",
+        blockParams: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        build: function build(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","field");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("label");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        render: function render(context, env, contextualElement) {
+          var dom = env.dom;
+          var hooks = env.hooks, inline = hooks.inline, get = hooks.get;
+          dom.detectNamespace(contextualElement);
+          var fragment;
+          if (env.useFragmentCache && dom.canClone) {
+            if (this.cachedFragment === null) {
+              fragment = this.build(dom);
+              if (this.hasRendered) {
+                this.cachedFragment = fragment;
+              } else {
+                this.hasRendered = true;
+              }
+            }
+            if (this.cachedFragment) {
+              fragment = dom.cloneNode(this.cachedFragment, true);
+            }
+          } else {
+            fragment = this.build(dom);
+          }
+          var element0 = dom.childAt(fragment, [1]);
+          var morph0 = dom.createMorphAt(dom.childAt(element0, [1]),0,0);
+          var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
+          var morph2 = dom.createMorphAt(element0,5,5);
+          inline(env, morph0, context, "t", ["settings.autoUpdateInterval"], {});
+          inline(env, morph1, context, "t", ["settings.autoUpdateIntervalLabel"], {});
+          inline(env, morph2, context, "ui-dropdown", [], {"class": "ui selection dropdown", "value": get(env, context, "settings.system.updateInterval"), "content": get(env, context, "updateIntervals"), "optionLabelPath": "content.label", "optionValuePath": "content.value"});
+          return fragment;
+        }
+      };
+    }());
     return {
       isHTMLBars: true,
       revision: "Ember@1.12.1",
@@ -7913,30 +7980,11 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var el3 = dom.createTextNode("\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
+        var el2 = dom.createTextNode("\n\n");
         dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","field");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
+        var el2 = dom.createComment("");
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
+        var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
         dom.setAttribute(el2,"class","field");
@@ -7971,7 +8019,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
       },
       render: function render(context, env, contextualElement) {
         var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, get = hooks.get, subexpr = hooks.subexpr, element = hooks.element;
+        var hooks = env.hooks, inline = hooks.inline, get = hooks.get, subexpr = hooks.subexpr, element = hooks.element, block = hooks.block;
         dom.detectNamespace(contextualElement);
         var fragment;
         if (env.useFragmentCache && dom.canClone) {
@@ -7989,41 +8037,38 @@ define('rose/templates/settings', ['exports'], function (exports) {
         } else {
           fragment = this.build(dom);
         }
-        var element0 = dom.childAt(fragment, [0, 3]);
-        var element1 = dom.childAt(fragment, [2]);
-        var element2 = dom.childAt(element1, [1]);
-        var element3 = dom.childAt(element1, [3]);
-        var element4 = dom.childAt(element1, [5]);
-        var element5 = dom.childAt(element1, [7]);
-        var element6 = dom.childAt(element5, [5]);
-        var element7 = dom.childAt(element1, [9]);
-        var element8 = dom.childAt(element1, [11]);
-        var element9 = dom.childAt(element1, [13]);
+        var element1 = dom.childAt(fragment, [0, 3]);
+        var element2 = dom.childAt(fragment, [2]);
+        var element3 = dom.childAt(element2, [1]);
+        var element4 = dom.childAt(element2, [3]);
+        var element5 = dom.childAt(element2, [5]);
+        var element6 = dom.childAt(element2, [7]);
+        var element7 = dom.childAt(element6, [5]);
+        var element8 = dom.childAt(element2, [9]);
+        var element9 = dom.childAt(element2, [13]);
         var element10 = dom.childAt(element9, [5]);
-        var morph0 = dom.createMorphAt(element0,1,1);
-        var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
-        var morph2 = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
-        var morph3 = dom.createMorphAt(dom.childAt(element2, [3]),0,0);
-        var morph4 = dom.createMorphAt(element2,5,5);
-        var morph5 = dom.createMorphAt(dom.childAt(element3, [1]),0,0);
-        var morph6 = dom.createMorphAt(dom.childAt(element3, [3]),0,0);
-        var morph7 = dom.createMorphAt(element3,5,5);
-        var morph8 = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
-        var morph9 = dom.createMorphAt(dom.childAt(element4, [3]),0,0);
-        var morph10 = dom.createMorphAt(element4,5,5);
-        var morph11 = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
-        var morph12 = dom.createMorphAt(dom.childAt(element5, [3]),0,0);
-        var morph13 = dom.createMorphAt(element6,0,0);
-        var morph14 = dom.createMorphAt(element5,7,7);
-        var morph15 = dom.createMorphAt(dom.childAt(element7, [1]),0,0);
-        var morph16 = dom.createMorphAt(dom.childAt(element7, [3]),0,0);
-        var morph17 = dom.createMorphAt(element7,5,5);
-        var morph18 = dom.createMorphAt(dom.childAt(element8, [1]),0,0);
-        var morph19 = dom.createMorphAt(dom.childAt(element8, [3]),0,0);
-        var morph20 = dom.createMorphAt(element8,5,5);
-        var morph21 = dom.createMorphAt(dom.childAt(element9, [1]),0,0);
-        var morph22 = dom.createMorphAt(dom.childAt(element9, [3]),0,0);
-        var morph23 = dom.createMorphAt(element10,0,0);
+        var morph0 = dom.createMorphAt(element1,1,1);
+        var morph1 = dom.createMorphAt(dom.childAt(element1, [3]),0,0);
+        var morph2 = dom.createMorphAt(dom.childAt(element3, [1]),0,0);
+        var morph3 = dom.createMorphAt(dom.childAt(element3, [3]),0,0);
+        var morph4 = dom.createMorphAt(element3,5,5);
+        var morph5 = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
+        var morph6 = dom.createMorphAt(dom.childAt(element4, [3]),0,0);
+        var morph7 = dom.createMorphAt(element4,5,5);
+        var morph8 = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
+        var morph9 = dom.createMorphAt(dom.childAt(element5, [3]),0,0);
+        var morph10 = dom.createMorphAt(element5,5,5);
+        var morph11 = dom.createMorphAt(dom.childAt(element6, [1]),0,0);
+        var morph12 = dom.createMorphAt(dom.childAt(element6, [3]),0,0);
+        var morph13 = dom.createMorphAt(element7,0,0);
+        var morph14 = dom.createMorphAt(element6,7,7);
+        var morph15 = dom.createMorphAt(dom.childAt(element8, [1]),0,0);
+        var morph16 = dom.createMorphAt(dom.childAt(element8, [3]),0,0);
+        var morph17 = dom.createMorphAt(element8,5,5);
+        var morph18 = dom.createMorphAt(element2,11,11);
+        var morph19 = dom.createMorphAt(dom.childAt(element9, [1]),0,0);
+        var morph20 = dom.createMorphAt(dom.childAt(element9, [3]),0,0);
+        var morph21 = dom.createMorphAt(element10,0,0);
         inline(env, morph0, context, "t", ["settings.title"], {});
         inline(env, morph1, context, "t", ["settings.subtitle"], {});
         inline(env, morph2, context, "t", ["settings.language"], {});
@@ -8037,19 +8082,17 @@ define('rose/templates/settings', ['exports'], function (exports) {
         inline(env, morph10, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "settings.user.developerModeIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "settings.user.developerModeIsEnabled")], {}), "action": "saveSettings"});
         inline(env, morph11, context, "t", ["settings.manualUpdate"], {});
         inline(env, morph12, context, "t", ["settings.manualUpdateLabel"], {});
-        element(env, element6, context, "action", ["manualUpdate"], {});
+        element(env, element7, context, "action", ["manualUpdate"], {});
         inline(env, morph13, context, "t", ["action.update"], {});
         inline(env, morph14, context, "moment", [get(env, context, "settings.system.timestamp")], {});
         inline(env, morph15, context, "t", ["settings.autoUpdate"], {});
         inline(env, morph16, context, "t", ["settings.autoUpdateLabel"], {});
         inline(env, morph17, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "settings.system.autoUpdateIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "settings.system.autoUpdateIsEnabled")], {}), "action": "saveSettings"});
-        inline(env, morph18, context, "t", ["settings.autoUpdateInterval"], {});
-        inline(env, morph19, context, "t", ["settings.autoUpdateIntervalLabel"], {});
-        inline(env, morph20, context, "ui-dropdown", [], {"class": "ui selection dropdown", "value": get(env, context, "settings.system.updateInterval"), "content": get(env, context, "updateIntervals"), "optionLabelPath": "content.label", "optionValuePath": "content.value"});
-        inline(env, morph21, context, "t", ["settings.resetRose"], {});
-        inline(env, morph22, context, "t", ["settings.resetRoseLabel"], {});
+        block(env, morph18, context, "if", [get(env, context, "settings.system.autoUpdateIsEnabled")], {}, child0, null);
+        inline(env, morph19, context, "t", ["settings.resetRose"], {});
+        inline(env, morph20, context, "t", ["settings.resetRoseLabel"], {});
         element(env, element10, context, "action", ["confirm"], {});
-        inline(env, morph23, context, "t", ["action.reset"], {});
+        inline(env, morph21, context, "t", ["action.reset"], {});
         return fragment;
       }
     };

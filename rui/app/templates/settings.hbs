@@ -51,6 +51,7 @@
                   action="saveSettings"}}
   </div>
 
+  {{#if settings.system.autoUpdateIsEnabled}}
   <div class="field">
     <label>{{t "settings.autoUpdateInterval"}}</label>
     <p>{{t "settings.autoUpdateIntervalLabel"}}</p>
@@ -60,6 +61,7 @@
                     optionLabelPath="content.label"
                     optionValuePath="content.value"}}
   </div>
+  {{/if}}
 
   <div class="field">
     <label>{{t "settings.resetRose"}}</label>

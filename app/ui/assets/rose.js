@@ -140,6 +140,12 @@ define('rose/adapters/kango-adapter', ['exports', 'ember', 'ember-data'], functi
       });
     },
 
+    find: function find(store, type, id, snapshot) {
+      var adapter = this;
+
+      return getItem(adapter.modelNamespace + '/' + id);
+    },
+
     findQuery: function findQuery(store, type, query, recordArray) {
       return getList(this.collectionNamespace).then(function (comments) {
         if (Ember['default'].isEmpty(comments)) {
@@ -1199,7 +1205,15 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
       },
 
       manualUpdate: function manualUpdate() {
+        var _this = this;
+
         kango.dispatchMessage('Update');
+
+        kango.addMessageListener('update-result', function (e) {
+          _this.get('settings.system').reload().then(function () {
+            kango.removeMessageListener('update-result');
+          });
+        });
       }
     }
   });
@@ -9293,7 +9307,7 @@ define('rose/tests/adapters/kango-adapter.jshint', function () {
 
   module('JSHint - adapters');
   test('adapters/kango-adapter.js should pass jshint', function() { 
-    ok(false, 'adapters/kango-adapter.js should pass jshint.\nadapters/kango-adapter.js: line 71, col 39, Expected \'===\' and instead saw \'==\'.\nadapters/kango-adapter.js: line 53, col 43, \'recordArray\' is defined but never used.\nadapters/kango-adapter.js: line 97, col 53, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 108, col 53, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 129, col 51, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 137, col 51, \'reject\' is defined but never used.\n\n6 errors'); 
+    ok(false, 'adapters/kango-adapter.js should pass jshint.\nadapters/kango-adapter.js: line 77, col 39, Expected \'===\' and instead saw \'==\'.\nadapters/kango-adapter.js: line 53, col 35, \'snapshot\' is defined but never used.\nadapters/kango-adapter.js: line 59, col 43, \'recordArray\' is defined but never used.\nadapters/kango-adapter.js: line 103, col 53, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 114, col 53, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 135, col 51, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 143, col 51, \'reject\' is defined but never used.\n\n7 errors'); 
   });
 
 });
@@ -9413,7 +9427,7 @@ define('rose/tests/controllers/settings.jshint', function () {
 
   module('JSHint - controllers');
   test('controllers/settings.js should pass jshint', function() { 
-    ok(true, 'controllers/settings.js should pass jshint.'); 
+    ok(false, 'controllers/settings.js should pass jshint.\ncontrollers/settings.js: line 39, col 9, Missing semicolon.\ncontrollers/settings.js: line 35, col 50, \'e\' is defined but never used.\n\n2 errors'); 
   });
 
 });

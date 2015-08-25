@@ -31,6 +31,12 @@ export default Ember.Controller.extend({
 
     manualUpdate() {
       kango.dispatchMessage('Update');
+
+      kango.addMessageListener('update-result', (e) => {
+        this.get('settings.system').reload().then(() => {
+          kango.removeMessageListener('update-result');
+        });
+      })
     }
   }
 });

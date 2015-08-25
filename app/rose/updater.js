@@ -18,6 +18,7 @@ let update = () => {
 
         configs.set('timestamp', data.timestamp);
         configs.save();
+        kango.dispatchMessage('update-result', {});
         // iterate through networks
         let networks = new NetworkCollection();
         networks.fetch({success: () => {

@@ -88,11 +88,13 @@ define('rose/adapters/interaction', ['exports', 'rose/adapters/kango-adapter'], 
   });
 
 });
-define('rose/adapters/kango-adapter', ['exports', 'ember', 'ember-data'], function (exports, Ember, DS) {
+define('rose/adapters/kango-adapter', ['exports', 'ember', 'ember-data', 'rose/adapters/utils/queue'], function (exports, Ember, DS, LFQueue) {
 
   'use strict';
 
   exports['default'] = DS['default'].Adapter.extend({
+    queue: LFQueue['default'].create(),
+
     createRecord: function createRecord(store, type, snapshot) {
       var collectionNamespace = this.collectionNamespace;
       var modelNamespace = this.modelNamespace;
@@ -100,7 +102,7 @@ define('rose/adapters/kango-adapter', ['exports', 'ember', 'ember-data'], functi
       var serializer = store.serializerFor(snapshot.modelName);
       var recordHash = serializer.serialize(snapshot, { includeId: true });
 
-      return new Ember['default'].RSVP.Promise(function (resolve) {
+      return this.queue.attach(function (resolve) {
         kango.invokeAsyncCallback('localforage.getItem', collectionNamespace, function (list) {
           if (Ember['default'].isEmpty(list)) {
             list = [];
@@ -189,7 +191,7 @@ define('rose/adapters/kango-adapter', ['exports', 'ember', 'ember-data'], functi
       var serializer = store.serializerFor(snapshot.modelName);
       var recordHash = serializer.serialize(snapshot, { includeId: true });
 
-      return new Ember['default'].RSVP.Promise(function (resolve, reject) {
+      return this.queue.attach(function (resolve, reject) {
         kango.invokeAsyncCallback('localforage.setItem', modelNamespace + '/' + id, recordHash, function () {
           Ember['default'].run(null, resolve);
         });
@@ -200,7 +202,7 @@ define('rose/adapters/kango-adapter', ['exports', 'ember', 'ember-data'], functi
       var collectionNamespace = this.collectionNamespace;
       var modelNamespace = this.modelNamespace;
 
-      return new Ember['default'].RSVP.Promise(function (resolve, reject) {
+      return this.queue.attach(function (resolve, reject) {
         kango.invokeAsyncCallback('localforage.getItem', collectionNamespace, function (collection) {
           if (!Ember['default'].isEmpty(collection)) {
             var index = collection.indexOf(modelNamespace + '/' + id);
@@ -264,6 +266,31 @@ define('rose/adapters/user-setting', ['exports', 'rose/adapters/kango-adapter'],
   exports['default'] = KangoAdapter['default'].extend({
     collectionNamespace: 'userSettings',
     modelNamespace: 'userSetting'
+  });
+
+});
+define('rose/adapters/utils/queue', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  var Promise = Ember['default'].RSVP.Promise;
+
+  exports['default'] = Ember['default'].Object.extend({
+    queue: [Promise.resolve()],
+
+    attach: function attach(callback) {
+      var self = this;
+      var queueKey = self.queue.length;
+
+      self.queue[queueKey] = new Ember['default'].RSVP.Promise(function (resolve, reject) {
+        self.queue[queueKey - 1].then(function () {
+          self.queue.splice(queueKey, 1);
+          callback(resolve, reject);
+        });
+      });
+
+      return self.queue[queueKey];
+    }
   });
 
 });
@@ -7341,6 +7368,49 @@ define('rose/templates/interactions', ['exports'], function (exports) {
 
   exports['default'] = Ember.HTMLBars.template((function() {
     var child0 = (function() {
+      var child0 = (function() {
+        return {
+          isHTMLBars: true,
+          revision: "Ember@1.12.1",
+          blockParams: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          build: function build(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("    ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          render: function render(context, env, contextualElement) {
+            var dom = env.dom;
+            var hooks = env.hooks, get = hooks.get, inline = hooks.inline;
+            dom.detectNamespace(contextualElement);
+            var fragment;
+            if (env.useFragmentCache && dom.canClone) {
+              if (this.cachedFragment === null) {
+                fragment = this.build(dom);
+                if (this.hasRendered) {
+                  this.cachedFragment = fragment;
+                } else {
+                  this.hasRendered = true;
+                }
+              }
+              if (this.cachedFragment) {
+                fragment = dom.cloneNode(this.cachedFragment, true);
+              }
+            } else {
+              fragment = this.build(dom);
+            }
+            var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
+            inline(env, morph0, context, "rose-interaction", [], {"model": get(env, context, "interaction")});
+            return fragment;
+          }
+        };
+      }());
       return {
         isHTMLBars: true,
         revision: "Ember@1.12.1",
@@ -7349,17 +7419,13 @@ define('rose/templates/interactions', ['exports'], function (exports) {
         hasRendered: false,
         build: function build(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("  ");
-          dom.appendChild(el0, el1);
           var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
           dom.appendChild(el0, el1);
           return el0;
         },
         render: function render(context, env, contextualElement, blockArguments) {
           var dom = env.dom;
-          var hooks = env.hooks, set = hooks.set, get = hooks.get, inline = hooks.inline;
+          var hooks = env.hooks, set = hooks.set, get = hooks.get, block = hooks.block;
           dom.detectNamespace(contextualElement);
           var fragment;
           if (env.useFragmentCache && dom.canClone) {
@@ -7377,9 +7443,11 @@ define('rose/templates/interactions', ['exports'], function (exports) {
           } else {
             fragment = this.build(dom);
           }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
+          var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
+          dom.insertBoundary(fragment, null);
+          dom.insertBoundary(fragment, 0);
           set(env, context, "interaction", blockArguments[0]);
-          inline(env, morph0, context, "rose-interaction", [], {"model": get(env, context, "interaction")});
+          block(env, morph0, context, "unless", [get(env, context, "interaction.isDeleted")], {}, child0, null);
           return fragment;
         }
       };
@@ -9307,7 +9375,7 @@ define('rose/tests/adapters/kango-adapter.jshint', function () {
 
   module('JSHint - adapters');
   test('adapters/kango-adapter.js should pass jshint', function() { 
-    ok(false, 'adapters/kango-adapter.js should pass jshint.\nadapters/kango-adapter.js: line 77, col 39, Expected \'===\' and instead saw \'==\'.\nadapters/kango-adapter.js: line 53, col 35, \'snapshot\' is defined but never used.\nadapters/kango-adapter.js: line 59, col 43, \'recordArray\' is defined but never used.\nadapters/kango-adapter.js: line 103, col 53, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 114, col 53, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 135, col 51, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 143, col 51, \'reject\' is defined but never used.\n\n7 errors'); 
+    ok(false, 'adapters/kango-adapter.js should pass jshint.\nadapters/kango-adapter.js: line 80, col 39, Expected \'===\' and instead saw \'==\'.\nadapters/kango-adapter.js: line 56, col 35, \'snapshot\' is defined but never used.\nadapters/kango-adapter.js: line 62, col 43, \'recordArray\' is defined but never used.\nadapters/kango-adapter.js: line 106, col 48, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 117, col 48, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 138, col 51, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 146, col 51, \'reject\' is defined but never used.\n\n7 errors'); 
   });
 
 });
@@ -9338,6 +9406,16 @@ define('rose/tests/adapters/user-setting.jshint', function () {
   module('JSHint - adapters');
   test('adapters/user-setting.js should pass jshint', function() { 
     ok(true, 'adapters/user-setting.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/adapters/utils/queue.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - adapters/utils');
+  test('adapters/utils/queue.js should pass jshint', function() { 
+    ok(true, 'adapters/utils/queue.js should pass jshint.'); 
   });
 
 });
@@ -11586,7 +11664,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.2e40efc0"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.cddc91ec"});
 }
 
 /* jshint ignore:end */

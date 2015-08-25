@@ -17,6 +17,6 @@
     "localforage": "~1.2.1",
     "FileSaver": "*",
     "highstock": "~3.0.1",
-    "ember-data": "1.0.0-beta.18"
+    "ember-data": "1.0.0-beta.19.2"
   }
 }

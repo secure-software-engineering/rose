@@ -50,6 +50,12 @@ export default DS.Adapter.extend({
       });
   },
 
+  find: function(store, type, id, snapshot) {
+    var adapter = this;
+
+    return getItem(adapter.modelNamespace + '/' + id);
+  },
+
   findQuery: function(store, type, query, recordArray) {
     return getList(this.collectionNamespace)
       .then(function(comments) {

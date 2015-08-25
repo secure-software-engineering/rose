@@ -52,6 +52,16 @@
   </div>
 
   <div class="field">
+    <label>{{t "settings.autoUpdateInterval"}}</label>
+    <p>{{t "settings.autoUpdateIntervalLabel"}}</p>
+    {{ui-dropdown class="ui selection dropdown"
+                    value=settings.system.updateInterval
+                    content=updateIntervals
+                    optionLabelPath="content.label"
+                    optionValuePath="content.value"}}
+  </div>
+
+  <div class="field">
     <label>{{t "settings.resetRose"}}</label>
     <p>{{t "settings.resetRoseLabel"}}</p>
     <button class="ui red button" {{action "confirm"}}>{{t "action.reset"}}</button>

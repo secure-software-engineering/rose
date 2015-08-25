@@ -58516,21 +58516,34 @@ define("ember/resolver",
 
     if (fullName.parsedName === true) { return fullName; }
 
-    var prefixParts = fullName.split('@');
-    var prefix;
+    var prefix, type, name;
+    var fullNameParts = fullName.split('@');
 
-    if (prefixParts.length === 2) {
-      if (prefixParts[0].split(':')[0] === 'view') {
-        prefixParts[0] = prefixParts[0].split(':')[1];
-        prefixParts[1] = 'view:' + prefixParts[1];
+    // Htmlbars uses helper:@content-helper which collides
+    // with ember-cli namespace detection.
+    // This will be removed in a future release of Htmlbars.
+    if (fullName !== 'helper:@content-helper' &&
+        fullNameParts.length === 2) {
+      var prefixParts = fullNameParts[0].split(':');
+
+      if (prefixParts.length === 2) {
+        prefix = prefixParts[1];
+        type = prefixParts[0];
+        name = fullNameParts[1];
+      } else {
+        var nameParts = fullNameParts[1].split(':');
+
+        prefix = fullNameParts[0];
+        type = nameParts[0];
+        name = nameParts[1];
       }
-
-      prefix = prefixParts[0];
+    } else {
+      fullNameParts = fullName.split(':');
+      type = fullNameParts[0];
+      name = fullNameParts[1];
     }
 
-    var nameParts = prefixParts[prefixParts.length - 1].split(":");
-    var type = nameParts[0], fullNameWithoutType = nameParts[1];
-    var name = fullNameWithoutType;
+    var fullNameWithoutType = name;
     var namespace = get(this, 'namespace');
     var root = namespace;
 
@@ -58980,11 +58993,12 @@ define("ember/container-debug-adapter",
   Ember.Application.initializer({
     name: 'container-debug-adapter',
 
-    initialize: function(container, app) {
+    initialize: function() {
+      var app = arguments[1] || arguments[0];
       var ContainerDebugAdapter = require('ember/container-debug-adapter');
       var Resolver = require('ember/resolver');
 
-      container.register('container-debug-adapter:main', ContainerDebugAdapter);
+      app.register('container-debug-adapter:main', ContainerDebugAdapter);
       app.inject('container-debug-adapter:main', 'namespace', 'application:main');
     }
   });
@@ -72681,7 +72695,7 @@ define("ember/load-initializers",
 
 ;/*!
     localForage -- Offline Storage, Improved
-    Version 1.2.7
+    Version 1.2.8
     https://mozilla.github.io/localForage
     (c) 2013-2015 Mozilla, Apache License 2.0
 */
@@ -74349,6 +74363,9 @@ requireModule('promise/polyfill').polyfill();
 
             for (var i = 0; i < length; i++) {
                 var key = localStorage.key(i);
+                if (key.indexOf(keyPrefix) !== 0) {
+                    continue;
+                }
                 var value = localStorage.getItem(key);
 
                 // If a result was found, parse it from the serialized

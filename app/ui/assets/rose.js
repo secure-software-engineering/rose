@@ -1178,6 +1178,7 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
 
   exports['default'] = Ember['default'].Controller.extend({
     availableLanguages: languages['default'],
+    updateIntervals: [{ label: 'hourly', value: 3600000 }, { label: 'daily', value: 86400000 }, { label: 'weekly', value: 604800000 }, { label: 'monthly', value: 2629743830 }, { label: 'yearly', value: 31556926000 }],
 
     changeI18nLanguage: (function () {
       this.set('i18n.locale', this.get('settings.user.currentLanguage'));
@@ -1185,7 +1186,7 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
 
     onChange: (function () {
       this.send('saveSettings');
-    }).observes('settings.user.currentLanguage'),
+    }).observes('settings.user.currentLanguage', 'settings.system.updateInterval'),
 
     actions: {
       saveSettings: function saveSettings() {
@@ -1393,7 +1394,8 @@ define('rose/initializers/export-application-global', ['exports', 'ember', 'rose
 
   exports.initialize = initialize;
 
-  function initialize(container, application) {
+  function initialize() {
+    var application = arguments[1] || arguments[0];
     if (config['default'].exportApplicationGlobal !== false) {
       var value = config['default'].exportApplicationGlobal;
       var globalName;
@@ -7929,6 +7931,29 @@ define('rose/templates/settings', ['exports'], function (exports) {
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
         var el3 = dom.createElement("button");
         dom.setAttribute(el3,"class","ui red button");
         var el4 = dom.createComment("");
@@ -7973,7 +7998,8 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var element6 = dom.childAt(element5, [5]);
         var element7 = dom.childAt(element1, [9]);
         var element8 = dom.childAt(element1, [11]);
-        var element9 = dom.childAt(element8, [5]);
+        var element9 = dom.childAt(element1, [13]);
+        var element10 = dom.childAt(element9, [5]);
         var morph0 = dom.createMorphAt(element0,1,1);
         var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
         var morph2 = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
@@ -7994,7 +8020,10 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var morph17 = dom.createMorphAt(element7,5,5);
         var morph18 = dom.createMorphAt(dom.childAt(element8, [1]),0,0);
         var morph19 = dom.createMorphAt(dom.childAt(element8, [3]),0,0);
-        var morph20 = dom.createMorphAt(element9,0,0);
+        var morph20 = dom.createMorphAt(element8,5,5);
+        var morph21 = dom.createMorphAt(dom.childAt(element9, [1]),0,0);
+        var morph22 = dom.createMorphAt(dom.childAt(element9, [3]),0,0);
+        var morph23 = dom.createMorphAt(element10,0,0);
         inline(env, morph0, context, "t", ["settings.title"], {});
         inline(env, morph1, context, "t", ["settings.subtitle"], {});
         inline(env, morph2, context, "t", ["settings.language"], {});
@@ -8014,10 +8043,13 @@ define('rose/templates/settings', ['exports'], function (exports) {
         inline(env, morph15, context, "t", ["settings.autoUpdate"], {});
         inline(env, morph16, context, "t", ["settings.autoUpdateLabel"], {});
         inline(env, morph17, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "settings.system.autoUpdateIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "settings.system.autoUpdateIsEnabled")], {}), "action": "saveSettings"});
-        inline(env, morph18, context, "t", ["settings.resetRose"], {});
-        inline(env, morph19, context, "t", ["settings.resetRoseLabel"], {});
-        element(env, element9, context, "action", ["confirm"], {});
-        inline(env, morph20, context, "t", ["action.reset"], {});
+        inline(env, morph18, context, "t", ["settings.autoUpdateInterval"], {});
+        inline(env, morph19, context, "t", ["settings.autoUpdateIntervalLabel"], {});
+        inline(env, morph20, context, "ui-dropdown", [], {"class": "ui selection dropdown", "value": get(env, context, "settings.system.updateInterval"), "content": get(env, context, "updateIntervals"), "optionLabelPath": "content.label", "optionValuePath": "content.value"});
+        inline(env, morph21, context, "t", ["settings.resetRose"], {});
+        inline(env, morph22, context, "t", ["settings.resetRoseLabel"], {});
+        element(env, element10, context, "action", ["confirm"], {});
+        inline(env, morph23, context, "t", ["action.reset"], {});
         return fragment;
       }
     };
@@ -11497,7 +11529,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.8286ae76"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.2e40efc0"});
 }
 
 /* jshint ignore:end */

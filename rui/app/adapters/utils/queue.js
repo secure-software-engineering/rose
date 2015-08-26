@@ -5,17 +5,16 @@ const { Promise } = Ember.RSVP;
 export default Ember.Object.extend({
   queue: [Promise.resolve()],
 
-  attach: function(callback) {
-    var self = this;
-    var queueKey = self.queue.length;
+  attach(callback) {
+    var queueKey = this.queue.length;
 
-    self.queue[queueKey] = new Ember.RSVP.Promise(function(resolve, reject) {
-      self.queue[queueKey - 1].then(function() {
-        self.queue.splice(queueKey, 1);
+    this.queue[queueKey] = new Ember.RSVP.Promise((resolve, reject) => {
+      this.queue[queueKey - 1].then(() => {
+        this.queue.splice(queueKey, 1);
         callback(resolve, reject);
       });
     });
 
-    return self.queue[queueKey];
-  },
+    return this.queue[queueKey];
+  }
 });

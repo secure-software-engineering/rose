@@ -73,7 +73,7 @@ export default DS.Adapter.extend({
         });
 
         return Ember.RSVP.all(promises).then(function(comments) {
-          let filteredComments = comments.filter(function(comment) {
+          return comments.filter(function(comment) {
             let result = false;
 
             Object.keys(query).forEach(function(key) {
@@ -81,11 +81,6 @@ export default DS.Adapter.extend({
             });
 
             return result;
-          });
-
-          return filteredComments.map(function(comment) {
-            comment.rating = [].concat(comment.rating);
-            return comment;
           });
         });
       });
@@ -99,13 +94,11 @@ export default DS.Adapter.extend({
   updateRecord: function(store, type, snapshot) {
     const id = snapshot.id;
     const modelNamespace = this.modelNamespace;
-
-    const serializer = store.serializerFor(snapshot.modelName);
-    const recordHash = serializer.serialize(snapshot, { includeId: true });
+    const recordHash = snapshot.serialize({ includeId: true });
 
     return this.queue.attach(function(resolve, reject) {
-      kango.invokeAsyncCallback('localforage.setItem', modelNamespace + '/' + id, recordHash, function() {
-        Ember.run(null, resolve);
+      kango.invokeAsyncCallback('localforage.setItem',  modelNamespace + '/' + id, recordHash, function() {
+        resolve();
       });
     });
   },

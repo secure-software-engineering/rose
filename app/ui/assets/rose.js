@@ -78,6 +78,16 @@ define('rose/adapters/comment', ['exports', 'rose/adapters/kango-adapter'], func
   });
 
 });
+define('rose/adapters/extractor', ['exports', 'rose/adapters/kango-adapter'], function (exports, KangoAdapter) {
+
+  'use strict';
+
+  exports['default'] = KangoAdapter['default'].extend({
+    collectionNamespace: 'Extractors',
+    modelNamespace: 'Extractor'
+  });
+
+});
 define('rose/adapters/interaction', ['exports', 'rose/adapters/kango-adapter'], function (exports, KangoAdapter) {
 
   'use strict';
@@ -161,7 +171,7 @@ define('rose/adapters/kango-adapter', ['exports', 'ember', 'ember-data', 'rose/a
         });
 
         return Ember['default'].RSVP.all(promises).then(function (comments) {
-          var filteredComments = comments.filter(function (comment) {
+          return comments.filter(function (comment) {
             var result = false;
 
             Object.keys(query).forEach(function (key) {
@@ -169,11 +179,6 @@ define('rose/adapters/kango-adapter', ['exports', 'ember', 'ember-data', 'rose/a
             });
 
             return result;
-          });
-
-          return filteredComments.map(function (comment) {
-            comment.rating = [].concat(comment.rating);
-            return comment;
           });
         });
       });
@@ -187,13 +192,11 @@ define('rose/adapters/kango-adapter', ['exports', 'ember', 'ember-data', 'rose/a
     updateRecord: function updateRecord(store, type, snapshot) {
       var id = snapshot.id;
       var modelNamespace = this.modelNamespace;
-
-      var serializer = store.serializerFor(snapshot.modelName);
-      var recordHash = serializer.serialize(snapshot, { includeId: true });
+      var recordHash = snapshot.serialize({ includeId: true });
 
       return this.queue.attach(function (resolve, reject) {
         kango.invokeAsyncCallback('localforage.setItem', modelNamespace + '/' + id, recordHash, function () {
-          Ember['default'].run(null, resolve);
+          resolve();
         });
       });
     },
@@ -249,6 +252,16 @@ define('rose/adapters/network', ['exports', 'rose/adapters/kango-adapter'], func
   });
 
 });
+define('rose/adapters/observer', ['exports', 'rose/adapters/kango-adapter'], function (exports, KangoAdapter) {
+
+  'use strict';
+
+  exports['default'] = KangoAdapter['default'].extend({
+    collectionNamespace: 'Observers',
+    modelNamespace: 'Observer'
+  });
+
+});
 define('rose/adapters/system-config', ['exports', 'rose/adapters/kango-adapter'], function (exports, KangoAdapter) {
 
   'use strict';
@@ -279,17 +292,18 @@ define('rose/adapters/utils/queue', ['exports', 'ember'], function (exports, Emb
     queue: [Promise.resolve()],
 
     attach: function attach(callback) {
-      var self = this;
-      var queueKey = self.queue.length;
+      var _this = this;
 
-      self.queue[queueKey] = new Ember['default'].RSVP.Promise(function (resolve, reject) {
-        self.queue[queueKey - 1].then(function () {
-          self.queue.splice(queueKey, 1);
+      var queueKey = this.queue.length;
+
+      this.queue[queueKey] = new Ember['default'].RSVP.Promise(function (resolve, reject) {
+        _this.queue[queueKey - 1].then(function () {
+          _this.queue.splice(queueKey, 1);
           callback(resolve, reject);
         });
       });
 
-      return self.queue[queueKey];
+      return this.queue[queueKey];
     }
   });
 
@@ -348,6 +362,22 @@ define('rose/components/lf-overlay', ['exports', 'ember'], function (exports, Em
   });
 
 });
+define('rose/components/liquid-bind', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  var LiquidBind = Ember['default'].Component.extend({
+    tagName: '',
+    positionalParams: ['value'] // needed for Ember 1.13.[0-5] and 2.0.0-beta.[1-3] support
+  });
+
+  LiquidBind.reopenClass({
+    positionalParams: ['value']
+  });
+
+  exports['default'] = LiquidBind;
+
+});
 define('rose/components/liquid-child', ['exports', 'ember'], function (exports, Ember) {
 
   'use strict';
@@ -355,18 +385,14 @@ define('rose/components/liquid-child', ['exports', 'ember'], function (exports, 
   exports['default'] = Ember['default'].Component.extend({
     classNames: ['liquid-child'],
 
-    updateElementVisibility: (function () {
-      var visible = this.get('visible');
+    didInsertElement: function didInsertElement() {
       var $container = this.$();
-
-      if ($container && $container.length) {
-        $container.css('visibility', visible ? 'visible' : 'hidden');
+      if ($container) {
+        $container.css('visibility', 'hidden');
       }
-    }).on('willInsertElement').observes('visible'),
+      this.sendAction('liquidChildDidRender', this);
+    }
 
-    tellContainerWeRendered: Ember['default'].on('didInsertElement', function () {
-      this.sendAction('didRender', this);
-    })
   });
 
 });
@@ -376,7 +402,6 @@ define('rose/components/liquid-container', ['exports', 'ember', 'liquid-fire/gro
 
   exports['default'] = Ember['default'].Component.extend(Growable['default'], {
     classNames: ['liquid-container'],
-    classNameBindings: ['liquidAnimating'],
 
     lockSize: function lockSize(elt, want) {
       elt.outerWidth(want.width);
@@ -387,9 +412,7 @@ define('rose/components/liquid-container', ['exports', 'ember', 'liquid-fire/gro
       var _this = this;
 
       var doUnlock = function doUnlock() {
-        if (!_this.isDestroyed) {
-          _this.set('liquidAnimating', false);
-        }
+        _this.updateAnimatingClass(false);
         var elt = _this.$();
         if (elt) {
           elt.css({ width: '', height: '' });
@@ -402,8 +425,28 @@ define('rose/components/liquid-container', ['exports', 'ember', 'liquid-fire/gro
       }
     },
 
+    // We're doing this manually instead of via classNameBindings
+    // because it depends on upward-data-flow, which generates warnings
+    // under Glimmer.
+    updateAnimatingClass: function updateAnimatingClass(on) {
+      if (this.isDestroyed || !this._wasInserted) {
+        return;
+      }
+      if (arguments.length === 0) {
+        on = this.get('liquidAnimating');
+      } else {
+        this.set('liquidAnimating', on);
+      }
+      if (on) {
+        this.$().addClass('liquid-animating');
+      } else {
+        this.$().removeClass('liquid-animating');
+      }
+    },
+
     startMonitoringSize: Ember['default'].on('didInsertElement', function () {
       this._wasInserted = true;
+      this.updateAnimatingClass();
     }),
 
     actions: {
@@ -424,7 +467,7 @@ define('rose/components/liquid-container', ['exports', 'ember', 'liquid-fire/gro
 
         // Apply '.liquid-animating' to liquid-container allowing
         // any customizable CSS control while an animating is occuring
-        this.set('liquidAnimating', true);
+        this.updateAnimatingClass(true);
       },
 
       afterChildInsertion: function afterChildInsertion(versions) {
@@ -493,7 +536,7 @@ define('rose/components/liquid-container', ['exports', 'ember', 'liquid-fire/gro
   }
 
   function goStatic(version) {
-    if (version.view) {
+    if (version.view && !version.view.isDestroyed) {
       version.view.$().css({ width: '', height: '', position: '' });
     }
   }
@@ -503,105 +546,32 @@ define('rose/components/liquid-if', ['exports', 'ember', 'liquid-fire/ember-inte
 
   'use strict';
 
-  exports['default'] = Ember['default'].Component.extend({
-    _yieldInverse: ember_internals.inverseYieldMethod,
-    hasInverse: Ember['default'].computed('inverseTemplate', function () {
-      return !!this.get('inverseTemplate');
-    })
+  var LiquidIf = Ember['default'].Component.extend({
+    positionalParams: ['predicate'], // needed for Ember 1.13.[0-5] and 2.0.0-beta.[1-3] support
+    tagName: '',
+    helperName: 'liquid-if',
+    didReceiveAttrs: function didReceiveAttrs() {
+      this._super();
+      var predicate = ember_internals.shouldDisplay(this.getAttr('predicate'));
+      this.set('showFirstBlock', this.inverted ? !predicate : predicate);
+    }
   });
+
+  LiquidIf.reopenClass({
+    positionalParams: ['predicate']
+  });
+
+  exports['default'] = LiquidIf;
 
 });
-define('rose/components/liquid-measured', ['exports', 'liquid-fire/mutation-observer', 'ember'], function (exports, MutationObserver, Ember) {
+define('rose/components/liquid-measured', ['exports', 'liquid-fire/components/liquid-measured'], function (exports, liquid_measured) {
 
-  'use strict';
+	'use strict';
 
-  exports.measure = measure;
 
-  exports['default'] = Ember['default'].Component.extend({
 
-    didInsertElement: function didInsertElement() {
-      var self = this;
-
-      // This prevents margin collapse
-      this.$().css({
-        overflow: 'auto'
-      });
-
-      this.didMutate();
-
-      this.observer = new MutationObserver['default'](function (mutations) {
-        self.didMutate(mutations);
-      });
-      this.observer.observe(this.get('element'), {
-        attributes: true,
-        subtree: true,
-        childList: true,
-        characterData: true
-      });
-      this.$().bind('webkitTransitionEnd', function () {
-        self.didMutate();
-      });
-      // Chrome Memory Leak: https://bugs.webkit.org/show_bug.cgi?id=93661
-      window.addEventListener('unload', function () {
-        self.willDestroyElement();
-      });
-    },
-
-    willDestroyElement: function willDestroyElement() {
-      if (this.observer) {
-        this.observer.disconnect();
-      }
-    },
-
-    transitionMap: Ember['default'].inject.service('liquid-fire-transitions'),
-
-    didMutate: function didMutate() {
-      // by incrementing the running transitions counter here we prevent
-      // tests from falling through the gap between the time they
-      // triggered mutation the time we may actually animate in
-      // response.
-      var tmap = this.get('transitionMap');
-      tmap.incrementRunningTransitions();
-      Ember['default'].run.next(this, function () {
-        this._didMutate();
-        tmap.decrementRunningTransitions();
-      });
-    },
-
-    _didMutate: function _didMutate() {
-      var elt = this.$();
-      if (!elt || !elt[0]) {
-        return;
-      }
-      this.set('measurements', measure(elt));
-    }
-
-  });
-
-  function measure($elt) {
-    var width, height;
-
-    // if jQuery sees a zero dimension, it will temporarily modify the
-    // element's css to try to make its size measurable. But that's bad
-    // for us here, because we'll get an infinite recursion of mutation
-    // events. So we trap the zero case without hitting jQuery.
-
-    if ($elt[0].offsetWidth === 0) {
-      width = 0;
-    } else {
-      width = $elt.outerWidth();
-    }
-    if ($elt[0].offsetHeight === 0) {
-      height = 0;
-    } else {
-      height = $elt.outerHeight();
-    }
-
-    return {
-      width: width,
-      height: height
-    };
-  }
+	exports.default = liquid_measured.default;
+	exports.measure = liquid_measured.measure;
 
 });
 define('rose/components/liquid-modal', ['exports', 'ember'], function (exports, Ember) {
@@ -610,13 +580,18 @@ define('rose/components/liquid-modal', ['exports', 'ember'], function (exports, 
 
   exports['default'] = Ember['default'].Component.extend({
     classNames: ['liquid-modal'],
-    currentContext: Ember['default'].computed.oneWay('owner.modalContexts.lastObject'),
+    currentContext: Ember['default'].computed('owner.modalContexts.lastObject', function () {
+      var context = this.get('owner.modalContexts.lastObject');
+      if (context) {
+        context.view = this.innerView(context);
+      }
+      return context;
+    }),
 
     owner: Ember['default'].inject.service('liquid-fire-modals'),
 
-    innerView: Ember['default'].computed('currentContext', function () {
+    innerView: function innerView(current) {
       var self = this,
-          current = this.get('currentContext'),
           name = current.get('name'),
           container = this.get('container'),
           component = container.lookup('component-lookup:main').lookupFactory(name);
@@ -658,7 +633,7 @@ define('rose/components/liquid-modal', ['exports', 'ember'], function (exports, 
       };
 
       return component.extend(args);
-    }),
+    },
 
     actions: {
       outsideClick: function outsideClick() {
@@ -701,80 +676,44 @@ define('rose/components/liquid-modal', ['exports', 'ember'], function (exports, 
   }
 
 });
-define('rose/components/liquid-outlet', ['exports', 'ember', 'liquid-fire/ember-internals'], function (exports, Ember, ember_internals) {
-
-	'use strict';
-
-	exports['default'] = Ember['default'].Component.extend(ember_internals.OutletBehavior);
-
-});
-define('rose/components/liquid-spacer', ['exports', 'rose/components/liquid-measured', 'liquid-fire/growable', 'ember'], function (exports, liquid_measured, Growable, Ember) {
+define('rose/components/liquid-outlet', ['exports', 'ember'], function (exports, Ember) {
 
   'use strict';
 
-  exports['default'] = Ember['default'].Component.extend(Growable['default'], {
-    enabled: true,
-
-    didInsertElement: function didInsertElement() {
-      var child = this.$('> div');
-      var measurements = this.myMeasurements(liquid_measured.measure(child));
-      this.$().css({
-        overflow: 'hidden',
-        outerWidth: measurements.width,
-        outerHeight: measurements.height
-      });
-    },
-
-    sizeChange: Ember['default'].observer('measurements', function () {
-      if (!this.get('enabled')) {
-        return;
-      }
-      var elt = this.$();
-      if (!elt || !elt[0]) {
-        return;
-      }
-      var want = this.myMeasurements(this.get('measurements'));
-      var have = liquid_measured.measure(this.$());
-      this.animateGrowth(elt, have, want);
-    }),
-
-    // given our child's outerWidth & outerHeight, figure out what our
-    // outerWidth & outerHeight should be.
-    myMeasurements: function myMeasurements(childMeasurements) {
-      var elt = this.$();
-      return {
-        width: childMeasurements.width + sumCSS(elt, padding('width')) + sumCSS(elt, border('width')),
-        height: childMeasurements.height + sumCSS(elt, padding('height')) + sumCSS(elt, border('height'))
-      };
-      //if (this.$().css('box-sizing') === 'border-box') {
+  var LiquidOutlet = Ember['default'].Component.extend({
+    positionalParams: ['inputOutletName'], // needed for Ember 1.13.[0-5] and 2.0.0-beta.[1-3] support
+    tagName: '',
+    didReceiveAttrs: function didReceiveAttrs() {
+      this._super();
+      this.set('outletName', this.attrs.inputOutletName || 'main');
     }
-
   });
 
-  function sides(dimension) {
-    return dimension === 'width' ? ['Left', 'Right'] : ['Top', 'Bottom'];
-  }
+  LiquidOutlet.reopenClass({
+    positionalParams: ['inputOutletName']
+  });
 
-  function padding(dimension) {
-    var s = sides(dimension);
-    return ['padding' + s[0], 'padding' + s[1]];
-  }
+  exports['default'] = LiquidOutlet;
 
-  function border(dimension) {
-    var s = sides(dimension);
-    return ['border' + s[0] + 'Width', 'border' + s[1] + 'Width'];
-  }
+});
+define('rose/components/liquid-spacer', ['exports', 'liquid-fire/components/liquid-spacer'], function (exports, liquid_spacer) {
 
-  function sumCSS(elt, fields) {
-    var accum = 0;
-    for (var i = 0; i < fields.length; i++) {
-      var num = parseFloat(elt.css(fields[i]), 10);
-      if (!isNaN(num)) {
-        accum += num;
-      }
-    }
-    return accum;
-  }
+	'use strict';
+
+
+
+	exports.default = liquid_spacer.default;
+
+});
+define('rose/components/liquid-unless', ['exports', 'rose/components/liquid-if'], function (exports, LiquidIf) {
+
+  'use strict';
+
+  exports['default'] = LiquidIf['default'].extend({
+    helperName: 'liquid-unless',
+    layoutName: 'components/liquid-if',
+    inverted: true
+  });
 
 });
 define('rose/components/liquid-versions', ['exports', 'ember', 'liquid-fire/ember-internals'], function (exports, Ember, ember_internals) {
@@ -790,10 +729,18 @@ define('rose/components/liquid-versions', ['exports', 'ember', 'liquid-fire/embe
 
     transitionMap: Ember['default'].inject.service('liquid-fire-transitions'),
 
-    appendVersion: Ember['default'].on('init', Ember['default'].observer('value', function () {
-      var versions = get(this, 'versions');
+    didReceiveAttrs: function didReceiveAttrs() {
+      this._super();
+      if (!this.versions || this._lastVersion !== this.getAttr('value')) {
+        this.appendVersion();
+        this._lastVersion = this.getAttr('value');
+      }
+    },
+
+    appendVersion: function appendVersion() {
+      var versions = this.versions;
       var firstTime = false;
-      var newValue = get(this, 'value');
+      var newValue = this.getAttr('value');
       var oldValue;
 
       if (!versions) {
@@ -824,7 +771,7 @@ define('rose/components/liquid-versions', ['exports', 'ember', 'liquid-fire/embe
       if (!newVersion.shouldRender && !firstTime) {
         this._transition();
       }
-    })),
+    },
 
     _transition: function _transition() {
       var _this = this;
@@ -846,7 +793,8 @@ define('rose/components/liquid-versions', ['exports', 'ember', 'liquid-fire/embe
         // "match anything truthy/falsy" predicates, whereas string
         // checks are a direct object property lookup.
         firstTime: firstTime ? 'yes' : 'no',
-        helperName: get(this, 'name')
+        helperName: get(this, 'name'),
+        outletName: get(this, 'outletName')
       });
 
       if (this._runningTransition) {
@@ -894,9 +842,20 @@ define('rose/components/liquid-with', ['exports', 'ember'], function (exports, E
 
   'use strict';
 
-  exports['default'] = Ember['default'].Component.extend({
-    name: 'liquid-with'
+  var LiquidWith = Ember['default'].Component.extend({
+    name: 'liquid-with',
+    positionalParams: ['value'], // needed for Ember 1.13.[0-5] and 2.0.0-beta.[1-3] support
+    tagName: '',
+    iAmDeprecated: Ember['default'].on('init', function () {
+      Ember['default'].deprecate("liquid-with is deprecated, use liquid-bind instead -- it accepts a block now.");
+    })
   });
+
+  LiquidWith.reopenClass({
+    positionalParams: ['value']
+  });
+
+  exports['default'] = LiquidWith;
 
 });
 define('rose/components/lm-container', ['exports', 'ember', 'liquid-fire/tabbable'], function (exports, Ember) {
@@ -1007,6 +966,27 @@ define('rose/components/ui-dropdown', ['exports', 'semantic-ui-ember/components/
 	exports['default'] = Dropdown['default'];
 
 });
+define('rose/components/ui-embed', ['exports', 'semantic-ui-ember/components/ui-embed'], function (exports, Embed) {
+
+	'use strict';
+
+	exports['default'] = Embed['default'];
+
+});
+define('rose/components/ui-modal', ['exports', 'semantic-ui-ember/components/ui-modal'], function (exports, Modal) {
+
+	'use strict';
+
+	exports['default'] = Modal['default'];
+
+});
+define('rose/components/ui-nag', ['exports', 'semantic-ui-ember/components/ui-nag'], function (exports, Nag) {
+
+	'use strict';
+
+	exports['default'] = Nag['default'];
+
+});
 define('rose/components/ui-popup', ['exports', 'semantic-ui-ember/components/ui-popup'], function (exports, Popup) {
 
 	'use strict';
@@ -1033,6 +1013,34 @@ define('rose/components/ui-rating', ['exports', 'semantic-ui-ember/components/ui
 	'use strict';
 
 	exports['default'] = Rating['default'];
+
+});
+define('rose/components/ui-search', ['exports', 'semantic-ui-ember/components/ui-search'], function (exports, Search) {
+
+	'use strict';
+
+	exports['default'] = Search['default'];
+
+});
+define('rose/components/ui-shape', ['exports', 'semantic-ui-ember/components/ui-shape'], function (exports, Shape) {
+
+	'use strict';
+
+	exports['default'] = Shape['default'];
+
+});
+define('rose/components/ui-sidebar', ['exports', 'semantic-ui-ember/components/ui-sidebar'], function (exports, Sidebar) {
+
+	'use strict';
+
+	exports['default'] = Sidebar['default'];
+
+});
+define('rose/components/ui-sticky', ['exports', 'semantic-ui-ember/components/ui-sticky'], function (exports, Sticky) {
+
+	'use strict';
+
+	exports['default'] = Sticky['default'];
 
 });
 define('rose/controllers/application', ['exports', 'ember'], function (exports, Ember) {
@@ -1089,7 +1097,7 @@ define('rose/controllers/backup', ['exports', 'ember'], function (exports, Ember
       var models = this.get('model');
 
       models.forEach(function (model) {
-        result[model.type.modelName] = model.content;
+        result[model.type] = model.data;
       });
 
       result['export-date'] = new Date().toJSON();
@@ -1098,12 +1106,28 @@ define('rose/controllers/backup', ['exports', 'ember'], function (exports, Ember
     }).property('model'),
 
     actions: {
-      deleteData: function deleteData() {
-        this.send('openModal', 'modal/reset-data');
+      openModal: function openModal(name) {
+        Ember['default'].$('.ui.' + name + '.modal').modal('show');
       },
 
       download: function download() {
         window.saveAs(new Blob([this.get('jsonData')]), 'rose-data.txt');
+      },
+
+      approveModal: function approveModal() {
+        var _this = this;
+
+        ['comment', 'interaction', 'diary-entry'].forEach(function (type) {
+          return _this.store.find(type).then(function (records) {
+            return records.invoke('destroyRecord');
+          });
+        });
+
+        ['click', 'fb-login', 'mousemove', 'scroll', 'window'].forEach(function (type) {
+          return kango.invokeAsyncCallback('localforage.removeItem', type + '-activity-records');
+        });
+
+        return true;
       }
     }
   });
@@ -1154,50 +1178,6 @@ define('rose/controllers/interactions', ['exports', 'ember'], function (exports,
   });
 
 });
-define('rose/controllers/modal/reset-config', ['exports', 'ember'], function (exports, Ember) {
-
-    'use strict';
-
-    exports['default'] = Ember['default'].Controller.extend({
-        deleteData: false
-    });
-
-});
-define('rose/controllers/modal/reset-data', ['exports', 'ember'], function (exports, Ember) {
-
-  'use strict';
-
-  exports['default'] = Ember['default'].Controller.extend({
-    actions: {
-      deleteData: function deleteData() {
-        var _this = this;
-
-        var modelTypes = ['interaction', 'comment'];
-
-        modelTypes.forEach(function (type) {
-          _this.store.find(type).then(function (records) {
-            records.invoke('deleteRecord');
-            return Ember['default'].RSVP.all(records.invoke('save'));
-          }).then(function () {
-            var adapter = _this.store.adapterFor(type);
-            var namespace = adapter.get('collectionNamespace');
-
-            kango.invokeAsyncCallback('localforage.removeItem', namespace);
-          });
-        });
-
-        this.store.find('diary-entry').then(function (records) {
-          return records.invoke('destroyRecord');
-        });
-
-        ['click', 'fb-login', 'mousemove', 'scroll', 'window'].forEach(function (type) {
-          return kango.invokeAsyncCallback('localforage.removeItem', type + '-activity-records');
-        });
-      }
-    }
-  });
-
-});
 define('rose/controllers/object', ['exports', 'ember'], function (exports, Ember) {
 
 	'use strict';
@@ -1208,6 +1188,8 @@ define('rose/controllers/object', ['exports', 'ember'], function (exports, Ember
 define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages'], function (exports, Ember, languages) {
 
   'use strict';
+
+  var Promise = Ember['default'].RSVP.Promise;
 
   exports['default'] = Ember['default'].Controller.extend({
     availableLanguages: languages['default'],
@@ -1227,10 +1209,6 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
         this.get('settings.system').save();
       },
 
-      confirm: function confirm() {
-        this.send('openModal', 'modal/reset-config');
-      },
-
       manualUpdate: function manualUpdate() {
         var _this = this;
 
@@ -1240,6 +1218,26 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
           _this.get('settings.system').reload().then(function () {
             kango.removeMessageListener('update-result');
           });
+        });
+      },
+
+      openModal: function openModal(name) {
+        Ember['default'].$('.ui.' + name + '.modal').modal('show');
+      },
+
+      approveModal: function approveModal() {
+        var _this2 = this;
+
+        return Promise.all([this.store.find('extractor').then(function (records) {
+          return records.invoke('destroyRecord');
+        }), this.store.find('network').then(function (records) {
+          return records.invoke('destroyRecord');
+        }), this.store.find('observer').then(function (records) {
+          return records.invoke('destroyRecord');
+        }), this.get('settings.user').destroyRecord(), this.get('settings.system').destroyRecord()]).then(function () {
+          return _this2.get('settings').setup();
+        }).then(function () {
+          return _this2.transitionToRoute('index');
         });
       }
     }
@@ -1308,60 +1306,6 @@ define('rose/helpers/boolean-to-yesno', ['exports', 'ember', 'ember-i18n'], func
   }
 
   exports['default'] = Ember['default'].HTMLBars.makeBoundHelper(booleanToYesno);
-
-});
-define('rose/helpers/lf-yield-inverse', ['exports', 'liquid-fire/ember-internals'], function (exports, ember_internals) {
-
-  'use strict';
-
-  exports['default'] = {
-    isHTMLBars: true,
-    helperFunction: ember_internals.inverseYieldHelper
-  };
-
-});
-define('rose/helpers/liquid-bind', ['exports', 'liquid-fire/ember-internals'], function (exports, ember_internals) {
-
-	'use strict';
-
-	exports['default'] = ember_internals.makeHelperShim('liquid-bind');
-
-});
-define('rose/helpers/liquid-if', ['exports', 'liquid-fire/ember-internals'], function (exports, ember_internals) {
-
-  'use strict';
-
-  exports['default'] = ember_internals.makeHelperShim('liquid-if', function (params, hash, options) {
-    hash.helperName = 'liquid-if';
-    hash.inverseTemplate = options.inverse;
-  });
-
-});
-define('rose/helpers/liquid-outlet', ['exports', 'liquid-fire/ember-internals'], function (exports, ember_internals) {
-
-  'use strict';
-
-  exports['default'] = ember_internals.makeHelperShim('liquid-outlet', function (params, hash) {
-    hash._outletName = params[0] || "main";
-  });
-
-});
-define('rose/helpers/liquid-unless', ['exports', 'liquid-fire/ember-internals'], function (exports, ember_internals) {
-
-  'use strict';
-
-  exports['default'] = ember_internals.makeHelperShim('liquid-if', function (params, hash, options) {
-    hash.helperName = 'liquid-unless';
-    hash.inverseTemplate = options.template;
-    options.template = options.inverse;
-  });
-
-});
-define('rose/helpers/liquid-with', ['exports', 'liquid-fire/ember-internals'], function (exports, ember_internals) {
-
-	'use strict';
-
-	exports['default'] = ember_internals.makeHelperShim('liquid-with');
 
 });
 define('rose/initializers/app-version', ['exports', 'rose/config/environment', 'ember'], function (exports, config, Ember) {
@@ -1435,8 +1379,7 @@ define('rose/initializers/export-application-global', ['exports', 'ember', 'rose
 
   exports.initialize = initialize;
 
-  function initialize() {
-    var application = arguments[1] || arguments[0];
+  function initialize(container, application) {
     if (config['default'].exportApplicationGlobal !== false) {
       var value = config['default'].exportApplicationGlobal;
       var globalName;
@@ -1499,12 +1442,14 @@ define('rose/initializers/kango-api', ['exports'], function (exports) {
   };
 
 });
-define('rose/initializers/liquid-fire', ['exports', 'liquid-fire/router-dsl-ext'], function (exports) {
+define('rose/initializers/liquid-fire', ['exports', 'liquid-fire/router-dsl-ext', 'liquid-fire/ember-internals'], function (exports, __dep0__, ember_internals) {
 
   'use strict';
 
-  // This initializer exists only to make sure that the following import
-  // happens before the app boots.
+  // This initializer exists only to make sure that the following
+  // imports happen before the app boots.
+  ember_internals.registerKeywords();
+
   exports['default'] = {
     name: 'liquid-fire',
     initialize: function initialize() {}
@@ -1961,7 +1906,7 @@ define('rose/locales/languages', ['exports'], function (exports) {
 
 	'use strict';
 
-	exports['default'] = [{ language: "Auto detect", code: "auto" }, { language: "English", code: "en" }, { language: "Deutsch", code: "de" }];
+	exports['default'] = [{ name: "Auto detect", code: "auto" }, { name: "English", code: "en" }, { name: "Deutsch", code: "de" }];
 
 });
 define('rose/models/comment', ['exports', 'ember-data'], function (exports, DS) {
@@ -1975,7 +1920,7 @@ define('rose/models/comment', ['exports', 'ember-data'], function (exports, DS) 
       } }),
     updatedAt: DS['default'].attr(),
     isPrivate: DS['default'].attr('boolean'),
-    rating: DS['default'].attr(),
+    rating: DS['default'].attr('array'),
     contentId: DS['default'].attr('string'),
     network: DS['default'].attr()
   });
@@ -1997,6 +1942,15 @@ define('rose/models/diary-entry', ['exports', 'ember-data'], function (exports, 
   });
 
   exports['default'] = model;
+
+});
+define('rose/models/extractor', ['exports', 'ember-data'], function (exports, DS) {
+
+  'use strict';
+
+  exports['default'] = DS['default'].Model.extend({
+    network: DS['default'].attr()
+  });
 
 });
 define('rose/models/interaction', ['exports', 'ember-data'], function (exports, DS) {
@@ -2021,6 +1975,13 @@ define('rose/models/network', ['exports', 'ember-data'], function (exports, DS) 
     identifier: DS['default'].attr('string'),
     isEnabled: DS['default'].attr('boolean')
   });
+
+});
+define('rose/models/observer', ['exports', 'ember-data'], function (exports, DS) {
+
+	'use strict';
+
+	exports['default'] = DS['default'].Model.extend({});
 
 });
 define('rose/models/study-creator-setting', ['exports', 'ember-data'], function (exports, DS) {
@@ -2097,7 +2058,7 @@ define('rose/pods/components/diary-entry/component', ['exports', 'ember'], funct
         this.set('isEditable', false);
       },
       cancel: function cancel() {
-        this.get('model').rollback();
+        this.get('model').rollbackAttributes();
         this.set('isEditable', false);
       }
     }
@@ -2111,12 +2072,25 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
   exports['default'] = Ember.HTMLBars.template((function() {
     var child0 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 9,
+              "column": 2
+            },
+            "end": {
+              "line": 13,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/diary-entry/template.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -2133,40 +2107,39 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, get = hooks.get, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(dom.childAt(fragment, [1]),1,1);
-          inline(env, morph0, context, "textarea", [], {"value": get(env, context, "model.text")});
-          return fragment;
-        }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),1,1);
+          return morphs;
+        },
+        statements: [
+          ["inline","textarea",[],["value",["subexpr","@mut",[["get","model.text",["loc",[null,[11,23],[11,33]]]]],[],[]]],["loc",[null,[11,6],[11,35]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child1 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 13,
+              "column": 2
+            },
+            "end": {
+              "line": 15,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/diary-entry/template.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -2176,40 +2149,39 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, content = hooks.content;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          content(env, morph0, context, "model.text");
-          return fragment;
-        }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+          return morphs;
+        },
+        statements: [
+          ["content","model.text",["loc",[null,[14,4],[14,18]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child2 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 18,
+              "column": 2
+            },
+            "end": {
+              "line": 25,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/diary-entry/template.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -2235,46 +2207,47 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, element = hooks.element, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var element3 = dom.childAt(fragment, [1]);
           var element4 = dom.childAt(fragment, [3]);
-          var morph0 = dom.createMorphAt(element3,1,1);
-          var morph1 = dom.createMorphAt(element4,1,1);
-          element(env, element3, context, "action", ["save"], {});
-          inline(env, morph0, context, "t", ["action.save"], {});
-          element(env, element4, context, "action", ["cancel"], {});
-          inline(env, morph1, context, "t", ["action.cancel"], {});
-          return fragment;
-        }
+          var morphs = new Array(4);
+          morphs[0] = dom.createElementMorph(element3);
+          morphs[1] = dom.createMorphAt(element3,1,1);
+          morphs[2] = dom.createElementMorph(element4);
+          morphs[3] = dom.createMorphAt(element4,1,1);
+          return morphs;
+        },
+        statements: [
+          ["element","action",["save"],[],["loc",[null,[19,7],[19,24]]]],
+          ["inline","t",["action.save"],[],["loc",[null,[20,6],[20,25]]]],
+          ["element","action",["cancel"],[],["loc",[null,[22,7],[22,26]]]],
+          ["inline","t",["action.cancel"],[],["loc",[null,[23,6],[23,27]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child3 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 25,
+              "column": 2
+            },
+            "end": {
+              "line": 29,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/diary-entry/template.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -2290,42 +2263,42 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, element = hooks.element, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var element2 = dom.childAt(fragment, [1]);
-          var morph0 = dom.createMorphAt(element2,1,1);
-          element(env, element2, context, "action", ["edit"], {});
-          inline(env, morph0, context, "t", ["action.edit"], {});
-          return fragment;
-        }
+          var morphs = new Array(2);
+          morphs[0] = dom.createElementMorph(element2);
+          morphs[1] = dom.createMorphAt(element2,1,1);
+          return morphs;
+        },
+        statements: [
+          ["element","action",["edit"],[],["loc",[null,[26,7],[26,24]]]],
+          ["inline","t",["action.edit"],[],["loc",[null,[27,6],[27,25]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child4 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 30,
+              "column": 2
+            },
+            "end": {
+              "line": 34,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/diary-entry/template.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -2341,42 +2314,42 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, element = hooks.element, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var element1 = dom.childAt(fragment, [1]);
-          var morph0 = dom.createMorphAt(element1,1,1);
-          element(env, element1, context, "action", ["unhide"], {});
-          inline(env, morph0, context, "t", ["action.unhide"], {});
-          return fragment;
-        }
+          var morphs = new Array(2);
+          morphs[0] = dom.createElementMorph(element1);
+          morphs[1] = dom.createMorphAt(element1,1,1);
+          return morphs;
+        },
+        statements: [
+          ["element","action",["unhide"],[],["loc",[null,[31,7],[31,26]]]],
+          ["inline","t",["action.unhide"],[],["loc",[null,[32,6],[32,27]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child5 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 34,
+              "column": 2
+            },
+            "end": {
+              "line": 38,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/diary-entry/template.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -2392,41 +2365,41 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, element = hooks.element, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var element0 = dom.childAt(fragment, [1]);
-          var morph0 = dom.createMorphAt(element0,1,1);
-          element(env, element0, context, "action", ["hide"], {});
-          inline(env, morph0, context, "t", ["action.hide"], {});
-          return fragment;
-        }
+          var morphs = new Array(2);
+          morphs[0] = dom.createElementMorph(element0);
+          morphs[1] = dom.createMorphAt(element0,1,1);
+          return morphs;
+        },
+        statements: [
+          ["element","action",["hide"],[],["loc",[null,[35,7],[35,24]]]],
+          ["inline","t",["action.hide"],[],["loc",[null,[36,6],[36,25]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 44,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/pods/components/diary-entry/template.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("a");
         dom.setAttribute(el1,"class","avatar");
@@ -2497,42 +2470,29 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, get = hooks.get, inline = hooks.inline, block = hooks.block, element = hooks.element;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element5 = dom.childAt(fragment, [2]);
         var element6 = dom.childAt(element5, [5]);
         var element7 = dom.childAt(element6, [4]);
-        var morph0 = dom.createMorphAt(dom.childAt(element5, [1, 1]),0,0);
-        var morph1 = dom.createMorphAt(dom.childAt(element5, [3]),1,1);
-        var morph2 = dom.createMorphAt(element6,1,1);
-        var morph3 = dom.createMorphAt(element6,2,2);
-        var morph4 = dom.createMorphAt(element7,1,1);
-        inline(env, morph0, context, "moment", [get(env, context, "model.createdAt")], {});
-        block(env, morph1, context, "liquid-if", [get(env, context, "isEditable")], {}, child0, child1);
-        block(env, morph2, context, "if", [get(env, context, "isEditable")], {}, child2, child3);
-        block(env, morph3, context, "if", [get(env, context, "model.isPrivate")], {}, child4, child5);
-        element(env, element7, context, "action", ["delete"], {});
-        inline(env, morph4, context, "t", ["action.delete"], {});
-        return fragment;
-      }
+        var morphs = new Array(6);
+        morphs[0] = dom.createMorphAt(dom.childAt(element5, [1, 1]),0,0);
+        morphs[1] = dom.createMorphAt(dom.childAt(element5, [3]),1,1);
+        morphs[2] = dom.createMorphAt(element6,1,1);
+        morphs[3] = dom.createMorphAt(element6,2,2);
+        morphs[4] = dom.createElementMorph(element7);
+        morphs[5] = dom.createMorphAt(element7,1,1);
+        return morphs;
+      },
+      statements: [
+        ["inline","moment",[["get","model.createdAt",["loc",[null,[6,32],[6,47]]]]],[],["loc",[null,[6,23],[6,49]]]],
+        ["block","liquid-if",[["get","isEditable",["loc",[null,[9,15],[9,25]]]]],[],0,1,["loc",[null,[9,2],[15,16]]]],
+        ["block","if",[["get","isEditable",["loc",[null,[18,8],[18,18]]]]],[],2,3,["loc",[null,[18,2],[29,9]]]],
+        ["block","if",[["get","model.isPrivate",["loc",[null,[30,8],[30,23]]]]],[],4,5,["loc",[null,[30,2],[38,9]]]],
+        ["element","action",["delete"],[],["loc",[null,[39,7],[39,26]]]],
+        ["inline","t",["action.delete"],[],["loc",[null,[40,6],[40,27]]]]
+      ],
+      locals: [],
+      templates: [child0, child1, child2, child3, child4, child5]
     };
   }()));
 
@@ -2560,12 +2520,25 @@ define('rose/pods/components/file-input-button/template', ['exports'], function 
 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 5,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/pods/components/file-input-button/template.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("button");
         dom.setAttribute(el1,"class","ui primary bottom attached button");
@@ -2584,34 +2557,21 @@ define('rose/pods/components/file-input-button/template', ['exports'], function 
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, element = hooks.element, content = hooks.content, inline = hooks.inline;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0]);
-        var morph0 = dom.createMorphAt(element0,1,1);
-        var morph1 = dom.createMorphAt(fragment,2,2,contextualElement);
-        element(env, element0, context, "action", ["openFileChooser"], {});
-        content(env, morph0, context, "yield");
-        inline(env, morph1, context, "file-input", [], {"class": "hidden", "onread": "onread"});
-        return fragment;
-      }
+        var morphs = new Array(3);
+        morphs[0] = dom.createElementMorph(element0);
+        morphs[1] = dom.createMorphAt(element0,1,1);
+        morphs[2] = dom.createMorphAt(fragment,2,2,contextualElement);
+        return morphs;
+      },
+      statements: [
+        ["element","action",["openFileChooser"],[],["loc",[null,[1,50],[1,78]]]],
+        ["content","yield",["loc",[null,[2,2],[2,11]]]],
+        ["inline","file-input",[],["class","hidden","onread","onread"],["loc",[null,[4,0],[4,45]]]]
+      ],
+      locals: [],
+      templates: []
     };
   }()));
 
@@ -2645,12 +2605,25 @@ define('rose/pods/components/file-input/template', ['exports'], function (export
 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 2,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/pods/components/file-input/template.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
@@ -2658,31 +2631,17 @@ define('rose/pods/components/file-input/template', ['exports'], function (export
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, content = hooks.content;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
         dom.insertBoundary(fragment, 0);
-        content(env, morph0, context, "yield");
-        return fragment;
-      }
+        return morphs;
+      },
+      statements: [
+        ["content","yield",["loc",[null,[1,0],[1,9]]]]
+      ],
+      locals: [],
+      templates: []
     };
   }()));
 
@@ -2830,12 +2789,25 @@ define('rose/pods/components/high-chart/template', ['exports'], function (export
 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 2,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/pods/components/high-chart/template.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
@@ -2843,31 +2815,17 @@ define('rose/pods/components/high-chart/template', ['exports'], function (export
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, content = hooks.content;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
         dom.insertBoundary(fragment, 0);
-        content(env, morph0, context, "yield");
-        return fragment;
-      }
+        return morphs;
+      },
+      statements: [
+        ["content","yield",["loc",[null,[1,0],[1,9]]]]
+      ],
+      locals: [],
+      templates: []
     };
   }()));
 
@@ -2912,12 +2870,25 @@ define('rose/pods/components/installation-wizard/template', ['exports'], functio
 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 43,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/pods/components/installation-wizard/template.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("div");
         dom.setAttribute(el1,"class","ui two column centered grid");
@@ -3074,26 +3045,7 @@ define('rose/pods/components/installation-wizard/template', ['exports'], functio
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, element = hooks.element;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0, 1, 1]);
         var element1 = dom.childAt(element0, [1, 3]);
         var element2 = dom.childAt(element0, [3]);
@@ -3103,28 +3055,35 @@ define('rose/pods/components/installation-wizard/template', ['exports'], functio
         var element6 = dom.childAt(element2, [3]);
         var element7 = dom.childAt(element6, [1]);
         var element8 = dom.childAt(element6, [3]);
-        var morph0 = dom.createMorphAt(element1,1,1);
-        var morph1 = dom.createMorphAt(dom.childAt(element1, [3]),0,0);
-        var morph2 = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
-        var morph3 = dom.createMorphAt(dom.childAt(element4, [3]),1,1);
-        var morph4 = dom.createMorphAt(element5,1,1);
-        var morph5 = dom.createMorphAt(dom.childAt(element7, [1]),0,0);
-        var morph6 = dom.createMorphAt(dom.childAt(element7, [3]),1,1);
-        var morph7 = dom.createMorphAt(element8,3,3);
-        var morph8 = dom.createMorphAt(element6,5,5);
-        inline(env, morph0, context, "t", ["wizard.header"], {});
-        inline(env, morph1, context, "t", ["wizard.description"], {});
-        inline(env, morph2, context, "t", ["wizard.defaultConfigHeader"], {});
-        inline(env, morph3, context, "t", ["wizard.defaultConfigDescription"], {});
-        element(env, element5, context, "action", ["selectDefaultConfig"], {});
-        inline(env, morph4, context, "t", ["action.select"], {});
-        inline(env, morph5, context, "t", ["wizard.fileConfigHeader"], {});
-        inline(env, morph6, context, "t", ["wizard.fileConfigDescription"], {});
-        element(env, element8, context, "action", ["openFileChooser"], {});
-        inline(env, morph7, context, "t", ["wizard.fileConfigBtn"], {});
-        inline(env, morph8, context, "file-input", [], {"class": "hidden", "onread": "onread"});
-        return fragment;
-      }
+        var morphs = new Array(11);
+        morphs[0] = dom.createMorphAt(element1,1,1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element1, [3]),0,0);
+        morphs[2] = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
+        morphs[3] = dom.createMorphAt(dom.childAt(element4, [3]),1,1);
+        morphs[4] = dom.createElementMorph(element5);
+        morphs[5] = dom.createMorphAt(element5,1,1);
+        morphs[6] = dom.createMorphAt(dom.childAt(element7, [1]),0,0);
+        morphs[7] = dom.createMorphAt(dom.childAt(element7, [3]),1,1);
+        morphs[8] = dom.createElementMorph(element8);
+        morphs[9] = dom.createMorphAt(element8,3,3);
+        morphs[10] = dom.createMorphAt(element6,5,5);
+        return morphs;
+      },
+      statements: [
+        ["inline","t",["wizard.header"],[],["loc",[null,[7,10],[7,31]]]],
+        ["inline","t",["wizard.description"],[],["loc",[null,[8,34],[8,60]]]],
+        ["inline","t",["wizard.defaultConfigHeader"],[],["loc",[null,[15,32],[15,66]]]],
+        ["inline","t",["wizard.defaultConfigDescription"],[],["loc",[null,[17,14],[17,53]]]],
+        ["element","action",["selectDefaultConfig"],[],["loc",[null,[21,18],[21,50]]]],
+        ["inline","t",["action.select"],[],["loc",[null,[22,12],[22,33]]]],
+        ["inline","t",["wizard.fileConfigHeader"],[],["loc",[null,[27,32],[27,63]]]],
+        ["inline","t",["wizard.fileConfigDescription"],[],["loc",[null,[29,14],[29,50]]]],
+        ["element","action",["openFileChooser"],[],["loc",[null,[33,18],[33,46]]]],
+        ["inline","t",["wizard.fileConfigBtn"],[],["loc",[null,[35,12],[35,40]]]],
+        ["inline","file-input",[],["class","hidden","onread","onread"],["loc",[null,[37,10],[37,55]]]]
+      ],
+      locals: [],
+      templates: []
     };
   }()));
 
@@ -3158,7 +3117,7 @@ define('rose/pods/components/rose-comment/component', ['exports', 'ember'], func
         this.set('isEditable', false);
       },
       cancel: function cancel() {
-        this.get('model').rollback();
+        this.get('model').rollbackAttributes();
         this.set('isEditable', false);
       }
     }
@@ -3172,12 +3131,25 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
   exports['default'] = Ember.HTMLBars.template((function() {
     var child0 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 1,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 8,
+              "column": 4
+            },
+            "end": {
+              "line": 13,
+              "column": 4
+            }
+          },
+          "moduleName": "rose/pods/components/rose-comment/template.hbs"
+        },
+        arity: 1,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -3199,41 +3171,39 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement, blockArguments) {
-          var dom = env.dom;
-          var hooks = env.hooks, set = hooks.set, content = hooks.content;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(dom.childAt(fragment, [1]),3,3);
-          set(env, context, "value", blockArguments[0]);
-          content(env, morph0, context, "value");
-          return fragment;
-        }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),3,3);
+          return morphs;
+        },
+        statements: [
+          ["content","value",["loc",[null,[11,6],[11,15]]]]
+        ],
+        locals: ["value"],
+        templates: []
       };
     }());
     var child1 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 16,
+              "column": 2
+            },
+            "end": {
+              "line": 20,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/rose-comment/template.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -3250,40 +3220,39 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, get = hooks.get, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(dom.childAt(fragment, [1]),1,1);
-          inline(env, morph0, context, "textarea", [], {"value": get(env, context, "model.text")});
-          return fragment;
-        }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),1,1);
+          return morphs;
+        },
+        statements: [
+          ["inline","textarea",[],["value",["subexpr","@mut",[["get","model.text",["loc",[null,[18,23],[18,33]]]]],[],[]]],["loc",[null,[18,6],[18,35]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child2 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 20,
+              "column": 2
+            },
+            "end": {
+              "line": 22,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/rose-comment/template.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -3298,40 +3267,39 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, content = hooks.content;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(dom.childAt(fragment, [1, 0]),0,0);
-          content(env, morph0, context, "model.text");
-          return fragment;
-        }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1, 0]),0,0);
+          return morphs;
+        },
+        statements: [
+          ["content","model.text",["loc",[null,[21,33],[21,47]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child3 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 25,
+              "column": 2
+            },
+            "end": {
+              "line": 32,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/rose-comment/template.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -3357,46 +3325,47 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, element = hooks.element, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var element3 = dom.childAt(fragment, [1]);
           var element4 = dom.childAt(fragment, [3]);
-          var morph0 = dom.createMorphAt(element3,1,1);
-          var morph1 = dom.createMorphAt(element4,1,1);
-          element(env, element3, context, "action", ["save"], {});
-          inline(env, morph0, context, "t", ["action.save"], {});
-          element(env, element4, context, "action", ["cancel"], {});
-          inline(env, morph1, context, "t", ["action.cancel"], {});
-          return fragment;
-        }
+          var morphs = new Array(4);
+          morphs[0] = dom.createElementMorph(element3);
+          morphs[1] = dom.createMorphAt(element3,1,1);
+          morphs[2] = dom.createElementMorph(element4);
+          morphs[3] = dom.createMorphAt(element4,1,1);
+          return morphs;
+        },
+        statements: [
+          ["element","action",["save"],[],["loc",[null,[26,7],[26,24]]]],
+          ["inline","t",["action.save"],[],["loc",[null,[27,6],[27,25]]]],
+          ["element","action",["cancel"],[],["loc",[null,[29,7],[29,26]]]],
+          ["inline","t",["action.cancel"],[],["loc",[null,[30,6],[30,27]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child4 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 32,
+              "column": 2
+            },
+            "end": {
+              "line": 36,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/rose-comment/template.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -3412,42 +3381,42 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, element = hooks.element, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var element2 = dom.childAt(fragment, [1]);
-          var morph0 = dom.createMorphAt(element2,1,1);
-          element(env, element2, context, "action", ["edit"], {});
-          inline(env, morph0, context, "t", ["action.edit"], {});
-          return fragment;
-        }
+          var morphs = new Array(2);
+          morphs[0] = dom.createElementMorph(element2);
+          morphs[1] = dom.createMorphAt(element2,1,1);
+          return morphs;
+        },
+        statements: [
+          ["element","action",["edit"],[],["loc",[null,[33,7],[33,24]]]],
+          ["inline","t",["action.edit"],[],["loc",[null,[34,6],[34,25]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child5 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 37,
+              "column": 2
+            },
+            "end": {
+              "line": 41,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/rose-comment/template.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -3463,42 +3432,42 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, element = hooks.element, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var element1 = dom.childAt(fragment, [1]);
-          var morph0 = dom.createMorphAt(element1,1,1);
-          element(env, element1, context, "action", ["unhide"], {});
-          inline(env, morph0, context, "t", ["action.unhide"], {});
-          return fragment;
-        }
+          var morphs = new Array(2);
+          morphs[0] = dom.createElementMorph(element1);
+          morphs[1] = dom.createMorphAt(element1,1,1);
+          return morphs;
+        },
+        statements: [
+          ["element","action",["unhide"],[],["loc",[null,[38,7],[38,26]]]],
+          ["inline","t",["action.unhide"],[],["loc",[null,[39,6],[39,27]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child6 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 41,
+              "column": 2
+            },
+            "end": {
+              "line": 45,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/rose-comment/template.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -3514,41 +3483,41 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, element = hooks.element, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var element0 = dom.childAt(fragment, [1]);
-          var morph0 = dom.createMorphAt(element0,1,1);
-          element(env, element0, context, "action", ["hide"], {});
-          inline(env, morph0, context, "t", ["action.hide"], {});
-          return fragment;
-        }
+          var morphs = new Array(2);
+          morphs[0] = dom.createElementMorph(element0);
+          morphs[1] = dom.createMorphAt(element0,1,1);
+          return morphs;
+        },
+        statements: [
+          ["element","action",["hide"],[],["loc",[null,[42,7],[42,24]]]],
+          ["inline","t",["action.hide"],[],["loc",[null,[43,6],[43,25]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 51,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/pods/components/rose-comment/template.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("a");
         dom.setAttribute(el1,"class","avatar");
@@ -3640,51 +3609,38 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, content = hooks.content, get = hooks.get, block = hooks.block, element = hooks.element;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element5 = dom.childAt(fragment, [2]);
         var element6 = dom.childAt(element5, [7]);
         var element7 = dom.childAt(element5, [11]);
         var element8 = dom.childAt(element7, [4]);
-        var morph0 = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
-        var morph1 = dom.createMorphAt(element5,3,3);
-        var morph2 = dom.createMorphAt(dom.childAt(element5, [5]),0,0);
-        var morph3 = dom.createMorphAt(dom.childAt(element6, [1]),0,0);
-        var morph4 = dom.createMorphAt(element6,3,3);
-        var morph5 = dom.createMorphAt(dom.childAt(element5, [9]),1,1);
-        var morph6 = dom.createMorphAt(element7,1,1);
-        var morph7 = dom.createMorphAt(element7,2,2);
-        var morph8 = dom.createMorphAt(element8,1,1);
-        inline(env, morph0, context, "t", ["comments.you"], {});
-        inline(env, morph1, context, "t", ["comments.commentedOn"], {});
-        content(env, morph2, context, "model.contentId");
-        inline(env, morph3, context, "moment", [get(env, context, "model.createdAt")], {});
-        block(env, morph4, context, "each", [get(env, context, "model.rating")], {}, child0, null);
-        block(env, morph5, context, "liquid-if", [get(env, context, "isEditable")], {}, child1, child2);
-        block(env, morph6, context, "if", [get(env, context, "isEditable")], {}, child3, child4);
-        block(env, morph7, context, "if", [get(env, context, "model.isPrivate")], {}, child5, child6);
-        element(env, element8, context, "action", ["delete"], {});
-        inline(env, morph8, context, "t", ["action.delete"], {});
-        return fragment;
-      }
+        var morphs = new Array(10);
+        morphs[0] = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
+        morphs[1] = dom.createMorphAt(element5,3,3);
+        morphs[2] = dom.createMorphAt(dom.childAt(element5, [5]),0,0);
+        morphs[3] = dom.createMorphAt(dom.childAt(element6, [1]),0,0);
+        morphs[4] = dom.createMorphAt(element6,3,3);
+        morphs[5] = dom.createMorphAt(dom.childAt(element5, [9]),1,1);
+        morphs[6] = dom.createMorphAt(element7,1,1);
+        morphs[7] = dom.createMorphAt(element7,2,2);
+        morphs[8] = dom.createElementMorph(element8);
+        morphs[9] = dom.createMorphAt(element8,1,1);
+        return morphs;
+      },
+      statements: [
+        ["inline","t",["comments.you"],[],["loc",[null,[5,20],[5,40]]]],
+        ["inline","t",["comments.commentedOn"],[],["loc",[null,[5,45],[5,73]]]],
+        ["content","model.contentId",["loc",[null,[5,82],[5,101]]]],
+        ["inline","moment",[["get","model.createdAt",["loc",[null,[7,32],[7,47]]]]],[],["loc",[null,[7,23],[7,49]]]],
+        ["block","each",[["get","model.rating",["loc",[null,[8,12],[8,24]]]]],[],0,null,["loc",[null,[8,4],[13,13]]]],
+        ["block","liquid-if",[["get","isEditable",["loc",[null,[16,15],[16,25]]]]],[],1,2,["loc",[null,[16,2],[22,16]]]],
+        ["block","if",[["get","isEditable",["loc",[null,[25,8],[25,18]]]]],[],3,4,["loc",[null,[25,2],[36,9]]]],
+        ["block","if",[["get","model.isPrivate",["loc",[null,[37,8],[37,23]]]]],[],5,6,["loc",[null,[37,2],[45,9]]]],
+        ["element","action",["delete"],[],["loc",[null,[46,7],[46,26]]]],
+        ["inline","t",["action.delete"],[],["loc",[null,[47,6],[47,27]]]]
+      ],
+      locals: [],
+      templates: [child0, child1, child2, child3, child4, child5, child6]
     };
   }()));
 
@@ -3727,12 +3683,25 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
   exports['default'] = Ember.HTMLBars.template((function() {
     var child0 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 10,
+              "column": 2
+            },
+            "end": {
+              "line": 14,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/rose-interaction/template.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("  ");
           dom.appendChild(el0, el1);
@@ -3753,40 +3722,39 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, content = hooks.content;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(dom.childAt(fragment, [1, 1, 0]),0,0);
-          content(env, morph0, context, "jsonData");
-          return fragment;
-        }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1, 1, 0]),0,0);
+          return morphs;
+        },
+        statements: [
+          ["content","jsonData",["loc",[null,[12,15],[12,27]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child1 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 18,
+              "column": 2
+            },
+            "end": {
+              "line": 20,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/rose-interaction/template.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -3798,42 +3766,42 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, element = hooks.element, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var element1 = dom.childAt(fragment, [1]);
-          var morph0 = dom.createMorphAt(element1,0,0);
-          element(env, element1, context, "action", ["unhide"], {});
-          inline(env, morph0, context, "t", ["action.unhide"], {});
-          return fragment;
-        }
+          var morphs = new Array(2);
+          morphs[0] = dom.createElementMorph(element1);
+          morphs[1] = dom.createMorphAt(element1,0,0);
+          return morphs;
+        },
+        statements: [
+          ["element","action",["unhide"],[],["loc",[null,[19,7],[19,26]]]],
+          ["inline","t",["action.unhide"],[],["loc",[null,[19,27],[19,48]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child2 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 20,
+              "column": 2
+            },
+            "end": {
+              "line": 22,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/rose-interaction/template.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -3845,41 +3813,41 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, element = hooks.element, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var element0 = dom.childAt(fragment, [1]);
-          var morph0 = dom.createMorphAt(element0,0,0);
-          element(env, element0, context, "action", ["hide"], {});
-          inline(env, morph0, context, "t", ["action.hide"], {});
-          return fragment;
-        }
+          var morphs = new Array(2);
+          morphs[0] = dom.createElementMorph(element0);
+          morphs[1] = dom.createMorphAt(element0,0,0);
+          return morphs;
+        },
+        statements: [
+          ["element","action",["hide"],[],["loc",[null,[21,7],[21,24]]]],
+          ["inline","t",["action.hide"],[],["loc",[null,[21,25],[21,44]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 26,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/pods/components/rose-interaction/template.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("a");
         dom.setAttribute(el1,"class","avatar");
@@ -3967,50 +3935,38 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, content = hooks.content, inline = hooks.inline, get = hooks.get, block = hooks.block, element = hooks.element;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element2 = dom.childAt(fragment, [2]);
         var element3 = dom.childAt(element2, [11]);
         var element4 = dom.childAt(element3, [1]);
         var element5 = dom.childAt(element3, [5]);
-        var morph0 = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
-        var morph1 = dom.createMorphAt(element2,3,3);
-        var morph2 = dom.createMorphAt(dom.childAt(element2, [5]),0,0);
-        var morph3 = dom.createMorphAt(dom.childAt(element2, [7, 1]),0,0);
-        var morph4 = dom.createMorphAt(dom.childAt(element2, [9]),1,1);
-        var morph5 = dom.createMorphAt(element4,0,0);
-        var morph6 = dom.createMorphAt(element3,3,3);
-        var morph7 = dom.createMorphAt(element5,0,0);
-        content(env, morph0, context, "model.origin.observer");
-        inline(env, morph1, context, "t", ["interactions.actionOn"], {});
-        content(env, morph2, context, "model.contentId");
-        inline(env, morph3, context, "moment", [get(env, context, "model.createdAt")], {});
-        block(env, morph4, context, "liquid-if", [get(env, context, "showDetails")], {}, child0, null);
-        element(env, element4, context, "action", ["toggleDetails"], {});
-        inline(env, morph5, context, "t", ["action.details"], {});
-        block(env, morph6, context, "if", [get(env, context, "model.isPrivate")], {}, child1, child2);
-        element(env, element5, context, "action", ["delete"], {});
-        inline(env, morph7, context, "t", ["action.delete"], {});
-        return fragment;
-      }
+        var morphs = new Array(10);
+        morphs[0] = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
+        morphs[1] = dom.createMorphAt(element2,3,3);
+        morphs[2] = dom.createMorphAt(dom.childAt(element2, [5]),0,0);
+        morphs[3] = dom.createMorphAt(dom.childAt(element2, [7, 1]),0,0);
+        morphs[4] = dom.createMorphAt(dom.childAt(element2, [9]),1,1);
+        morphs[5] = dom.createElementMorph(element4);
+        morphs[6] = dom.createMorphAt(element4,0,0);
+        morphs[7] = dom.createMorphAt(element3,3,3);
+        morphs[8] = dom.createElementMorph(element5);
+        morphs[9] = dom.createMorphAt(element5,0,0);
+        return morphs;
+      },
+      statements: [
+        ["content","model.origin.observer",["loc",[null,[5,20],[5,45]]]],
+        ["inline","t",["interactions.actionOn"],[],["loc",[null,[5,50],[5,79]]]],
+        ["content","model.contentId",["loc",[null,[5,88],[5,107]]]],
+        ["inline","moment",[["get","model.createdAt",["loc",[null,[7,32],[7,47]]]]],[],["loc",[null,[7,23],[7,49]]]],
+        ["block","liquid-if",[["get","showDetails",["loc",[null,[10,15],[10,26]]]]],[],0,null,["loc",[null,[10,2],[14,16]]]],
+        ["element","action",["toggleDetails"],[],["loc",[null,[17,7],[17,33]]]],
+        ["inline","t",["action.details"],[],["loc",[null,[17,34],[17,56]]]],
+        ["block","if",[["get","model.isPrivate",["loc",[null,[18,8],[18,23]]]]],[],1,2,["loc",[null,[18,2],[22,9]]]],
+        ["element","action",["delete"],[],["loc",[null,[23,7],[23,26]]]],
+        ["inline","t",["action.delete"],[],["loc",[null,[23,27],[23,48]]]]
+      ],
+      locals: [],
+      templates: [child0, child1, child2]
     };
   }()));
 
@@ -4043,13 +3999,13 @@ define('rose/routes/about', ['exports', 'ember'], function (exports, Ember) {
 	exports['default'] = Ember['default'].Route.extend({});
 
 });
-define('rose/routes/application', ['exports', 'ember', 'semantic-ui-ember/mixins/application-route'], function (exports, Ember, SemanticRouteMixin) {
+define('rose/routes/application', ['exports', 'ember'], function (exports, Ember) {
 
   'use strict';
 
   var Promise = Ember['default'].RSVP.Promise;
 
-  exports['default'] = Ember['default'].Route.extend(SemanticRouteMixin['default'], {
+  exports['default'] = Ember['default'].Route.extend({
     beforeModel: function beforeModel() {
       var settings = this.get('settings');
       return Promise.all([settings.setup()]);
@@ -4090,10 +4046,8 @@ define('rose/routes/backup', ['exports', 'ember'], function (exports, Ember) {
     return new Ember['default'].RSVP.Promise(function (resolve) {
       kango.invokeAsyncCallback('localforage.getItem', key, function (data) {
         resolve({
-          type: {
-            modelName: key
-          },
-          content: data
+          type: key,
+          data: data
         });
       });
     });
@@ -4101,7 +4055,17 @@ define('rose/routes/backup', ['exports', 'ember'], function (exports, Ember) {
 
   exports['default'] = Ember['default'].Route.extend({
     model: function model() {
-      var promises = [this.store.find('comment'), this.store.find('interaction'), this.store.find('diary-entry'), this.store.find('user-setting'), getItem('click-activity-records'), getItem('mousemove-activity-records'), getItem('window-activity-records'), getItem('scroll-activity-records'), getItem('fb-login-activity-records'), getItem('install-date'), getItem('rose-data-version')];
+      var promises = [this.store.find('comment').then(function (records) {
+        return { type: 'comment', data: records.invoke('serialize') };
+      }), this.store.find('interaction').then(function (records) {
+        return { type: 'interaction', data: records.invoke('serialize') };
+      }), this.store.find('diary-entry').then(function (records) {
+        return { type: 'diary-entry', data: records.invoke('serialize') };
+      }), this.store.find('user-setting').then(function (records) {
+        return { type: 'user-setting', data: records.invoke('serialize') };
+      }), this.store.find('system-config').then(function (records) {
+        return { type: 'system-config', data: records.invoke('serialize') };
+      }), getItem('click-activity-records'), getItem('mousemove-activity-records'), getItem('window-activity-records'), getItem('scroll-activity-records'), getItem('fb-login-activity-records'), getItem('install-date'), getItem('rose-data-version')];
 
       return Ember['default'].RSVP.all(promises);
     }
@@ -4272,12 +4236,25 @@ define('rose/templates/about', ['exports'], function (exports) {
 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 36,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/about.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("h2");
         dom.setAttribute(el1,"class","ui dividing header");
@@ -4407,50 +4384,36 @@ define('rose/templates/about', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0, 3]);
         var element1 = dom.childAt(fragment, [10, 1]);
-        var morph0 = dom.createMorphAt(element0,1,1);
-        var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
-        var morph2 = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
-        var morph3 = dom.createMorphAt(fragment,6,6,contextualElement);
-        var morph4 = dom.createMorphAt(dom.childAt(fragment, [8]),1,1);
-        var morph5 = dom.createMorphAt(dom.childAt(element1, [1]),0,0);
-        var morph6 = dom.createMorphAt(element1,4,4);
-        var morph7 = dom.createMorphAt(element1,9,9);
-        var morph8 = dom.createMorphAt(dom.childAt(fragment, [12]),1,1);
-        var morph9 = dom.createMorphAt(dom.childAt(fragment, [16]),1,1);
-        inline(env, morph0, context, "t", ["about.title"], {});
-        inline(env, morph1, context, "t", ["about.subtitle"], {});
-        inline(env, morph2, context, "t", ["about.description"], {});
-        inline(env, morph3, context, "t", ["about.developedBy"], {});
-        inline(env, morph4, context, "t", ["and"], {});
-        inline(env, morph5, context, "t", ["about.address.name"], {});
-        inline(env, morph6, context, "t", ["about.address.street"], {});
-        inline(env, morph7, context, "t", ["about.address.country"], {});
-        inline(env, morph8, context, "t", ["about.forQuestions"], {});
-        inline(env, morph9, context, "t", ["about.licenceNotice"], {});
-        return fragment;
-      }
+        var morphs = new Array(10);
+        morphs[0] = dom.createMorphAt(element0,1,1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
+        morphs[2] = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
+        morphs[3] = dom.createMorphAt(fragment,6,6,contextualElement);
+        morphs[4] = dom.createMorphAt(dom.childAt(fragment, [8]),1,1);
+        morphs[5] = dom.createMorphAt(dom.childAt(element1, [1]),0,0);
+        morphs[6] = dom.createMorphAt(element1,4,4);
+        morphs[7] = dom.createMorphAt(element1,9,9);
+        morphs[8] = dom.createMorphAt(dom.childAt(fragment, [12]),1,1);
+        morphs[9] = dom.createMorphAt(dom.childAt(fragment, [16]),1,1);
+        return morphs;
+      },
+      statements: [
+        ["inline","t",["about.title"],[],["loc",[null,[4,4],[4,23]]]],
+        ["inline","t",["about.subtitle"],[],["loc",[null,[5,28],[5,50]]]],
+        ["inline","t",["about.description"],[],["loc",[null,[10,2],[10,27]]]],
+        ["inline","t",["about.developedBy"],[],["loc",[null,[15,5],[15,30]]]],
+        ["inline","t",["and"],[],["loc",[null,[17,39],[17,50]]]],
+        ["inline","t",["about.address.name"],[],["loc",[null,[21,12],[21,38]]]],
+        ["inline","t",["about.address.street"],[],["loc",[null,[22,4],[22,32]]]],
+        ["inline","t",["about.address.country"],[],["loc",[null,[24,4],[24,33]]]],
+        ["inline","t",["about.forQuestions"],[],["loc",[null,[28,2],[28,28]]]],
+        ["inline","t",["about.licenceNotice"],[],["loc",[null,[34,2],[34,29]]]]
+      ],
+      locals: [],
+      templates: []
     };
   }()));
 
@@ -4462,12 +4425,25 @@ define('rose/templates/application', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     var child0 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "line": 5,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/application.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("\n");
           dom.appendChild(el0, el1);
@@ -4477,40 +4453,39 @@ define('rose/templates/application', ['exports'], function (exports) {
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "installation-wizard", [], {"cancel": "cancelWizard", "onsuccess": "saveConfig"});
-          return fragment;
-        }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+          return morphs;
+        },
+        statements: [
+          ["inline","installation-wizard",[],["cancel","cancelWizard","onsuccess","saveConfig"],["loc",[null,[3,0],[3,68]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child1 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 5,
+              "column": 0
+            },
+            "end": {
+              "line": 19,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/application.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("\n");
           dom.appendChild(el0, el1);
@@ -4550,81 +4525,60 @@ define('rose/templates/application', ['exports'], function (exports) {
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n\n");
           dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n\n");
-          dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline, content = hooks.content;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var element0 = dom.childAt(fragment, [1]);
-          var morph0 = dom.createMorphAt(dom.childAt(element0, [1]),1,1);
-          var morph1 = dom.createMorphAt(dom.childAt(element0, [3, 1]),1,1);
-          var morph2 = dom.createMorphAt(fragment,3,3,contextualElement);
-          inline(env, morph0, context, "partial", ["sidebar-menu"], {});
-          content(env, morph1, context, "outlet");
-          inline(env, morph2, context, "outlet", ["modal"], {});
-          return fragment;
-        }
+          var morphs = new Array(2);
+          morphs[0] = dom.createMorphAt(dom.childAt(element0, [1]),1,1);
+          morphs[1] = dom.createMorphAt(dom.childAt(element0, [3, 1]),1,1);
+          return morphs;
+        },
+        statements: [
+          ["inline","partial",["sidebar-menu"],[],["loc",[null,[9,4],[9,30]]]],
+          ["content","outlet",["loc",[null,[14,6],[14,16]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 20,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/application.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, get = hooks.get, block = hooks.block;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-        dom.insertBoundary(fragment, null);
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
         dom.insertBoundary(fragment, 0);
-        block(env, morph0, context, "if", [get(env, context, "settings.user.firstRun")], {}, child0, child1);
-        return fragment;
-      }
+        dom.insertBoundary(fragment, null);
+        return morphs;
+      },
+      statements: [
+        ["block","if",[["get","settings.user.firstRun",["loc",[null,[1,6],[1,28]]]]],[],0,1,["loc",[null,[1,0],[19,7]]]]
+      ],
+      locals: [],
+      templates: [child0, child1]
     };
   }()));
 
@@ -4635,12 +4589,25 @@ define('rose/templates/backup', ['exports'], function (exports) {
 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 32,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/backup.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("h2");
         dom.setAttribute(el1,"class","ui dividing header");
@@ -4745,58 +4712,52 @@ define('rose/templates/backup', ['exports'], function (exports) {
         var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, element = hooks.element, get = hooks.get;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0, 3]);
         var element1 = dom.childAt(fragment, [2]);
         var element2 = dom.childAt(element1, [1]);
         var element3 = dom.childAt(element2, [5]);
         var element4 = dom.childAt(element1, [3]);
         var element5 = dom.childAt(element1, [5]);
-        var morph0 = dom.createMorphAt(element0,1,1);
-        var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
-        var morph2 = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
-        var morph3 = dom.createMorphAt(dom.childAt(element2, [3]),0,0);
-        var morph4 = dom.createMorphAt(element3,1,1);
-        var morph5 = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
-        var morph6 = dom.createMorphAt(dom.childAt(element4, [3]),0,0);
-        var morph7 = dom.createMorphAt(element4,5,5);
-        var morph8 = dom.createMorphAt(element5,1,1);
-        inline(env, morph0, context, "t", ["backup.title"], {});
-        inline(env, morph1, context, "t", ["backup.subtitle"], {});
-        inline(env, morph2, context, "t", ["backup.resetData"], {});
-        inline(env, morph3, context, "t", ["backup.resetDataLabel"], {});
-        element(env, element3, context, "action", ["deleteData"], {});
-        inline(env, morph4, context, "t", ["action.reset"], {});
-        inline(env, morph5, context, "t", ["backup.export"], {});
-        inline(env, morph6, context, "t", ["backup.exportLabel"], {});
-        inline(env, morph7, context, "textarea", [], {"readonly": true, "value": get(env, context, "jsonData")});
-        element(env, element5, context, "action", ["download"], {});
-        inline(env, morph8, context, "t", ["action.download"], {});
-        return fragment;
-      }
+        var morphs = new Array(12);
+        morphs[0] = dom.createMorphAt(element0,1,1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
+        morphs[2] = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
+        morphs[3] = dom.createMorphAt(dom.childAt(element2, [3]),0,0);
+        morphs[4] = dom.createElementMorph(element3);
+        morphs[5] = dom.createMorphAt(element3,1,1);
+        morphs[6] = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
+        morphs[7] = dom.createMorphAt(dom.childAt(element4, [3]),0,0);
+        morphs[8] = dom.createMorphAt(element4,5,5);
+        morphs[9] = dom.createElementMorph(element5);
+        morphs[10] = dom.createMorphAt(element5,1,1);
+        morphs[11] = dom.createMorphAt(fragment,4,4,contextualElement);
+        return morphs;
+      },
+      statements: [
+        ["inline","t",["backup.title"],[],["loc",[null,[4,4],[4,24]]]],
+        ["inline","t",["backup.subtitle"],[],["loc",[null,[5,28],[5,51]]]],
+        ["inline","t",["backup.resetData"],[],["loc",[null,[11,11],[11,35]]]],
+        ["inline","t",["backup.resetDataLabel"],[],["loc",[null,[12,7],[12,36]]]],
+        ["element","action",["openModal","reset-data"],[],["loc",[null,[14,38],[14,73]]]],
+        ["inline","t",["action.reset"],[],["loc",[null,[15,6],[15,26]]]],
+        ["inline","t",["backup.export"],[],["loc",[null,[20,11],[20,32]]]],
+        ["inline","t",["backup.exportLabel"],[],["loc",[null,[21,7],[21,33]]]],
+        ["inline","textarea",[],["readonly",true,"value",["subexpr","@mut",[["get","jsonData",["loc",[null,[22,35],[22,43]]]]],[],[]]],["loc",[null,[22,4],[22,45]]]],
+        ["element","action",["download"],[],["loc",[null,[26,36],[26,57]]]],
+        ["inline","t",["action.download"],[],["loc",[null,[27,4],[27,27]]]],
+        ["inline","partial",["modal/reset-data"],[],["loc",[null,[31,0],[31,30]]]]
+      ],
+      locals: [],
+      templates: []
     };
   }()));
 
@@ -4808,12 +4769,25 @@ define('rose/templates/comments', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     var child0 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 1,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 10,
+              "column": 2
+            },
+            "end": {
+              "line": 12,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/templates/comments.hbs"
+        },
+        arity: 1,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -4823,40 +4797,38 @@ define('rose/templates/comments', ['exports'], function (exports) {
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement, blockArguments) {
-          var dom = env.dom;
-          var hooks = env.hooks, set = hooks.set, get = hooks.get, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          set(env, context, "comment", blockArguments[0]);
-          inline(env, morph0, context, "rose-comment", [], {"model": get(env, context, "comment")});
-          return fragment;
-        }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+          return morphs;
+        },
+        statements: [
+          ["inline","rose-comment",[],["model",["subexpr","@mut",[["get","comment",["loc",[null,[11,25],[11,32]]]]],[],[]]],["loc",[null,[11,4],[11,34]]]]
+        ],
+        locals: ["comment"],
+        templates: []
       };
     }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 14,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/comments.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("h2");
         dom.setAttribute(el1,"class","ui dividing header");
@@ -4899,35 +4871,21 @@ define('rose/templates/comments', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, get = hooks.get, block = hooks.block;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0, 3]);
-        var morph0 = dom.createMorphAt(element0,1,1);
-        var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
-        var morph2 = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
-        inline(env, morph0, context, "t", ["comments.title"], {});
-        inline(env, morph1, context, "t", ["comments.subtitle"], {});
-        block(env, morph2, context, "each", [get(env, context, "sortedList")], {}, child0, null);
-        return fragment;
-      }
+        var morphs = new Array(3);
+        morphs[0] = dom.createMorphAt(element0,1,1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
+        morphs[2] = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
+        return morphs;
+      },
+      statements: [
+        ["inline","t",["comments.title"],[],["loc",[null,[4,4],[4,26]]]],
+        ["inline","t",["comments.subtitle"],[],["loc",[null,[5,28],[5,53]]]],
+        ["block","each",[["get","sortedList",["loc",[null,[10,10],[10,20]]]]],[],0,null,["loc",[null,[10,2],[12,11]]]]
+      ],
+      locals: [],
+      templates: [child0]
     };
   }()));
 
@@ -4939,250 +4897,401 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
   exports['default'] = Ember.HTMLBars.template((function() {
     var child0 = (function() {
       var child0 = (function() {
-        return {
-          isHTMLBars: true,
-          revision: "Ember@1.12.1",
-          blockParams: 1,
-          cachedFragment: null,
-          hasRendered: false,
-          build: function build(dom) {
-            var el0 = dom.createDocumentFragment();
-            var el1 = dom.createComment("");
-            dom.appendChild(el0, el1);
-            return el0;
-          },
-          render: function render(context, env, contextualElement, blockArguments) {
-            var dom = env.dom;
-            var hooks = env.hooks, set = hooks.set, content = hooks.content;
-            dom.detectNamespace(contextualElement);
-            var fragment;
-            if (env.useFragmentCache && dom.canClone) {
-              if (this.cachedFragment === null) {
-                fragment = this.build(dom);
-                if (this.hasRendered) {
-                  this.cachedFragment = fragment;
-                } else {
-                  this.hasRendered = true;
-                }
-              }
-              if (this.cachedFragment) {
-                fragment = dom.cloneNode(this.cachedFragment, true);
-              }
-            } else {
-              fragment = this.build(dom);
-            }
-            var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-            dom.insertBoundary(fragment, null);
-            dom.insertBoundary(fragment, 0);
-            set(env, context, "version", blockArguments[0]);
-            content(env, morph0, context, "version");
-            return fragment;
-          }
-        };
-      }());
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, get = hooks.get, block = hooks.block;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-          dom.insertBoundary(fragment, null);
-          dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "liquid-versions", [], {"value": get(env, context, "value"), "use": get(env, context, "use"), "name": "liquid-bind", "renderWhenFalse": true, "innerClass": get(env, context, "innerClass")}, child0, null);
-          return fragment;
-        }
-      };
-    }());
-    var child1 = (function() {
-      var child0 = (function() {
         var child0 = (function() {
           return {
-            isHTMLBars: true,
-            revision: "Ember@1.12.1",
-            blockParams: 1,
+            meta: {
+              "revision": "Ember@1.13.9",
+              "loc": {
+                "source": null,
+                "start": {
+                  "line": 5,
+                  "column": 4
+                },
+                "end": {
+                  "line": 7,
+                  "column": 4
+                }
+              },
+              "moduleName": "rose/templates/components/liquid-bind.hbs"
+            },
+            arity: 0,
             cachedFragment: null,
             hasRendered: false,
-            build: function build(dom) {
+            buildFragment: function buildFragment(dom) {
               var el0 = dom.createDocumentFragment();
               var el1 = dom.createComment("");
               dom.appendChild(el0, el1);
               return el0;
             },
-            render: function render(context, env, contextualElement, blockArguments) {
-              var dom = env.dom;
-              var hooks = env.hooks, set = hooks.set, content = hooks.content;
-              dom.detectNamespace(contextualElement);
-              var fragment;
-              if (env.useFragmentCache && dom.canClone) {
-                if (this.cachedFragment === null) {
-                  fragment = this.build(dom);
-                  if (this.hasRendered) {
-                    this.cachedFragment = fragment;
-                  } else {
-                    this.hasRendered = true;
-                  }
-                }
-                if (this.cachedFragment) {
-                  fragment = dom.cloneNode(this.cachedFragment, true);
-                }
-              } else {
-                fragment = this.build(dom);
-              }
-              var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-              dom.insertBoundary(fragment, null);
+            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+              var morphs = new Array(1);
+              morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
               dom.insertBoundary(fragment, 0);
-              set(env, context, "version", blockArguments[0]);
-              content(env, morph0, context, "version");
-              return fragment;
-            }
+              dom.insertBoundary(fragment, null);
+              return morphs;
+            },
+            statements: [
+              ["inline","yield",[["get","version",["loc",[null,[6,15],[6,22]]]]],[],["loc",[null,[6,6],[6,26]]]]
+            ],
+            locals: [],
+            templates: []
+          };
+        }());
+        var child1 = (function() {
+          return {
+            meta: {
+              "revision": "Ember@1.13.9",
+              "loc": {
+                "source": null,
+                "start": {
+                  "line": 7,
+                  "column": 4
+                },
+                "end": {
+                  "line": 9,
+                  "column": 4
+                }
+              },
+              "moduleName": "rose/templates/components/liquid-bind.hbs"
+            },
+            arity: 0,
+            cachedFragment: null,
+            hasRendered: false,
+            buildFragment: function buildFragment(dom) {
+              var el0 = dom.createDocumentFragment();
+              var el1 = dom.createComment("");
+              dom.appendChild(el0, el1);
+              return el0;
+            },
+            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+              var morphs = new Array(1);
+              morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+              dom.insertBoundary(fragment, 0);
+              dom.insertBoundary(fragment, null);
+              return morphs;
+            },
+            statements: [
+              ["content","version",["loc",[null,[8,6],[8,20]]]]
+            ],
+            locals: [],
+            templates: []
           };
         }());
         return {
-          isHTMLBars: true,
-          revision: "Ember@1.12.1",
-          blockParams: 1,
+          meta: {
+            "revision": "Ember@1.13.9",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 2,
+                "column": 2
+              },
+              "end": {
+                "line": 11,
+                "column": 0
+              }
+            },
+            "moduleName": "rose/templates/components/liquid-bind.hbs"
+          },
+          arity: 1,
           cachedFragment: null,
           hasRendered: false,
-          build: function build(dom) {
+          buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
             var el1 = dom.createComment("");
             dom.appendChild(el0, el1);
             return el0;
           },
-          render: function render(context, env, contextualElement, blockArguments) {
-            var dom = env.dom;
-            var hooks = env.hooks, set = hooks.set, get = hooks.get, block = hooks.block;
-            dom.detectNamespace(contextualElement);
-            var fragment;
-            if (env.useFragmentCache && dom.canClone) {
-              if (this.cachedFragment === null) {
-                fragment = this.build(dom);
-                if (this.hasRendered) {
-                  this.cachedFragment = fragment;
-                } else {
-                  this.hasRendered = true;
-                }
-              }
-              if (this.cachedFragment) {
-                fragment = dom.cloneNode(this.cachedFragment, true);
-              }
-            } else {
-              fragment = this.build(dom);
-            }
-            var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-            dom.insertBoundary(fragment, null);
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
             dom.insertBoundary(fragment, 0);
-            set(env, context, "container", blockArguments[0]);
-            block(env, morph0, context, "liquid-versions", [], {"value": get(env, context, "value"), "notify": get(env, context, "container"), "use": get(env, context, "use"), "name": "liquid-bind", "renderWhenFalse": true}, child0, null);
-            return fragment;
-          }
+            dom.insertBoundary(fragment, null);
+            return morphs;
+          },
+          statements: [
+            ["block","if",[["get","hasBlock",["loc",[null,[5,11],[5,19]]]]],[],0,1,["loc",[null,[5,4],[9,12]]]]
+          ],
+          locals: ["version"],
+          templates: [child0, child1]
         };
       }());
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "line": 12,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/components/liquid-bind.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, get = hooks.get, block = hooks.block;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-          dom.insertBoundary(fragment, null);
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "growDuration": get(env, context, "growDuration"), "growPixelsPerSecond": get(env, context, "growPixelsPerSecond"), "growEasing": get(env, context, "growEasing"), "enableGrowth": get(env, context, "enableGrowth")}, child0, null);
-          return fragment;
-        }
+          dom.insertBoundary(fragment, null);
+          return morphs;
+        },
+        statements: [
+          ["block","liquid-versions",[],["value",["subexpr","@mut",[["get","attrs.value",["loc",[null,[2,28],[2,39]]]]],[],[]],"use",["subexpr","@mut",[["get","use",["loc",[null,[2,44],[2,47]]]]],[],[]],"outletName",["subexpr","@mut",[["get","attrs.outletName",["loc",[null,[3,32],[3,48]]]]],[],[]],"name","liquid-bind","renderWhenFalse",true,"class",["subexpr","@mut",[["get","class",["loc",[null,[4,67],[4,72]]]]],[],[]]],0,null,["loc",[null,[2,2],[11,22]]]]
+        ],
+        locals: [],
+        templates: [child0]
+      };
+    }());
+    var child1 = (function() {
+      var child0 = (function() {
+        var child0 = (function() {
+          var child0 = (function() {
+            return {
+              meta: {
+                "revision": "Ember@1.13.9",
+                "loc": {
+                  "source": null,
+                  "start": {
+                    "line": 25,
+                    "column": 6
+                  },
+                  "end": {
+                    "line": 27,
+                    "column": 6
+                  }
+                },
+                "moduleName": "rose/templates/components/liquid-bind.hbs"
+              },
+              arity: 0,
+              cachedFragment: null,
+              hasRendered: false,
+              buildFragment: function buildFragment(dom) {
+                var el0 = dom.createDocumentFragment();
+                var el1 = dom.createComment("");
+                dom.appendChild(el0, el1);
+                return el0;
+              },
+              buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+                var morphs = new Array(1);
+                morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+                dom.insertBoundary(fragment, 0);
+                dom.insertBoundary(fragment, null);
+                return morphs;
+              },
+              statements: [
+                ["inline","yield",[["get","version",["loc",[null,[26,17],[26,24]]]]],[],["loc",[null,[26,8],[26,28]]]]
+              ],
+              locals: [],
+              templates: []
+            };
+          }());
+          var child1 = (function() {
+            return {
+              meta: {
+                "revision": "Ember@1.13.9",
+                "loc": {
+                  "source": null,
+                  "start": {
+                    "line": 27,
+                    "column": 6
+                  },
+                  "end": {
+                    "line": 29,
+                    "column": 6
+                  }
+                },
+                "moduleName": "rose/templates/components/liquid-bind.hbs"
+              },
+              arity: 0,
+              cachedFragment: null,
+              hasRendered: false,
+              buildFragment: function buildFragment(dom) {
+                var el0 = dom.createDocumentFragment();
+                var el1 = dom.createComment("");
+                dom.appendChild(el0, el1);
+                return el0;
+              },
+              buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+                var morphs = new Array(1);
+                morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+                dom.insertBoundary(fragment, 0);
+                dom.insertBoundary(fragment, null);
+                return morphs;
+              },
+              statements: [
+                ["content","version",["loc",[null,[28,8],[28,22]]]]
+              ],
+              locals: [],
+              templates: []
+            };
+          }());
+          return {
+            meta: {
+              "revision": "Ember@1.13.9",
+              "loc": {
+                "source": null,
+                "start": {
+                  "line": 21,
+                  "column": 4
+                },
+                "end": {
+                  "line": 31,
+                  "column": 4
+                }
+              },
+              "moduleName": "rose/templates/components/liquid-bind.hbs"
+            },
+            arity: 1,
+            cachedFragment: null,
+            hasRendered: false,
+            buildFragment: function buildFragment(dom) {
+              var el0 = dom.createDocumentFragment();
+              var el1 = dom.createComment("");
+              dom.appendChild(el0, el1);
+              return el0;
+            },
+            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+              var morphs = new Array(1);
+              morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+              dom.insertBoundary(fragment, 0);
+              dom.insertBoundary(fragment, null);
+              return morphs;
+            },
+            statements: [
+              ["block","if",[["get","hasBlock",["loc",[null,[25,13],[25,21]]]]],[],0,1,["loc",[null,[25,6],[29,14]]]]
+            ],
+            locals: ["version"],
+            templates: [child0, child1]
+          };
+        }());
+        return {
+          meta: {
+            "revision": "Ember@1.13.9",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 13,
+                "column": 2
+              },
+              "end": {
+                "line": 32,
+                "column": 2
+              }
+            },
+            "moduleName": "rose/templates/components/liquid-bind.hbs"
+          },
+          arity: 1,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+            dom.insertBoundary(fragment, 0);
+            dom.insertBoundary(fragment, null);
+            return morphs;
+          },
+          statements: [
+            ["block","liquid-versions",[],["value",["subexpr","@mut",[["get","attrs.value",["loc",[null,[21,30],[21,41]]]]],[],[]],"notify",["subexpr","@mut",[["get","container",["loc",[null,[21,49],[21,58]]]]],[],[]],"use",["subexpr","@mut",[["get","use",["loc",[null,[21,63],[21,66]]]]],[],[]],"outletName",["subexpr","@mut",[["get","attrs.outletName",["loc",[null,[22,34],[22,50]]]]],[],[]],"name","liquid-bind","renderWhenFalse",true],0,null,["loc",[null,[21,4],[31,26]]]]
+          ],
+          locals: ["container"],
+          templates: [child0]
+        };
+      }());
+      return {
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 12,
+              "column": 0
+            },
+            "end": {
+              "line": 33,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/components/liquid-bind.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+          dom.insertBoundary(fragment, 0);
+          dom.insertBoundary(fragment, null);
+          return morphs;
+        },
+        statements: [
+          ["block","liquid-container",[],["id",["subexpr","@mut",[["get","id",["loc",[null,[14,9],[14,11]]]]],[],[]],"class",["subexpr","@mut",[["get","class",["loc",[null,[15,12],[15,17]]]]],[],[]],"growDuration",["subexpr","@mut",[["get","growDuration",["loc",[null,[16,19],[16,31]]]]],[],[]],"growPixelsPerSecond",["subexpr","@mut",[["get","growPixelsPerSecond",["loc",[null,[17,26],[17,45]]]]],[],[]],"growEasing",["subexpr","@mut",[["get","growEasing",["loc",[null,[18,17],[18,27]]]]],[],[]],"enableGrowth",["subexpr","@mut",[["get","enableGrowth",["loc",[null,[19,19],[19,31]]]]],[],[]]],0,null,["loc",[null,[13,2],[32,25]]]]
+        ],
+        locals: [],
+        templates: [child0]
       };
     }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 34,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/components/liquid-bind.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, get = hooks.get, block = hooks.block;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-        dom.insertBoundary(fragment, null);
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
         dom.insertBoundary(fragment, 0);
-        block(env, morph0, context, "if", [get(env, context, "containerless")], {}, child0, child1);
-        return fragment;
-      }
+        dom.insertBoundary(fragment, null);
+        return morphs;
+      },
+      statements: [
+        ["block","if",[["get","containerless",["loc",[null,[1,6],[1,19]]]]],[],0,1,["loc",[null,[1,0],[33,7]]]]
+      ],
+      locals: [],
+      templates: [child0, child1]
     };
   }()));
 
@@ -5193,43 +5302,42 @@ define('rose/templates/components/liquid-container', ['exports'], function (expo
 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 1,
+            "column": 14
+          }
+        },
+        "moduleName": "rose/templates/components/liquid-container.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, get = hooks.get, inline = hooks.inline;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-        dom.insertBoundary(fragment, null);
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
         dom.insertBoundary(fragment, 0);
-        inline(env, morph0, context, "yield", [get(env, context, "this")], {});
-        return fragment;
-      }
+        dom.insertBoundary(fragment, null);
+        return morphs;
+      },
+      statements: [
+        ["inline","yield",[["get","this",["loc",[null,[1,8],[1,12]]]]],[],["loc",[null,[1,0],[1,14]]]]
+      ],
+      locals: [],
+      templates: []
     };
   }()));
 
@@ -5243,12 +5351,25 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
       var child0 = (function() {
         var child0 = (function() {
           return {
-            isHTMLBars: true,
-            revision: "Ember@1.12.1",
-            blockParams: 0,
+            meta: {
+              "revision": "Ember@1.13.9",
+              "loc": {
+                "source": null,
+                "start": {
+                  "line": 4,
+                  "column": 4
+                },
+                "end": {
+                  "line": 6,
+                  "column": 4
+                }
+              },
+              "moduleName": "rose/templates/components/liquid-if.hbs"
+            },
+            arity: 0,
             cachedFragment: null,
             hasRendered: false,
-            build: function build(dom) {
+            buildFragment: function buildFragment(dom) {
               var el0 = dom.createDocumentFragment();
               var el1 = dom.createTextNode("      ");
               dom.appendChild(el0, el1);
@@ -5258,40 +5379,39 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
               dom.appendChild(el0, el1);
               return el0;
             },
-            render: function render(context, env, contextualElement) {
-              var dom = env.dom;
-              var hooks = env.hooks, content = hooks.content;
-              dom.detectNamespace(contextualElement);
-              var fragment;
-              if (env.useFragmentCache && dom.canClone) {
-                if (this.cachedFragment === null) {
-                  fragment = this.build(dom);
-                  if (this.hasRendered) {
-                    this.cachedFragment = fragment;
-                  } else {
-                    this.hasRendered = true;
-                  }
-                }
-                if (this.cachedFragment) {
-                  fragment = dom.cloneNode(this.cachedFragment, true);
-                }
-              } else {
-                fragment = this.build(dom);
-              }
-              var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-              content(env, morph0, context, "yield");
-              return fragment;
-            }
+            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+              var morphs = new Array(1);
+              morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+              return morphs;
+            },
+            statements: [
+              ["content","yield",["loc",[null,[5,6],[5,15]]]]
+            ],
+            locals: [],
+            templates: []
           };
         }());
         var child1 = (function() {
           return {
-            isHTMLBars: true,
-            revision: "Ember@1.12.1",
-            blockParams: 0,
+            meta: {
+              "revision": "Ember@1.13.9",
+              "loc": {
+                "source": null,
+                "start": {
+                  "line": 6,
+                  "column": 4
+                },
+                "end": {
+                  "line": 8,
+                  "column": 4
+                }
+              },
+              "moduleName": "rose/templates/components/liquid-if.hbs"
+            },
+            arity: 0,
             cachedFragment: null,
             hasRendered: false,
-            build: function build(dom) {
+            buildFragment: function buildFragment(dom) {
               var el0 = dom.createDocumentFragment();
               var el1 = dom.createTextNode("      ");
               dom.appendChild(el0, el1);
@@ -5301,111 +5421,94 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
               dom.appendChild(el0, el1);
               return el0;
             },
-            render: function render(context, env, contextualElement) {
-              var dom = env.dom;
-              var hooks = env.hooks, content = hooks.content;
-              dom.detectNamespace(contextualElement);
-              var fragment;
-              if (env.useFragmentCache && dom.canClone) {
-                if (this.cachedFragment === null) {
-                  fragment = this.build(dom);
-                  if (this.hasRendered) {
-                    this.cachedFragment = fragment;
-                  } else {
-                    this.hasRendered = true;
-                  }
-                }
-                if (this.cachedFragment) {
-                  fragment = dom.cloneNode(this.cachedFragment, true);
-                }
-              } else {
-                fragment = this.build(dom);
-              }
-              var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-              content(env, morph0, context, "lf-yield-inverse");
-              return fragment;
-            }
+            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+              var morphs = new Array(1);
+              morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+              return morphs;
+            },
+            statements: [
+              ["inline","yield",[],["to","inverse"],["loc",[null,[7,6],[7,28]]]]
+            ],
+            locals: [],
+            templates: []
           };
         }());
         return {
-          isHTMLBars: true,
-          revision: "Ember@1.12.1",
-          blockParams: 1,
+          meta: {
+            "revision": "Ember@1.13.9",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 2,
+                "column": 2
+              },
+              "end": {
+                "line": 9,
+                "column": 2
+              }
+            },
+            "moduleName": "rose/templates/components/liquid-if.hbs"
+          },
+          arity: 1,
           cachedFragment: null,
           hasRendered: false,
-          build: function build(dom) {
+          buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
             var el1 = dom.createComment("");
             dom.appendChild(el0, el1);
             return el0;
           },
-          render: function render(context, env, contextualElement, blockArguments) {
-            var dom = env.dom;
-            var hooks = env.hooks, set = hooks.set, get = hooks.get, block = hooks.block;
-            dom.detectNamespace(contextualElement);
-            var fragment;
-            if (env.useFragmentCache && dom.canClone) {
-              if (this.cachedFragment === null) {
-                fragment = this.build(dom);
-                if (this.hasRendered) {
-                  this.cachedFragment = fragment;
-                } else {
-                  this.hasRendered = true;
-                }
-              }
-              if (this.cachedFragment) {
-                fragment = dom.cloneNode(this.cachedFragment, true);
-              }
-            } else {
-              fragment = this.build(dom);
-            }
-            var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-            dom.insertBoundary(fragment, null);
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
             dom.insertBoundary(fragment, 0);
-            set(env, context, "valueVersion", blockArguments[0]);
-            block(env, morph0, context, "if", [get(env, context, "valueVersion")], {}, child0, child1);
-            return fragment;
-          }
+            dom.insertBoundary(fragment, null);
+            return morphs;
+          },
+          statements: [
+            ["block","if",[["get","valueVersion",["loc",[null,[4,10],[4,22]]]]],[],0,1,["loc",[null,[4,4],[8,11]]]]
+          ],
+          locals: ["valueVersion"],
+          templates: [child0, child1]
         };
       }());
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "line": 10,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/components/liquid-if.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, get = hooks.get, block = hooks.block;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-          dom.insertBoundary(fragment, null);
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "liquid-versions", [], {"value": get(env, context, "value"), "name": get(env, context, "helperName"), "use": get(env, context, "use"), "renderWhenFalse": get(env, context, "hasInverse"), "innerClass": get(env, context, "innerClass")}, child0, null);
-          return fragment;
-        }
+          dom.insertBoundary(fragment, null);
+          return morphs;
+        },
+        statements: [
+          ["block","liquid-versions",[],["value",["subexpr","@mut",[["get","showFirstBlock",["loc",[null,[2,27],[2,41]]]]],[],[]],"name",["subexpr","@mut",[["get","helperName",["loc",[null,[2,47],[2,57]]]]],[],[]],"use",["subexpr","@mut",[["get","use",["loc",[null,[3,27],[3,30]]]]],[],[]],"renderWhenFalse",["subexpr","hasBlock",["inverse"],[],["loc",[null,[3,47],[3,67]]]],"class",["subexpr","@mut",[["get","class",["loc",[null,[3,74],[3,79]]]]],[],[]]],0,null,["loc",[null,[2,2],[9,22]]]]
+        ],
+        locals: [],
+        templates: [child0]
       };
     }());
     var child1 = (function() {
@@ -5413,12 +5516,25 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
         var child0 = (function() {
           var child0 = (function() {
             return {
-              isHTMLBars: true,
-              revision: "Ember@1.12.1",
-              blockParams: 0,
+              meta: {
+                "revision": "Ember@1.13.9",
+                "loc": {
+                  "source": null,
+                  "start": {
+                    "line": 21,
+                    "column": 6
+                  },
+                  "end": {
+                    "line": 23,
+                    "column": 6
+                  }
+                },
+                "moduleName": "rose/templates/components/liquid-if.hbs"
+              },
+              arity: 0,
               cachedFragment: null,
               hasRendered: false,
-              build: function build(dom) {
+              buildFragment: function buildFragment(dom) {
                 var el0 = dom.createDocumentFragment();
                 var el1 = dom.createTextNode("        ");
                 dom.appendChild(el0, el1);
@@ -5428,40 +5544,39 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
                 dom.appendChild(el0, el1);
                 return el0;
               },
-              render: function render(context, env, contextualElement) {
-                var dom = env.dom;
-                var hooks = env.hooks, content = hooks.content;
-                dom.detectNamespace(contextualElement);
-                var fragment;
-                if (env.useFragmentCache && dom.canClone) {
-                  if (this.cachedFragment === null) {
-                    fragment = this.build(dom);
-                    if (this.hasRendered) {
-                      this.cachedFragment = fragment;
-                    } else {
-                      this.hasRendered = true;
-                    }
-                  }
-                  if (this.cachedFragment) {
-                    fragment = dom.cloneNode(this.cachedFragment, true);
-                  }
-                } else {
-                  fragment = this.build(dom);
-                }
-                var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-                content(env, morph0, context, "yield");
-                return fragment;
-              }
+              buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+                var morphs = new Array(1);
+                morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+                return morphs;
+              },
+              statements: [
+                ["content","yield",["loc",[null,[22,8],[22,17]]]]
+              ],
+              locals: [],
+              templates: []
             };
           }());
           var child1 = (function() {
             return {
-              isHTMLBars: true,
-              revision: "Ember@1.12.1",
-              blockParams: 0,
+              meta: {
+                "revision": "Ember@1.13.9",
+                "loc": {
+                  "source": null,
+                  "start": {
+                    "line": 23,
+                    "column": 6
+                  },
+                  "end": {
+                    "line": 25,
+                    "column": 6
+                  }
+                },
+                "moduleName": "rose/templates/components/liquid-if.hbs"
+              },
+              arity: 0,
               cachedFragment: null,
               hasRendered: false,
-              build: function build(dom) {
+              buildFragment: function buildFragment(dom) {
                 var el0 = dom.createDocumentFragment();
                 var el1 = dom.createTextNode("        ");
                 dom.appendChild(el0, el1);
@@ -5471,240 +5586,172 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
                 dom.appendChild(el0, el1);
                 return el0;
               },
-              render: function render(context, env, contextualElement) {
-                var dom = env.dom;
-                var hooks = env.hooks, content = hooks.content;
-                dom.detectNamespace(contextualElement);
-                var fragment;
-                if (env.useFragmentCache && dom.canClone) {
-                  if (this.cachedFragment === null) {
-                    fragment = this.build(dom);
-                    if (this.hasRendered) {
-                      this.cachedFragment = fragment;
-                    } else {
-                      this.hasRendered = true;
-                    }
-                  }
-                  if (this.cachedFragment) {
-                    fragment = dom.cloneNode(this.cachedFragment, true);
-                  }
-                } else {
-                  fragment = this.build(dom);
-                }
-                var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-                content(env, morph0, context, "lf-yield-inverse");
-                return fragment;
-              }
+              buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+                var morphs = new Array(1);
+                morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+                return morphs;
+              },
+              statements: [
+                ["inline","yield",[],["to","inverse"],["loc",[null,[24,8],[24,30]]]]
+              ],
+              locals: [],
+              templates: []
             };
           }());
           return {
-            isHTMLBars: true,
-            revision: "Ember@1.12.1",
-            blockParams: 1,
+            meta: {
+              "revision": "Ember@1.13.9",
+              "loc": {
+                "source": null,
+                "start": {
+                  "line": 19,
+                  "column": 4
+                },
+                "end": {
+                  "line": 26,
+                  "column": 4
+                }
+              },
+              "moduleName": "rose/templates/components/liquid-if.hbs"
+            },
+            arity: 1,
             cachedFragment: null,
             hasRendered: false,
-            build: function build(dom) {
+            buildFragment: function buildFragment(dom) {
               var el0 = dom.createDocumentFragment();
               var el1 = dom.createComment("");
               dom.appendChild(el0, el1);
               return el0;
             },
-            render: function render(context, env, contextualElement, blockArguments) {
-              var dom = env.dom;
-              var hooks = env.hooks, set = hooks.set, get = hooks.get, block = hooks.block;
-              dom.detectNamespace(contextualElement);
-              var fragment;
-              if (env.useFragmentCache && dom.canClone) {
-                if (this.cachedFragment === null) {
-                  fragment = this.build(dom);
-                  if (this.hasRendered) {
-                    this.cachedFragment = fragment;
-                  } else {
-                    this.hasRendered = true;
-                  }
-                }
-                if (this.cachedFragment) {
-                  fragment = dom.cloneNode(this.cachedFragment, true);
-                }
-              } else {
-                fragment = this.build(dom);
-              }
-              var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-              dom.insertBoundary(fragment, null);
+            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+              var morphs = new Array(1);
+              morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
               dom.insertBoundary(fragment, 0);
-              set(env, context, "valueVersion", blockArguments[0]);
-              block(env, morph0, context, "if", [get(env, context, "valueVersion")], {}, child0, child1);
-              return fragment;
-            }
+              dom.insertBoundary(fragment, null);
+              return morphs;
+            },
+            statements: [
+              ["block","if",[["get","valueVersion",["loc",[null,[21,12],[21,24]]]]],[],0,1,["loc",[null,[21,6],[25,13]]]]
+            ],
+            locals: ["valueVersion"],
+            templates: [child0, child1]
           };
         }());
         return {
-          isHTMLBars: true,
-          revision: "Ember@1.12.1",
-          blockParams: 1,
+          meta: {
+            "revision": "Ember@1.13.9",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 11,
+                "column": 2
+              },
+              "end": {
+                "line": 27,
+                "column": 2
+              }
+            },
+            "moduleName": "rose/templates/components/liquid-if.hbs"
+          },
+          arity: 1,
           cachedFragment: null,
           hasRendered: false,
-          build: function build(dom) {
+          buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
             var el1 = dom.createComment("");
             dom.appendChild(el0, el1);
             return el0;
           },
-          render: function render(context, env, contextualElement, blockArguments) {
-            var dom = env.dom;
-            var hooks = env.hooks, set = hooks.set, get = hooks.get, block = hooks.block;
-            dom.detectNamespace(contextualElement);
-            var fragment;
-            if (env.useFragmentCache && dom.canClone) {
-              if (this.cachedFragment === null) {
-                fragment = this.build(dom);
-                if (this.hasRendered) {
-                  this.cachedFragment = fragment;
-                } else {
-                  this.hasRendered = true;
-                }
-              }
-              if (this.cachedFragment) {
-                fragment = dom.cloneNode(this.cachedFragment, true);
-              }
-            } else {
-              fragment = this.build(dom);
-            }
-            var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-            dom.insertBoundary(fragment, null);
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
             dom.insertBoundary(fragment, 0);
-            set(env, context, "container", blockArguments[0]);
-            block(env, morph0, context, "liquid-versions", [], {"value": get(env, context, "value"), "notify": get(env, context, "container"), "name": get(env, context, "helperName"), "use": get(env, context, "use"), "renderWhenFalse": get(env, context, "hasInverse")}, child0, null);
-            return fragment;
-          }
+            dom.insertBoundary(fragment, null);
+            return morphs;
+          },
+          statements: [
+            ["block","liquid-versions",[],["value",["subexpr","@mut",[["get","showFirstBlock",["loc",[null,[19,29],[19,43]]]]],[],[]],"notify",["subexpr","@mut",[["get","container",["loc",[null,[19,51],[19,60]]]]],[],[]],"name",["subexpr","@mut",[["get","helperName",["loc",[null,[19,66],[19,76]]]]],[],[]],"use",["subexpr","@mut",[["get","use",["loc",[null,[20,8],[20,11]]]]],[],[]],"renderWhenFalse",["subexpr","hasBlock",["inverse"],[],["loc",[null,[20,28],[20,48]]]]],0,null,["loc",[null,[19,4],[26,24]]]]
+          ],
+          locals: ["container"],
+          templates: [child0]
         };
       }());
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 10,
+              "column": 0
+            },
+            "end": {
+              "line": 28,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/components/liquid-if.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, get = hooks.get, block = hooks.block;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-          dom.insertBoundary(fragment, null);
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "growDuration": get(env, context, "growDuration"), "growPixelsPerSecond": get(env, context, "growPixelsPerSecond"), "growEasing": get(env, context, "growEasing"), "enableGrowth": get(env, context, "enableGrowth")}, child0, null);
-          return fragment;
-        }
+          dom.insertBoundary(fragment, null);
+          return morphs;
+        },
+        statements: [
+          ["block","liquid-container",[],["id",["subexpr","@mut",[["get","id",["loc",[null,[12,9],[12,11]]]]],[],[]],"class",["subexpr","@mut",[["get","class",["loc",[null,[13,12],[13,17]]]]],[],[]],"growDuration",["subexpr","@mut",[["get","growDuration",["loc",[null,[14,19],[14,31]]]]],[],[]],"growPixelsPerSecond",["subexpr","@mut",[["get","growPixelsPerSecond",["loc",[null,[15,26],[15,45]]]]],[],[]],"growEasing",["subexpr","@mut",[["get","growEasing",["loc",[null,[16,17],[16,27]]]]],[],[]],"enableGrowth",["subexpr","@mut",[["get","enableGrowth",["loc",[null,[17,19],[17,31]]]]],[],[]]],0,null,["loc",[null,[11,2],[27,23]]]]
+        ],
+        locals: [],
+        templates: [child0]
       };
     }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 29,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/components/liquid-if.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, get = hooks.get, block = hooks.block;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+        dom.insertBoundary(fragment, 0);
         dom.insertBoundary(fragment, null);
-        dom.insertBoundary(fragment, 0);
-        block(env, morph0, context, "if", [get(env, context, "containerless")], {}, child0, child1);
-        return fragment;
-      }
-    };
-  }()));
-
-});
-define('rose/templates/components/liquid-measured', ['exports'], function (exports) {
-
-  'use strict';
-
-  exports['default'] = Ember.HTMLBars.template((function() {
-    return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
-      cachedFragment: null,
-      hasRendered: false,
-      build: function build(dom) {
-        var el0 = dom.createDocumentFragment();
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        return el0;
+        return morphs;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, content = hooks.content;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-        dom.insertBoundary(fragment, 0);
-        content(env, morph0, context, "yield");
-        return fragment;
-      }
+      statements: [
+        ["block","if",[["get","containerless",["loc",[null,[1,6],[1,19]]]]],[],0,1,["loc",[null,[1,0],[28,7]]]]
+      ],
+      locals: [],
+      templates: [child0, child1]
     };
   }()));
 
@@ -5717,12 +5764,25 @@ define('rose/templates/components/liquid-modal', ['exports'], function (exports)
     var child0 = (function() {
       var child0 = (function() {
         return {
-          isHTMLBars: true,
-          revision: "Ember@1.12.1",
-          blockParams: 0,
+          meta: {
+            "revision": "Ember@1.13.9",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 2,
+                "column": 2
+              },
+              "end": {
+                "line": 6,
+                "column": 2
+              }
+            },
+            "moduleName": "rose/templates/components/liquid-modal.hbs"
+          },
+          arity: 0,
           cachedFragment: null,
           hasRendered: false,
-          build: function build(dom) {
+          buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
             var el1 = dom.createTextNode("    ");
             dom.appendChild(el0, el1);
@@ -5739,42 +5799,45 @@ define('rose/templates/components/liquid-modal', ['exports'], function (exports)
             dom.appendChild(el0, el1);
             return el0;
           },
-          render: function render(context, env, contextualElement) {
-            var dom = env.dom;
-            var hooks = env.hooks, element = hooks.element, get = hooks.get, inline = hooks.inline;
-            dom.detectNamespace(contextualElement);
-            var fragment;
-            if (env.useFragmentCache && dom.canClone) {
-              if (this.cachedFragment === null) {
-                fragment = this.build(dom);
-                if (this.hasRendered) {
-                  this.cachedFragment = fragment;
-                } else {
-                  this.hasRendered = true;
-                }
-              }
-              if (this.cachedFragment) {
-                fragment = dom.cloneNode(this.cachedFragment, true);
-              }
-            } else {
-              fragment = this.build(dom);
-            }
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
             var element0 = dom.childAt(fragment, [1]);
-            var morph0 = dom.createMorphAt(element0,1,1);
-            element(env, element0, context, "bind-attr", [], {"class": ":lf-dialog cc.options.dialogClass"});
-            element(env, element0, context, "bind-attr", [], {"aria-labelledby": "cc.options.ariaLabelledBy", "aria-label": "cc.options.ariaLabel"});
-            inline(env, morph0, context, "view", [get(env, context, "innerView")], {"dismiss": "dismiss"});
-            return fragment;
-          }
+            var morphs = new Array(4);
+            morphs[0] = dom.createAttrMorph(element0, 'class');
+            morphs[1] = dom.createAttrMorph(element0, 'aria-labelledby');
+            morphs[2] = dom.createAttrMorph(element0, 'aria-label');
+            morphs[3] = dom.createMorphAt(element0,1,1);
+            return morphs;
+          },
+          statements: [
+            ["attribute","class",["concat",["lf-dialog ",["get","cc.options.dialogClass",["loc",[null,[3,28],[3,50]]]]]]],
+            ["attribute","aria-labelledby",["get","cc.options.ariaLabelledBy",["loc",[null,[3,86],[3,111]]]]],
+            ["attribute","aria-label",["get","cc.options.ariaLabel",["loc",[null,[3,127],[3,147]]]]],
+            ["inline","lf-vue",[["get","cc.view",["loc",[null,[4,15],[4,22]]]]],["dismiss","dismiss"],["loc",[null,[4,6],[4,42]]]]
+          ],
+          locals: [],
+          templates: []
         };
       }());
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 1,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "line": 8,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/components/liquid-modal.hbs"
+        },
+        arity: 1,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
@@ -5786,74 +5849,58 @@ define('rose/templates/components/liquid-modal', ['exports'], function (exports)
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement, blockArguments) {
-          var dom = env.dom;
-          var hooks = env.hooks, set = hooks.set, block = hooks.block, content = hooks.content;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-          var morph1 = dom.createMorphAt(fragment,2,2,contextualElement);
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(2);
+          morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+          morphs[1] = dom.createMorphAt(fragment,2,2,contextualElement);
           dom.insertBoundary(fragment, 0);
-          set(env, context, "cc", blockArguments[0]);
-          block(env, morph0, context, "lm-container", [], {"action": "escape", "clickAway": "outsideClick"}, child0, null);
-          content(env, morph1, context, "lf-overlay");
-          return fragment;
-        }
+          return morphs;
+        },
+        statements: [
+          ["block","lm-container",[],["action","escape","clickAway","outsideClick"],0,null,["loc",[null,[2,2],[6,19]]]],
+          ["content","lf-overlay",["loc",[null,[7,2],[7,16]]]]
+        ],
+        locals: ["cc"],
+        templates: [child0]
       };
     }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 9,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/components/liquid-modal.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, get = hooks.get, block = hooks.block;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-        dom.insertBoundary(fragment, null);
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
         dom.insertBoundary(fragment, 0);
-        block(env, morph0, context, "liquid-versions", [], {"name": "liquid-modal", "value": get(env, context, "currentContext")}, child0, null);
-        return fragment;
-      }
+        dom.insertBoundary(fragment, null);
+        return morphs;
+      },
+      statements: [
+        ["block","liquid-versions",[],["name","liquid-modal","value",["subexpr","@mut",[["get","currentContext",["loc",[null,[1,45],[1,59]]]]],[],[]],"renderWhenFalse",false],0,null,["loc",[null,[1,0],[8,20]]]]
+      ],
+      locals: [],
+      templates: [child0]
     };
   }()));
 
@@ -5864,175 +5911,162 @@ define('rose/templates/components/liquid-outlet', ['exports'], function (exports
 
   exports['default'] = Ember.HTMLBars.template((function() {
     var child0 = (function() {
+      var child0 = (function() {
+        var child0 = (function() {
+          return {
+            meta: {
+              "revision": "Ember@1.13.9",
+              "loc": {
+                "source": null,
+                "start": {
+                  "line": 15,
+                  "column": 6
+                },
+                "end": {
+                  "line": 17,
+                  "column": 6
+                }
+              },
+              "moduleName": "rose/templates/components/liquid-outlet.hbs"
+            },
+            arity: 0,
+            cachedFragment: null,
+            hasRendered: false,
+            buildFragment: function buildFragment(dom) {
+              var el0 = dom.createDocumentFragment();
+              var el1 = dom.createComment("");
+              dom.appendChild(el0, el1);
+              return el0;
+            },
+            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+              var morphs = new Array(1);
+              morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+              dom.insertBoundary(fragment, 0);
+              dom.insertBoundary(fragment, null);
+              return morphs;
+            },
+            statements: [
+              ["inline","outlet",[["get","outletName",["loc",[null,[16,17],[16,27]]]]],[],["loc",[null,[16,8],[16,29]]]]
+            ],
+            locals: [],
+            templates: []
+          };
+        }());
+        return {
+          meta: {
+            "revision": "Ember@1.13.9",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 2,
+                "column": 2
+              },
+              "end": {
+                "line": 19,
+                "column": 2
+              }
+            },
+            "moduleName": "rose/templates/components/liquid-outlet.hbs"
+          },
+          arity: 1,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+            dom.insertBoundary(fragment, 0);
+            dom.insertBoundary(fragment, null);
+            return morphs;
+          },
+          statements: [
+            ["block","set-outlet-state",[["get","outletName",["loc",[null,[15,26],[15,36]]]],["get","version.outletState",["loc",[null,[15,37],[15,56]]]]],[],0,null,["loc",[null,[15,6],[17,28]]]]
+          ],
+          locals: ["version"],
+          templates: [child0]
+        };
+      }());
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 1,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "line": 20,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/components/liquid-outlet.hbs"
+        },
+        arity: 1,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement, blockArguments) {
-          var dom = env.dom;
-          var hooks = env.hooks, set = hooks.set, get = hooks.get, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-          dom.insertBoundary(fragment, null);
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, 0);
-          set(env, context, "outletStateVersion", blockArguments[0]);
-          inline(env, morph0, context, "lf-outlet", [], {"staticState": get(env, context, "outletStateVersion")});
-          return fragment;
-        }
-      };
-    }());
-    return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
-      cachedFragment: null,
-      hasRendered: false,
-      build: function build(dom) {
-        var el0 = dom.createDocumentFragment();
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        return el0;
-      },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, get = hooks.get, block = hooks.block;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-        dom.insertBoundary(fragment, null);
-        dom.insertBoundary(fragment, 0);
-        block(env, morph0, context, "liquid-with", [get(env, context, "outletState")], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "use": get(env, context, "use"), "name": "liquid-outlet", "containerless": get(env, context, "containerless"), "growDuration": get(env, context, "growDuration"), "growPixelsPerSecond": get(env, context, "growPixelsPerSecond"), "growEasing": get(env, context, "growEasing"), "enableGrowth": get(env, context, "enableGrowth")}, child0, null);
-        return fragment;
-      }
-    };
-  }()));
-
-});
-define('rose/templates/components/liquid-spacer', ['exports'], function (exports) {
-
-  'use strict';
-
-  exports['default'] = Ember.HTMLBars.template((function() {
-    var child0 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("  ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
+          dom.insertBoundary(fragment, null);
+          return morphs;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, content = hooks.content;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          content(env, morph0, context, "yield");
-          return fragment;
-        }
+        statements: [
+          ["block","liquid-bind",[["get","outletState",["loc",[null,[2,17],[2,28]]]]],["id",["subexpr","@mut",[["get","id",["loc",[null,[3,9],[3,11]]]]],[],[]],"class",["subexpr","@mut",[["get","class",["loc",[null,[4,12],[4,17]]]]],[],[]],"use",["subexpr","@mut",[["get","use",["loc",[null,[5,10],[5,13]]]]],[],[]],"name","liquid-outlet","outletName",["subexpr","@mut",[["get","outletName",["loc",[null,[7,17],[7,27]]]]],[],[]],"containerless",["subexpr","@mut",[["get","containerless",["loc",[null,[8,20],[8,33]]]]],[],[]],"growDuration",["subexpr","@mut",[["get","growDuration",["loc",[null,[9,19],[9,31]]]]],[],[]],"growPixelsPerSecond",["subexpr","@mut",[["get","growPixelsPerSecond",["loc",[null,[10,26],[10,45]]]]],[],[]],"growEasing",["subexpr","@mut",[["get","growEasing",["loc",[null,[11,17],[11,27]]]]],[],[]],"enableGrowth",["subexpr","@mut",[["get","enableGrowth",["loc",[null,[12,19],[12,31]]]]],[],[]]],0,null,["loc",[null,[2,2],[19,20]]]]
+        ],
+        locals: ["outletState"],
+        templates: [child0]
       };
     }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 21,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/components/liquid-outlet.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, get = hooks.get, block = hooks.block;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-        dom.insertBoundary(fragment, null);
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
         dom.insertBoundary(fragment, 0);
-        block(env, morph0, context, "liquid-measured", [], {"measurements": get(env, context, "measurements")}, child0, null);
-        return fragment;
-      }
+        dom.insertBoundary(fragment, null);
+        return morphs;
+      },
+      statements: [
+        ["block","get-outlet-state",[["get","outletName",["loc",[null,[1,21],[1,31]]]]],[],0,null,["loc",[null,[1,0],[20,21]]]]
+      ],
+      locals: [],
+      templates: [child0]
     };
   }()));
 
@@ -6046,164 +6080,159 @@ define('rose/templates/components/liquid-versions', ['exports'], function (expor
       var child0 = (function() {
         var child0 = (function() {
           return {
-            isHTMLBars: true,
-            revision: "Ember@1.12.1",
-            blockParams: 0,
+            meta: {
+              "revision": "Ember@1.13.9",
+              "loc": {
+                "source": null,
+                "start": {
+                  "line": 3,
+                  "column": 4
+                },
+                "end": {
+                  "line": 5,
+                  "column": 4
+                }
+              },
+              "moduleName": "rose/templates/components/liquid-versions.hbs"
+            },
+            arity: 0,
             cachedFragment: null,
             hasRendered: false,
-            build: function build(dom) {
+            buildFragment: function buildFragment(dom) {
               var el0 = dom.createDocumentFragment();
               var el1 = dom.createComment("");
               dom.appendChild(el0, el1);
               return el0;
             },
-            render: function render(context, env, contextualElement) {
-              var dom = env.dom;
-              var hooks = env.hooks, get = hooks.get, inline = hooks.inline;
-              dom.detectNamespace(contextualElement);
-              var fragment;
-              if (env.useFragmentCache && dom.canClone) {
-                if (this.cachedFragment === null) {
-                  fragment = this.build(dom);
-                  if (this.hasRendered) {
-                    this.cachedFragment = fragment;
-                  } else {
-                    this.hasRendered = true;
-                  }
-                }
-                if (this.cachedFragment) {
-                  fragment = dom.cloneNode(this.cachedFragment, true);
-                }
-              } else {
-                fragment = this.build(dom);
-              }
-              var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-              dom.insertBoundary(fragment, null);
+            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+              var morphs = new Array(1);
+              morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
               dom.insertBoundary(fragment, 0);
-              inline(env, morph0, context, "yield", [get(env, context, "version.value")], {});
-              return fragment;
-            }
+              dom.insertBoundary(fragment, null);
+              return morphs;
+            },
+            statements: [
+              ["inline","yield",[["get","version.value",["loc",[null,[4,14],[4,27]]]]],[],["loc",[null,[4,6],[4,31]]]]
+            ],
+            locals: [],
+            templates: []
           };
         }());
         return {
-          isHTMLBars: true,
-          revision: "Ember@1.12.1",
-          blockParams: 0,
+          meta: {
+            "revision": "Ember@1.13.9",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 2,
+                "column": 2
+              },
+              "end": {
+                "line": 6,
+                "column": 2
+              }
+            },
+            "moduleName": "rose/templates/components/liquid-versions.hbs"
+          },
+          arity: 0,
           cachedFragment: null,
           hasRendered: false,
-          build: function build(dom) {
+          buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
             var el1 = dom.createComment("");
             dom.appendChild(el0, el1);
             return el0;
           },
-          render: function render(context, env, contextualElement) {
-            var dom = env.dom;
-            var hooks = env.hooks, get = hooks.get, block = hooks.block;
-            dom.detectNamespace(contextualElement);
-            var fragment;
-            if (env.useFragmentCache && dom.canClone) {
-              if (this.cachedFragment === null) {
-                fragment = this.build(dom);
-                if (this.hasRendered) {
-                  this.cachedFragment = fragment;
-                } else {
-                  this.hasRendered = true;
-                }
-              }
-              if (this.cachedFragment) {
-                fragment = dom.cloneNode(this.cachedFragment, true);
-              }
-            } else {
-              fragment = this.build(dom);
-            }
-            var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-            dom.insertBoundary(fragment, null);
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
             dom.insertBoundary(fragment, 0);
-            block(env, morph0, context, "liquid-child", [], {"version": get(env, context, "version"), "visible": false, "didRender": "childDidRender", "class": get(env, context, "innerClass")}, child0, null);
-            return fragment;
-          }
+            dom.insertBoundary(fragment, null);
+            return morphs;
+          },
+          statements: [
+            ["block","liquid-child",[],["version",["subexpr","@mut",[["get","version",["loc",[null,[3,28],[3,35]]]]],[],[]],"liquidChildDidRender","childDidRender","class",["subexpr","@mut",[["get","class",["loc",[null,[3,80],[3,85]]]]],[],[]]],0,null,["loc",[null,[3,4],[5,21]]]]
+          ],
+          locals: [],
+          templates: [child0]
         };
       }());
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 1,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "line": 7,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/components/liquid-versions.hbs"
+        },
+        arity: 1,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement, blockArguments) {
-          var dom = env.dom;
-          var hooks = env.hooks, set = hooks.set, get = hooks.get, block = hooks.block;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-          dom.insertBoundary(fragment, null);
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, 0);
-          set(env, context, "version", blockArguments[0]);
-          block(env, morph0, context, "if", [get(env, context, "version.shouldRender")], {}, child0, null);
-          return fragment;
-        }
+          dom.insertBoundary(fragment, null);
+          return morphs;
+        },
+        statements: [
+          ["block","if",[["get","version.shouldRender",["loc",[null,[2,8],[2,28]]]]],[],0,null,["loc",[null,[2,2],[6,9]]]]
+        ],
+        locals: ["version"],
+        templates: [child0]
       };
     }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 8,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/components/liquid-versions.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, get = hooks.get, block = hooks.block;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-        dom.insertBoundary(fragment, null);
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
         dom.insertBoundary(fragment, 0);
-        block(env, morph0, context, "each", [get(env, context, "versions")], {}, child0, null);
-        return fragment;
-      }
+        dom.insertBoundary(fragment, null);
+        return morphs;
+      },
+      statements: [
+        ["block","each",[["get","versions",["loc",[null,[1,8],[1,16]]]]],["key","@identity"],0,null,["loc",[null,[1,0],[7,9]]]]
+      ],
+      locals: [],
+      templates: [child0]
     };
   }()));
 
@@ -6216,249 +6245,240 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
     var child0 = (function() {
       var child0 = (function() {
         return {
-          isHTMLBars: true,
-          revision: "Ember@1.12.1",
-          blockParams: 1,
+          meta: {
+            "revision": "Ember@1.13.9",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 2,
+                "column": 2
+              },
+              "end": {
+                "line": 4,
+                "column": 2
+              }
+            },
+            "moduleName": "rose/templates/components/liquid-with.hbs"
+          },
+          arity: 1,
           cachedFragment: null,
           hasRendered: false,
-          build: function build(dom) {
+          buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
             var el1 = dom.createComment("");
             dom.appendChild(el0, el1);
             return el0;
           },
-          render: function render(context, env, contextualElement, blockArguments) {
-            var dom = env.dom;
-            var hooks = env.hooks, set = hooks.set, get = hooks.get, inline = hooks.inline;
-            dom.detectNamespace(contextualElement);
-            var fragment;
-            if (env.useFragmentCache && dom.canClone) {
-              if (this.cachedFragment === null) {
-                fragment = this.build(dom);
-                if (this.hasRendered) {
-                  this.cachedFragment = fragment;
-                } else {
-                  this.hasRendered = true;
-                }
-              }
-              if (this.cachedFragment) {
-                fragment = dom.cloneNode(this.cachedFragment, true);
-              }
-            } else {
-              fragment = this.build(dom);
-            }
-            var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-            dom.insertBoundary(fragment, null);
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
             dom.insertBoundary(fragment, 0);
-            set(env, context, "version", blockArguments[0]);
-            inline(env, morph0, context, "yield", [get(env, context, "version")], {});
-            return fragment;
-          }
+            dom.insertBoundary(fragment, null);
+            return morphs;
+          },
+          statements: [
+            ["inline","yield",[["get","version",["loc",[null,[3,13],[3,20]]]]],[],["loc",[null,[3,4],[3,24]]]]
+          ],
+          locals: ["version"],
+          templates: []
         };
       }());
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "line": 5,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/components/liquid-with.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, get = hooks.get, block = hooks.block;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-          dom.insertBoundary(fragment, null);
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "liquid-versions", [], {"value": get(env, context, "value"), "use": get(env, context, "use"), "name": get(env, context, "name"), "innerClass": get(env, context, "innerClass")}, child0, null);
-          return fragment;
-        }
+          dom.insertBoundary(fragment, null);
+          return morphs;
+        },
+        statements: [
+          ["block","liquid-versions",[],["value",["subexpr","@mut",[["get","attrs.value",["loc",[null,[2,28],[2,39]]]]],[],[]],"use",["subexpr","@mut",[["get","use",["loc",[null,[2,44],[2,47]]]]],[],[]],"name",["subexpr","@mut",[["get","name",["loc",[null,[2,53],[2,57]]]]],[],[]],"class",["subexpr","@mut",[["get","class",["loc",[null,[2,64],[2,69]]]]],[],[]]],0,null,["loc",[null,[2,2],[4,23]]]]
+        ],
+        locals: [],
+        templates: [child0]
       };
     }());
     var child1 = (function() {
       var child0 = (function() {
         var child0 = (function() {
           return {
-            isHTMLBars: true,
-            revision: "Ember@1.12.1",
-            blockParams: 1,
+            meta: {
+              "revision": "Ember@1.13.9",
+              "loc": {
+                "source": null,
+                "start": {
+                  "line": 14,
+                  "column": 4
+                },
+                "end": {
+                  "line": 16,
+                  "column": 4
+                }
+              },
+              "moduleName": "rose/templates/components/liquid-with.hbs"
+            },
+            arity: 1,
             cachedFragment: null,
             hasRendered: false,
-            build: function build(dom) {
+            buildFragment: function buildFragment(dom) {
               var el0 = dom.createDocumentFragment();
               var el1 = dom.createComment("");
               dom.appendChild(el0, el1);
               return el0;
             },
-            render: function render(context, env, contextualElement, blockArguments) {
-              var dom = env.dom;
-              var hooks = env.hooks, set = hooks.set, get = hooks.get, inline = hooks.inline;
-              dom.detectNamespace(contextualElement);
-              var fragment;
-              if (env.useFragmentCache && dom.canClone) {
-                if (this.cachedFragment === null) {
-                  fragment = this.build(dom);
-                  if (this.hasRendered) {
-                    this.cachedFragment = fragment;
-                  } else {
-                    this.hasRendered = true;
-                  }
-                }
-                if (this.cachedFragment) {
-                  fragment = dom.cloneNode(this.cachedFragment, true);
-                }
-              } else {
-                fragment = this.build(dom);
-              }
-              var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-              dom.insertBoundary(fragment, null);
+            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+              var morphs = new Array(1);
+              morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
               dom.insertBoundary(fragment, 0);
-              set(env, context, "version", blockArguments[0]);
-              inline(env, morph0, context, "yield", [get(env, context, "version")], {});
-              return fragment;
-            }
+              dom.insertBoundary(fragment, null);
+              return morphs;
+            },
+            statements: [
+              ["inline","yield",[["get","version",["loc",[null,[15,15],[15,22]]]]],[],["loc",[null,[15,6],[15,26]]]]
+            ],
+            locals: ["version"],
+            templates: []
           };
         }());
         return {
-          isHTMLBars: true,
-          revision: "Ember@1.12.1",
-          blockParams: 1,
+          meta: {
+            "revision": "Ember@1.13.9",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 6,
+                "column": 2
+              },
+              "end": {
+                "line": 17,
+                "column": 2
+              }
+            },
+            "moduleName": "rose/templates/components/liquid-with.hbs"
+          },
+          arity: 1,
           cachedFragment: null,
           hasRendered: false,
-          build: function build(dom) {
+          buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
             var el1 = dom.createComment("");
             dom.appendChild(el0, el1);
             return el0;
           },
-          render: function render(context, env, contextualElement, blockArguments) {
-            var dom = env.dom;
-            var hooks = env.hooks, set = hooks.set, get = hooks.get, block = hooks.block;
-            dom.detectNamespace(contextualElement);
-            var fragment;
-            if (env.useFragmentCache && dom.canClone) {
-              if (this.cachedFragment === null) {
-                fragment = this.build(dom);
-                if (this.hasRendered) {
-                  this.cachedFragment = fragment;
-                } else {
-                  this.hasRendered = true;
-                }
-              }
-              if (this.cachedFragment) {
-                fragment = dom.cloneNode(this.cachedFragment, true);
-              }
-            } else {
-              fragment = this.build(dom);
-            }
-            var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-            dom.insertBoundary(fragment, null);
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
             dom.insertBoundary(fragment, 0);
-            set(env, context, "container", blockArguments[0]);
-            block(env, morph0, context, "liquid-versions", [], {"value": get(env, context, "value"), "notify": get(env, context, "container"), "use": get(env, context, "use"), "name": get(env, context, "name")}, child0, null);
-            return fragment;
-          }
+            dom.insertBoundary(fragment, null);
+            return morphs;
+          },
+          statements: [
+            ["block","liquid-versions",[],["value",["subexpr","@mut",[["get","attrs.value",["loc",[null,[14,30],[14,41]]]]],[],[]],"notify",["subexpr","@mut",[["get","container",["loc",[null,[14,49],[14,58]]]]],[],[]],"use",["subexpr","@mut",[["get","use",["loc",[null,[14,63],[14,66]]]]],[],[]],"name",["subexpr","@mut",[["get","name",["loc",[null,[14,72],[14,76]]]]],[],[]]],0,null,["loc",[null,[14,4],[16,25]]]]
+          ],
+          locals: ["container"],
+          templates: [child0]
         };
       }());
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 5,
+              "column": 0
+            },
+            "end": {
+              "line": 18,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/components/liquid-with.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, get = hooks.get, block = hooks.block;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-          dom.insertBoundary(fragment, null);
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "liquid-container", [], {"id": get(env, context, "innerId"), "class": get(env, context, "innerClass"), "growDuration": get(env, context, "growDuration"), "growPixelsPerSecond": get(env, context, "growPixelsPerSecond"), "growEasing": get(env, context, "growEasing"), "enableGrowth": get(env, context, "enableGrowth")}, child0, null);
-          return fragment;
-        }
+          dom.insertBoundary(fragment, null);
+          return morphs;
+        },
+        statements: [
+          ["block","liquid-container",[],["id",["subexpr","@mut",[["get","id",["loc",[null,[7,9],[7,11]]]]],[],[]],"class",["subexpr","@mut",[["get","class",["loc",[null,[8,12],[8,17]]]]],[],[]],"growDuration",["subexpr","@mut",[["get","growDuration",["loc",[null,[9,19],[9,31]]]]],[],[]],"growPixelsPerSecond",["subexpr","@mut",[["get","growPixelsPerSecond",["loc",[null,[10,26],[10,45]]]]],[],[]],"growEasing",["subexpr","@mut",[["get","growEasing",["loc",[null,[11,17],[11,27]]]]],[],[]],"enableGrowth",["subexpr","@mut",[["get","enableGrowth",["loc",[null,[12,19],[12,31]]]]],[],[]]],0,null,["loc",[null,[6,2],[17,23]]]]
+        ],
+        locals: [],
+        templates: [child0]
       };
     }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 19,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/components/liquid-with.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, get = hooks.get, block = hooks.block;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-        dom.insertBoundary(fragment, null);
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
         dom.insertBoundary(fragment, 0);
-        block(env, morph0, context, "if", [get(env, context, "containerless")], {}, child0, child1);
-        return fragment;
-      }
+        dom.insertBoundary(fragment, null);
+        return morphs;
+      },
+      statements: [
+        ["block","if",[["get","containerless",["loc",[null,[1,6],[1,19]]]]],[],0,1,["loc",[null,[1,0],[18,7]]]]
+      ],
+      locals: [],
+      templates: [child0, child1]
     };
   }()));
 
@@ -6469,12 +6489,25 @@ define('rose/templates/components/ui-checkbox', ['exports'], function (exports) 
 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 3,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/components/ui-checkbox.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("input");
         dom.appendChild(el0, el1);
@@ -6488,32 +6521,28 @@ define('rose/templates/components/ui-checkbox', ['exports'], function (exports) 
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, get = hooks.get, element = hooks.element, content = hooks.content;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0]);
-        var morph0 = dom.createMorphAt(dom.childAt(fragment, [2]),0,0);
-        element(env, element0, context, "bind-attr", [], {"type": get(env, context, "type"), "name": get(env, context, "name"), "checked": get(env, context, "checked"), "disabled": get(env, context, "readonly"), "data-id": get(env, context, "data-id")});
-        content(env, morph0, context, "label");
-        return fragment;
-      }
+        if (this.cachedFragment) { dom.repairClonedNode(element0,[],true); }
+        var morphs = new Array(6);
+        morphs[0] = dom.createAttrMorph(element0, 'type');
+        morphs[1] = dom.createAttrMorph(element0, 'name');
+        morphs[2] = dom.createAttrMorph(element0, 'checked');
+        morphs[3] = dom.createAttrMorph(element0, 'disabled');
+        morphs[4] = dom.createAttrMorph(element0, 'data-id');
+        morphs[5] = dom.createMorphAt(dom.childAt(fragment, [2]),0,0);
+        return morphs;
+      },
+      statements: [
+        ["attribute","type",["get","type",["loc",[null,[1,14],[1,18]]]]],
+        ["attribute","name",["get","name",["loc",[null,[1,28],[1,32]]]]],
+        ["attribute","checked",["get","checked",["loc",[null,[1,45],[1,52]]]]],
+        ["attribute","disabled",["get","readonly",["loc",[null,[1,66],[1,74]]]]],
+        ["attribute","data-id",["get","data-id",["loc",[null,[1,87],[1,94]]]]],
+        ["content","label",["loc",[null,[2,7],[2,16]]]]
+      ],
+      locals: [],
+      templates: []
     };
   }()));
 
@@ -6523,362 +6552,91 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
   'use strict';
 
   exports['default'] = Ember.HTMLBars.template((function() {
-    var child0 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("  ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("i");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, element = hooks.element;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var element0 = dom.childAt(fragment, [1]);
-          element(env, element0, context, "bind-attr", [], {"class": "view.icon :icon"});
-          return fragment;
-        }
-      };
-    }());
-    var child1 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("  ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("i");
-          dom.setAttribute(el1,"class","dropdown icon");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          return fragment;
-        }
-      };
-    }());
-    var child2 = (function() {
-      var child0 = (function() {
-        return {
-          isHTMLBars: true,
-          revision: "Ember@1.12.1",
-          blockParams: 0,
-          cachedFragment: null,
-          hasRendered: false,
-          build: function build(dom) {
-            var el0 = dom.createDocumentFragment();
-            var el1 = dom.createTextNode("      ");
-            dom.appendChild(el0, el1);
-            var el1 = dom.createComment("");
-            dom.appendChild(el0, el1);
-            var el1 = dom.createTextNode("\n");
-            dom.appendChild(el0, el1);
-            return el0;
-          },
-          render: function render(context, env, contextualElement) {
-            var dom = env.dom;
-            var hooks = env.hooks, get = hooks.get, inline = hooks.inline;
-            dom.detectNamespace(contextualElement);
-            var fragment;
-            if (env.useFragmentCache && dom.canClone) {
-              if (this.cachedFragment === null) {
-                fragment = this.build(dom);
-                if (this.hasRendered) {
-                  this.cachedFragment = fragment;
-                } else {
-                  this.hasRendered = true;
-                }
-              }
-              if (this.cachedFragment) {
-                fragment = dom.cloneNode(this.cachedFragment, true);
-              }
-            } else {
-              fragment = this.build(dom);
-            }
-            var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-            inline(env, morph0, context, "view", [get(env, context, "view.groupView")], {"content": get(env, context, "group.content"), "label": get(env, context, "group.label")});
-            return fragment;
-          }
-        };
-      }());
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, get = hooks.get, block = hooks.block;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-          dom.insertBoundary(fragment, null);
-          dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "each", [get(env, context, "view.groupedContent")], {"keyword": "group"}, child0, null);
-          return fragment;
-        }
-      };
-    }());
-    var child3 = (function() {
-      var child0 = (function() {
-        return {
-          isHTMLBars: true,
-          revision: "Ember@1.12.1",
-          blockParams: 0,
-          cachedFragment: null,
-          hasRendered: false,
-          build: function build(dom) {
-            var el0 = dom.createDocumentFragment();
-            var el1 = dom.createTextNode("      ");
-            dom.appendChild(el0, el1);
-            var el1 = dom.createComment("");
-            dom.appendChild(el0, el1);
-            var el1 = dom.createTextNode("\n");
-            dom.appendChild(el0, el1);
-            return el0;
-          },
-          render: function render(context, env, contextualElement) {
-            var dom = env.dom;
-            var hooks = env.hooks, get = hooks.get, inline = hooks.inline;
-            dom.detectNamespace(contextualElement);
-            var fragment;
-            if (env.useFragmentCache && dom.canClone) {
-              if (this.cachedFragment === null) {
-                fragment = this.build(dom);
-                if (this.hasRendered) {
-                  this.cachedFragment = fragment;
-                } else {
-                  this.hasRendered = true;
-                }
-              }
-              if (this.cachedFragment) {
-                fragment = dom.cloneNode(this.cachedFragment, true);
-              }
-            } else {
-              fragment = this.build(dom);
-            }
-            var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-            inline(env, morph0, context, "view", [get(env, context, "view.optionView")], {"content": get(env, context, "item"), "valuePath": get(env, context, "view.optionValuePath")});
-            return fragment;
-          }
-        };
-      }());
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, get = hooks.get, block = hooks.block;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-          dom.insertBoundary(fragment, null);
-          dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "each", [get(env, context, "view.content")], {"keyword": "item"}, child0, null);
-          return fragment;
-        }
-      };
-    }());
-    var child4 = (function() {
-      return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        build: function build(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("  ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, content = hooks.content;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          content(env, morph0, context, "yield");
-          return fragment;
-        }
-      };
-    }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 2,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/components/ui-dropdown.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
-        var el1 = dom.createElement("div");
-        dom.setAttribute(el1,"class","text");
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
-        var el1 = dom.createElement("div");
-        dom.setAttribute(el1,"class","menu");
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, content = hooks.content, get = hooks.get, block = hooks.block;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+        dom.insertBoundary(fragment, 0);
+        return morphs;
+      },
+      statements: [
+        ["content","yield",["loc",[null,[1,0],[1,9]]]]
+      ],
+      locals: [],
+      templates: []
+    };
+  }()));
+
+});
+define('rose/templates/components/ui-modal', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    return {
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 2,
+            "column": 0
           }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var morph0 = dom.createMorphAt(dom.childAt(fragment, [0]),0,0);
-        var morph1 = dom.createMorphAt(fragment,2,2,contextualElement);
-        var morph2 = dom.createMorphAt(dom.childAt(fragment, [3]),1,1);
-        var morph3 = dom.createMorphAt(fragment,5,5,contextualElement);
-        dom.insertBoundary(fragment, null);
-        content(env, morph0, context, "view.prompt");
-        block(env, morph1, context, "if", [get(env, context, "view.icon")], {}, child0, child1);
-        block(env, morph2, context, "if", [get(env, context, "view.optionGroupPath")], {}, child2, child3);
-        block(env, morph3, context, "if", [get(env, context, "view.template")], {}, child4, null);
-        return fragment;
-      }
+        },
+        "moduleName": "rose/templates/components/ui-modal.hbs"
+      },
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+        dom.insertBoundary(fragment, 0);
+        return morphs;
+      },
+      statements: [
+        ["content","yield",["loc",[null,[1,0],[1,9]]]]
+      ],
+      locals: [],
+      templates: []
     };
   }()));
 
@@ -6889,12 +6647,25 @@ define('rose/templates/components/ui-radio', ['exports'], function (exports) {
 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 3,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/components/ui-radio.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("input");
         dom.appendChild(el0, el1);
@@ -6908,32 +6679,28 @@ define('rose/templates/components/ui-radio', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, get = hooks.get, element = hooks.element, content = hooks.content;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0]);
-        var morph0 = dom.createMorphAt(dom.childAt(fragment, [2]),0,0);
-        element(env, element0, context, "bind-attr", [], {"type": get(env, context, "type"), "name": get(env, context, "name"), "checked": get(env, context, "checked"), "disabled": get(env, context, "readonly"), "data-id": get(env, context, "data-id")});
-        content(env, morph0, context, "label");
-        return fragment;
-      }
+        if (this.cachedFragment) { dom.repairClonedNode(element0,[],true); }
+        var morphs = new Array(6);
+        morphs[0] = dom.createAttrMorph(element0, 'type');
+        morphs[1] = dom.createAttrMorph(element0, 'name');
+        morphs[2] = dom.createAttrMorph(element0, 'checked');
+        morphs[3] = dom.createAttrMorph(element0, 'disabled');
+        morphs[4] = dom.createAttrMorph(element0, 'data-id');
+        morphs[5] = dom.createMorphAt(dom.childAt(fragment, [2]),0,0);
+        return morphs;
+      },
+      statements: [
+        ["attribute","type",["get","type",["loc",[null,[1,14],[1,18]]]]],
+        ["attribute","name",["get","name",["loc",[null,[1,28],[1,32]]]]],
+        ["attribute","checked",["get","checked",["loc",[null,[1,45],[1,52]]]]],
+        ["attribute","disabled",["get","readonly",["loc",[null,[1,66],[1,74]]]]],
+        ["attribute","data-id",["get","data-id",["loc",[null,[1,87],[1,94]]]]],
+        ["content","label",["loc",[null,[2,7],[2,16]]]]
+      ],
+      locals: [],
+      templates: []
     };
   }()));
 
@@ -6945,12 +6712,25 @@ define('rose/templates/diary', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     var child0 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 1,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 25,
+              "column": 2
+            },
+            "end": {
+              "line": 27,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/templates/diary.hbs"
+        },
+        arity: 1,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -6960,40 +6740,38 @@ define('rose/templates/diary', ['exports'], function (exports) {
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement, blockArguments) {
-          var dom = env.dom;
-          var hooks = env.hooks, set = hooks.set, get = hooks.get, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          set(env, context, "entry", blockArguments[0]);
-          inline(env, morph0, context, "diary-entry", [], {"model": get(env, context, "entry")});
-          return fragment;
-        }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+          return morphs;
+        },
+        statements: [
+          ["inline","diary-entry",[],["model",["subexpr","@mut",[["get","entry",["loc",[null,[26,24],[26,29]]]]],[],[]]],["loc",[null,[26,4],[26,31]]]]
+        ],
+        locals: ["entry"],
+        templates: []
       };
     }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 29,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/diary.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("h2");
         dom.setAttribute(el1,"class","ui dividing header");
@@ -7080,48 +6858,36 @@ define('rose/templates/diary', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, get = hooks.get, subexpr = hooks.subexpr, concat = hooks.concat, attribute = hooks.attribute, element = hooks.element, block = hooks.block;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0, 3]);
         var element1 = dom.childAt(fragment, [2]);
         var element2 = dom.childAt(element1, [3]);
         var element3 = dom.childAt(element1, [5]);
-        var morph0 = dom.createMorphAt(element0,1,1);
-        var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
-        var morph2 = dom.createMorphAt(dom.childAt(element1, [1]),1,1);
-        var morph3 = dom.createMorphAt(element2,1,1);
-        var attrMorph0 = dom.createAttrMorph(element2, 'class');
-        var morph4 = dom.createMorphAt(element3,1,1);
-        var morph5 = dom.createMorphAt(dom.childAt(fragment, [6]),1,1);
-        inline(env, morph0, context, "t", ["diary.title"], {});
-        inline(env, morph1, context, "t", ["diary.subtitle"], {});
-        inline(env, morph2, context, "textarea", [], {"value": get(env, context, "diaryInput")});
-        attribute(env, attrMorph0, element2, "class", concat(env, ["ui primary button ", subexpr(env, context, "if", [get(env, context, "diaryInputIsEmpty"), "disabled"], {})]));
-        element(env, element2, context, "action", ["save"], {});
-        inline(env, morph3, context, "t", ["action.save"], {});
-        element(env, element3, context, "action", ["cancel"], {});
-        inline(env, morph4, context, "t", ["action.cancel"], {});
-        block(env, morph5, context, "each", [get(env, context, "sortedList")], {}, child0, null);
-        return fragment;
-      }
+        var morphs = new Array(9);
+        morphs[0] = dom.createMorphAt(element0,1,1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
+        morphs[2] = dom.createMorphAt(dom.childAt(element1, [1]),1,1);
+        morphs[3] = dom.createAttrMorph(element2, 'class');
+        morphs[4] = dom.createElementMorph(element2);
+        morphs[5] = dom.createMorphAt(element2,1,1);
+        morphs[6] = dom.createElementMorph(element3);
+        morphs[7] = dom.createMorphAt(element3,1,1);
+        morphs[8] = dom.createMorphAt(dom.childAt(fragment, [6]),1,1);
+        return morphs;
+      },
+      statements: [
+        ["inline","t",["diary.title"],[],["loc",[null,[4,4],[4,23]]]],
+        ["inline","t",["diary.subtitle"],[],["loc",[null,[5,28],[5,50]]]],
+        ["inline","textarea",[],["value",["subexpr","@mut",[["get","diaryInput",["loc",[null,[11,21],[11,31]]]]],[],[]]],["loc",[null,[11,4],[11,33]]]],
+        ["attribute","class",["concat",["ui primary button ",["subexpr","if",[["get","diaryInputIsEmpty",["loc",[null,[14,40],[14,57]]]],"disabled"],[],["loc",[null,[14,35],[14,70]]]]]]],
+        ["element","action",["save"],[],["loc",[null,[14,72],[14,89]]]],
+        ["inline","t",["action.save"],[],["loc",[null,[15,4],[15,23]]]],
+        ["element","action",["cancel"],[],["loc",[null,[17,28],[17,47]]]],
+        ["inline","t",["action.cancel"],[],["loc",[null,[18,4],[18,25]]]],
+        ["block","each",[["get","sortedList",["loc",[null,[25,10],[25,20]]]]],[],0,null,["loc",[null,[25,2],[27,11]]]]
+      ],
+      locals: [],
+      templates: [child0]
     };
   }()));
 
@@ -7132,12 +6898,25 @@ define('rose/templates/help', ['exports'], function (exports) {
 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 32,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/help.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("h2");
         dom.setAttribute(el1,"class","ui dividing header");
@@ -7251,65 +7030,51 @@ define('rose/templates/help', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0, 3]);
-        var morph0 = dom.createMorphAt(element0,1,1);
-        var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
-        var morph2 = dom.createMorphAt(dom.childAt(fragment, [2]),0,0);
-        var morph3 = dom.createUnsafeMorphAt(fragment,4,4,contextualElement);
-        var morph4 = dom.createMorphAt(dom.childAt(fragment, [6]),0,0);
-        var morph5 = dom.createUnsafeMorphAt(fragment,8,8,contextualElement);
-        var morph6 = dom.createMorphAt(dom.childAt(fragment, [10]),0,0);
-        var morph7 = dom.createUnsafeMorphAt(fragment,12,12,contextualElement);
-        var morph8 = dom.createMorphAt(dom.childAt(fragment, [14]),0,0);
-        var morph9 = dom.createUnsafeMorphAt(fragment,16,16,contextualElement);
-        var morph10 = dom.createMorphAt(dom.childAt(fragment, [18]),0,0);
-        var morph11 = dom.createUnsafeMorphAt(fragment,20,20,contextualElement);
-        var morph12 = dom.createMorphAt(dom.childAt(fragment, [22]),0,0);
-        var morph13 = dom.createUnsafeMorphAt(fragment,24,24,contextualElement);
-        var morph14 = dom.createMorphAt(dom.childAt(fragment, [26]),0,0);
-        var morph15 = dom.createUnsafeMorphAt(fragment,28,28,contextualElement);
-        var morph16 = dom.createMorphAt(dom.childAt(fragment, [30]),0,0);
-        var morph17 = dom.createUnsafeMorphAt(fragment,32,32,contextualElement);
-        inline(env, morph0, context, "t", ["help.title"], {});
-        inline(env, morph1, context, "t", ["help.subtitle"], {});
-        inline(env, morph2, context, "t", ["help.issue1.question"], {});
-        inline(env, morph3, context, "t", ["help.issue1.answer"], {});
-        inline(env, morph4, context, "t", ["help.issue2.question"], {});
-        inline(env, morph5, context, "t", ["help.issue2.answer"], {});
-        inline(env, morph6, context, "t", ["help.issue3.question"], {});
-        inline(env, morph7, context, "t", ["help.issue3.answer"], {});
-        inline(env, morph8, context, "t", ["help.issue4.question"], {});
-        inline(env, morph9, context, "t", ["help.issue4.answer"], {});
-        inline(env, morph10, context, "t", ["help.issue5.question"], {});
-        inline(env, morph11, context, "t", ["help.issue5.answer"], {});
-        inline(env, morph12, context, "t", ["help.issue6.question"], {});
-        inline(env, morph13, context, "t", ["help.issue6.answer"], {});
-        inline(env, morph14, context, "t", ["help.issue7.question"], {});
-        inline(env, morph15, context, "t", ["help.issue7.answer"], {});
-        inline(env, morph16, context, "t", ["help.issue8.question"], {});
-        inline(env, morph17, context, "t", ["help.issue8.answer"], {});
-        return fragment;
-      }
+        var morphs = new Array(18);
+        morphs[0] = dom.createMorphAt(element0,1,1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
+        morphs[2] = dom.createMorphAt(dom.childAt(fragment, [2]),0,0);
+        morphs[3] = dom.createUnsafeMorphAt(fragment,4,4,contextualElement);
+        morphs[4] = dom.createMorphAt(dom.childAt(fragment, [6]),0,0);
+        morphs[5] = dom.createUnsafeMorphAt(fragment,8,8,contextualElement);
+        morphs[6] = dom.createMorphAt(dom.childAt(fragment, [10]),0,0);
+        morphs[7] = dom.createUnsafeMorphAt(fragment,12,12,contextualElement);
+        morphs[8] = dom.createMorphAt(dom.childAt(fragment, [14]),0,0);
+        morphs[9] = dom.createUnsafeMorphAt(fragment,16,16,contextualElement);
+        morphs[10] = dom.createMorphAt(dom.childAt(fragment, [18]),0,0);
+        morphs[11] = dom.createUnsafeMorphAt(fragment,20,20,contextualElement);
+        morphs[12] = dom.createMorphAt(dom.childAt(fragment, [22]),0,0);
+        morphs[13] = dom.createUnsafeMorphAt(fragment,24,24,contextualElement);
+        morphs[14] = dom.createMorphAt(dom.childAt(fragment, [26]),0,0);
+        morphs[15] = dom.createUnsafeMorphAt(fragment,28,28,contextualElement);
+        morphs[16] = dom.createMorphAt(dom.childAt(fragment, [30]),0,0);
+        morphs[17] = dom.createUnsafeMorphAt(fragment,32,32,contextualElement);
+        return morphs;
+      },
+      statements: [
+        ["inline","t",["help.title"],[],["loc",[null,[4,4],[4,22]]]],
+        ["inline","t",["help.subtitle"],[],["loc",[null,[5,28],[5,49]]]],
+        ["inline","t",["help.issue1.question"],[],["loc",[null,[9,4],[9,32]]]],
+        ["inline","t",["help.issue1.answer"],[],["loc",[null,[10,0],[10,28]]]],
+        ["inline","t",["help.issue2.question"],[],["loc",[null,[12,4],[12,32]]]],
+        ["inline","t",["help.issue2.answer"],[],["loc",[null,[13,0],[13,28]]]],
+        ["inline","t",["help.issue3.question"],[],["loc",[null,[15,4],[15,32]]]],
+        ["inline","t",["help.issue3.answer"],[],["loc",[null,[16,0],[16,28]]]],
+        ["inline","t",["help.issue4.question"],[],["loc",[null,[18,4],[18,32]]]],
+        ["inline","t",["help.issue4.answer"],[],["loc",[null,[19,0],[19,28]]]],
+        ["inline","t",["help.issue5.question"],[],["loc",[null,[21,4],[21,32]]]],
+        ["inline","t",["help.issue5.answer"],[],["loc",[null,[22,0],[22,28]]]],
+        ["inline","t",["help.issue6.question"],[],["loc",[null,[24,4],[24,32]]]],
+        ["inline","t",["help.issue6.answer"],[],["loc",[null,[25,0],[25,28]]]],
+        ["inline","t",["help.issue7.question"],[],["loc",[null,[27,4],[27,32]]]],
+        ["inline","t",["help.issue7.answer"],[],["loc",[null,[28,0],[28,28]]]],
+        ["inline","t",["help.issue8.question"],[],["loc",[null,[30,4],[30,32]]]],
+        ["inline","t",["help.issue8.answer"],[],["loc",[null,[31,0],[31,28]]]]
+      ],
+      locals: [],
+      templates: []
     };
   }()));
 
@@ -7320,12 +7085,25 @@ define('rose/templates/index', ['exports'], function (exports) {
 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 2,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/index.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
@@ -7333,31 +7111,17 @@ define('rose/templates/index', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, get = hooks.get, inline = hooks.inline;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
         dom.insertBoundary(fragment, 0);
-        inline(env, morph0, context, "high-chart", [], {"data": get(env, context, "model")});
-        return fragment;
-      }
+        return morphs;
+      },
+      statements: [
+        ["inline","high-chart",[],["data",["subexpr","@mut",[["get","model",["loc",[null,[1,18],[1,23]]]]],[],[]]],["loc",[null,[1,0],[1,25]]]]
+      ],
+      locals: [],
+      templates: []
     };
   }()));
 
@@ -7370,12 +7134,25 @@ define('rose/templates/interactions', ['exports'], function (exports) {
     var child0 = (function() {
       var child0 = (function() {
         return {
-          isHTMLBars: true,
-          revision: "Ember@1.12.1",
-          blockParams: 0,
+          meta: {
+            "revision": "Ember@1.13.9",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 11,
+                "column": 4
+              },
+              "end": {
+                "line": 13,
+                "column": 4
+              }
+            },
+            "moduleName": "rose/templates/interactions.hbs"
+          },
+          arity: 0,
           cachedFragment: null,
           hasRendered: false,
-          build: function build(dom) {
+          buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
             var el1 = dom.createTextNode("    ");
             dom.appendChild(el0, el1);
@@ -7385,80 +7162,77 @@ define('rose/templates/interactions', ['exports'], function (exports) {
             dom.appendChild(el0, el1);
             return el0;
           },
-          render: function render(context, env, contextualElement) {
-            var dom = env.dom;
-            var hooks = env.hooks, get = hooks.get, inline = hooks.inline;
-            dom.detectNamespace(contextualElement);
-            var fragment;
-            if (env.useFragmentCache && dom.canClone) {
-              if (this.cachedFragment === null) {
-                fragment = this.build(dom);
-                if (this.hasRendered) {
-                  this.cachedFragment = fragment;
-                } else {
-                  this.hasRendered = true;
-                }
-              }
-              if (this.cachedFragment) {
-                fragment = dom.cloneNode(this.cachedFragment, true);
-              }
-            } else {
-              fragment = this.build(dom);
-            }
-            var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-            inline(env, morph0, context, "rose-interaction", [], {"model": get(env, context, "interaction")});
-            return fragment;
-          }
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+            return morphs;
+          },
+          statements: [
+            ["inline","rose-interaction",[],["model",["subexpr","@mut",[["get","interaction",["loc",[null,[12,29],[12,40]]]]],[],[]]],["loc",[null,[12,4],[12,42]]]]
+          ],
+          locals: [],
+          templates: []
         };
       }());
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 1,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 10,
+              "column": 2
+            },
+            "end": {
+              "line": 14,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/templates/interactions.hbs"
+        },
+        arity: 1,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement, blockArguments) {
-          var dom = env.dom;
-          var hooks = env.hooks, set = hooks.set, get = hooks.get, block = hooks.block;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-          dom.insertBoundary(fragment, null);
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, 0);
-          set(env, context, "interaction", blockArguments[0]);
-          block(env, morph0, context, "unless", [get(env, context, "interaction.isDeleted")], {}, child0, null);
-          return fragment;
-        }
+          dom.insertBoundary(fragment, null);
+          return morphs;
+        },
+        statements: [
+          ["block","unless",[["get","interaction.isDeleted",["loc",[null,[11,14],[11,35]]]]],[],0,null,["loc",[null,[11,4],[13,15]]]]
+        ],
+        locals: ["interaction"],
+        templates: [child0]
       };
     }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 16,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/interactions.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("h2");
         dom.setAttribute(el1,"class","ui dividing header");
@@ -7501,35 +7275,21 @@ define('rose/templates/interactions', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, get = hooks.get, block = hooks.block;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0, 3]);
-        var morph0 = dom.createMorphAt(element0,1,1);
-        var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
-        var morph2 = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
-        inline(env, morph0, context, "t", ["interactions.title"], {});
-        inline(env, morph1, context, "t", ["interactions.subtitle"], {});
-        block(env, morph2, context, "each", [get(env, context, "sortedList")], {}, child0, null);
-        return fragment;
-      }
+        var morphs = new Array(3);
+        morphs[0] = dom.createMorphAt(element0,1,1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
+        morphs[2] = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
+        return morphs;
+      },
+      statements: [
+        ["inline","t",["interactions.title"],[],["loc",[null,[4,4],[4,30]]]],
+        ["inline","t",["interactions.subtitle"],[],["loc",[null,[5,28],[5,57]]]],
+        ["block","each",[["get","sortedList",["loc",[null,[10,10],[10,20]]]]],[],0,null,["loc",[null,[10,2],[14,11]]]]
+      ],
+      locals: [],
+      templates: [child0]
     };
   }()));
 
@@ -7539,107 +7299,149 @@ define('rose/templates/modal/reset-config', ['exports'], function (exports) {
   'use strict';
 
   exports['default'] = Ember.HTMLBars.template((function() {
+    var child0 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "line": 18,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/modal/reset-config.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createElement("i");
+          dom.setAttribute(el1,"class","close icon");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","header");
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","content");
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","actions");
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("div");
+          dom.setAttribute(el2,"class","ui black cancel button");
+          var el3 = dom.createTextNode("\n    ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n  ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("div");
+          dom.setAttribute(el2,"class","ui positive right labeled icon button");
+          var el3 = dom.createTextNode("\n    ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n    ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createElement("i");
+          dom.setAttribute(el3,"class","checkmark icon");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n  ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element0 = dom.childAt(fragment, [6]);
+          var morphs = new Array(4);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
+          morphs[1] = dom.createMorphAt(dom.childAt(fragment, [4, 1]),0,0);
+          morphs[2] = dom.createMorphAt(dom.childAt(element0, [1]),1,1);
+          morphs[3] = dom.createMorphAt(dom.childAt(element0, [3]),1,1);
+          return morphs;
+        },
+        statements: [
+          ["inline","t",["resetConfigModal.question"],[],["loc",[null,[4,2],[4,35]]]],
+          ["inline","t",["resetConfigModal.warning"],[],["loc",[null,[7,5],[7,37]]]],
+          ["inline","t",["action.cancel"],[],["loc",[null,[11,4],[11,25]]]],
+          ["inline","t",["action.confirm"],[],["loc",[null,[14,4],[14,26]]]]
+        ],
+        locals: [],
+        templates: []
+      };
+    }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 19,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/modal/reset-config.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
-        var el1 = dom.createElement("i");
-        dom.setAttribute(el1,"class","close icon");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("div");
-        dom.setAttribute(el1,"class","header");
-        var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("div");
-        dom.setAttribute(el1,"class","content");
-        var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("p");
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("div");
-        dom.setAttribute(el1,"class","actions");
-        var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","ui black button");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","ui positive button");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
+        var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, element = hooks.element;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var element0 = dom.childAt(fragment, [6]);
-        var element1 = dom.childAt(element0, [3]);
-        var morph0 = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
-        var morph1 = dom.createMorphAt(dom.childAt(fragment, [4, 1]),0,0);
-        var morph2 = dom.createMorphAt(dom.childAt(element0, [1]),1,1);
-        var morph3 = dom.createMorphAt(element1,1,1);
-        inline(env, morph0, context, "t", ["resetConfigModal.question"], {});
-        inline(env, morph1, context, "t", ["resetConfigModal.warning"], {});
-        inline(env, morph2, context, "t", ["action.cancel"], {});
-        element(env, element1, context, "action", ["resetConfig"], {});
-        inline(env, morph3, context, "t", ["action.confirm"], {});
-        return fragment;
-      }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+        dom.insertBoundary(fragment, 0);
+        dom.insertBoundary(fragment, null);
+        return morphs;
+      },
+      statements: [
+        ["block","ui-modal",[],["class","reset-config","approve",["subexpr","action",["approveModal"],[],["loc",[null,[1,41],[1,64]]]]],0,null,["loc",[null,[1,0],[18,13]]]]
+      ],
+      locals: [],
+      templates: [child0]
     };
   }()));
 
@@ -7649,105 +7451,142 @@ define('rose/templates/modal/reset-data', ['exports'], function (exports) {
   'use strict';
 
   exports['default'] = Ember.HTMLBars.template((function() {
+    var child0 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "line": 17,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/modal/reset-data.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createElement("i");
+          dom.setAttribute(el1,"class","close icon");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","header");
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","content");
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","actions");
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("div");
+          dom.setAttribute(el2,"class","ui black button");
+          var el3 = dom.createTextNode("\n    ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n  ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("div");
+          dom.setAttribute(el2,"class","ui positive button");
+          var el3 = dom.createTextNode("\n    ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n  ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element0 = dom.childAt(fragment, [6]);
+          var morphs = new Array(4);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
+          morphs[1] = dom.createMorphAt(dom.childAt(fragment, [4]),1,1);
+          morphs[2] = dom.createMorphAt(dom.childAt(element0, [1]),1,1);
+          morphs[3] = dom.createMorphAt(dom.childAt(element0, [3]),1,1);
+          return morphs;
+        },
+        statements: [
+          ["inline","t",["resetDataModal.question"],[],["loc",[null,[4,2],[4,33]]]],
+          ["inline","t",["resetDataModal.warning"],[],["loc",[null,[7,2],[7,32]]]],
+          ["inline","t",["action.cancel"],[],["loc",[null,[11,4],[11,25]]]],
+          ["inline","t",["action.confirm"],[],["loc",[null,[14,4],[14,26]]]]
+        ],
+        locals: [],
+        templates: []
+      };
+    }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 18,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/modal/reset-data.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
-        var el1 = dom.createElement("i");
-        dom.setAttribute(el1,"class","close icon");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("div");
-        dom.setAttribute(el1,"class","header");
-        var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("div");
-        dom.setAttribute(el1,"class","content");
-        var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("div");
-        dom.setAttribute(el1,"class","actions");
-        var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","ui black button");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","ui positive button");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
+        var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, element = hooks.element;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var element0 = dom.childAt(fragment, [6]);
-        var element1 = dom.childAt(element0, [3]);
-        var morph0 = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
-        var morph1 = dom.createMorphAt(dom.childAt(fragment, [4]),1,1);
-        var morph2 = dom.createMorphAt(dom.childAt(element0, [1]),1,1);
-        var morph3 = dom.createMorphAt(element1,1,1);
-        inline(env, morph0, context, "t", ["resetDataModal.question"], {});
-        inline(env, morph1, context, "t", ["resetDataModal.warning"], {});
-        inline(env, morph2, context, "t", ["action.cancel"], {});
-        element(env, element1, context, "action", ["deleteData"], {});
-        inline(env, morph3, context, "t", ["action.confirm"], {});
-        return fragment;
-      }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+        dom.insertBoundary(fragment, 0);
+        dom.insertBoundary(fragment, null);
+        return morphs;
+      },
+      statements: [
+        ["block","ui-modal",[],["class","reset-data","approve",["subexpr","action",["approveModal"],[],["loc",[null,[1,39],[1,62]]]]],0,null,["loc",[null,[1,0],[17,13]]]]
+      ],
+      locals: [],
+      templates: [child0]
     };
   }()));
 
@@ -7758,12 +7597,25 @@ define('rose/templates/privacysettings', ['exports'], function (exports) {
 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 8,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/privacysettings.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("h2");
         dom.setAttribute(el1,"class","ui dividing header");
@@ -7797,33 +7649,19 @@ define('rose/templates/privacysettings', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0, 3]);
-        var morph0 = dom.createMorphAt(element0,1,1);
-        var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
-        inline(env, morph0, context, "t", ["privacySettings.title"], {});
-        inline(env, morph1, context, "t", ["privacySettings.subtitle"], {});
-        return fragment;
-      }
+        var morphs = new Array(2);
+        morphs[0] = dom.createMorphAt(element0,1,1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
+        return morphs;
+      },
+      statements: [
+        ["inline","t",["privacySettings.title"],[],["loc",[null,[4,4],[4,33]]]],
+        ["inline","t",["privacySettings.subtitle"],[],["loc",[null,[5,28],[5,60]]]]
+      ],
+      locals: [],
+      templates: []
     };
   }()));
 
@@ -7834,13 +7672,256 @@ define('rose/templates/settings', ['exports'], function (exports) {
 
   exports['default'] = Ember.HTMLBars.template((function() {
     var child0 = (function() {
+      var child0 = (function() {
+        return {
+          meta: {
+            "revision": "Ember@1.13.9",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 19,
+                "column": 8
+              },
+              "end": {
+                "line": 21,
+                "column": 8
+              }
+            },
+            "moduleName": "rose/templates/settings.hbs"
+          },
+          arity: 1,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("        ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("div");
+            dom.setAttribute(el1,"class","item");
+            var el2 = dom.createComment("");
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var element2 = dom.childAt(fragment, [1]);
+            var morphs = new Array(2);
+            morphs[0] = dom.createAttrMorph(element2, 'data-value');
+            morphs[1] = dom.createMorphAt(element2,0,0);
+            return morphs;
+          },
+          statements: [
+            ["attribute","data-value",["get","language.code",["loc",[null,[20,39],[20,52]]]]],
+            ["content","language.name",["loc",[null,[20,55],[20,72]]]]
+          ],
+          locals: ["language"],
+          templates: []
+        };
+      }());
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 14,
+              "column": 4
+            },
+            "end": {
+              "line": 23,
+              "column": 4
+            }
+          },
+          "moduleName": "rose/templates/settings.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("input");
+          dom.setAttribute(el1,"type","hidden");
+          dom.setAttribute(el1,"name","language");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","default text");
+          var el2 = dom.createTextNode("Language");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("i");
+          dom.setAttribute(el1,"class","dropdown icon");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","menu");
+          var el2 = dom.createTextNode("\n");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("      ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [7]),1,1);
+          return morphs;
+        },
+        statements: [
+          ["block","each",[["get","availableLanguages",["loc",[null,[19,16],[19,34]]]]],[],0,null,["loc",[null,[19,8],[21,17]]]]
+        ],
+        locals: [],
+        templates: [child0]
+      };
+    }());
+    var child1 = (function() {
+      var child0 = (function() {
+        var child0 = (function() {
+          return {
+            meta: {
+              "revision": "Ember@1.13.9",
+              "loc": {
+                "source": null,
+                "start": {
+                  "line": 70,
+                  "column": 8
+                },
+                "end": {
+                  "line": 72,
+                  "column": 8
+                }
+              },
+              "moduleName": "rose/templates/settings.hbs"
+            },
+            arity: 1,
+            cachedFragment: null,
+            hasRendered: false,
+            buildFragment: function buildFragment(dom) {
+              var el0 = dom.createDocumentFragment();
+              var el1 = dom.createTextNode("        ");
+              dom.appendChild(el0, el1);
+              var el1 = dom.createElement("div");
+              dom.setAttribute(el1,"class","item");
+              var el2 = dom.createComment("");
+              dom.appendChild(el1, el2);
+              dom.appendChild(el0, el1);
+              var el1 = dom.createTextNode("\n");
+              dom.appendChild(el0, el1);
+              return el0;
+            },
+            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+              var element0 = dom.childAt(fragment, [1]);
+              var morphs = new Array(2);
+              morphs[0] = dom.createAttrMorph(element0, 'data-value');
+              morphs[1] = dom.createMorphAt(element0,0,0);
+              return morphs;
+            },
+            statements: [
+              ["attribute","data-value",["get","interval.value",["loc",[null,[71,39],[71,53]]]]],
+              ["inline","t",[["get","interval.label",["loc",[null,[71,60],[71,74]]]]],[],["loc",[null,[71,56],[71,76]]]]
+            ],
+            locals: ["interval"],
+            templates: []
+          };
+        }());
+        return {
+          meta: {
+            "revision": "Ember@1.13.9",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 65,
+                "column": 4
+              },
+              "end": {
+                "line": 74,
+                "column": 4
+              }
+            },
+            "moduleName": "rose/templates/settings.hbs"
+          },
+          arity: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("      ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("input");
+            dom.setAttribute(el1,"type","hidden");
+            dom.setAttribute(el1,"name","updateInterval");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n      ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("div");
+            dom.setAttribute(el1,"class","default text");
+            var el2 = dom.createTextNode("Select Interval");
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n      ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("i");
+            dom.setAttribute(el1,"class","dropdown icon");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n      ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("div");
+            dom.setAttribute(el1,"class","menu");
+            var el2 = dom.createTextNode("\n");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createComment("");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("      ");
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(dom.childAt(fragment, [7]),1,1);
+            return morphs;
+          },
+          statements: [
+            ["block","each",[["get","updateIntervals",["loc",[null,[70,16],[70,31]]]]],[],0,null,["loc",[null,[70,8],[72,17]]]]
+          ],
+          locals: [],
+          templates: [child0]
+        };
+      }());
+      return {
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 60,
+              "column": 2
+            },
+            "end": {
+              "line": 76,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/templates/settings.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("  ");
           dom.appendChild(el0, el1);
@@ -7858,55 +7939,54 @@ define('rose/templates/settings', ['exports'], function (exports) {
           var el3 = dom.createComment("");
           dom.appendChild(el2, el3);
           dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n    ");
+          var el2 = dom.createTextNode("\n\n");
           dom.appendChild(el1, el2);
           var el2 = dom.createComment("");
           dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n  ");
+          var el2 = dom.createTextNode("  ");
           dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n");
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline, get = hooks.get;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var element0 = dom.childAt(fragment, [1]);
-          var morph0 = dom.createMorphAt(dom.childAt(element0, [1]),0,0);
-          var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
-          var morph2 = dom.createMorphAt(element0,5,5);
-          inline(env, morph0, context, "t", ["settings.autoUpdateInterval"], {});
-          inline(env, morph1, context, "t", ["settings.autoUpdateIntervalLabel"], {});
-          inline(env, morph2, context, "ui-dropdown", [], {"class": "ui selection dropdown", "value": get(env, context, "settings.system.updateInterval"), "content": get(env, context, "updateIntervals"), "optionLabelPath": "content.label", "optionValuePath": "content.value"});
-          return fragment;
-        }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element1 = dom.childAt(fragment, [1]);
+          var morphs = new Array(3);
+          morphs[0] = dom.createMorphAt(dom.childAt(element1, [1]),0,0);
+          morphs[1] = dom.createMorphAt(dom.childAt(element1, [3]),0,0);
+          morphs[2] = dom.createMorphAt(element1,5,5);
+          return morphs;
+        },
+        statements: [
+          ["inline","t",["settings.autoUpdateInterval"],[],["loc",[null,[62,11],[62,46]]]],
+          ["inline","t",["settings.autoUpdateIntervalLabel"],[],["loc",[null,[63,7],[63,47]]]],
+          ["block","ui-dropdown",[],["class","selection","selection",["subexpr","@mut",[["get","settings.system.updateInterval",["loc",[null,[65,47],[65,77]]]]],[],[]]],0,null,["loc",[null,[65,4],[74,20]]]]
+        ],
+        locals: [],
+        templates: [child0]
       };
     }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 88,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/settings.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("h2");
         dom.setAttribute(el1,"class","ui dividing header");
@@ -7956,11 +8036,11 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
+        var el3 = dom.createTextNode("\n\n");
         dom.appendChild(el2, el3);
         var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
+        var el3 = dom.createTextNode("  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n\n  ");
@@ -8086,7 +8166,11 @@ define('rose/templates/settings', ['exports'], function (exports) {
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("button");
         dom.setAttribute(el3,"class","ui red button");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
         var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n    ");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n  ");
@@ -8095,88 +8179,82 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, get = hooks.get, subexpr = hooks.subexpr, element = hooks.element, block = hooks.block;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
-        var element1 = dom.childAt(fragment, [0, 3]);
-        var element2 = dom.childAt(fragment, [2]);
-        var element3 = dom.childAt(element2, [1]);
-        var element4 = dom.childAt(element2, [3]);
-        var element5 = dom.childAt(element2, [5]);
-        var element6 = dom.childAt(element2, [7]);
-        var element7 = dom.childAt(element6, [5]);
-        var element8 = dom.childAt(element2, [9]);
-        var element9 = dom.childAt(element2, [13]);
-        var element10 = dom.childAt(element9, [5]);
-        var morph0 = dom.createMorphAt(element1,1,1);
-        var morph1 = dom.createMorphAt(dom.childAt(element1, [3]),0,0);
-        var morph2 = dom.createMorphAt(dom.childAt(element3, [1]),0,0);
-        var morph3 = dom.createMorphAt(dom.childAt(element3, [3]),0,0);
-        var morph4 = dom.createMorphAt(element3,5,5);
-        var morph5 = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
-        var morph6 = dom.createMorphAt(dom.childAt(element4, [3]),0,0);
-        var morph7 = dom.createMorphAt(element4,5,5);
-        var morph8 = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
-        var morph9 = dom.createMorphAt(dom.childAt(element5, [3]),0,0);
-        var morph10 = dom.createMorphAt(element5,5,5);
-        var morph11 = dom.createMorphAt(dom.childAt(element6, [1]),0,0);
-        var morph12 = dom.createMorphAt(dom.childAt(element6, [3]),0,0);
-        var morph13 = dom.createMorphAt(element7,0,0);
-        var morph14 = dom.createMorphAt(element6,7,7);
-        var morph15 = dom.createMorphAt(dom.childAt(element8, [1]),0,0);
-        var morph16 = dom.createMorphAt(dom.childAt(element8, [3]),0,0);
-        var morph17 = dom.createMorphAt(element8,5,5);
-        var morph18 = dom.createMorphAt(element2,11,11);
-        var morph19 = dom.createMorphAt(dom.childAt(element9, [1]),0,0);
-        var morph20 = dom.createMorphAt(dom.childAt(element9, [3]),0,0);
-        var morph21 = dom.createMorphAt(element10,0,0);
-        inline(env, morph0, context, "t", ["settings.title"], {});
-        inline(env, morph1, context, "t", ["settings.subtitle"], {});
-        inline(env, morph2, context, "t", ["settings.language"], {});
-        inline(env, morph3, context, "t", ["settings.languageLabel"], {});
-        inline(env, morph4, context, "ui-dropdown", [], {"class": "ui selection dropdown", "value": get(env, context, "settings.user.currentLanguage"), "content": get(env, context, "availableLanguages"), "optionLabelPath": "content.language", "optionValuePath": "content.code"});
-        inline(env, morph5, context, "t", ["settings.commentReminder"], {});
-        inline(env, morph6, context, "t", ["settings.commentReminderLabel"], {});
-        inline(env, morph7, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "settings.user.commentReminderIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "settings.user.commentReminderIsEnabled")], {}), "action": "saveSettings"});
-        inline(env, morph8, context, "t", ["settings.extraFeatures"], {});
-        inline(env, morph9, context, "t", ["settings.extraFeaturesLabel"], {});
-        inline(env, morph10, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "settings.user.developerModeIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "settings.user.developerModeIsEnabled")], {}), "action": "saveSettings"});
-        inline(env, morph11, context, "t", ["settings.manualUpdate"], {});
-        inline(env, morph12, context, "t", ["settings.manualUpdateLabel"], {});
-        element(env, element7, context, "action", ["manualUpdate"], {});
-        inline(env, morph13, context, "t", ["action.update"], {});
-        inline(env, morph14, context, "moment", [get(env, context, "settings.system.timestamp")], {});
-        inline(env, morph15, context, "t", ["settings.autoUpdate"], {});
-        inline(env, morph16, context, "t", ["settings.autoUpdateLabel"], {});
-        inline(env, morph17, context, "ui-checkbox", [], {"class": "toggle", "checked": get(env, context, "settings.system.autoUpdateIsEnabled"), "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "settings.system.autoUpdateIsEnabled")], {}), "action": "saveSettings"});
-        block(env, morph18, context, "if", [get(env, context, "settings.system.autoUpdateIsEnabled")], {}, child0, null);
-        inline(env, morph19, context, "t", ["settings.resetRose"], {});
-        inline(env, morph20, context, "t", ["settings.resetRoseLabel"], {});
-        element(env, element10, context, "action", ["confirm"], {});
-        inline(env, morph21, context, "t", ["action.reset"], {});
-        return fragment;
-      }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element3 = dom.childAt(fragment, [0, 3]);
+        var element4 = dom.childAt(fragment, [2]);
+        var element5 = dom.childAt(element4, [1]);
+        var element6 = dom.childAt(element4, [3]);
+        var element7 = dom.childAt(element4, [5]);
+        var element8 = dom.childAt(element4, [7]);
+        var element9 = dom.childAt(element8, [5]);
+        var element10 = dom.childAt(element4, [9]);
+        var element11 = dom.childAt(element4, [13]);
+        var element12 = dom.childAt(element11, [5]);
+        var morphs = new Array(25);
+        morphs[0] = dom.createMorphAt(element3,1,1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element3, [3]),0,0);
+        morphs[2] = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
+        morphs[3] = dom.createMorphAt(dom.childAt(element5, [3]),0,0);
+        morphs[4] = dom.createMorphAt(element5,5,5);
+        morphs[5] = dom.createMorphAt(dom.childAt(element6, [1]),0,0);
+        morphs[6] = dom.createMorphAt(dom.childAt(element6, [3]),0,0);
+        morphs[7] = dom.createMorphAt(element6,5,5);
+        morphs[8] = dom.createMorphAt(dom.childAt(element7, [1]),0,0);
+        morphs[9] = dom.createMorphAt(dom.childAt(element7, [3]),0,0);
+        morphs[10] = dom.createMorphAt(element7,5,5);
+        morphs[11] = dom.createMorphAt(dom.childAt(element8, [1]),0,0);
+        morphs[12] = dom.createMorphAt(dom.childAt(element8, [3]),0,0);
+        morphs[13] = dom.createElementMorph(element9);
+        morphs[14] = dom.createMorphAt(element9,0,0);
+        morphs[15] = dom.createMorphAt(element8,7,7);
+        morphs[16] = dom.createMorphAt(dom.childAt(element10, [1]),0,0);
+        morphs[17] = dom.createMorphAt(dom.childAt(element10, [3]),0,0);
+        morphs[18] = dom.createMorphAt(element10,5,5);
+        morphs[19] = dom.createMorphAt(element4,11,11);
+        morphs[20] = dom.createMorphAt(dom.childAt(element11, [1]),0,0);
+        morphs[21] = dom.createMorphAt(dom.childAt(element11, [3]),0,0);
+        morphs[22] = dom.createElementMorph(element12);
+        morphs[23] = dom.createMorphAt(element12,1,1);
+        morphs[24] = dom.createMorphAt(fragment,4,4,contextualElement);
+        return morphs;
+      },
+      statements: [
+        ["inline","t",["settings.title"],[],["loc",[null,[4,4],[4,26]]]],
+        ["inline","t",["settings.subtitle"],[],["loc",[null,[5,28],[5,53]]]],
+        ["inline","t",["settings.language"],[],["loc",[null,[11,11],[11,36]]]],
+        ["inline","t",["settings.languageLabel"],[],["loc",[null,[12,7],[12,37]]]],
+        ["block","ui-dropdown",[],["class","selection","selection",["subexpr","@mut",[["get","settings.user.currentLanguage",["loc",[null,[14,47],[14,76]]]]],[],[]]],0,null,["loc",[null,[14,4],[23,20]]]],
+        ["inline","t",["settings.commentReminder"],[],["loc",[null,[27,11],[27,43]]]],
+        ["inline","t",["settings.commentReminderLabel"],[],["loc",[null,[28,7],[28,44]]]],
+        ["inline","ui-checkbox",[],["class","toggle","checked",["subexpr","@mut",[["get","settings.user.commentReminderIsEnabled",["loc",[null,[30,26],[30,64]]]]],[],[]],"label",["subexpr","boolean-to-yesno",[["get","settings.user.commentReminderIsEnabled",["loc",[null,[31,42],[31,80]]]]],[],["loc",[null,[31,24],[31,81]]]],"action","saveSettings"],["loc",[null,[29,4],[32,41]]]],
+        ["inline","t",["settings.extraFeatures"],[],["loc",[null,[36,11],[36,41]]]],
+        ["inline","t",["settings.extraFeaturesLabel"],[],["loc",[null,[37,7],[37,42]]]],
+        ["inline","ui-checkbox",[],["class","toggle","checked",["subexpr","@mut",[["get","settings.user.developerModeIsEnabled",["loc",[null,[39,26],[39,62]]]]],[],[]],"label",["subexpr","boolean-to-yesno",[["get","settings.user.developerModeIsEnabled",["loc",[null,[40,42],[40,78]]]]],[],["loc",[null,[40,24],[40,79]]]],"action","saveSettings"],["loc",[null,[38,4],[41,41]]]],
+        ["inline","t",["settings.manualUpdate"],[],["loc",[null,[45,11],[45,40]]]],
+        ["inline","t",["settings.manualUpdateLabel"],[],["loc",[null,[46,7],[46,41]]]],
+        ["element","action",["manualUpdate"],[],["loc",[null,[47,30],[47,55]]]],
+        ["inline","t",["action.update"],[],["loc",[null,[47,56],[47,77]]]],
+        ["inline","moment",[["get","settings.system.timestamp",["loc",[null,[48,26],[48,51]]]]],[],["loc",[null,[48,17],[48,53]]]],
+        ["inline","t",["settings.autoUpdate"],[],["loc",[null,[52,11],[52,38]]]],
+        ["inline","t",["settings.autoUpdateLabel"],[],["loc",[null,[53,7],[53,39]]]],
+        ["inline","ui-checkbox",[],["class","toggle","checked",["subexpr","@mut",[["get","settings.system.autoUpdateIsEnabled",["loc",[null,[55,26],[55,61]]]]],[],[]],"label",["subexpr","boolean-to-yesno",[["get","settings.system.autoUpdateIsEnabled",["loc",[null,[56,42],[56,77]]]]],[],["loc",[null,[56,24],[56,78]]]],"action","saveSettings"],["loc",[null,[54,4],[57,41]]]],
+        ["block","if",[["get","settings.system.autoUpdateIsEnabled",["loc",[null,[60,8],[60,43]]]]],[],1,null,["loc",[null,[60,2],[76,9]]]],
+        ["inline","t",["settings.resetRose"],[],["loc",[null,[79,11],[79,37]]]],
+        ["inline","t",["settings.resetRoseLabel"],[],["loc",[null,[80,7],[80,38]]]],
+        ["element","action",["openModal","reset-config"],[],["loc",[null,[81,34],[81,71]]]],
+        ["inline","t",["action.reset"],[],["loc",[null,[82,6],[82,26]]]],
+        ["inline","partial",["modal/reset-config"],[],["loc",[null,[87,0],[87,32]]]]
+      ],
+      locals: [],
+      templates: [child0, child1]
     };
   }()));
 
@@ -8188,48 +8266,59 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     var child0 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 2,
+              "column": 2
+            },
+            "end": {
+              "line": 4,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/templates/sidebar-menu.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ROSE\n");
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          return fragment;
-        }
+        buildRenderNodes: function buildRenderNodes() { return []; },
+        statements: [
+
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child1 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 5,
+              "column": 2
+            },
+            "end": {
+              "line": 7,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/templates/sidebar-menu.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -8239,40 +8328,39 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.diary"], {});
-          return fragment;
-        }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+          return morphs;
+        },
+        statements: [
+          ["inline","t",["sidebarMenu.diary"],[],["loc",[null,[6,4],[6,29]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child2 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 8,
+              "column": 2
+            },
+            "end": {
+              "line": 10,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/templates/sidebar-menu.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -8282,40 +8370,39 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.backup"], {});
-          return fragment;
-        }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+          return morphs;
+        },
+        statements: [
+          ["inline","t",["sidebarMenu.backup"],[],["loc",[null,[9,4],[9,30]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child3 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 11,
+              "column": 2
+            },
+            "end": {
+              "line": 13,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/templates/sidebar-menu.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -8325,41 +8412,40 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.settings"], {});
-          return fragment;
-        }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+          return morphs;
+        },
+        statements: [
+          ["inline","t",["sidebarMenu.settings"],[],["loc",[null,[12,4],[12,32]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child4 = (function() {
       var child0 = (function() {
         return {
-          isHTMLBars: true,
-          revision: "Ember@1.12.1",
-          blockParams: 0,
+          meta: {
+            "revision": "Ember@1.13.9",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 23,
+                "column": 8
+              },
+              "end": {
+                "line": 25,
+                "column": 8
+              }
+            },
+            "moduleName": "rose/templates/sidebar-menu.hbs"
+          },
+          arity: 0,
           cachedFragment: null,
           hasRendered: false,
-          build: function build(dom) {
+          buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
             var el1 = dom.createTextNode("          ");
             dom.appendChild(el0, el1);
@@ -8369,40 +8455,39 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
             dom.appendChild(el0, el1);
             return el0;
           },
-          render: function render(context, env, contextualElement) {
-            var dom = env.dom;
-            var hooks = env.hooks, inline = hooks.inline;
-            dom.detectNamespace(contextualElement);
-            var fragment;
-            if (env.useFragmentCache && dom.canClone) {
-              if (this.cachedFragment === null) {
-                fragment = this.build(dom);
-                if (this.hasRendered) {
-                  this.cachedFragment = fragment;
-                } else {
-                  this.hasRendered = true;
-                }
-              }
-              if (this.cachedFragment) {
-                fragment = dom.cloneNode(this.cachedFragment, true);
-              }
-            } else {
-              fragment = this.build(dom);
-            }
-            var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-            inline(env, morph0, context, "t", ["sidebarMenu.comments"], {});
-            return fragment;
-          }
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+            return morphs;
+          },
+          statements: [
+            ["inline","t",["sidebarMenu.comments"],[],["loc",[null,[24,10],[24,38]]]]
+          ],
+          locals: [],
+          templates: []
         };
       }());
       var child1 = (function() {
         return {
-          isHTMLBars: true,
-          revision: "Ember@1.12.1",
-          blockParams: 0,
+          meta: {
+            "revision": "Ember@1.13.9",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 26,
+                "column": 8
+              },
+              "end": {
+                "line": 28,
+                "column": 8
+              }
+            },
+            "moduleName": "rose/templates/sidebar-menu.hbs"
+          },
+          arity: 0,
           cachedFragment: null,
           hasRendered: false,
-          build: function build(dom) {
+          buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
             var el1 = dom.createTextNode("          ");
             dom.appendChild(el0, el1);
@@ -8412,40 +8497,39 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
             dom.appendChild(el0, el1);
             return el0;
           },
-          render: function render(context, env, contextualElement) {
-            var dom = env.dom;
-            var hooks = env.hooks, inline = hooks.inline;
-            dom.detectNamespace(contextualElement);
-            var fragment;
-            if (env.useFragmentCache && dom.canClone) {
-              if (this.cachedFragment === null) {
-                fragment = this.build(dom);
-                if (this.hasRendered) {
-                  this.cachedFragment = fragment;
-                } else {
-                  this.hasRendered = true;
-                }
-              }
-              if (this.cachedFragment) {
-                fragment = dom.cloneNode(this.cachedFragment, true);
-              }
-            } else {
-              fragment = this.build(dom);
-            }
-            var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-            inline(env, morph0, context, "t", ["sidebarMenu.interactions"], {});
-            return fragment;
-          }
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+            return morphs;
+          },
+          statements: [
+            ["inline","t",["sidebarMenu.interactions"],[],["loc",[null,[27,10],[27,42]]]]
+          ],
+          locals: [],
+          templates: []
         };
       }());
       var child2 = (function() {
         return {
-          isHTMLBars: true,
-          revision: "Ember@1.12.1",
-          blockParams: 0,
+          meta: {
+            "revision": "Ember@1.13.9",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 29,
+                "column": 8
+              },
+              "end": {
+                "line": 31,
+                "column": 8
+              }
+            },
+            "moduleName": "rose/templates/sidebar-menu.hbs"
+          },
+          arity: 0,
           cachedFragment: null,
           hasRendered: false,
-          build: function build(dom) {
+          buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
             var el1 = dom.createTextNode("          ");
             dom.appendChild(el0, el1);
@@ -8455,39 +8539,38 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
             dom.appendChild(el0, el1);
             return el0;
           },
-          render: function render(context, env, contextualElement) {
-            var dom = env.dom;
-            var hooks = env.hooks, inline = hooks.inline;
-            dom.detectNamespace(contextualElement);
-            var fragment;
-            if (env.useFragmentCache && dom.canClone) {
-              if (this.cachedFragment === null) {
-                fragment = this.build(dom);
-                if (this.hasRendered) {
-                  this.cachedFragment = fragment;
-                } else {
-                  this.hasRendered = true;
-                }
-              }
-              if (this.cachedFragment) {
-                fragment = dom.cloneNode(this.cachedFragment, true);
-              }
-            } else {
-              fragment = this.build(dom);
-            }
-            var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-            inline(env, morph0, context, "t", ["sidebarMenu.privacySettings"], {});
-            return fragment;
-          }
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+            return morphs;
+          },
+          statements: [
+            ["inline","t",["sidebarMenu.privacySettings"],[],["loc",[null,[30,10],[30,45]]]]
+          ],
+          locals: [],
+          templates: []
         };
       }());
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 1,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 19,
+              "column": 2
+            },
+            "end": {
+              "line": 34,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/templates/sidebar-menu.hbs"
+        },
+        arity: 1,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -8519,50 +8602,48 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement, blockArguments) {
-          var dom = env.dom;
-          var hooks = env.hooks, set = hooks.set, content = hooks.content, get = hooks.get, block = hooks.block;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var element1 = dom.childAt(fragment, [1]);
           var element2 = dom.childAt(element1, [3]);
-          var morph0 = dom.createMorphAt(element1,1,1);
-          var morph1 = dom.createMorphAt(element2,1,1);
-          var morph2 = dom.createMorphAt(element2,2,2);
-          var morph3 = dom.createMorphAt(element2,3,3);
-          set(env, context, "network", blockArguments[0]);
-          content(env, morph0, context, "network.descriptiveName");
-          block(env, morph1, context, "link-to", ["comments", get(env, context, "network.name")], {"class": "item"}, child0, null);
-          block(env, morph2, context, "link-to", ["interactions", get(env, context, "network.name")], {"class": "item"}, child1, null);
-          block(env, morph3, context, "link-to", ["privacysettings", get(env, context, "network.name")], {"class": "item"}, child2, null);
-          return fragment;
-        }
+          var morphs = new Array(4);
+          morphs[0] = dom.createMorphAt(element1,1,1);
+          morphs[1] = dom.createMorphAt(element2,1,1);
+          morphs[2] = dom.createMorphAt(element2,2,2);
+          morphs[3] = dom.createMorphAt(element2,3,3);
+          return morphs;
+        },
+        statements: [
+          ["content","network.descriptiveName",["loc",[null,[21,6],[21,33]]]],
+          ["block","link-to",["comments",["get","network.name",["loc",[null,[23,30],[23,42]]]]],["class","item"],0,null,["loc",[null,[23,8],[25,20]]]],
+          ["block","link-to",["interactions",["get","network.name",["loc",[null,[26,34],[26,46]]]]],["class","item"],1,null,["loc",[null,[26,8],[28,20]]]],
+          ["block","link-to",["privacysettings",["get","network.name",["loc",[null,[29,37],[29,49]]]]],["class","item"],2,null,["loc",[null,[29,8],[31,20]]]]
+        ],
+        locals: ["network"],
+        templates: [child0, child1, child2]
       };
     }());
     var child5 = (function() {
       var child0 = (function() {
         return {
-          isHTMLBars: true,
-          revision: "Ember@1.12.1",
-          blockParams: 0,
+          meta: {
+            "revision": "Ember@1.13.9",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 43,
+                "column": 8
+              },
+              "end": {
+                "line": 45,
+                "column": 8
+              }
+            },
+            "moduleName": "rose/templates/sidebar-menu.hbs"
+          },
+          arity: 0,
           cachedFragment: null,
           hasRendered: false,
-          build: function build(dom) {
+          buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
             var el1 = dom.createTextNode("          ");
             dom.appendChild(el0, el1);
@@ -8572,39 +8653,38 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
             dom.appendChild(el0, el1);
             return el0;
           },
-          render: function render(context, env, contextualElement) {
-            var dom = env.dom;
-            var hooks = env.hooks, inline = hooks.inline;
-            dom.detectNamespace(contextualElement);
-            var fragment;
-            if (env.useFragmentCache && dom.canClone) {
-              if (this.cachedFragment === null) {
-                fragment = this.build(dom);
-                if (this.hasRendered) {
-                  this.cachedFragment = fragment;
-                } else {
-                  this.hasRendered = true;
-                }
-              }
-              if (this.cachedFragment) {
-                fragment = dom.cloneNode(this.cachedFragment, true);
-              }
-            } else {
-              fragment = this.build(dom);
-            }
-            var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-            inline(env, morph0, context, "t", ["sidebarMenu.studyCreator"], {});
-            return fragment;
-          }
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+            return morphs;
+          },
+          statements: [
+            ["inline","t",["sidebarMenu.studyCreator"],[],["loc",[null,[44,10],[44,42]]]]
+          ],
+          locals: [],
+          templates: []
         };
       }());
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 39,
+              "column": 2
+            },
+            "end": {
+              "line": 48,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/templates/sidebar-menu.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -8632,43 +8712,42 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline, block = hooks.block;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var element0 = dom.childAt(fragment, [1]);
-          var morph0 = dom.createMorphAt(element0,1,1);
-          var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),1,1);
-          inline(env, morph0, context, "t", ["sidebarMenu.extraFeatures"], {});
-          block(env, morph1, context, "link-to", ["study-creator"], {"class": "item"}, child0, null);
-          return fragment;
-        }
+          var morphs = new Array(2);
+          morphs[0] = dom.createMorphAt(element0,1,1);
+          morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),1,1);
+          return morphs;
+        },
+        statements: [
+          ["inline","t",["sidebarMenu.extraFeatures"],[],["loc",[null,[41,6],[41,39]]]],
+          ["block","link-to",["study-creator"],["class","item"],0,null,["loc",[null,[43,8],[45,20]]]]
+        ],
+        locals: [],
+        templates: [child0]
       };
     }());
     var child6 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 49,
+              "column": 2
+            },
+            "end": {
+              "line": 51,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/templates/sidebar-menu.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -8678,40 +8757,39 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.help"], {});
-          return fragment;
-        }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+          return morphs;
+        },
+        statements: [
+          ["inline","t",["sidebarMenu.help"],[],["loc",[null,[50,4],[50,28]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     var child7 = (function() {
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 0,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 52,
+              "column": 2
+            },
+            "end": {
+              "line": 54,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/templates/sidebar-menu.hbs"
+        },
+        arity: 0,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
@@ -8721,39 +8799,38 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement) {
-          var dom = env.dom;
-          var hooks = env.hooks, inline = hooks.inline;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-          inline(env, morph0, context, "t", ["sidebarMenu.about"], {});
-          return fragment;
-        }
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+          return morphs;
+        },
+        statements: [
+          ["inline","t",["sidebarMenu.about"],[],["loc",[null,[53,4],[53,29]]]]
+        ],
+        locals: [],
+        templates: []
       };
     }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 56,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/sidebar-menu.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("div");
         dom.setAttribute(el1,"class","ui vertical menu");
@@ -8806,49 +8883,35 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, block = hooks.block, inline = hooks.inline, get = hooks.get;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element3 = dom.childAt(fragment, [0]);
-        var morph0 = dom.createMorphAt(element3,1,1);
-        var morph1 = dom.createMorphAt(element3,2,2);
-        var morph2 = dom.createMorphAt(element3,3,3);
-        var morph3 = dom.createMorphAt(element3,4,4);
-        var morph4 = dom.createMorphAt(dom.childAt(element3, [6]),1,1);
-        var morph5 = dom.createMorphAt(element3,8,8);
-        var morph6 = dom.createMorphAt(dom.childAt(element3, [10]),1,1);
-        var morph7 = dom.createMorphAt(element3,12,12);
-        var morph8 = dom.createMorphAt(element3,13,13);
-        var morph9 = dom.createMorphAt(element3,14,14);
-        block(env, morph0, context, "link-to", ["index"], {"class": "header item"}, child0, null);
-        block(env, morph1, context, "link-to", ["diary"], {"class": "item"}, child1, null);
-        block(env, morph2, context, "link-to", ["backup"], {"class": "item"}, child2, null);
-        block(env, morph3, context, "link-to", ["settings"], {"class": "item"}, child3, null);
-        inline(env, morph4, context, "t", ["sidebarMenu.networks"], {});
-        block(env, morph5, context, "each", [get(env, context, "networks")], {}, child4, null);
-        inline(env, morph6, context, "t", ["sidebarMenu.more"], {});
-        block(env, morph7, context, "liquid-if", [get(env, context, "settings.user.developerModeIsEnabled")], {}, child5, null);
-        block(env, morph8, context, "link-to", ["help"], {"class": "item"}, child6, null);
-        block(env, morph9, context, "link-to", ["about"], {"class": "item"}, child7, null);
-        return fragment;
-      }
+        var morphs = new Array(10);
+        morphs[0] = dom.createMorphAt(element3,1,1);
+        morphs[1] = dom.createMorphAt(element3,2,2);
+        morphs[2] = dom.createMorphAt(element3,3,3);
+        morphs[3] = dom.createMorphAt(element3,4,4);
+        morphs[4] = dom.createMorphAt(dom.childAt(element3, [6]),1,1);
+        morphs[5] = dom.createMorphAt(element3,8,8);
+        morphs[6] = dom.createMorphAt(dom.childAt(element3, [10]),1,1);
+        morphs[7] = dom.createMorphAt(element3,12,12);
+        morphs[8] = dom.createMorphAt(element3,13,13);
+        morphs[9] = dom.createMorphAt(element3,14,14);
+        return morphs;
+      },
+      statements: [
+        ["block","link-to",["index"],["class","header item"],0,null,["loc",[null,[2,2],[4,14]]]],
+        ["block","link-to",["diary"],["class","item"],1,null,["loc",[null,[5,2],[7,14]]]],
+        ["block","link-to",["backup"],["class","item"],2,null,["loc",[null,[8,2],[10,14]]]],
+        ["block","link-to",["settings"],["class","item"],3,null,["loc",[null,[11,2],[13,14]]]],
+        ["inline","t",["sidebarMenu.networks"],[],["loc",[null,[16,4],[16,32]]]],
+        ["block","each",[["get","networks",["loc",[null,[19,10],[19,18]]]]],[],4,null,["loc",[null,[19,2],[34,11]]]],
+        ["inline","t",["sidebarMenu.more"],[],["loc",[null,[37,4],[37,28]]]],
+        ["block","liquid-if",[["get","settings.user.developerModeIsEnabled",["loc",[null,[39,15],[39,51]]]]],[],5,null,["loc",[null,[39,2],[48,16]]]],
+        ["block","link-to",["help"],["class","item"],6,null,["loc",[null,[49,2],[51,14]]]],
+        ["block","link-to",["about"],["class","item"],7,null,["loc",[null,[52,2],[54,14]]]]
+      ],
+      locals: [],
+      templates: [child0, child1, child2, child3, child4, child5, child6, child7]
     };
   }()));
 
@@ -8861,12 +8924,25 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
     var child0 = (function() {
       var child0 = (function() {
         return {
-          isHTMLBars: true,
-          revision: "Ember@1.12.1",
-          blockParams: 0,
+          meta: {
+            "revision": "Ember@1.13.9",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 82,
+                "column": 6
+              },
+              "end": {
+                "line": 90,
+                "column": 6
+              }
+            },
+            "moduleName": "rose/templates/study-creator.hbs"
+          },
+          arity: 0,
           cachedFragment: null,
           hasRendered: false,
-          build: function build(dom) {
+          buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
             var el1 = dom.createTextNode("      ");
             dom.appendChild(el0, el1);
@@ -8883,80 +8959,77 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
             dom.appendChild(el0, el1);
             return el0;
           },
-          render: function render(context, env, contextualElement) {
-            var dom = env.dom;
-            var hooks = env.hooks, get = hooks.get, inline = hooks.inline;
-            dom.detectNamespace(contextualElement);
-            var fragment;
-            if (env.useFragmentCache && dom.canClone) {
-              if (this.cachedFragment === null) {
-                fragment = this.build(dom);
-                if (this.hasRendered) {
-                  this.cachedFragment = fragment;
-                } else {
-                  this.hasRendered = true;
-                }
-              }
-              if (this.cachedFragment) {
-                fragment = dom.cloneNode(this.cachedFragment, true);
-              }
-            } else {
-              fragment = this.build(dom);
-            }
-            var morph0 = dom.createMorphAt(dom.childAt(fragment, [1]),1,1);
-            inline(env, morph0, context, "ui-checkbox", [], {"checked": get(env, context, "network.isEnabled"), "class": "toggle", "label": get(env, context, "network.name"), "action": "saveNetworkSettings", "value": get(env, context, "network")});
-            return fragment;
-          }
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),1,1);
+            return morphs;
+          },
+          statements: [
+            ["inline","ui-checkbox",[],["checked",["subexpr","@mut",[["get","network.isEnabled",["loc",[null,[84,30],[84,47]]]]],[],[]],"class","toggle","label",["subexpr","@mut",[["get","network.name",["loc",[null,[86,28],[86,40]]]]],[],[]],"action","saveNetworkSettings","value",["subexpr","@mut",[["get","network",["loc",[null,[88,28],[88,35]]]]],[],[]]],["loc",[null,[84,8],[88,37]]]]
+          ],
+          locals: [],
+          templates: []
         };
       }());
       return {
-        isHTMLBars: true,
-        revision: "Ember@1.12.1",
-        blockParams: 1,
+        meta: {
+          "revision": "Ember@1.13.9",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 81,
+              "column": 4
+            },
+            "end": {
+              "line": 91,
+              "column": 4
+            }
+          },
+          "moduleName": "rose/templates/study-creator.hbs"
+        },
+        arity: 1,
         cachedFragment: null,
         hasRendered: false,
-        build: function build(dom) {
+        buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
           return el0;
         },
-        render: function render(context, env, contextualElement, blockArguments) {
-          var dom = env.dom;
-          var hooks = env.hooks, set = hooks.set, get = hooks.get, block = hooks.block;
-          dom.detectNamespace(contextualElement);
-          var fragment;
-          if (env.useFragmentCache && dom.canClone) {
-            if (this.cachedFragment === null) {
-              fragment = this.build(dom);
-              if (this.hasRendered) {
-                this.cachedFragment = fragment;
-              } else {
-                this.hasRendered = true;
-              }
-            }
-            if (this.cachedFragment) {
-              fragment = dom.cloneNode(this.cachedFragment, true);
-            }
-          } else {
-            fragment = this.build(dom);
-          }
-          var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
-          dom.insertBoundary(fragment, null);
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, 0);
-          set(env, context, "network", blockArguments[0]);
-          block(env, morph0, context, "if", [get(env, context, "network.isLoaded")], {}, child0, null);
-          return fragment;
-        }
+          dom.insertBoundary(fragment, null);
+          return morphs;
+        },
+        statements: [
+          ["block","if",[["get","network.isLoaded",["loc",[null,[82,12],[82,28]]]]],[],0,null,["loc",[null,[82,6],[90,13]]]]
+        ],
+        locals: ["network"],
+        templates: [child0]
       };
     }());
     return {
-      isHTMLBars: true,
-      revision: "Ember@1.12.1",
-      blockParams: 0,
+      meta: {
+        "revision": "Ember@1.13.9",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 117,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/study-creator.hbs"
+      },
+      arity: 0,
       cachedFragment: null,
       hasRendered: false,
-      build: function build(dom) {
+      buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("h2");
         dom.setAttribute(el1,"class","ui dividing header");
@@ -9240,26 +9313,7 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         return el0;
       },
-      render: function render(context, env, contextualElement) {
-        var dom = env.dom;
-        var hooks = env.hooks, inline = hooks.inline, get = hooks.get, subexpr = hooks.subexpr, concat = hooks.concat, attribute = hooks.attribute, element = hooks.element, block = hooks.block;
-        dom.detectNamespace(contextualElement);
-        var fragment;
-        if (env.useFragmentCache && dom.canClone) {
-          if (this.cachedFragment === null) {
-            fragment = this.build(dom);
-            if (this.hasRendered) {
-              this.cachedFragment = fragment;
-            } else {
-              this.hasRendered = true;
-            }
-          }
-          if (this.cachedFragment) {
-            fragment = dom.cloneNode(this.cachedFragment, true);
-          }
-        } else {
-          fragment = this.build(dom);
-        }
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0, 3]);
         var element1 = dom.childAt(fragment, [2]);
         var element2 = dom.childAt(element1, [1]);
@@ -9273,68 +9327,75 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         var element10 = dom.childAt(element1, [15]);
         var element11 = dom.childAt(element1, [17]);
         var element12 = dom.childAt(element1, [19]);
-        var morph0 = dom.createMorphAt(element0,1,1);
-        var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
-        var morph2 = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
-        var morph3 = dom.createMorphAt(dom.childAt(element2, [3]),0,0);
-        var morph4 = dom.createMorphAt(element2,5,5);
-        var morph5 = dom.createMorphAt(dom.childAt(element3, [1]),0,0);
-        var morph6 = dom.createMorphAt(dom.childAt(element3, [3]),0,0);
-        var morph7 = dom.createMorphAt(element3,5,5);
-        var morph8 = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
-        var morph9 = dom.createMorphAt(dom.childAt(element4, [3]),0,0);
-        var morph10 = dom.createMorphAt(element4,5,5);
-        var morph11 = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
-        var morph12 = dom.createMorphAt(dom.childAt(element5, [3]),0,0);
-        var morph13 = dom.createMorphAt(element5,5,5);
-        var morph14 = dom.createMorphAt(dom.childAt(element6, [1]),0,0);
-        var morph15 = dom.createMorphAt(dom.childAt(element6, [3]),0,0);
-        var morph16 = dom.createMorphAt(element7,1,1);
-        var attrMorph0 = dom.createAttrMorph(element8, 'class');
-        var morph17 = dom.createMorphAt(dom.childAt(element9, [1]),0,0);
-        var morph18 = dom.createMorphAt(dom.childAt(element9, [3]),0,0);
-        var morph19 = dom.createMorphAt(dom.childAt(element9, [5]),1,1);
-        var morph20 = dom.createMorphAt(dom.childAt(element1, [13]),5,5);
-        var morph21 = dom.createMorphAt(dom.childAt(element10, [1]),0,0);
-        var morph22 = dom.createMorphAt(dom.childAt(element10, [3]),0,0);
-        var morph23 = dom.createMorphAt(element10,5,5);
-        var morph24 = dom.createMorphAt(dom.childAt(element11, [1]),0,0);
-        var morph25 = dom.createMorphAt(dom.childAt(element11, [3]),0,0);
-        var morph26 = dom.createMorphAt(element11,5,5);
-        var morph27 = dom.createMorphAt(element12,1,1);
-        inline(env, morph0, context, "t", ["studyCreator.title"], {});
-        inline(env, morph1, context, "t", ["studyCreator.subtitle"], {});
-        inline(env, morph2, context, "t", ["studyCreator.roseComments"], {});
-        inline(env, morph3, context, "t", ["studyCreator.roseCommentsDesc"], {});
-        inline(env, morph4, context, "ui-checkbox", [], {"checked": get(env, context, "model.roseCommentsIsEnabled"), "class": "toggle", "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "model.roseCommentsIsEnabled")], {}), "action": "saveSettings"});
-        inline(env, morph5, context, "t", ["studyCreator.roseCommentsRating"], {});
-        inline(env, morph6, context, "t", ["studyCreator.roseCommentsRatingDesc"], {});
-        inline(env, morph7, context, "ui-checkbox", [], {"checked": get(env, context, "model.roseCommentsRatingIsEnabled"), "class": "toggle", "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "model.roseCommentsRatingIsEnabled")], {}), "action": "saveSettings"});
-        inline(env, morph8, context, "t", ["studyCreator.salt"], {});
-        inline(env, morph9, context, "t", ["studyCreator.saltDesc"], {});
-        inline(env, morph10, context, "input", [], {"type": "text", "value": get(env, context, "model.salt"), "insert-newline": "saveSettings", "focus-out": "saveSettings"});
-        inline(env, morph11, context, "t", ["studyCreator.hashLength"], {});
-        inline(env, morph12, context, "t", ["studyCreator.hashLengthDesc"], {});
-        inline(env, morph13, context, "input", [], {"type": "number", "value": get(env, context, "model.hashLength"), "insert-newline": "saveSettings", "focus-out": "saveSettings"});
-        inline(env, morph14, context, "t", ["studyCreator.repositoryUrl"], {});
-        inline(env, morph15, context, "t", ["studyCreator.repositoryUrlDesc"], {});
-        inline(env, morph16, context, "input", [], {"type": "text", "value": get(env, context, "model.repositoryUrl"), "insert-newline": "fetchBaseFile"});
-        attribute(env, attrMorph0, element8, "class", concat(env, ["ui icon button ", subexpr(env, context, "if", [get(env, context, "baseFileIsLoading"), "loading"], {})]));
-        element(env, element8, context, "action", ["fetchBaseFile"], {});
-        inline(env, morph17, context, "t", ["studyCreator.fingerprint"], {});
-        inline(env, morph18, context, "t", ["studyCreator.fingerprintDesc"], {});
-        inline(env, morph19, context, "input", [], {"type": "text", "value": get(env, context, "model.fingerprint"), "insert-newline": "saveSettings", "focus-out": "saveSettings"});
-        block(env, morph20, context, "each", [get(env, context, "model.networks")], {}, child0, null);
-        inline(env, morph21, context, "t", ["studyCreator.autoUpdate"], {});
-        inline(env, morph22, context, "t", ["studyCreator.autoUpdateDesc"], {});
-        inline(env, morph23, context, "ui-checkbox", [], {"checked": get(env, context, "model.autoUpdateIsEnabled"), "class": "toggle", "label": subexpr(env, context, "boolean-to-yesno", [get(env, context, "model.autoUpdateIsEnabled")], {}), "action": "saveSettings"});
-        inline(env, morph24, context, "t", ["studyCreator.exportConfig"], {});
-        inline(env, morph25, context, "t", ["studyCreator.exportConfigDesc"], {});
-        inline(env, morph26, context, "input", [], {"value": get(env, context, "model.fileName"), "insert-newline": "saveSettings", "focus-out": "saveSettings"});
-        element(env, element12, context, "action", ["download"], {});
-        inline(env, morph27, context, "t", ["action.download"], {});
-        return fragment;
-      }
+        var morphs = new Array(31);
+        morphs[0] = dom.createMorphAt(element0,1,1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
+        morphs[2] = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
+        morphs[3] = dom.createMorphAt(dom.childAt(element2, [3]),0,0);
+        morphs[4] = dom.createMorphAt(element2,5,5);
+        morphs[5] = dom.createMorphAt(dom.childAt(element3, [1]),0,0);
+        morphs[6] = dom.createMorphAt(dom.childAt(element3, [3]),0,0);
+        morphs[7] = dom.createMorphAt(element3,5,5);
+        morphs[8] = dom.createMorphAt(dom.childAt(element4, [1]),0,0);
+        morphs[9] = dom.createMorphAt(dom.childAt(element4, [3]),0,0);
+        morphs[10] = dom.createMorphAt(element4,5,5);
+        morphs[11] = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
+        morphs[12] = dom.createMorphAt(dom.childAt(element5, [3]),0,0);
+        morphs[13] = dom.createMorphAt(element5,5,5);
+        morphs[14] = dom.createMorphAt(dom.childAt(element6, [1]),0,0);
+        morphs[15] = dom.createMorphAt(dom.childAt(element6, [3]),0,0);
+        morphs[16] = dom.createMorphAt(element7,1,1);
+        morphs[17] = dom.createAttrMorph(element8, 'class');
+        morphs[18] = dom.createElementMorph(element8);
+        morphs[19] = dom.createMorphAt(dom.childAt(element9, [1]),0,0);
+        morphs[20] = dom.createMorphAt(dom.childAt(element9, [3]),0,0);
+        morphs[21] = dom.createMorphAt(dom.childAt(element9, [5]),1,1);
+        morphs[22] = dom.createMorphAt(dom.childAt(element1, [13]),5,5);
+        morphs[23] = dom.createMorphAt(dom.childAt(element10, [1]),0,0);
+        morphs[24] = dom.createMorphAt(dom.childAt(element10, [3]),0,0);
+        morphs[25] = dom.createMorphAt(element10,5,5);
+        morphs[26] = dom.createMorphAt(dom.childAt(element11, [1]),0,0);
+        morphs[27] = dom.createMorphAt(dom.childAt(element11, [3]),0,0);
+        morphs[28] = dom.createMorphAt(element11,5,5);
+        morphs[29] = dom.createElementMorph(element12);
+        morphs[30] = dom.createMorphAt(element12,1,1);
+        return morphs;
+      },
+      statements: [
+        ["inline","t",["studyCreator.title"],[],["loc",[null,[4,4],[4,30]]]],
+        ["inline","t",["studyCreator.subtitle"],[],["loc",[null,[5,28],[5,57]]]],
+        ["inline","t",["studyCreator.roseComments"],[],["loc",[null,[11,11],[11,44]]]],
+        ["inline","t",["studyCreator.roseCommentsDesc"],[],["loc",[null,[12,7],[12,44]]]],
+        ["inline","ui-checkbox",[],["checked",["subexpr","@mut",[["get","model.roseCommentsIsEnabled",["loc",[null,[14,26],[14,53]]]]],[],[]],"class","toggle","label",["subexpr","boolean-to-yesno",[["get","model.roseCommentsIsEnabled",["loc",[null,[16,42],[16,69]]]]],[],["loc",[null,[16,24],[16,70]]]],"action","saveSettings"],["loc",[null,[14,4],[17,41]]]],
+        ["inline","t",["studyCreator.roseCommentsRating"],[],["loc",[null,[21,11],[21,50]]]],
+        ["inline","t",["studyCreator.roseCommentsRatingDesc"],[],["loc",[null,[22,7],[22,50]]]],
+        ["inline","ui-checkbox",[],["checked",["subexpr","@mut",[["get","model.roseCommentsRatingIsEnabled",["loc",[null,[24,26],[24,59]]]]],[],[]],"class","toggle","label",["subexpr","boolean-to-yesno",[["get","model.roseCommentsRatingIsEnabled",["loc",[null,[26,42],[26,75]]]]],[],["loc",[null,[26,24],[26,76]]]],"action","saveSettings"],["loc",[null,[24,4],[27,41]]]],
+        ["inline","t",["studyCreator.salt"],[],["loc",[null,[31,11],[31,36]]]],
+        ["inline","t",["studyCreator.saltDesc"],[],["loc",[null,[32,7],[32,36]]]],
+        ["inline","input",[],["type","text","value",["subexpr","@mut",[["get","model.salt",["loc",[null,[35,18],[35,28]]]]],[],[]],"insert-newline","saveSettings","focus-out","saveSettings"],["loc",[null,[34,4],[37,38]]]],
+        ["inline","t",["studyCreator.hashLength"],[],["loc",[null,[41,11],[41,42]]]],
+        ["inline","t",["studyCreator.hashLengthDesc"],[],["loc",[null,[42,7],[42,42]]]],
+        ["inline","input",[],["type","number","value",["subexpr","@mut",[["get","model.hashLength",["loc",[null,[45,18],[45,34]]]]],[],[]],"insert-newline","saveSettings","focus-out","saveSettings"],["loc",[null,[44,4],[47,38]]]],
+        ["inline","t",["studyCreator.repositoryUrl"],[],["loc",[null,[51,11],[51,45]]]],
+        ["inline","t",["studyCreator.repositoryUrlDesc"],[],["loc",[null,[52,7],[52,45]]]],
+        ["inline","input",[],["type","text","value",["subexpr","@mut",[["get","model.repositoryUrl",["loc",[null,[56,20],[56,39]]]]],[],[]],"insert-newline","fetchBaseFile"],["loc",[null,[55,6],[57,46]]]],
+        ["attribute","class",["concat",["ui icon button ",["subexpr","if",[["get","baseFileIsLoading",["loc",[null,[59,41],[59,58]]]],"loading"],[],["loc",[null,[59,36],[59,70]]]]]]],
+        ["element","action",["fetchBaseFile"],[],["loc",[null,[59,72],[59,98]]]],
+        ["inline","t",["studyCreator.fingerprint"],[],["loc",[null,[66,11],[66,43]]]],
+        ["inline","t",["studyCreator.fingerprintDesc"],[],["loc",[null,[67,7],[67,43]]]],
+        ["inline","input",[],["type","text","value",["subexpr","@mut",[["get","model.fingerprint",["loc",[null,[71,20],[71,37]]]]],[],[]],"insert-newline","saveSettings","focus-out","saveSettings"],["loc",[null,[70,6],[73,40]]]],
+        ["block","each",[["get","model.networks",["loc",[null,[81,12],[81,26]]]]],[],0,null,["loc",[null,[81,4],[91,13]]]],
+        ["inline","t",["studyCreator.autoUpdate"],[],["loc",[null,[95,11],[95,42]]]],
+        ["inline","t",["studyCreator.autoUpdateDesc"],[],["loc",[null,[96,7],[96,42]]]],
+        ["inline","ui-checkbox",[],["checked",["subexpr","@mut",[["get","model.autoUpdateIsEnabled",["loc",[null,[98,26],[98,51]]]]],[],[]],"class","toggle","label",["subexpr","boolean-to-yesno",[["get","model.autoUpdateIsEnabled",["loc",[null,[100,42],[100,67]]]]],[],["loc",[null,[100,24],[100,68]]]],"action","saveSettings"],["loc",[null,[98,4],[101,41]]]],
+        ["inline","t",["studyCreator.exportConfig"],[],["loc",[null,[105,11],[105,44]]]],
+        ["inline","t",["studyCreator.exportConfigDesc"],[],["loc",[null,[106,7],[106,44]]]],
+        ["inline","input",[],["value",["subexpr","@mut",[["get","model.fileName",["loc",[null,[108,18],[108,32]]]]],[],[]],"insert-newline","saveSettings","focus-out","saveSettings"],["loc",[null,[108,4],[110,38]]]],
+        ["element","action",["download"],[],["loc",[null,[113,36],[113,57]]]],
+        ["inline","t",["action.download"],[],["loc",[null,[114,4],[114,27]]]]
+      ],
+      locals: [],
+      templates: [child0]
     };
   }()));
 
@@ -9359,6 +9420,16 @@ define('rose/tests/adapters/comment.jshint', function () {
   });
 
 });
+define('rose/tests/adapters/extractor.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - adapters');
+  test('adapters/extractor.js should pass jshint', function() { 
+    ok(true, 'adapters/extractor.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/adapters/interaction.jshint', function () {
 
   'use strict';
@@ -9375,7 +9446,7 @@ define('rose/tests/adapters/kango-adapter.jshint', function () {
 
   module('JSHint - adapters');
   test('adapters/kango-adapter.js should pass jshint', function() { 
-    ok(false, 'adapters/kango-adapter.js should pass jshint.\nadapters/kango-adapter.js: line 80, col 39, Expected \'===\' and instead saw \'==\'.\nadapters/kango-adapter.js: line 56, col 35, \'snapshot\' is defined but never used.\nadapters/kango-adapter.js: line 62, col 43, \'recordArray\' is defined but never used.\nadapters/kango-adapter.js: line 106, col 48, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 117, col 48, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 138, col 51, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 146, col 51, \'reject\' is defined but never used.\n\n7 errors'); 
+    ok(false, 'adapters/kango-adapter.js should pass jshint.\nadapters/kango-adapter.js: line 80, col 39, Expected \'===\' and instead saw \'==\'.\nadapters/kango-adapter.js: line 56, col 35, \'snapshot\' is defined but never used.\nadapters/kango-adapter.js: line 62, col 43, \'recordArray\' is defined but never used.\nadapters/kango-adapter.js: line 99, col 48, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 110, col 48, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 131, col 51, \'reject\' is defined but never used.\nadapters/kango-adapter.js: line 139, col 51, \'reject\' is defined but never used.\n\n7 errors'); 
   });
 
 });
@@ -9386,6 +9457,16 @@ define('rose/tests/adapters/network.jshint', function () {
   module('JSHint - adapters');
   test('adapters/network.js should pass jshint', function() { 
     ok(true, 'adapters/network.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/adapters/observer.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - adapters');
+  test('adapters/observer.js should pass jshint', function() { 
+    ok(true, 'adapters/observer.js should pass jshint.'); 
   });
 
 });
@@ -9479,33 +9560,13 @@ define('rose/tests/controllers/interactions.jshint', function () {
   });
 
 });
-define('rose/tests/controllers/modal/reset-config.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - controllers/modal');
-  test('controllers/modal/reset-config.js should pass jshint', function() { 
-    ok(true, 'controllers/modal/reset-config.js should pass jshint.'); 
-  });
-
-});
-define('rose/tests/controllers/modal/reset-data.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - controllers/modal');
-  test('controllers/modal/reset-data.js should pass jshint', function() { 
-    ok(true, 'controllers/modal/reset-data.js should pass jshint.'); 
-  });
-
-});
 define('rose/tests/controllers/settings.jshint', function () {
 
   'use strict';
 
   module('JSHint - controllers');
   test('controllers/settings.js should pass jshint', function() { 
-    ok(false, 'controllers/settings.js should pass jshint.\ncontrollers/settings.js: line 39, col 9, Missing semicolon.\ncontrollers/settings.js: line 35, col 50, \'e\' is defined but never used.\n\n2 errors'); 
+    ok(false, 'controllers/settings.js should pass jshint.\ncontrollers/settings.js: line 37, col 9, Missing semicolon.\ncontrollers/settings.js: line 33, col 50, \'e\' is defined but never used.\n\n2 errors'); 
   });
 
 });
@@ -9676,6 +9737,16 @@ define('rose/tests/models/diary-entry.jshint', function () {
   });
 
 });
+define('rose/tests/models/extractor.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - models');
+  test('models/extractor.js should pass jshint', function() { 
+    ok(true, 'models/extractor.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/models/interaction.jshint', function () {
 
   'use strict';
@@ -9693,6 +9764,16 @@ define('rose/tests/models/network.jshint', function () {
   module('JSHint - models');
   test('models/network.js should pass jshint', function() { 
     ok(true, 'models/network.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/models/observer.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - models');
+  test('models/observer.js should pass jshint', function() { 
+    ok(true, 'models/observer.js should pass jshint.'); 
   });
 
 });
@@ -9822,7 +9903,7 @@ define('rose/tests/routes/application.jshint', function () {
 
   module('JSHint - routes');
   test('routes/application.js should pass jshint', function() { 
-    ok(false, 'routes/application.js should pass jshint.\nroutes/application.js: line 17, col 35, Missing semicolon.\nroutes/application.js: line 21, col 7, Missing semicolon.\n\n2 errors'); 
+    ok(false, 'routes/application.js should pass jshint.\nroutes/application.js: line 16, col 35, Missing semicolon.\nroutes/application.js: line 20, col 7, Missing semicolon.\n\n2 errors'); 
   });
 
 });
@@ -9832,7 +9913,7 @@ define('rose/tests/routes/backup.jshint', function () {
 
   module('JSHint - routes');
   test('routes/backup.js should pass jshint', function() { 
-    ok(true, 'routes/backup.js should pass jshint.'); 
+    ok(false, 'routes/backup.js should pass jshint.\nroutes/backup.js: line 17, col 113, Missing semicolon.\nroutes/backup.js: line 18, col 121, Missing semicolon.\nroutes/backup.js: line 19, col 121, Missing semicolon.\nroutes/backup.js: line 20, col 123, Missing semicolon.\nroutes/backup.js: line 21, col 125, Missing semicolon.\n\n5 errors'); 
   });
 
 });
@@ -9943,6 +10024,16 @@ define('rose/tests/test-helper.jshint', function () {
   });
 
 });
+define('rose/tests/transforms/array.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - transforms');
+  test('transforms/array.js should pass jshint', function() { 
+    ok(false, 'transforms/array.js should pass jshint.\ntransforms/array.js: line 6, col 40, Expected \'===\' and instead saw \'==\'.\ntransforms/array.js: line 11, col 16, Expected \'===\' and instead saw \'==\'.\ntransforms/array.js: line 12, col 26, Missing semicolon.\ntransforms/array.js: line 13, col 23, Expected \'===\' and instead saw \'==\'.\n\n4 errors'); 
+  });
+
+});
 define('rose/tests/unit/adapters/application-test', ['ember-qunit'], function (ember_qunit) {
 
   'use strict';
@@ -9995,6 +10086,32 @@ define('rose/tests/unit/adapters/comment-test.jshint', function () {
   });
 
 });
+define('rose/tests/unit/adapters/extractor-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('adapter:extractor', 'Unit | Adapter | extractor', {
+    // Specify the other units that are required for this test.
+    // needs: ['serializer:foo']
+  });
+
+  // Replace this with your real tests.
+  ember_qunit.test('it exists', function (assert) {
+    var adapter = this.subject();
+    assert.ok(adapter);
+  });
+
+});
+define('rose/tests/unit/adapters/extractor-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/adapters');
+  test('unit/adapters/extractor-test.js should pass jshint', function() { 
+    ok(true, 'unit/adapters/extractor-test.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/unit/adapters/interaction-test', ['ember-qunit'], function (ember_qunit) {
 
   'use strict';
@@ -10044,6 +10161,32 @@ define('rose/tests/unit/adapters/kango-adapter-test.jshint', function () {
   module('JSHint - unit/adapters');
   test('unit/adapters/kango-adapter-test.js should pass jshint', function() { 
     ok(true, 'unit/adapters/kango-adapter-test.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/unit/adapters/observer-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('adapter:observer', 'Unit | Adapter | observer', {
+    // Specify the other units that are required for this test.
+    // needs: ['serializer:foo']
+  });
+
+  // Replace this with your real tests.
+  ember_qunit.test('it exists', function (assert) {
+    var adapter = this.subject();
+    assert.ok(adapter);
+  });
+
+});
+define('rose/tests/unit/adapters/observer-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/adapters');
+  test('unit/adapters/observer-test.js should pass jshint', function() { 
+    ok(true, 'unit/adapters/observer-test.js should pass jshint.'); 
   });
 
 });
@@ -10252,32 +10395,6 @@ define('rose/tests/unit/controllers/modal/confirm-reset-test.jshint', function (
   module('JSHint - unit/controllers/modal');
   test('unit/controllers/modal/confirm-reset-test.js should pass jshint', function() { 
     ok(true, 'unit/controllers/modal/confirm-reset-test.js should pass jshint.'); 
-  });
-
-});
-define('rose/tests/unit/controllers/modal/reset-data-test', ['ember-qunit'], function (ember_qunit) {
-
-  'use strict';
-
-  ember_qunit.moduleFor('controller:modal/reset-data', {
-    // Specify the other units that are required for this test.
-    // needs: ['controller:foo']
-  });
-
-  // Replace this with your real tests.
-  ember_qunit.test('it exists', function (assert) {
-    var controller = this.subject();
-    assert.ok(controller);
-  });
-
-});
-define('rose/tests/unit/controllers/modal/reset-data-test.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - unit/controllers/modal');
-  test('unit/controllers/modal/reset-data-test.js should pass jshint', function() { 
-    ok(true, 'unit/controllers/modal/reset-data-test.js should pass jshint.'); 
   });
 
 });
@@ -10513,6 +10630,32 @@ define('rose/tests/unit/models/diary-entry-test.jshint', function () {
   });
 
 });
+define('rose/tests/unit/models/extractor-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleForModel('extractor', 'Unit | Model | extractor', {
+    // Specify the other units that are required for this test.
+    needs: []
+  });
+
+  ember_qunit.test('it exists', function (assert) {
+    var model = this.subject();
+    // var store = this.store();
+    assert.ok(!!model);
+  });
+
+});
+define('rose/tests/unit/models/extractor-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/models');
+  test('unit/models/extractor-test.js should pass jshint', function() { 
+    ok(true, 'unit/models/extractor-test.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/unit/models/interaction-test', ['ember-qunit'], function (ember_qunit) {
 
   'use strict';
@@ -10562,6 +10705,32 @@ define('rose/tests/unit/models/network-test.jshint', function () {
   module('JSHint - unit/models');
   test('unit/models/network-test.js should pass jshint', function() { 
     ok(true, 'unit/models/network-test.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/unit/models/observer-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleForModel('observer', 'Unit | Model | observer', {
+    // Specify the other units that are required for this test.
+    needs: []
+  });
+
+  ember_qunit.test('it exists', function (assert) {
+    var model = this.subject();
+    // var store = this.store();
+    assert.ok(!!model);
+  });
+
+});
+define('rose/tests/unit/models/observer-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/models');
+  test('unit/models/observer-test.js should pass jshint', function() { 
+    ok(true, 'unit/models/observer-test.js should pass jshint.'); 
   });
 
 });
@@ -11172,6 +11341,56 @@ define('rose/tests/unit/services/settings-test.jshint', function () {
   });
 
 });
+define('rose/tests/unit/transforms/array-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('transform:array', 'Unit | Transform | array', {
+    // Specify the other units that are required for this test.
+    // needs: ['serializer:foo']
+  });
+
+  // Replace this with your real tests.
+  ember_qunit.test('it exists', function (assert) {
+    var transform = this.subject();
+    assert.ok(transform);
+  });
+
+});
+define('rose/tests/unit/transforms/array-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/transforms');
+  test('unit/transforms/array-test.js should pass jshint', function() { 
+    ok(true, 'unit/transforms/array-test.js should pass jshint.'); 
+  });
+
+});
+define('rose/transforms/array', ['exports', 'ember', 'ember-data'], function (exports, Ember, DS) {
+
+  'use strict';
+
+  exports['default'] = DS['default'].Transform.extend({
+    deserialize: function deserialize(serialized) {
+      return Ember['default'].typeOf(serialized) == "array" ? serialized : [];
+    },
+
+    serialize: function serialize(deserialized) {
+      var type = Ember['default'].typeOf(deserialized);
+      if (type == 'array') {
+        return deserialized;
+      } else if (type == 'string') {
+        return deserialized.split(',').map(function (item) {
+          return Ember['default'].$.trim(item);
+        });
+      } else {
+        return [];
+      }
+    }
+  });
+
+});
 define('rose/transitions/cross-fade', ['exports', 'liquid-fire'], function (exports, liquid_fire) {
 
   'use strict';
@@ -11346,22 +11565,51 @@ define('rose/transitions/explode', ['exports', 'ember', 'liquid-fire'], function
       return liquid_fire.Promise.resolve();
     }
 
-    var oldPrefix = piece.pickOld || piece.pick || '';
-    var newPrefix = piece.pickNew || piece.pick || '';
+    // reduce the matchBy scope
+    if (piece.pick) {
+      context.oldElement = context.oldElement.find(piece.pick);
+      context.newElement = context.newElement.find(piece.pick);
+    }
 
-    var hits = Ember['default'].A(context.oldElement.find(oldPrefix + "[" + piece.matchBy + "]").toArray());
+    if (piece.pickOld) {
+      context.oldElement = context.oldElement.find(piece.pickOld);
+    }
+
+    if (piece.pickNew) {
+      context.newElement = context.newElement.find(piece.pickNew);
+    }
+
+    // use the fastest selector available
+    var selector;
+
+    if (piece.matchBy === 'id') {
+      selector = function (attrValue) {
+        return "#" + attrValue;
+      };
+    } else if (piece.matchBy === 'class') {
+      selector = function (attrValue) {
+        return "." + attrValue;
+      };
+    } else {
+      selector = function (attrValue) {
+        var escapedAttrValue = attrValue.replace(/'/g, "\\'");
+        return "[" + piece.matchBy + "='" + escapedAttrValue + "']";
+      };
+    }
+
+    var hits = Ember['default'].A(context.oldElement.find("[" + piece.matchBy + "]").toArray());
     return liquid_fire.Promise.all(hits.map(function (elt) {
-      var propValue = Ember['default'].$(elt).attr(piece.matchBy);
-      var selector = "[" + piece.matchBy + "=" + propValue + "]";
-      if (context.newElement.find("" + newPrefix + selector).length > 0) {
-        return explodePiece(context, {
-          pickOld: oldPrefix + "[" + piece.matchBy + "=" + propValue + "]",
-          pickNew: newPrefix + "[" + piece.matchBy + "=" + propValue + "]",
-          use: piece.use
-        }, seen);
-      } else {
+      var attrValue = Ember['default'].$(elt).attr(piece.matchBy);
+
+      // if there is no match for a particular item just skip it
+      if (attrValue === "" || context.newElement.find(selector(attrValue)).length === 0) {
         return liquid_fire.Promise.resolve();
       }
+
+      return explodePiece(context, {
+        pick: selector(attrValue),
+        use: piece.use
+      }, seen);
     }));
   }
 
@@ -11629,13 +11877,6 @@ define('rose/utils/i18n/missing-message', ['exports', 'ember-i18n/missing-messag
 	exports['default'] = missingMessage['default'];
 
 });
-define('rose/views/ui-modal', ['exports', 'semantic-ui-ember/views/ui-modal'], function (exports, Modal) {
-
-	'use strict';
-
-	exports['default'] = Modal['default'];
-
-});
 /* jshint ignore:start */
 
 /* jshint ignore:end */
@@ -11664,7 +11905,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.cddc91ec"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.35daae9f"});
 }
 
 /* jshint ignore:end */

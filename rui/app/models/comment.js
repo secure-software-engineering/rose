@@ -5,7 +5,7 @@ let model = DS.Model.extend({
   createdAt: DS.attr('string', { defaultValue: () => (new Date()).toJSON() }),
   updatedAt: DS.attr(),
   isPrivate: DS.attr('boolean'),
-  rating: DS.attr(),
+  rating: DS.attr('array'),
   contentId: DS.attr('string'),
   network: DS.attr()
 });

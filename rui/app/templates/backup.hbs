@@ -11,7 +11,7 @@
     <label>{{t "backup.resetData"}}</label>
     <p>{{t "backup.resetDataLabel"}}</p>
 
-    <button class="ui primary button" {{action "deleteData"}}>
+    <button class="ui primary button" {{action "openModal" "reset-data"}}>
       {{t "action.reset"}}
     </button>
   </div>
@@ -27,3 +27,5 @@
     {{t "action.download"}}
   </button>
 </div>
+
+{{partial "modal/reset-data"}}

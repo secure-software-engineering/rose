@@ -1,6 +1,8 @@
 import Ember from 'ember';
 import languages from '../locales/languages';
 
+const { Promise } = Ember.RSVP;
+
 export default Ember.Controller.extend({
   availableLanguages: languages,
   updateIntervals: [
@@ -25,10 +27,6 @@ export default Ember.Controller.extend({
       this.get('settings.system').save();
     },
 
-    confirm() {
-      this.send('openModal', 'modal/reset-config');
-    },
-
     manualUpdate() {
       kango.dispatchMessage('Update');
 
@@ -37,6 +35,24 @@ export default Ember.Controller.extend({
           kango.removeMessageListener('update-result');
         });
       })
+    },
+
+    openModal: function(name) {
+      Ember.$('.ui.' + name + '.modal').modal('show');
+    },
+
+    approveModal() {
+      return Promise.all([
+        this.store.find('extractor').then((records) => records.invoke('destroyRecord')),
+        this.store.find('network').then((records) => records.invoke('destroyRecord')),
+        this.store.find('observer').then((records) => records.invoke('destroyRecord')),
+        this.get('settings.user').destroyRecord(),
+        this.get('settings.system').destroyRecord()
+      ]).then(() => {
+        return this.get('settings').setup();
+      }).then(() => {
+        return this.transitionToRoute('index');
+      });
     }
   }
 });

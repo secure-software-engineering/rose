@@ -1,7 +1,10 @@
 import Ember from 'ember';
 import DS from 'ember-data';
+import LFQueue from './utils/queue';
 
 export default DS.Adapter.extend({
+  queue: LFQueue.create(),
+
   createRecord: function(store, type, snapshot) {
     const collectionNamespace = this.collectionNamespace;
     const modelNamespace = this.modelNamespace;
@@ -9,7 +12,7 @@ export default DS.Adapter.extend({
     const serializer = store.serializerFor(snapshot.modelName);
     const recordHash = serializer.serialize(snapshot, { includeId: true });
 
-    return new Ember.RSVP.Promise(function (resolve) {
+    return this.queue.attach(function (resolve) {
       kango.invokeAsyncCallback('localforage.getItem', collectionNamespace, function (list) {
         if (Ember.isEmpty(list)){
           list = [];
@@ -70,7 +73,7 @@ export default DS.Adapter.extend({
         });
 
         return Ember.RSVP.all(promises).then(function(comments) {
-          let filteredComments = comments.filter(function(comment) {
+          return comments.filter(function(comment) {
             let result = false;
 
             Object.keys(query).forEach(function(key) {
@@ -78,11 +81,6 @@ export default DS.Adapter.extend({
             });
 
             return result;
-          });
-
-          return filteredComments.map(function(comment) {
-            comment.rating = [].concat(comment.rating);
-            return comment;
           });
         });
       });
@@ -96,13 +94,11 @@ export default DS.Adapter.extend({
   updateRecord: function(store, type, snapshot) {
     const id = snapshot.id;
     const modelNamespace = this.modelNamespace;
+    const recordHash = snapshot.serialize({ includeId: true });
 
-    const serializer = store.serializerFor(snapshot.modelName);
-    const recordHash = serializer.serialize(snapshot, { includeId: true });
-
-    return new Ember.RSVP.Promise(function(resolve, reject) {
-      kango.invokeAsyncCallback('localforage.setItem', modelNamespace + '/' + id, recordHash, function() {
-        Ember.run(null, resolve);
+    return this.queue.attach(function(resolve, reject) {
+      kango.invokeAsyncCallback('localforage.setItem',  modelNamespace + '/' + id, recordHash, function() {
+        resolve();
       });
     });
   },
@@ -111,7 +107,7 @@ export default DS.Adapter.extend({
     const collectionNamespace = this.collectionNamespace;
     const modelNamespace = this.modelNamespace;
 
-    return new Ember.RSVP.Promise(function(resolve, reject) {
+    return this.queue.attach(function(resolve, reject) {
       kango.invokeAsyncCallback('localforage.getItem', collectionNamespace, function(collection) {
         if (!Ember.isEmpty(collection)) {
           let index = collection.indexOf(modelNamespace + '/' + id);

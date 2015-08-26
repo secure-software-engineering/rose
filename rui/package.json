@@ -37,7 +37,7 @@
     "ember-i18n-inject": "0.0.1",
     "ember-localforage-adapter": "0.7.3",
     "ember-moment": "1.1.1",
-    "liquid-fire": "^0.19.3",
-    "semantic-ui-ember": "0.0.1-rc.8"
+    "liquid-fire": "^0.21.0",
+    "semantic-ui-ember": "semantic-org/Semantic-UI-Ember#prep-1.0"
   }
 }

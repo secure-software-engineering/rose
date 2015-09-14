@@ -206,15 +206,15 @@ let checkConditions = (loginActivities) => {
   let oldPageActivity    = (_pageActivities.old !== undefined);
 
   //login status
-  let logout = false;
+  let recentLogout = false;
   if (_loginActivities.length > 1) {
-    if (_loginActivities[0].value === false && _loginActivities[1].value !== false && _loginActivities[0].date > idleTime) {
-      logout = true;
+    if (_loginActivities[0].value === false && _loginActivities[1].value !== false && _loginActivities[0].date > idleTime && _loginActivities[1].date > lastEngage) {
+      recentLogout = true;
     }
   }
 
   //debug
-  let logData = {lastEngage, lastDisengage, open, active, recentActiveTabs, oldActiveTabs, recentPageActivity, oldPageActivity, anyOpenTabs, logout};
+  let logData = {lastEngage, lastDisengage, open, active, recentActiveTabs, oldActiveTabs, recentPageActivity, oldPageActivity, anyOpenTabs, recentLogout};
   console.log(logData);
   /*
    * CHECK CONDITIONS
@@ -228,7 +228,7 @@ let checkConditions = (loginActivities) => {
     console.log('engaging: a tab is opened after no tab was open');
     engage = true;
   }
-  else if (logout === true) {
+  else if (recentLogout === true) {
     console.log('disengaging: user performed logout');
     engage = false;
   }

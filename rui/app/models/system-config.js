@@ -9,5 +9,6 @@ export default DS.Model.extend({
   repositoryURL: DS.attr('string'),
   updateInterval: DS.attr('number'),
   fingerprint: DS.attr('string'),
+  fileName: DS.attr('string'),
   timestamp: DS.attr('number')
 });

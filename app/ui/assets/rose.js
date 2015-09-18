@@ -959,6 +959,13 @@ define('rose/components/ui-checkbox', ['exports', 'semantic-ui-ember/components/
 	exports['default'] = Checkbox['default'];
 
 });
+define('rose/components/ui-dropdown-item', ['exports', 'semantic-ui-ember/components/ui-dropdown-item'], function (exports, DropdownItem) {
+
+	'use strict';
+
+	exports['default'] = DropdownItem['default'];
+
+});
 define('rose/components/ui-dropdown', ['exports', 'semantic-ui-ember/components/ui-dropdown'], function (exports, Dropdown) {
 
 	'use strict';
@@ -2014,6 +2021,7 @@ define('rose/models/system-config', ['exports', 'ember-data'], function (exports
     repositoryURL: DS['default'].attr('string'),
     updateInterval: DS['default'].attr('number'),
     fingerprint: DS['default'].attr('string'),
+    fileName: DS['default'].attr('string'),
     timestamp: DS['default'].attr('number')
   });
 
@@ -2073,7 +2081,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child0 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -2122,7 +2130,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child1 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -2164,7 +2172,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child2 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -2230,7 +2238,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child3 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -2281,7 +2289,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child4 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -2332,7 +2340,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     var child5 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -2382,7 +2390,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -2521,7 +2529,7 @@ define('rose/pods/components/file-input-button/template', ['exports'], function 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -2606,7 +2614,7 @@ define('rose/pods/components/file-input/template', ['exports'], function (export
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -2790,7 +2798,7 @@ define('rose/pods/components/high-chart/template', ['exports'], function (export
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -2871,7 +2879,7 @@ define('rose/pods/components/installation-wizard/template', ['exports'], functio
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -3132,7 +3140,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child0 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -3186,7 +3194,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child1 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -3235,7 +3243,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child2 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -3282,7 +3290,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child3 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -3348,7 +3356,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child4 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -3399,7 +3407,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child5 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -3450,7 +3458,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     var child6 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -3500,7 +3508,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -3684,7 +3692,7 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
     var child0 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -3737,7 +3745,7 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
     var child1 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -3784,7 +3792,7 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
     var child2 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -3830,7 +3838,7 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -4237,7 +4245,7 @@ define('rose/templates/about', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -4426,7 +4434,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child0 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -4468,7 +4476,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     var child1 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -4544,7 +4552,7 @@ define('rose/templates/application', ['exports'], function (exports) {
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -4590,7 +4598,7 @@ define('rose/templates/backup', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -4770,7 +4778,7 @@ define('rose/templates/comments', ['exports'], function (exports) {
     var child0 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -4811,7 +4819,7 @@ define('rose/templates/comments', ['exports'], function (exports) {
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -4900,7 +4908,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
         var child0 = (function() {
           return {
             meta: {
-              "revision": "Ember@1.13.9",
+              "revision": "Ember@1.13.10",
               "loc": {
                 "source": null,
                 "start": {
@@ -4940,7 +4948,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
         var child1 = (function() {
           return {
             meta: {
-              "revision": "Ember@1.13.9",
+              "revision": "Ember@1.13.10",
               "loc": {
                 "source": null,
                 "start": {
@@ -4979,7 +4987,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
         }());
         return {
           meta: {
-            "revision": "Ember@1.13.9",
+            "revision": "Ember@1.13.10",
             "loc": {
               "source": null,
               "start": {
@@ -5018,7 +5026,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
       }());
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -5061,7 +5069,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
           var child0 = (function() {
             return {
               meta: {
-                "revision": "Ember@1.13.9",
+                "revision": "Ember@1.13.10",
                 "loc": {
                   "source": null,
                   "start": {
@@ -5101,7 +5109,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
           var child1 = (function() {
             return {
               meta: {
-                "revision": "Ember@1.13.9",
+                "revision": "Ember@1.13.10",
                 "loc": {
                   "source": null,
                   "start": {
@@ -5140,7 +5148,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
           }());
           return {
             meta: {
-              "revision": "Ember@1.13.9",
+              "revision": "Ember@1.13.10",
               "loc": {
                 "source": null,
                 "start": {
@@ -5179,7 +5187,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
         }());
         return {
           meta: {
-            "revision": "Ember@1.13.9",
+            "revision": "Ember@1.13.10",
             "loc": {
               "source": null,
               "start": {
@@ -5218,7 +5226,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
       }());
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -5257,7 +5265,7 @@ define('rose/templates/components/liquid-bind', ['exports'], function (exports) 
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -5303,7 +5311,7 @@ define('rose/templates/components/liquid-container', ['exports'], function (expo
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -5352,7 +5360,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
         var child0 = (function() {
           return {
             meta: {
-              "revision": "Ember@1.13.9",
+              "revision": "Ember@1.13.10",
               "loc": {
                 "source": null,
                 "start": {
@@ -5394,7 +5402,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
         var child1 = (function() {
           return {
             meta: {
-              "revision": "Ember@1.13.9",
+              "revision": "Ember@1.13.10",
               "loc": {
                 "source": null,
                 "start": {
@@ -5435,7 +5443,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
         }());
         return {
           meta: {
-            "revision": "Ember@1.13.9",
+            "revision": "Ember@1.13.10",
             "loc": {
               "source": null,
               "start": {
@@ -5474,7 +5482,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
       }());
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -5517,7 +5525,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
           var child0 = (function() {
             return {
               meta: {
-                "revision": "Ember@1.13.9",
+                "revision": "Ember@1.13.10",
                 "loc": {
                   "source": null,
                   "start": {
@@ -5559,7 +5567,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
           var child1 = (function() {
             return {
               meta: {
-                "revision": "Ember@1.13.9",
+                "revision": "Ember@1.13.10",
                 "loc": {
                   "source": null,
                   "start": {
@@ -5600,7 +5608,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
           }());
           return {
             meta: {
-              "revision": "Ember@1.13.9",
+              "revision": "Ember@1.13.10",
               "loc": {
                 "source": null,
                 "start": {
@@ -5639,7 +5647,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
         }());
         return {
           meta: {
-            "revision": "Ember@1.13.9",
+            "revision": "Ember@1.13.10",
             "loc": {
               "source": null,
               "start": {
@@ -5678,7 +5686,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
       }());
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -5717,7 +5725,7 @@ define('rose/templates/components/liquid-if', ['exports'], function (exports) {
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -5765,7 +5773,7 @@ define('rose/templates/components/liquid-modal', ['exports'], function (exports)
       var child0 = (function() {
         return {
           meta: {
-            "revision": "Ember@1.13.9",
+            "revision": "Ember@1.13.10",
             "loc": {
               "source": null,
               "start": {
@@ -5820,7 +5828,7 @@ define('rose/templates/components/liquid-modal', ['exports'], function (exports)
       }());
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -5866,7 +5874,7 @@ define('rose/templates/components/liquid-modal', ['exports'], function (exports)
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -5915,7 +5923,7 @@ define('rose/templates/components/liquid-outlet', ['exports'], function (exports
         var child0 = (function() {
           return {
             meta: {
-              "revision": "Ember@1.13.9",
+              "revision": "Ember@1.13.10",
               "loc": {
                 "source": null,
                 "start": {
@@ -5954,7 +5962,7 @@ define('rose/templates/components/liquid-outlet', ['exports'], function (exports
         }());
         return {
           meta: {
-            "revision": "Ember@1.13.9",
+            "revision": "Ember@1.13.10",
             "loc": {
               "source": null,
               "start": {
@@ -5993,7 +6001,7 @@ define('rose/templates/components/liquid-outlet', ['exports'], function (exports
       }());
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -6032,7 +6040,7 @@ define('rose/templates/components/liquid-outlet', ['exports'], function (exports
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -6081,7 +6089,7 @@ define('rose/templates/components/liquid-versions', ['exports'], function (expor
         var child0 = (function() {
           return {
             meta: {
-              "revision": "Ember@1.13.9",
+              "revision": "Ember@1.13.10",
               "loc": {
                 "source": null,
                 "start": {
@@ -6120,7 +6128,7 @@ define('rose/templates/components/liquid-versions', ['exports'], function (expor
         }());
         return {
           meta: {
-            "revision": "Ember@1.13.9",
+            "revision": "Ember@1.13.10",
             "loc": {
               "source": null,
               "start": {
@@ -6159,7 +6167,7 @@ define('rose/templates/components/liquid-versions', ['exports'], function (expor
       }());
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -6198,7 +6206,7 @@ define('rose/templates/components/liquid-versions', ['exports'], function (expor
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -6246,7 +6254,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
       var child0 = (function() {
         return {
           meta: {
-            "revision": "Ember@1.13.9",
+            "revision": "Ember@1.13.10",
             "loc": {
               "source": null,
               "start": {
@@ -6285,7 +6293,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
       }());
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -6327,7 +6335,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
         var child0 = (function() {
           return {
             meta: {
-              "revision": "Ember@1.13.9",
+              "revision": "Ember@1.13.10",
               "loc": {
                 "source": null,
                 "start": {
@@ -6366,7 +6374,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
         }());
         return {
           meta: {
-            "revision": "Ember@1.13.9",
+            "revision": "Ember@1.13.10",
             "loc": {
               "source": null,
               "start": {
@@ -6405,7 +6413,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
       }());
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -6444,7 +6452,7 @@ define('rose/templates/components/liquid-with', ['exports'], function (exports) 
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -6490,7 +6498,7 @@ define('rose/templates/components/ui-checkbox', ['exports'], function (exports) 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -6554,7 +6562,7 @@ define('rose/templates/components/ui-dropdown', ['exports'], function (exports) 
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -6601,7 +6609,7 @@ define('rose/templates/components/ui-modal', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -6648,7 +6656,7 @@ define('rose/templates/components/ui-radio', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -6713,7 +6721,7 @@ define('rose/templates/diary', ['exports'], function (exports) {
     var child0 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -6754,7 +6762,7 @@ define('rose/templates/diary', ['exports'], function (exports) {
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -6899,7 +6907,7 @@ define('rose/templates/help', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -7086,7 +7094,7 @@ define('rose/templates/index', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -7135,7 +7143,7 @@ define('rose/templates/interactions', ['exports'], function (exports) {
       var child0 = (function() {
         return {
           meta: {
-            "revision": "Ember@1.13.9",
+            "revision": "Ember@1.13.10",
             "loc": {
               "source": null,
               "start": {
@@ -7176,7 +7184,7 @@ define('rose/templates/interactions', ['exports'], function (exports) {
       }());
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -7215,7 +7223,7 @@ define('rose/templates/interactions', ['exports'], function (exports) {
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -7302,7 +7310,7 @@ define('rose/templates/modal/reset-config', ['exports'], function (exports) {
     var child0 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -7407,7 +7415,7 @@ define('rose/templates/modal/reset-config', ['exports'], function (exports) {
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -7454,7 +7462,7 @@ define('rose/templates/modal/reset-data', ['exports'], function (exports) {
     var child0 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -7552,7 +7560,7 @@ define('rose/templates/modal/reset-data', ['exports'], function (exports) {
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -7598,7 +7606,7 @@ define('rose/templates/privacysettings', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -7675,7 +7683,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
       var child0 = (function() {
         return {
           meta: {
-            "revision": "Ember@1.13.9",
+            "revision": "Ember@1.13.10",
             "loc": {
               "source": null,
               "start": {
@@ -7722,7 +7730,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
       }());
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -7791,7 +7799,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var child0 = (function() {
           return {
             meta: {
-              "revision": "Ember@1.13.9",
+              "revision": "Ember@1.13.10",
               "loc": {
                 "source": null,
                 "start": {
@@ -7838,7 +7846,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
         }());
         return {
           meta: {
-            "revision": "Ember@1.13.9",
+            "revision": "Ember@1.13.10",
             "loc": {
               "source": null,
               "start": {
@@ -7904,7 +7912,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
       }());
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -7969,7 +7977,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -8267,7 +8275,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child0 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -8301,7 +8309,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child1 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -8343,7 +8351,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child2 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -8385,7 +8393,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child3 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -8428,7 +8436,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
       var child0 = (function() {
         return {
           meta: {
-            "revision": "Ember@1.13.9",
+            "revision": "Ember@1.13.10",
             "loc": {
               "source": null,
               "start": {
@@ -8470,7 +8478,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
       var child1 = (function() {
         return {
           meta: {
-            "revision": "Ember@1.13.9",
+            "revision": "Ember@1.13.10",
             "loc": {
               "source": null,
               "start": {
@@ -8512,7 +8520,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
       var child2 = (function() {
         return {
           meta: {
-            "revision": "Ember@1.13.9",
+            "revision": "Ember@1.13.10",
             "loc": {
               "source": null,
               "start": {
@@ -8553,7 +8561,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
       }());
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -8626,7 +8634,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
       var child0 = (function() {
         return {
           meta: {
-            "revision": "Ember@1.13.9",
+            "revision": "Ember@1.13.10",
             "loc": {
               "source": null,
               "start": {
@@ -8667,7 +8675,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
       }());
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -8730,7 +8738,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child6 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -8772,7 +8780,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     var child7 = (function() {
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -8813,7 +8821,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -8925,7 +8933,7 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
       var child0 = (function() {
         return {
           meta: {
-            "revision": "Ember@1.13.9",
+            "revision": "Ember@1.13.10",
             "loc": {
               "source": null,
               "start": {
@@ -8973,7 +8981,7 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
       }());
       return {
         meta: {
-          "revision": "Ember@1.13.9",
+          "revision": "Ember@1.13.10",
           "loc": {
             "source": null,
             "start": {
@@ -9012,7 +9020,7 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
     }());
     return {
       meta: {
-        "revision": "Ember@1.13.9",
+        "revision": "Ember@1.13.10",
         "loc": {
           "source": null,
           "start": {
@@ -11905,7 +11913,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.35daae9f"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.c3f3cbcc"});
 }
 
 /* jshint ignore:end */

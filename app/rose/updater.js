@@ -3,7 +3,7 @@ import ObserverCollection from 'rose/collections/observers';
 import ExtractorCollection from 'rose/collections/extractors';
 import NetworkCollection from 'rose/collections/networks';
 import verify from 'rose/verify.js';
-import RSVP from 'RSVP';
+import RSVP from 'rsvp';
 
 let configs = new ConfigModel();
 

@@ -3,7 +3,7 @@ import ObserverCollection from 'rose/collections/observers';
 import ExtractorCollection from 'rose/collections/extractors';
 import NetworkCollection from 'rose/collections/networks';
 import verify from 'rose/verify.js';
-import RSVP from 'rsvp';
+import { Promise } from 'rsvp';
 
 let configs = new ConfigModel();
 
@@ -13,22 +13,22 @@ let cancelUpdate = (errorMsg) => {
 }
 
 let getVerified = (url, key) => {
-  let file = $.get(url); //request file
-  let sig = $.get(url + '.asc'); //request signature
-  return new RSVP.Promise((resolve, reject) => {
-    $.when(file, sig).done((fileData, sigData) => {
-      verify(fileData[2].responseText, sigData[2].responseText, key).then(function(fingerprint) {
+  let baseFile = fetch(url);
+  let baseFileSig = fetch(url + '.asc');
+
+  return Promise.all([baseFile, baseFileSig])
+    .then((requests) => {
+      return Promise.all(requests.map((request) => request.text()));
+    })
+    .then((files) => {
+      return verify(files[0], files[1], key).then((fingerprint) => {
         if (parseInt(configs.get('fingerprint'), 16) === parseInt(fingerprint, 16)) {
-          resolve(fileData[0]);
+          return files[0];
+        } else {
+          return Promise.reject(new Error('Fingerprint does not match.'));
         }
-        else {
-          reject('Fingerprint does not match.');
-        }
-      }, function(value) {
-        reject(value);
       });
-    });
-  });
+    })
 }
 
 let update = () => {
@@ -65,7 +65,7 @@ let update = () => {
             });
 
             //when all requested files are verified update configuration
-            RSVP.all(promises).then((observersExtractors) => {
+            Promise.all(promises).then((observersExtractors) => {
               //Update every network by its observers/extractors
               (new ObserverCollection()).fetch({success: (observerCollection) => {
                 (new ExtractorCollection()).fetch({success: (extractorCollection) => {

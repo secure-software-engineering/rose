@@ -1,17 +1,17 @@
 [![devDependency Status](https://david-dm.org/secure-software-engineering/rose/dev-status.svg)](https://david-dm.org/secure-software-engineering/rose#info=devDependencies)
 
-ROSE 3.0
+ROSE 3.0 beta
 ========
 
 Synopsis
 ----
 ROSE is a browser extension for researchers to capture in situ data on how users actually use online social networks.
 
-[Please see the project wiki for more detailed information.](https://github.com/secure-software-engineering/rose/wiki)
+[Please see the project wiki for more detailed information. (partially outdated)](https://github.com/secure-software-engineering/rose/wiki)
 
 Features
 ----
-* Currently supported social setwork sites: facebook.com
+* Currently supported social network sites: facebook.com
 * Capturing user interactions such as likes, unlikes, comments, sending chat messages or sharing content.
 * Capturing addtional information about the content users interacting with (e.g. posts, sharer, etc.)
 * Capturing user activity by mouse move distance, scroll distance, OSN tab focus time, click amount and login status
@@ -81,10 +81,10 @@ About
 
 ROSE is developed by:
 
-    Fraunhofer Institute for Secure Information Technology SIT
-    Rheinstrasse 75
-    64295 Darmstadt
-    Germany
+> Fraunhofer Institute for Secure Information Technology SIT  
+> Rheinstrasse 75  
+> 64295 Darmstadt  
+> Germany  
 
 For questions about ROSE feel free to contact Andreas Poller, andreas.poller@sit.fraunhofer.de
 

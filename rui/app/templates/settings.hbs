@@ -10,15 +10,17 @@
   <div class="field">
     <label>{{t "settings.language"}}</label>
     <p>{{t "settings.languageLabel"}}</p>
-
-    {{#ui-dropdown class="selection" selection=settings.user.currentLanguage}}
-      <input type="hidden" name="language">
-      <div class="default text">Language</div>
+    {{#ui-dropdown  class="selection"
+                    value=settings.user.currentLanguage
+                    onChange=(action "changeI18nLanguage")}}
+      <div class="default text">{{t "settings.language"}}</div>
       <i class="dropdown icon"></i>
       <div class="menu">
-        {{#each availableLanguages as |language|}}
-        <div class="item" data-value={{language.code}}>{{language.name}}</div>
-        {{/each}}
+      {{#each availableLanguages as |language|}}
+        <div class="item" data-value={{language.code}}>
+          {{language.name}}
+        </div>
+      {{/each}}
       </div>
     {{/ui-dropdown}}
   </div>
@@ -29,7 +31,7 @@
     {{ui-checkbox class="toggle"
                   checked=settings.user.commentReminderIsEnabled
                   label=(boolean-to-yesno settings.user.commentReminderIsEnabled)
-                  action="saveSettings"}}
+                  onChange=(action "saveSettings")}}
   </div>
 
   <div class="field">
@@ -38,7 +40,7 @@
     {{ui-checkbox class="toggle"
                   checked=settings.user.developerModeIsEnabled
                   label=(boolean-to-yesno settings.user.developerModeIsEnabled)
-                  action="saveSettings"}}
+                  onChange=(action "saveSettings")}}
   </div>
 
   <div class="field">
@@ -54,7 +56,7 @@
     {{ui-checkbox class="toggle"
                   checked=settings.system.autoUpdateIsEnabled
                   label=(boolean-to-yesno settings.system.autoUpdateIsEnabled)
-                  action="saveSettings"}}
+                  onChange=(action "saveSettings")}}
   </div>
 
   {{#if settings.system.autoUpdateIsEnabled}}
@@ -62,13 +64,16 @@
     <label>{{t "settings.autoUpdateInterval"}}</label>
     <p>{{t "settings.autoUpdateIntervalLabel"}}</p>
 
-    {{#ui-dropdown class="selection" selection=settings.system.updateInterval}}
-      <input type="hidden" name="updateInterval">
+    {{#ui-dropdown  class="selection"
+                    value=settings.system.updateInterval
+                    onChange=(action "saveSettings")}}
       <div class="default text">Select Interval</div>
       <i class="dropdown icon"></i>
       <div class="menu">
         {{#each updateIntervals as |interval|}}
-        <div class="item" data-value={{interval.value}}>{{t interval.label}}</div>
+        <div class="item" data-value={{interval.value}}>
+          {{t interval.label}}
+        </div>
         {{/each}}
       </div>
     {{/ui-dropdown}}

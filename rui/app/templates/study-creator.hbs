@@ -14,7 +14,7 @@
     {{ui-checkbox checked=model.roseCommentsIsEnabled
                   class="toggle"
                   label=(boolean-to-yesno model.roseCommentsIsEnabled)
-                  action="saveSettings"}}
+                  onChange=(action "saveSettings")}}
   </div>
 
   <div class="field">
@@ -24,7 +24,7 @@
     {{ui-checkbox checked=model.roseCommentsRatingIsEnabled
                   class="toggle"
                   label=(boolean-to-yesno model.roseCommentsRatingIsEnabled)
-                  action="saveSettings"}}
+                  onChange=(action "saveSettings")}}
   </div>
 
   <div class="field">
@@ -75,16 +75,16 @@
   </div>
 
   <div class="field">
-    <label>Networks</label>
-    <p>asdfasdfasdfasdfasdf</p>
+    <label>{{t "studyCreator.networks"}}</label>
+    <p>{{t "studyCreator.networksDesc"}}</p>
 
     {{#each model.networks as |network|}}
       {{#if network.isLoaded}}
       <div class="field">
         {{ui-checkbox checked=network.isEnabled
                       class="toggle"
-                      label=network.name
-                      action="saveNetworkSettings"
+                      label=network.descriptiveName
+                      onChange=(action "saveNetworkSettings")
                       value=network}}
       </div>
       {{/if}}
@@ -98,7 +98,7 @@
     {{ui-checkbox checked=model.autoUpdateIsEnabled
                   class="toggle"
                   label=(boolean-to-yesno model.autoUpdateIsEnabled)
-                  action="saveSettings"}}
+                  onChange=(action "saveSettings")}}
   </div>
 
   <div class="field">

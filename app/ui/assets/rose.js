@@ -1202,18 +1202,15 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
     availableLanguages: languages['default'],
     updateIntervals: [{ label: 'hourly', value: 3600000 }, { label: 'daily', value: 86400000 }, { label: 'weekly', value: 604800000 }, { label: 'monthly', value: 2629743830 }, { label: 'yearly', value: 31556926000 }],
 
-    changeI18nLanguage: (function () {
-      this.set('i18n.locale', this.get('settings.user.currentLanguage'));
-    }).observes('settings.user.currentLanguage'),
-
-    onChange: (function () {
-      this.send('saveSettings');
-    }).observes('settings.user.currentLanguage', 'settings.system.updateInterval'),
-
     actions: {
       saveSettings: function saveSettings() {
         this.get('settings.user').save();
         this.get('settings.system').save();
+      },
+
+      changeI18nLanguage: function changeI18nLanguage() {
+        this.set('i18n.locale', this.get('settings.user.currentLanguage'));
+        this.send('saveSettings');
       },
 
       manualUpdate: function manualUpdate() {
@@ -1386,7 +1383,8 @@ define('rose/initializers/export-application-global', ['exports', 'ember', 'rose
 
   exports.initialize = initialize;
 
-  function initialize(container, application) {
+  function initialize() {
+    var application = arguments[1] || arguments[0];
     if (config['default'].exportApplicationGlobal !== false) {
       var value = config['default'].exportApplicationGlobal;
       var globalName;
@@ -7688,11 +7686,11 @@ define('rose/templates/settings', ['exports'], function (exports) {
               "source": null,
               "start": {
                 "line": 19,
-                "column": 8
+                "column": 6
               },
               "end": {
-                "line": 21,
-                "column": 8
+                "line": 23,
+                "column": 6
               }
             },
             "moduleName": "rose/templates/settings.hbs"
@@ -7706,7 +7704,11 @@ define('rose/templates/settings', ['exports'], function (exports) {
             dom.appendChild(el0, el1);
             var el1 = dom.createElement("div");
             dom.setAttribute(el1,"class","item");
+            var el2 = dom.createTextNode("\n          ");
+            dom.appendChild(el1, el2);
             var el2 = dom.createComment("");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("\n        ");
             dom.appendChild(el1, el2);
             dom.appendChild(el0, el1);
             var el1 = dom.createTextNode("\n");
@@ -7717,12 +7719,12 @@ define('rose/templates/settings', ['exports'], function (exports) {
             var element2 = dom.childAt(fragment, [1]);
             var morphs = new Array(2);
             morphs[0] = dom.createAttrMorph(element2, 'data-value');
-            morphs[1] = dom.createMorphAt(element2,0,0);
+            morphs[1] = dom.createMorphAt(element2,1,1);
             return morphs;
           },
           statements: [
             ["attribute","data-value",["get","language.code",["loc",[null,[20,39],[20,52]]]]],
-            ["content","language.name",["loc",[null,[20,55],[20,72]]]]
+            ["content","language.name",["loc",[null,[21,10],[21,27]]]]
           ],
           locals: ["language"],
           templates: []
@@ -7734,11 +7736,11 @@ define('rose/templates/settings', ['exports'], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 14,
+              "line": 13,
               "column": 4
             },
             "end": {
-              "line": 23,
+              "line": 25,
               "column": 4
             }
           },
@@ -7751,15 +7753,9 @@ define('rose/templates/settings', ['exports'], function (exports) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("      ");
           dom.appendChild(el0, el1);
-          var el1 = dom.createElement("input");
-          dom.setAttribute(el1,"type","hidden");
-          dom.setAttribute(el1,"name","language");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n      ");
-          dom.appendChild(el0, el1);
           var el1 = dom.createElement("div");
           dom.setAttribute(el1,"class","default text");
-          var el2 = dom.createTextNode("Language");
+          var el2 = dom.createComment("");
           dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n      ");
@@ -7783,12 +7779,14 @@ define('rose/templates/settings', ['exports'], function (exports) {
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(1);
-          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [7]),1,1);
+          var morphs = new Array(2);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),0,0);
+          morphs[1] = dom.createMorphAt(dom.childAt(fragment, [5]),1,1);
           return morphs;
         },
         statements: [
-          ["block","each",[["get","availableLanguages",["loc",[null,[19,16],[19,34]]]]],[],0,null,["loc",[null,[19,8],[21,17]]]]
+          ["inline","t",["settings.language"],[],["loc",[null,[16,32],[16,57]]]],
+          ["block","each",[["get","availableLanguages",["loc",[null,[19,14],[19,32]]]]],[],0,null,["loc",[null,[19,6],[23,15]]]]
         ],
         locals: [],
         templates: [child0]
@@ -7803,11 +7801,11 @@ define('rose/templates/settings', ['exports'], function (exports) {
               "loc": {
                 "source": null,
                 "start": {
-                  "line": 70,
+                  "line": 73,
                   "column": 8
                 },
                 "end": {
-                  "line": 72,
+                  "line": 77,
                   "column": 8
                 }
               },
@@ -7822,7 +7820,11 @@ define('rose/templates/settings', ['exports'], function (exports) {
               dom.appendChild(el0, el1);
               var el1 = dom.createElement("div");
               dom.setAttribute(el1,"class","item");
+              var el2 = dom.createTextNode("\n          ");
+              dom.appendChild(el1, el2);
               var el2 = dom.createComment("");
+              dom.appendChild(el1, el2);
+              var el2 = dom.createTextNode("\n        ");
               dom.appendChild(el1, el2);
               dom.appendChild(el0, el1);
               var el1 = dom.createTextNode("\n");
@@ -7833,12 +7835,12 @@ define('rose/templates/settings', ['exports'], function (exports) {
               var element0 = dom.childAt(fragment, [1]);
               var morphs = new Array(2);
               morphs[0] = dom.createAttrMorph(element0, 'data-value');
-              morphs[1] = dom.createMorphAt(element0,0,0);
+              morphs[1] = dom.createMorphAt(element0,1,1);
               return morphs;
             },
             statements: [
-              ["attribute","data-value",["get","interval.value",["loc",[null,[71,39],[71,53]]]]],
-              ["inline","t",[["get","interval.label",["loc",[null,[71,60],[71,74]]]]],[],["loc",[null,[71,56],[71,76]]]]
+              ["attribute","data-value",["get","interval.value",["loc",[null,[74,39],[74,53]]]]],
+              ["inline","t",[["get","interval.label",["loc",[null,[75,14],[75,28]]]]],[],["loc",[null,[75,10],[75,30]]]]
             ],
             locals: ["interval"],
             templates: []
@@ -7850,11 +7852,11 @@ define('rose/templates/settings', ['exports'], function (exports) {
             "loc": {
               "source": null,
               "start": {
-                "line": 65,
+                "line": 67,
                 "column": 4
               },
               "end": {
-                "line": 74,
+                "line": 79,
                 "column": 4
               }
             },
@@ -7866,12 +7868,6 @@ define('rose/templates/settings', ['exports'], function (exports) {
           buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
             var el1 = dom.createTextNode("      ");
-            dom.appendChild(el0, el1);
-            var el1 = dom.createElement("input");
-            dom.setAttribute(el1,"type","hidden");
-            dom.setAttribute(el1,"name","updateInterval");
-            dom.appendChild(el0, el1);
-            var el1 = dom.createTextNode("\n      ");
             dom.appendChild(el0, el1);
             var el1 = dom.createElement("div");
             dom.setAttribute(el1,"class","default text");
@@ -7900,11 +7896,11 @@ define('rose/templates/settings', ['exports'], function (exports) {
           },
           buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
             var morphs = new Array(1);
-            morphs[0] = dom.createMorphAt(dom.childAt(fragment, [7]),1,1);
+            morphs[0] = dom.createMorphAt(dom.childAt(fragment, [5]),1,1);
             return morphs;
           },
           statements: [
-            ["block","each",[["get","updateIntervals",["loc",[null,[70,16],[70,31]]]]],[],0,null,["loc",[null,[70,8],[72,17]]]]
+            ["block","each",[["get","updateIntervals",["loc",[null,[73,16],[73,31]]]]],[],0,null,["loc",[null,[73,8],[77,17]]]]
           ],
           locals: [],
           templates: [child0]
@@ -7916,11 +7912,11 @@ define('rose/templates/settings', ['exports'], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 60,
+              "line": 62,
               "column": 2
             },
             "end": {
-              "line": 76,
+              "line": 81,
               "column": 2
             }
           },
@@ -7967,9 +7963,9 @@ define('rose/templates/settings', ['exports'], function (exports) {
           return morphs;
         },
         statements: [
-          ["inline","t",["settings.autoUpdateInterval"],[],["loc",[null,[62,11],[62,46]]]],
-          ["inline","t",["settings.autoUpdateIntervalLabel"],[],["loc",[null,[63,7],[63,47]]]],
-          ["block","ui-dropdown",[],["class","selection","selection",["subexpr","@mut",[["get","settings.system.updateInterval",["loc",[null,[65,47],[65,77]]]]],[],[]]],0,null,["loc",[null,[65,4],[74,20]]]]
+          ["inline","t",["settings.autoUpdateInterval"],[],["loc",[null,[64,11],[64,46]]]],
+          ["inline","t",["settings.autoUpdateIntervalLabel"],[],["loc",[null,[65,7],[65,47]]]],
+          ["block","ui-dropdown",[],["class","selection","value",["subexpr","@mut",[["get","settings.system.updateInterval",["loc",[null,[68,26],[68,56]]]]],[],[]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[69,29],[69,52]]]]],0,null,["loc",[null,[67,4],[79,20]]]]
         ],
         locals: [],
         templates: [child0]
@@ -7985,7 +7981,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 88,
+            "line": 93,
             "column": 0
           }
         },
@@ -8044,7 +8040,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n");
+        var el3 = dom.createTextNode("\n");
         dom.appendChild(el2, el3);
         var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
@@ -8239,27 +8235,27 @@ define('rose/templates/settings', ['exports'], function (exports) {
         ["inline","t",["settings.subtitle"],[],["loc",[null,[5,28],[5,53]]]],
         ["inline","t",["settings.language"],[],["loc",[null,[11,11],[11,36]]]],
         ["inline","t",["settings.languageLabel"],[],["loc",[null,[12,7],[12,37]]]],
-        ["block","ui-dropdown",[],["class","selection","selection",["subexpr","@mut",[["get","settings.user.currentLanguage",["loc",[null,[14,47],[14,76]]]]],[],[]]],0,null,["loc",[null,[14,4],[23,20]]]],
-        ["inline","t",["settings.commentReminder"],[],["loc",[null,[27,11],[27,43]]]],
-        ["inline","t",["settings.commentReminderLabel"],[],["loc",[null,[28,7],[28,44]]]],
-        ["inline","ui-checkbox",[],["class","toggle","checked",["subexpr","@mut",[["get","settings.user.commentReminderIsEnabled",["loc",[null,[30,26],[30,64]]]]],[],[]],"label",["subexpr","boolean-to-yesno",[["get","settings.user.commentReminderIsEnabled",["loc",[null,[31,42],[31,80]]]]],[],["loc",[null,[31,24],[31,81]]]],"action","saveSettings"],["loc",[null,[29,4],[32,41]]]],
-        ["inline","t",["settings.extraFeatures"],[],["loc",[null,[36,11],[36,41]]]],
-        ["inline","t",["settings.extraFeaturesLabel"],[],["loc",[null,[37,7],[37,42]]]],
-        ["inline","ui-checkbox",[],["class","toggle","checked",["subexpr","@mut",[["get","settings.user.developerModeIsEnabled",["loc",[null,[39,26],[39,62]]]]],[],[]],"label",["subexpr","boolean-to-yesno",[["get","settings.user.developerModeIsEnabled",["loc",[null,[40,42],[40,78]]]]],[],["loc",[null,[40,24],[40,79]]]],"action","saveSettings"],["loc",[null,[38,4],[41,41]]]],
-        ["inline","t",["settings.manualUpdate"],[],["loc",[null,[45,11],[45,40]]]],
-        ["inline","t",["settings.manualUpdateLabel"],[],["loc",[null,[46,7],[46,41]]]],
-        ["element","action",["manualUpdate"],[],["loc",[null,[47,30],[47,55]]]],
-        ["inline","t",["action.update"],[],["loc",[null,[47,56],[47,77]]]],
-        ["inline","moment",[["get","settings.system.timestamp",["loc",[null,[48,26],[48,51]]]]],[],["loc",[null,[48,17],[48,53]]]],
-        ["inline","t",["settings.autoUpdate"],[],["loc",[null,[52,11],[52,38]]]],
-        ["inline","t",["settings.autoUpdateLabel"],[],["loc",[null,[53,7],[53,39]]]],
-        ["inline","ui-checkbox",[],["class","toggle","checked",["subexpr","@mut",[["get","settings.system.autoUpdateIsEnabled",["loc",[null,[55,26],[55,61]]]]],[],[]],"label",["subexpr","boolean-to-yesno",[["get","settings.system.autoUpdateIsEnabled",["loc",[null,[56,42],[56,77]]]]],[],["loc",[null,[56,24],[56,78]]]],"action","saveSettings"],["loc",[null,[54,4],[57,41]]]],
-        ["block","if",[["get","settings.system.autoUpdateIsEnabled",["loc",[null,[60,8],[60,43]]]]],[],1,null,["loc",[null,[60,2],[76,9]]]],
-        ["inline","t",["settings.resetRose"],[],["loc",[null,[79,11],[79,37]]]],
-        ["inline","t",["settings.resetRoseLabel"],[],["loc",[null,[80,7],[80,38]]]],
-        ["element","action",["openModal","reset-config"],[],["loc",[null,[81,34],[81,71]]]],
-        ["inline","t",["action.reset"],[],["loc",[null,[82,6],[82,26]]]],
-        ["inline","partial",["modal/reset-config"],[],["loc",[null,[87,0],[87,32]]]]
+        ["block","ui-dropdown",[],["class","selection","value",["subexpr","@mut",[["get","settings.user.currentLanguage",["loc",[null,[14,26],[14,55]]]]],[],[]],"onChange",["subexpr","action",["changeI18nLanguage"],[],["loc",[null,[15,29],[15,58]]]]],0,null,["loc",[null,[13,4],[25,20]]]],
+        ["inline","t",["settings.commentReminder"],[],["loc",[null,[29,11],[29,43]]]],
+        ["inline","t",["settings.commentReminderLabel"],[],["loc",[null,[30,7],[30,44]]]],
+        ["inline","ui-checkbox",[],["class","toggle","checked",["subexpr","@mut",[["get","settings.user.commentReminderIsEnabled",["loc",[null,[32,26],[32,64]]]]],[],[]],"label",["subexpr","boolean-to-yesno",[["get","settings.user.commentReminderIsEnabled",["loc",[null,[33,42],[33,80]]]]],[],["loc",[null,[33,24],[33,81]]]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[34,27],[34,50]]]]],["loc",[null,[31,4],[34,52]]]],
+        ["inline","t",["settings.extraFeatures"],[],["loc",[null,[38,11],[38,41]]]],
+        ["inline","t",["settings.extraFeaturesLabel"],[],["loc",[null,[39,7],[39,42]]]],
+        ["inline","ui-checkbox",[],["class","toggle","checked",["subexpr","@mut",[["get","settings.user.developerModeIsEnabled",["loc",[null,[41,26],[41,62]]]]],[],[]],"label",["subexpr","boolean-to-yesno",[["get","settings.user.developerModeIsEnabled",["loc",[null,[42,42],[42,78]]]]],[],["loc",[null,[42,24],[42,79]]]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[43,27],[43,50]]]]],["loc",[null,[40,4],[43,52]]]],
+        ["inline","t",["settings.manualUpdate"],[],["loc",[null,[47,11],[47,40]]]],
+        ["inline","t",["settings.manualUpdateLabel"],[],["loc",[null,[48,7],[48,41]]]],
+        ["element","action",["manualUpdate"],[],["loc",[null,[49,30],[49,55]]]],
+        ["inline","t",["action.update"],[],["loc",[null,[49,56],[49,77]]]],
+        ["inline","moment",[["get","settings.system.timestamp",["loc",[null,[50,26],[50,51]]]]],[],["loc",[null,[50,17],[50,53]]]],
+        ["inline","t",["settings.autoUpdate"],[],["loc",[null,[54,11],[54,38]]]],
+        ["inline","t",["settings.autoUpdateLabel"],[],["loc",[null,[55,7],[55,39]]]],
+        ["inline","ui-checkbox",[],["class","toggle","checked",["subexpr","@mut",[["get","settings.system.autoUpdateIsEnabled",["loc",[null,[57,26],[57,61]]]]],[],[]],"label",["subexpr","boolean-to-yesno",[["get","settings.system.autoUpdateIsEnabled",["loc",[null,[58,42],[58,77]]]]],[],["loc",[null,[58,24],[58,78]]]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[59,27],[59,50]]]]],["loc",[null,[56,4],[59,52]]]],
+        ["block","if",[["get","settings.system.autoUpdateIsEnabled",["loc",[null,[62,8],[62,43]]]]],[],1,null,["loc",[null,[62,2],[81,9]]]],
+        ["inline","t",["settings.resetRose"],[],["loc",[null,[84,11],[84,37]]]],
+        ["inline","t",["settings.resetRoseLabel"],[],["loc",[null,[85,7],[85,38]]]],
+        ["element","action",["openModal","reset-config"],[],["loc",[null,[86,34],[86,71]]]],
+        ["inline","t",["action.reset"],[],["loc",[null,[87,6],[87,26]]]],
+        ["inline","partial",["modal/reset-config"],[],["loc",[null,[92,0],[92,32]]]]
       ],
       locals: [],
       templates: [child0, child1]
@@ -8973,7 +8969,7 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
             return morphs;
           },
           statements: [
-            ["inline","ui-checkbox",[],["checked",["subexpr","@mut",[["get","network.isEnabled",["loc",[null,[84,30],[84,47]]]]],[],[]],"class","toggle","label",["subexpr","@mut",[["get","network.name",["loc",[null,[86,28],[86,40]]]]],[],[]],"action","saveNetworkSettings","value",["subexpr","@mut",[["get","network",["loc",[null,[88,28],[88,35]]]]],[],[]]],["loc",[null,[84,8],[88,37]]]]
+            ["inline","ui-checkbox",[],["checked",["subexpr","@mut",[["get","network.isEnabled",["loc",[null,[84,30],[84,47]]]]],[],[]],"class","toggle","label",["subexpr","@mut",[["get","network.descriptiveName",["loc",[null,[86,28],[86,51]]]]],[],[]],"onChange",["subexpr","action",["saveNetworkSettings"],[],["loc",[null,[87,31],[87,61]]]],"value",["subexpr","@mut",[["get","network",["loc",[null,[88,28],[88,35]]]]],[],[]]],["loc",[null,[84,8],[88,37]]]]
           ],
           locals: [],
           templates: []
@@ -9241,13 +9237,13 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("label");
-        var el4 = dom.createTextNode("Networks");
+        var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("p");
-        var el4 = dom.createTextNode("asdfasdfasdfasdfasdf");
+        var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n\n");
@@ -9332,10 +9328,11 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         var element7 = dom.childAt(element6, [5]);
         var element8 = dom.childAt(element7, [3]);
         var element9 = dom.childAt(element1, [11]);
-        var element10 = dom.childAt(element1, [15]);
-        var element11 = dom.childAt(element1, [17]);
-        var element12 = dom.childAt(element1, [19]);
-        var morphs = new Array(31);
+        var element10 = dom.childAt(element1, [13]);
+        var element11 = dom.childAt(element1, [15]);
+        var element12 = dom.childAt(element1, [17]);
+        var element13 = dom.childAt(element1, [19]);
+        var morphs = new Array(33);
         morphs[0] = dom.createMorphAt(element0,1,1);
         morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
         morphs[2] = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
@@ -9358,15 +9355,17 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         morphs[19] = dom.createMorphAt(dom.childAt(element9, [1]),0,0);
         morphs[20] = dom.createMorphAt(dom.childAt(element9, [3]),0,0);
         morphs[21] = dom.createMorphAt(dom.childAt(element9, [5]),1,1);
-        morphs[22] = dom.createMorphAt(dom.childAt(element1, [13]),5,5);
-        morphs[23] = dom.createMorphAt(dom.childAt(element10, [1]),0,0);
-        morphs[24] = dom.createMorphAt(dom.childAt(element10, [3]),0,0);
-        morphs[25] = dom.createMorphAt(element10,5,5);
-        morphs[26] = dom.createMorphAt(dom.childAt(element11, [1]),0,0);
-        morphs[27] = dom.createMorphAt(dom.childAt(element11, [3]),0,0);
-        morphs[28] = dom.createMorphAt(element11,5,5);
-        morphs[29] = dom.createElementMorph(element12);
-        morphs[30] = dom.createMorphAt(element12,1,1);
+        morphs[22] = dom.createMorphAt(dom.childAt(element10, [1]),0,0);
+        morphs[23] = dom.createMorphAt(dom.childAt(element10, [3]),0,0);
+        morphs[24] = dom.createMorphAt(element10,5,5);
+        morphs[25] = dom.createMorphAt(dom.childAt(element11, [1]),0,0);
+        morphs[26] = dom.createMorphAt(dom.childAt(element11, [3]),0,0);
+        morphs[27] = dom.createMorphAt(element11,5,5);
+        morphs[28] = dom.createMorphAt(dom.childAt(element12, [1]),0,0);
+        morphs[29] = dom.createMorphAt(dom.childAt(element12, [3]),0,0);
+        morphs[30] = dom.createMorphAt(element12,5,5);
+        morphs[31] = dom.createElementMorph(element13);
+        morphs[32] = dom.createMorphAt(element13,1,1);
         return morphs;
       },
       statements: [
@@ -9374,10 +9373,10 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         ["inline","t",["studyCreator.subtitle"],[],["loc",[null,[5,28],[5,57]]]],
         ["inline","t",["studyCreator.roseComments"],[],["loc",[null,[11,11],[11,44]]]],
         ["inline","t",["studyCreator.roseCommentsDesc"],[],["loc",[null,[12,7],[12,44]]]],
-        ["inline","ui-checkbox",[],["checked",["subexpr","@mut",[["get","model.roseCommentsIsEnabled",["loc",[null,[14,26],[14,53]]]]],[],[]],"class","toggle","label",["subexpr","boolean-to-yesno",[["get","model.roseCommentsIsEnabled",["loc",[null,[16,42],[16,69]]]]],[],["loc",[null,[16,24],[16,70]]]],"action","saveSettings"],["loc",[null,[14,4],[17,41]]]],
+        ["inline","ui-checkbox",[],["checked",["subexpr","@mut",[["get","model.roseCommentsIsEnabled",["loc",[null,[14,26],[14,53]]]]],[],[]],"class","toggle","label",["subexpr","boolean-to-yesno",[["get","model.roseCommentsIsEnabled",["loc",[null,[16,42],[16,69]]]]],[],["loc",[null,[16,24],[16,70]]]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[17,27],[17,50]]]]],["loc",[null,[14,4],[17,52]]]],
         ["inline","t",["studyCreator.roseCommentsRating"],[],["loc",[null,[21,11],[21,50]]]],
         ["inline","t",["studyCreator.roseCommentsRatingDesc"],[],["loc",[null,[22,7],[22,50]]]],
-        ["inline","ui-checkbox",[],["checked",["subexpr","@mut",[["get","model.roseCommentsRatingIsEnabled",["loc",[null,[24,26],[24,59]]]]],[],[]],"class","toggle","label",["subexpr","boolean-to-yesno",[["get","model.roseCommentsRatingIsEnabled",["loc",[null,[26,42],[26,75]]]]],[],["loc",[null,[26,24],[26,76]]]],"action","saveSettings"],["loc",[null,[24,4],[27,41]]]],
+        ["inline","ui-checkbox",[],["checked",["subexpr","@mut",[["get","model.roseCommentsRatingIsEnabled",["loc",[null,[24,26],[24,59]]]]],[],[]],"class","toggle","label",["subexpr","boolean-to-yesno",[["get","model.roseCommentsRatingIsEnabled",["loc",[null,[26,42],[26,75]]]]],[],["loc",[null,[26,24],[26,76]]]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[27,27],[27,50]]]]],["loc",[null,[24,4],[27,52]]]],
         ["inline","t",["studyCreator.salt"],[],["loc",[null,[31,11],[31,36]]]],
         ["inline","t",["studyCreator.saltDesc"],[],["loc",[null,[32,7],[32,36]]]],
         ["inline","input",[],["type","text","value",["subexpr","@mut",[["get","model.salt",["loc",[null,[35,18],[35,28]]]]],[],[]],"insert-newline","saveSettings","focus-out","saveSettings"],["loc",[null,[34,4],[37,38]]]],
@@ -9392,10 +9391,12 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         ["inline","t",["studyCreator.fingerprint"],[],["loc",[null,[66,11],[66,43]]]],
         ["inline","t",["studyCreator.fingerprintDesc"],[],["loc",[null,[67,7],[67,43]]]],
         ["inline","input",[],["type","text","value",["subexpr","@mut",[["get","model.fingerprint",["loc",[null,[71,20],[71,37]]]]],[],[]],"insert-newline","saveSettings","focus-out","saveSettings"],["loc",[null,[70,6],[73,40]]]],
+        ["inline","t",["studyCreator.networks"],[],["loc",[null,[78,11],[78,40]]]],
+        ["inline","t",["studyCreator.networksDesc"],[],["loc",[null,[79,7],[79,40]]]],
         ["block","each",[["get","model.networks",["loc",[null,[81,12],[81,26]]]]],[],0,null,["loc",[null,[81,4],[91,13]]]],
         ["inline","t",["studyCreator.autoUpdate"],[],["loc",[null,[95,11],[95,42]]]],
         ["inline","t",["studyCreator.autoUpdateDesc"],[],["loc",[null,[96,7],[96,42]]]],
-        ["inline","ui-checkbox",[],["checked",["subexpr","@mut",[["get","model.autoUpdateIsEnabled",["loc",[null,[98,26],[98,51]]]]],[],[]],"class","toggle","label",["subexpr","boolean-to-yesno",[["get","model.autoUpdateIsEnabled",["loc",[null,[100,42],[100,67]]]]],[],["loc",[null,[100,24],[100,68]]]],"action","saveSettings"],["loc",[null,[98,4],[101,41]]]],
+        ["inline","ui-checkbox",[],["checked",["subexpr","@mut",[["get","model.autoUpdateIsEnabled",["loc",[null,[98,26],[98,51]]]]],[],[]],"class","toggle","label",["subexpr","boolean-to-yesno",[["get","model.autoUpdateIsEnabled",["loc",[null,[100,42],[100,67]]]]],[],["loc",[null,[100,24],[100,68]]]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[101,27],[101,50]]]]],["loc",[null,[98,4],[101,52]]]],
         ["inline","t",["studyCreator.exportConfig"],[],["loc",[null,[105,11],[105,44]]]],
         ["inline","t",["studyCreator.exportConfigDesc"],[],["loc",[null,[106,7],[106,44]]]],
         ["inline","input",[],["value",["subexpr","@mut",[["get","model.fileName",["loc",[null,[108,18],[108,32]]]]],[],[]],"insert-newline","saveSettings","focus-out","saveSettings"],["loc",[null,[108,4],[110,38]]]],
@@ -9574,7 +9575,7 @@ define('rose/tests/controllers/settings.jshint', function () {
 
   module('JSHint - controllers');
   test('controllers/settings.js should pass jshint', function() { 
-    ok(false, 'controllers/settings.js should pass jshint.\ncontrollers/settings.js: line 37, col 9, Missing semicolon.\ncontrollers/settings.js: line 33, col 50, \'e\' is defined but never used.\n\n2 errors'); 
+    ok(false, 'controllers/settings.js should pass jshint.\ncontrollers/settings.js: line 1, col 26, Missing semicolon.\ncontrollers/settings.js: line 2, col 45, Missing semicolon.\ncontrollers/settings.js: line 4, col 31, Missing semicolon.\ncontrollers/settings.js: line 18, col 39, Missing semicolon.\ncontrollers/settings.js: line 19, col 41, Missing semicolon.\ncontrollers/settings.js: line 23, col 73, Missing semicolon.\ncontrollers/settings.js: line 24, col 32, Missing semicolon.\ncontrollers/settings.js: line 28, col 38, Missing semicolon.\ncontrollers/settings.js: line 32, col 55, Missing semicolon.\ncontrollers/settings.js: line 33, col 11, Missing semicolon.\ncontrollers/settings.js: line 34, col 9, Missing semicolon.\ncontrollers/settings.js: line 38, col 54, Missing semicolon.\ncontrollers/settings.js: line 49, col 44, Missing semicolon.\ncontrollers/settings.js: line 51, col 47, Missing semicolon.\ncontrollers/settings.js: line 52, col 9, Missing semicolon.\ncontrollers/settings.js: line 55, col 3, Missing semicolon.\ncontrollers/settings.js: line 30, col 50, \'e\' is defined but never used.\n\n17 errors'); 
   });
 
 });
@@ -11913,7 +11914,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.c3f3cbcc"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.98b85a6b"});
 }
 
 /* jshint ignore:end */

@@ -32,7 +32,10 @@
     "sidebar",
     "item",
     "popup",
-    "checkbox"
+    "checkbox",
+    "grid",
+    "site",
+    "segment"
   ],
   "version": "1.12.3"
 }

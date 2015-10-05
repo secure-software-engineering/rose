@@ -27,19 +27,19 @@ let _windowActivities, _pageActivities, _engageActivities, _loginActivities;
 let lastEngage,lastDisengage,_currentTime,_surveyTime;
 let running = false;
 
-let token, control, limit;
+let control, limit;
 
 let store = function(engage) {
-      _engageActivities = _engageActivities || [];
-      _engageActivities.push({
-        type: type,
-        date: Date.now(),
-        value: engage
-      });
+  _engageActivities = _engageActivities || [];
+  _engageActivities.push({
+    type: type,
+    date: Date.now(),
+    value: engage
+  });
 
-      kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', _engageActivities, () => {
-        running = false;
-      });
+  kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', _engageActivities, () => {
+    running = false;
+  });
 };
 
 let check = () => {
@@ -163,42 +163,42 @@ let checkConditions = (loginActivities) => {
   let tmpActivity;
   let activityInIntervall = (start, end, key) => {
     return (activity) => {
-        if (activity.date > start) {
-          return false;
-        }
-        else if (activity.date < end) {
-          return true;
-        }
-        else if (activity.value[key]) {
-          return true;
-        }
-        else {
-          return false;
-        }
-      };
+      if (activity.date > start) {
+        return false;
+      }
+      else if (activity.date < end) {
+        return true;
+      }
+      else if (activity.value[key]) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    };
   };
 
   //create conditions from activities
 
   //active Tabs
-  let active           = _windowActivities[0].value.active;
+  let active             = _windowActivities[0].value.active;
 
-  tmpActivity = _.find(_windowActivities, activityInIntervall(checkTime, idleTime, 'active'));
-  let recentActiveTabs = (tmpActivity !== undefined && tmpActivity.value.active);
+  tmpActivity            = _.find(_windowActivities, activityInIntervall(checkTime, idleTime, 'active'));
+  let recentActiveTabs   = (tmpActivity !== undefined && tmpActivity.value.active);
 
-  tmpActivity = _.find(_windowActivities, activityInIntervall(idleTime, beforIdleTime, 'active'));
-  let oldActiveTabs    = (tmpActivity !== undefined && tmpActivity.value.active);
+  tmpActivity            = _.find(_windowActivities, activityInIntervall(idleTime, beforIdleTime, 'active'));
+  let oldActiveTabs      = (tmpActivity !== undefined && tmpActivity.value.active);
 
   //openTabs
-  let open           = _windowActivities[0].value.open;
+  let open               = _windowActivities[0].value.open;
 
-  tmpActivity = _.find(_windowActivities, activityInIntervall(checkTime, idleTime, 'open'));
-  let recentOpenTabs = (tmpActivity !== undefined && tmpActivity.value.open);
+  tmpActivity            = _.find(_windowActivities, activityInIntervall(checkTime, idleTime, 'open'));
+  let recentOpenTabs     = (tmpActivity !== undefined && tmpActivity.value.open);
 
-  tmpActivity = _.find(_windowActivities, activityInIntervall(idleTime, beforIdleTime, 'open'));
-  let oldOpenTabs = (tmpActivity !== undefined && tmpActivity.value.open);
+  tmpActivity            = _.find(_windowActivities, activityInIntervall(idleTime, beforIdleTime, 'open'));
+  let oldOpenTabs        = (tmpActivity !== undefined && tmpActivity.value.open);
 
-  let anyOpenTabs    = recentOpenTabs || oldOpenTabs;
+  let anyOpenTabs        = recentOpenTabs || oldOpenTabs;
 
   //page activity
   let recentPageActivity = (_pageActivities.recent !== undefined);
@@ -252,26 +252,28 @@ let checkConditions = (loginActivities) => {
   //store when last dis-/engage has passed longer than survey interval
   if ((!engage && (lastDisengage === undefined || lastDisengage < _surveyTime)) || (engage && (lastEngage === undefined || lastEngage < _surveyTime))) {
     //store and trigger
-    token = Date.now();
     limit = 0;
-    sendTrigger(engage);
+    sendTrigger(engage, Date.now());
   }
   else {
     running = false;
   }
 };
 
-let sendTrigger = (engage) => {
+let sendTrigger = (engage, token) => {
     if (token === control) {
       console.log((!engage ? 'Dise' : 'E') + 'ngage survey triggered and stored');
       store(engage);
+    }
+    else if (!engage) {
+      kango.browser.tabs.create({url: kango.io.getResourceUrl('survey/index.html')});
     }
     else {
       if (limit < 5) {
         console.log('Try to reach content script. Attempt: ' + (limit++));
 
         kango.browser.tabs.getCurrent(function(tab) {
-          if (!engage || (new RegExp('^https:\/\/[\w\.\-]*(' + network.replace(/\./g, '\\$&') + ')(\/|$)')).test(tab.getUrl())) {
+          if ((new RegExp('^https:\/\/[\w\.\-]*(' + network.replace(/\./g, '\\$&') + ')(\/|$)')).test(tab.getUrl())) {
             if (limit % 3 === 0 ) {
               tab.navigate(tab.getUrl());
             }
@@ -280,7 +282,7 @@ let sendTrigger = (engage) => {
             }
           }
         });
-        setTimeout(sendTrigger, 1000 + limit*1000, engage);
+        setTimeout(sendTrigger, 1000 + limit*1000, engage, token);
       }
       else {
         console.log('Failed to reach content script.');

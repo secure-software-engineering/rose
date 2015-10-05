@@ -15,5 +15,12 @@
     "ratingEnjoy": "Did you enjoy what you were just reading",
     "questionNotice": "Why did you notice this post?",
     "questionQuality": "Did you examine the quality of the information? If so, how?"
+  },
+
+  "surveyDisengage": {
+    "infoText": "Please rate the following statements using the following scale (1 = Strongly disagree, 5 = Strongly agree), which reflects your experience on Facebook JUST NOW.",
+    "ratingAwareness": "It seems I am ‘running on automatic’ when using Facebook, without much awareness of what I am doing.",
+    "ratingActivities": "I rush through activities (e.g., posting status updates, commenting, launching apps, joining groups) on Facebook without being really attentive to them.",
+    "ratingCheckUpdates": "I quickly check updates from Facebook without being aware that I am using it."
   }
 }

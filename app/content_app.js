@@ -85,7 +85,4 @@ kango.addMessageListener('TriggerSurvey', function(event) {
   if (event.data.engage){
     startSurvey1();
   }
-  else {
-    alert('Trigger Survey 2 (Disengage)');
-  }
 });

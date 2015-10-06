@@ -262,11 +262,13 @@ let checkConditions = (loginActivities) => {
 
 let sendTrigger = (engage, token) => {
     if (token === control) {
-      console.log((!engage ? 'Dise' : 'E') + 'ngage survey triggered and stored');
+      console.log('Engage survey triggered and stored');
       store(engage);
     }
     else if (!engage) {
       kango.browser.tabs.create({url: kango.io.getResourceUrl('survey/index.html')});
+      console.log('Disengage survey triggered and stored');
+      store(engage);
     }
     else {
       if (limit < 5) {

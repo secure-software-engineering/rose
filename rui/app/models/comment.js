@@ -7,6 +7,7 @@ let model = DS.Model.extend({
   isPrivate: DS.attr('boolean'),
   rating: DS.attr('array'),
   contentId: DS.attr('string'),
+  engage: DS.attr('string'),
   network: DS.attr()
 });
 

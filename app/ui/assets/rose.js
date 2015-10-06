@@ -1967,6 +1967,7 @@ define('rose/models/comment', ['exports', 'ember-data'], function (exports, DS) 
     isPrivate: DS['default'].attr('boolean'),
     rating: DS['default'].attr('array'),
     contentId: DS['default'].attr('string'),
+    engage: DS['default'].attr('string'),
     network: DS['default'].attr()
   });
 

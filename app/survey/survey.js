@@ -99,7 +99,7 @@ let SurveyUI = (function () {
       $('body').prepend(tpl);
       if(this._configs.get('roseCommentsRatingIsEnabled')) {
         $('.ui .rating').rating();
-        $('.ui .rating').prepend('<div class="ui mini horizontal label">(agree)</div>').append('<div class="ui mini horizontal label">(disagree)</div>');
+        $('.ui .rating').prepend('<div class="ui mini horizontal label">(disagree)</div>').append('<div class="ui mini horizontal label">(agree)</div>');
       }
       else {
         $('.ui.rating').remove();

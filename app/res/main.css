@@ -77,7 +77,7 @@ body.pushable {
     padding: 0;
 }
 
-.ui.fluid.button, .ui.fluid.buttons {
+.ui.fluid.button, .ui.fluid.buttons, .ui.two.buttons>.button {
     width: auto;
 }
 

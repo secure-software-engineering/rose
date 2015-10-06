@@ -300,6 +300,12 @@ export default (function () {
         $('.ui.sidebar.uncover').sidebar('hide');
     }.bind(this));
 
+    //Dismiss/Cancel
+    $('body').on('click', '.sidebar .cancel.button', function() {
+      $('.ui.sidebar').sidebar('hide');
+      $('.ui.sidebar.uncover').sidebar('hide');
+    }.bind(this));
+
   };
 
   return FacebookUI;

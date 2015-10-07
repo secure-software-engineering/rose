@@ -1,3 +1,4 @@
+{{#ui-modal class="reset-data" approve=(action 'approveModal')}}
 <i class="close icon"></i>
 <div class="header">
   {{t "resetDataModal.question"}}
@@ -9,8 +10,8 @@
   <div class="ui black button">
     {{t "action.cancel"}}
   </div>
-  <div class="ui positive button"
-       {{action 'deleteData'}}>
+  <div class="ui positive button">
     {{t "action.confirm"}}
   </div>
 </div>
+{{/ui-modal}}

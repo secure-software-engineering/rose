@@ -25,7 +25,7 @@ export default Ember.Component.extend({
       this.set('isEditable', false);
     },
     cancel: function () {
-      this.get('model').rollback();
+      this.get('model').rollbackAttributes();
       this.set('isEditable', false);
     }
   }

@@ -8,6 +8,8 @@
 
 <div class="ui comments">
   {{#each sortedList as |interaction|}}
-  {{rose-interaction model=interaction}}
+    {{#unless interaction.isDeleted}}
+    {{rose-interaction model=interaction}}
+    {{/unless}}
   {{/each}}
 </div>

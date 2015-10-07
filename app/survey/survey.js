@@ -133,7 +133,7 @@ let SurveyUI = (function () {
       this._commentMode = false;
 
       var disengage = {};
-      disengage.engage = false;
+      disengage.type = 'disengage';
       disengage.rating = $('.ui.rating').rating('get rating') || [];
       disengage.network = 'facebook';
       disengage.createdAt = (new Date()).toJSON();

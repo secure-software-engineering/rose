@@ -311,7 +311,7 @@ export default (function () {
       }
       else {
         var engage = {};
-        engage.engage = true;
+        engage.type = 'engage';
         engage.rating = $('.ui.rating').rating('get rating') || [];
         engage.network = 'facebook';
         engage.createdAt = (new Date()).toJSON();

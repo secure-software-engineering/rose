@@ -255,18 +255,18 @@ export default (function () {
             }
 
           } else {
+            let comment = {createdAt: (new Date()).toJSON(), type: 'post', network: 'facebook'};
             if (extractorResult.contentId !== undefined) {
-              if(extractorResult.sharerId === undefined) {
-                this._activeComment = this._comments.create({contentId: extractorResult.contentId, createdAt: (new Date()).toJSON()});
-              }
-              else {
-                this._activeComment = this._comments.create({contentId: extractorResult.contentId, sharerId: extractorResult.sharerId, createdAt: (new Date()).toJSON()});
+              comment.contentId = extractorResult.contentId;
+              if(extractorResult.sharerId !== undefined) {
+                comment.sharerId = extractorResult.sharerId;
               }
             }
             else {
               console.error('Could not obtain contentId!');
-                this._activeComment = this._comments.create({contentId: null, createdAt: (new Date()).toJSON()});
+              comment.contentId = null;
             }
+            this._activeComment = this._comments.create(comment);
             $('.sidebar textarea').val('');
             $('.ui.checkbox').checkbox('uncheck');
             if(this._configs.get('roseCommentsRatingIsEnabled')) {
@@ -288,7 +288,6 @@ export default (function () {
           comment.rating = $('.ui.rating').rating('get rating') || [];
         }
         comment.checkbox = $('.ui.checkbox').checkbox('is checked');
-        comment.network = 'facebook';
         comment.updatedAt = (new Date()).toJSON();
         this._activeComment.set(comment);
         this._activeComment.save();

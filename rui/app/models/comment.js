@@ -1,4 +1,4 @@
-import DS from 'ember-data';
+import DS from 'ember-data'
 
 let model = DS.Model.extend({
   text: DS.attr('string'),
@@ -8,8 +8,8 @@ let model = DS.Model.extend({
   isPrivate: DS.attr('boolean'),
   rating: DS.attr('array'),
   contentId: DS.attr('string'),
-  engage: DS.attr('string'),
+  type: DS.attr('string'),
   network: DS.attr()
-});
+})
 
-export default model;
+export default model

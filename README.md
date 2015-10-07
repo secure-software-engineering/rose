@@ -1,17 +1,17 @@
 [![devDependency Status](https://david-dm.org/secure-software-engineering/rose/dev-status.svg)](https://david-dm.org/secure-software-engineering/rose#info=devDependencies)
 
-ROSE 3.0
+ROSE 3.0 beta
 ========
 
 Synopsis
 ----
 ROSE is a browser extension for researchers to capture in situ data on how users actually use online social networks.
 
-[Please see the project wiki for more detailed information.](https://github.com/secure-software-engineering/rose/wiki)
+[Please see the project wiki for more detailed information. (partially outdated)](https://github.com/secure-software-engineering/rose/wiki)
 
 Features
 ----
-* Currently supported social setwork sites: facebook.com
+* Currently supported social network sites: facebook.com
 * Capturing user interactions such as likes, unlikes, comments, sending chat messages or sharing content.
 * Capturing addtional information about the content users interacting with (e.g. posts, sharer, etc.)
 * Capturing user activity by mouse move distance, scroll distance, OSN tab focus time, click amount and login status
@@ -38,8 +38,9 @@ You can build your own copy of ROSE with the folowing steps:
     ```
     npm install
     ```
+    During install you may get asked a few questions. Just choose the defaults. If progress is halted just press return once.
 
-2. Build custom Semantic UI for facebook overlay
+2. Build custom Semantic UI for facebook overlay:
     ```
     git checkout -- semantic.json
     cd semamtic/
@@ -47,7 +48,7 @@ You can build your own copy of ROSE with the folowing steps:
     cd ..
     ```
 
-3. Build ROSE UI based on Ember
+3. Build ROSE UI based on Ember (You can skip this step. A precompiled version is in the repository)
     ```
     cd rui/
     npm install
@@ -80,10 +81,10 @@ About
 
 ROSE is developed by:
 
-    Fraunhofer Institute for Secure Information Technology SIT
-    Rheinstrasse 75
-    64295 Darmstadt
-    Germany
+> Fraunhofer Institute for Secure Information Technology SIT  
+> Rheinstrasse 75  
+> 64295 Darmstadt  
+> Germany  
 
 For questions about ROSE feel free to contact Andreas Poller, andreas.poller@sit.fraunhofer.de
 

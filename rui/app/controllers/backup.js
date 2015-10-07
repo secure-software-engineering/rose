@@ -7,7 +7,7 @@ export default Ember.Controller.extend({
     var models = this.get('model');
 
     models.forEach(function (model) {
-      result[model.type.modelName] = model.content;
+      result[model.type] = model.data;
     });
 
     result['export-date'] = new Date().toJSON();
@@ -16,12 +16,30 @@ export default Ember.Controller.extend({
   }.property('model'),
 
   actions: {
-    deleteData() {
-      this.send('openModal', 'modal/reset-data');
+    openModal: function(name) {
+      Ember.$('.ui.' + name + '.modal').modal('show');
     },
 
     download: function () {
       window.saveAs(new Blob([this.get('jsonData')]), 'rose-data.txt');
+    },
+
+    approveModal() {
+      [
+        'comment',
+        'interaction',
+        'diary-entry'
+      ].forEach((type) => this.store.find(type).then((records) => records.invoke('destroyRecord')));
+
+      [
+        'click',
+        'fb-login',
+        'mousemove',
+        'scroll',
+        'window'
+      ].forEach((type) => kango.invokeAsyncCallback('localforage.removeItem', type + '-activity-records'));
+
+      return true;
     }
   }
 });

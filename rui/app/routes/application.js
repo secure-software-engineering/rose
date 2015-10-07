@@ -1,9 +1,8 @@
 import Ember from 'ember';
-import SemanticRouteMixin from 'semantic-ui-ember/mixins/application-route';
 
 const { Promise } = Ember.RSVP;
 
-export default Ember.Route.extend(SemanticRouteMixin, {
+export default Ember.Route.extend({
   beforeModel() {
     let settings = this.get('settings');
     return Promise.all([settings.setup()]);

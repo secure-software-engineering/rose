@@ -1,3 +1,4 @@
+{{#ui-modal class="reset-config" approve=(action 'approveModal')}}
 <i class="close icon"></i>
 <div class="header">
   {{t "resetConfigModal.question"}}
@@ -6,11 +7,12 @@
   <p>{{t "resetConfigModal.warning"}}</p>
 </div>
 <div class="actions">
-  <div class="ui black button">
+  <div class="ui black cancel button">
     {{t "action.cancel"}}
   </div>
-  <div class="ui positive button"
-       {{action 'resetConfig'}}>
+  <div class="ui positive right labeled icon button">
     {{t "action.confirm"}}
+    <i class="checkmark icon"></i>
   </div>
 </div>
+{{/ui-modal}}

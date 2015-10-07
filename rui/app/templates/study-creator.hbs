@@ -14,7 +14,7 @@
     {{ui-checkbox checked=model.roseCommentsIsEnabled
                   class="toggle"
                   label=(boolean-to-yesno model.roseCommentsIsEnabled)
-                  action="saveSettings"}}
+                  onChange=(action "saveSettings")}}
   </div>
 
   <div class="field">
@@ -24,7 +24,7 @@
     {{ui-checkbox checked=model.roseCommentsRatingIsEnabled
                   class="toggle"
                   label=(boolean-to-yesno model.roseCommentsRatingIsEnabled)
-                  action="saveSettings"}}
+                  onChange=(action "saveSettings")}}
   </div>
 
   <div class="field">
@@ -53,7 +53,7 @@
 
     <div class="ui action input">
       {{input type="text"
-              value=model.repositoryUrl
+              value=model.repositoryURL
               insert-newline="fetchBaseFile"}}
 
       <button class="ui icon button {{if baseFileIsLoading "loading"}}" {{action "fetchBaseFile"}}>
@@ -75,19 +75,94 @@
   </div>
 
   <div class="field">
-    <label>Networks</label>
-    <p>asdfasdfasdfasdfasdf</p>
+    <label>{{t "studyCreator.networks"}}</label>
+    <p>{{t "studyCreator.networksDesc"}}</p>
 
-    {{#each model.networks as |network|}}
-      {{#if network.isLoaded}}
+    {{#each networks as |network|}}
       <div class="field">
         {{ui-checkbox checked=network.isEnabled
                       class="toggle"
-                      label=network.name
-                      action="saveNetworkSettings"
+                      label=network.descriptiveName
                       value=network}}
-      </div>
+        {{#if network.isEnabled}}
+        <div class="ui field" style="padding-top: 15px;">
+          <label>
+            {{t "studyCreator.extractors"}}
+            <div class="ui green small horizontal label" style="margin-left: 20px;">{{t "studyCreator.secure"}}</div>
+          </label>
+          <table class="ui small compact table">
+            <thead class="full-width">
+              <tr>
+                <th>{{t "studyCreator.table.enabled"}}</th>
+                <th>{{t "studyCreator.table.name"}}</th>
+                <th>{{t "studyCreator.table.version"}}</th>
+              </tr>
+            </thead>
+            <tbody>
+            {{#each network.extractors as |extractor|}}
+              <tr>
+                <td class="collapsing">
+                  {{ui-checkbox class="fitted toggle" checked=extractor.isEnabled}}
+                </td>
+                <td>{{extractor.name}}</td>
+                <td>{{extractor.version}}</td>
+              </tr>
+            {{/each}}
+            </tbody>
+            <tfoot class="full-width">
+              <tr>
+                <th colspan="3">
+                  <button class="ui small green button" {{action "enableAll" network.extractors}}>{{t "studyCreator.enableAll"}}</button>
+                  <button class="ui small basic button" {{action "disableAll" network.extractors}}>{{t "studyCreator.disableAll"}}</button>
+                </th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <div class="ui field">
+          <label>
+            {{t "studyCreator.observers"}}
+            {{#if model.fingerprint}}
+            <div class="ui green small horizontal label" style="margin-left: 20px;">{{t "studyCreator.secure"}}</div>
+            {{else}}
+            <div class="ui small horizontal label" style="margin-left: 20px;">{{t "studyCreator.unknown"}}</div>
+            {{/if}}
+          </label>
+          <table class="ui small compact table">
+            <thead class="full-width">
+              <tr>
+                <th>{{t "studyCreator.table.enabled"}}</th>
+                <th>{{t "studyCreator.table.name"}}</th>
+                <th>{{t "studyCreator.table.type"}}</th>
+                <th>{{t "studyCreator.table.priority"}}</th>
+                <th>{{t "studyCreator.table.version"}}</th>
+              </tr>
+            </thead>
+            <tbody>
+            {{#each network.observers as |observer|}}
+              <tr>
+                <td class="collapsing">
+                  {{ui-checkbox class="fitted toggle" checked=observer.isEnabled}}
+                </td>
+                <td>{{observer.name}}</td>
+                <td>{{observer.type}}</td>
+                <td>{{observer.priority}}</td>
+                <td>{{observer.version}}</td>
+              </tr>
+            {{/each}}
+            </tbody>
+            <tfoot class="full-width">
+              <tr>
+                <th colspan="5">
+                  <button class="ui small green button" {{action "enableAll" network.observers}}>{{t "studyCreator.enableAll"}}</button>
+                  <button class="ui small basic button" {{action "disableAll" network.observers}}>{{t "studyCreator.disableAll"}}</button>
+                </th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
       {{/if}}
+      </div>
     {{/each}}
   </div>
 
@@ -98,7 +173,7 @@
     {{ui-checkbox checked=model.autoUpdateIsEnabled
                   class="toggle"
                   label=(boolean-to-yesno model.autoUpdateIsEnabled)
-                  action="saveSettings"}}
+                  onChange=(action "saveSettings")}}
   </div>
 
   <div class="field">

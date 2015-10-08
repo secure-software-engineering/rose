@@ -1963,11 +1963,12 @@ define('rose/models/comment', ['exports', 'ember-data'], function (exports, DS) 
     createdAt: DS['default'].attr('string', { defaultValue: function defaultValue() {
         return new Date().toJSON();
       } }),
+    checkbox: DS['default'].attr('array'),
     updatedAt: DS['default'].attr(),
     isPrivate: DS['default'].attr('boolean'),
     rating: DS['default'].attr('array'),
     contentId: DS['default'].attr('string'),
-    engage: DS['default'].attr('string'),
+    type: DS['default'].attr('string'),
     network: DS['default'].attr()
   });
 
@@ -7485,7 +7486,7 @@ define('rose/templates/modal/reset-config', ['exports'], function (exports) {
         return morphs;
       },
       statements: [
-        ["block","ui-modal",[],["class","reset-config","approve",["subexpr","action",["approveModal"],[],["loc",[null,[1,41],[1,64]]]]],0,null,["loc",[null,[1,0],[18,13]]]]
+        ["block","ui-modal",[],["class","reset-config","onApprove",["subexpr","action",["approveModal"],[],["loc",[null,[1,43],[1,66]]]]],0,null,["loc",[null,[1,0],[18,13]]]]
       ],
       locals: [],
       templates: [child0]
@@ -7630,7 +7631,7 @@ define('rose/templates/modal/reset-data', ['exports'], function (exports) {
         return morphs;
       },
       statements: [
-        ["block","ui-modal",[],["class","reset-data","approve",["subexpr","action",["approveModal"],[],["loc",[null,[1,39],[1,62]]]]],0,null,["loc",[null,[1,0],[17,13]]]]
+        ["block","ui-modal",[],["class","reset-data","onApprove",["subexpr","action",["approveModal"],[],["loc",[null,[1,41],[1,64]]]]],0,null,["loc",[null,[1,0],[17,13]]]]
       ],
       locals: [],
       templates: [child0]
@@ -10152,7 +10153,7 @@ define('rose/tests/controllers/settings.jshint', function () {
 
   module('JSHint - controllers');
   test('controllers/settings.js should pass jshint', function() { 
-    ok(false, 'controllers/settings.js should pass jshint.\ncontrollers/settings.js: line 1, col 26, Missing semicolon.\ncontrollers/settings.js: line 2, col 45, Missing semicolon.\ncontrollers/settings.js: line 4, col 31, Missing semicolon.\ncontrollers/settings.js: line 18, col 39, Missing semicolon.\ncontrollers/settings.js: line 19, col 41, Missing semicolon.\ncontrollers/settings.js: line 23, col 73, Missing semicolon.\ncontrollers/settings.js: line 24, col 32, Missing semicolon.\ncontrollers/settings.js: line 28, col 38, Missing semicolon.\ncontrollers/settings.js: line 32, col 55, Missing semicolon.\ncontrollers/settings.js: line 33, col 11, Missing semicolon.\ncontrollers/settings.js: line 34, col 9, Missing semicolon.\ncontrollers/settings.js: line 38, col 54, Missing semicolon.\ncontrollers/settings.js: line 49, col 44, Missing semicolon.\ncontrollers/settings.js: line 51, col 47, Missing semicolon.\ncontrollers/settings.js: line 52, col 9, Missing semicolon.\ncontrollers/settings.js: line 55, col 3, Missing semicolon.\ncontrollers/settings.js: line 30, col 50, \'e\' is defined but never used.\n\n17 errors'); 
+    ok(false, 'controllers/settings.js should pass jshint.\ncontrollers/settings.js: line 30, col 50, \'e\' is defined but never used.\n\n1 error'); 
   });
 
 });
@@ -10162,7 +10163,7 @@ define('rose/tests/controllers/study-creator.jshint', function () {
 
   module('JSHint - controllers');
   test('controllers/study-creator.js should pass jshint', function() { 
-    ok(false, 'controllers/study-creator.js should pass jshint.\ncontrollers/study-creator.js: line 1, col 26, Missing semicolon.\ncontrollers/study-creator.js: line 9, col 69, Missing semicolon.\ncontrollers/study-creator.js: line 14, col 69, Missing semicolon.\ncontrollers/study-creator.js: line 19, col 31, Missing semicolon.\ncontrollers/study-creator.js: line 23, col 27, Missing semicolon.\ncontrollers/study-creator.js: line 32, col 95, Missing semicolon.\ncontrollers/study-creator.js: line 35, col 91, Missing semicolon.\ncontrollers/study-creator.js: line 37, col 25, Missing semicolon.\ncontrollers/study-creator.js: line 38, col 11, Missing semicolon.\ncontrollers/study-creator.js: line 40, col 45, Missing semicolon.\ncontrollers/study-creator.js: line 41, col 32, Missing semicolon.\ncontrollers/study-creator.js: line 42, col 54, Missing semicolon.\ncontrollers/study-creator.js: line 43, col 50, Missing semicolon.\ncontrollers/study-creator.js: line 45, col 52, Missing semicolon.\ncontrollers/study-creator.js: line 49, col 50, Missing semicolon.\ncontrollers/study-creator.js: line 53, col 47, Missing semicolon.\ncontrollers/study-creator.js: line 59, col 48, Missing semicolon.\ncontrollers/study-creator.js: line 60, col 47, Missing semicolon.\ncontrollers/study-creator.js: line 61, col 78, Missing semicolon.\ncontrollers/study-creator.js: line 62, col 17, Missing semicolon.\ncontrollers/study-creator.js: line 63, col 15, Missing semicolon.\ncontrollers/study-creator.js: line 65, col 11, Missing semicolon.\ncontrollers/study-creator.js: line 69, col 60, Missing semicolon.\ncontrollers/study-creator.js: line 73, col 61, Missing semicolon.\ncontrollers/study-creator.js: line 76, col 3, Missing semicolon.\n\n25 errors'); 
+    ok(true, 'controllers/study-creator.js should pass jshint.'); 
   });
 
 });
@@ -10259,7 +10260,7 @@ define('rose/tests/locales/de/config.jshint', function () {
 
   module('JSHint - locales/de');
   test('locales/de/config.js should pass jshint', function() { 
-    ok(false, 'locales/de/config.js should pass jshint.\nlocales/de/config.js: line 16, col 2, Missing semicolon.\n\n1 error'); 
+    ok(true, 'locales/de/config.js should pass jshint.'); 
   });
 
 });
@@ -10279,7 +10280,7 @@ define('rose/tests/locales/en/config.jshint', function () {
 
   module('JSHint - locales/en');
   test('locales/en/config.js should pass jshint', function() { 
-    ok(false, 'locales/en/config.js should pass jshint.\nlocales/en/config.js: line 16, col 2, Missing semicolon.\n\n1 error'); 
+    ok(true, 'locales/en/config.js should pass jshint.'); 
   });
 
 });
@@ -10489,7 +10490,7 @@ define('rose/tests/routes/application.jshint', function () {
 
   module('JSHint - routes');
   test('routes/application.js should pass jshint', function() { 
-    ok(false, 'routes/application.js should pass jshint.\nroutes/application.js: line 16, col 35, Missing semicolon.\nroutes/application.js: line 20, col 7, Missing semicolon.\n\n2 errors'); 
+    ok(true, 'routes/application.js should pass jshint.'); 
   });
 
 });
@@ -10499,7 +10500,7 @@ define('rose/tests/routes/backup.jshint', function () {
 
   module('JSHint - routes');
   test('routes/backup.js should pass jshint', function() { 
-    ok(false, 'routes/backup.js should pass jshint.\nroutes/backup.js: line 17, col 113, Missing semicolon.\nroutes/backup.js: line 18, col 121, Missing semicolon.\nroutes/backup.js: line 19, col 121, Missing semicolon.\nroutes/backup.js: line 20, col 123, Missing semicolon.\nroutes/backup.js: line 21, col 125, Missing semicolon.\n\n5 errors'); 
+    ok(true, 'routes/backup.js should pass jshint.'); 
   });
 
 });
@@ -10616,7 +10617,7 @@ define('rose/tests/transforms/array.jshint', function () {
 
   module('JSHint - transforms');
   test('transforms/array.js should pass jshint', function() { 
-    ok(false, 'transforms/array.js should pass jshint.\ntransforms/array.js: line 6, col 40, Expected \'===\' and instead saw \'==\'.\ntransforms/array.js: line 11, col 16, Expected \'===\' and instead saw \'==\'.\ntransforms/array.js: line 12, col 26, Missing semicolon.\ntransforms/array.js: line 13, col 23, Expected \'===\' and instead saw \'==\'.\n\n4 errors'); 
+    ok(false, 'transforms/array.js should pass jshint.\ntransforms/array.js: line 6, col 40, Expected \'===\' and instead saw \'==\'.\ntransforms/array.js: line 11, col 16, Expected \'===\' and instead saw \'==\'.\ntransforms/array.js: line 13, col 23, Expected \'===\' and instead saw \'==\'.\n\n3 errors'); 
   });
 
 });
@@ -12491,7 +12492,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.091498ab"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.53a192fc"});
 }
 
 /* jshint ignore:end */

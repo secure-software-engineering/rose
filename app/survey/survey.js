@@ -24,14 +24,12 @@ import UserSettingsModel from 'rose/models/user-settings';
 import CommentsCollection from 'rose/collections/comments';
 
 let SurveyUI = (function () {
-  SurveyUI.prototype._comments = new CommentsCollection();
   SurveyUI.prototype._configs = new SystemConfigModel();
   SurveyUI.prototype._settings = new UserSettingsModel();
 
   function SurveyUI() {
     this._configs.fetch();
     this._settings.fetch();
-    this._comments.fetch();
 
     //Init internationlization
     var options;
@@ -129,16 +127,16 @@ let SurveyUI = (function () {
     // Start commenting
     $('body').on('click', '.approve', function(evt) {
 
-      //Show sidebar
-      this._commentMode = false;
+      (new CommentsCollection()).fetch({success: (commentsCollection) => {
 
-      var disengage = {};
-      disengage.type = 'disengage';
-      disengage.rating = $('.ui.rating').rating('get rating') || [];
-      disengage.network = 'facebook';
-      disengage.createdAt = (new Date()).toJSON();
-      this._comments.create(disengage, {success: () => {
-        window.close();
+        var disengage = {};
+        disengage.type = 'disengage';
+        disengage.rating = $('.ui.rating').rating('get rating') || [];
+        disengage.network = 'facebook';
+        disengage.createdAt = (new Date()).toJSON();
+        commentsCollection.create(disengage, {success: () => {
+          window.close();
+        }});
       }});
     }.bind(this));
 

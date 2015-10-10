@@ -31,6 +31,8 @@ import MouseMoveTracker from 'rose/activity-trackers/mousemove';
 import ScrollTracker from 'rose/activity-trackers/scroll';
 import FBLoginTracker from 'rose/activity-trackers/facebook-login';
 
+var facebookUI;
+
 /* Content Script */
 (function() {
   var configs = new SystemConfigModel();
@@ -50,9 +52,8 @@ import FBLoginTracker from 'rose/activity-trackers/facebook-login';
           ObserverEngine.register(networkName);
 
           if (networkName === 'facebook' && configs.get('roseCommentsIsEnabled')) {
-            var facebookUI = new FacebookUI();
+            facebookUI = new FacebookUI();
             facebookUI.redrawUI();
-            // setTimeout(facebookUI.startSurvey, 5000, facebookUI);
           }
 
           ClickTracker.start();

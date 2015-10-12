@@ -84,7 +84,12 @@ export default {
     autoUpdate: "Automatically update configuration",
     autoUpdateLabel: "Switch on the automatic update function if ROSE shall automatically adapt to recent changes in social media pages."
   },
-
+  
+  resetConfigModal: {
+    question: "Confirm resetting the configuration of ROSE",
+    warning: "Are you sure you want to reset the configuration of ROSE. This action will bring you back to the configuration wizard. All collected data will remain unchanged.",
+  },  
+  
   // Comments Page
   comments: {
     title: "Comments",

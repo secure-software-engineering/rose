@@ -17,7 +17,7 @@ export default {
     details: "Details",
     reset: "Reset",
     update: "Update",
-    confirm: "Confirm"
+    confirm: "Confirm",
   },
 
   // Sidebar Menu
@@ -40,9 +40,13 @@ export default {
     header: "Welcome to Rose",
     description: "In this step we first need to configure Rose to work properly.",
     configOptions: "Choose one option to configure Rose.",
-    defaultConfig: "Take the default configuration.",
+    defaultConfigHeader: "Use default configuration.",
+    fileConfigHeader: "Use configuration file",
+    defaultConfigDescription: "I have no configuration file to customize the configuration of ROSE. Please initialize ROSE with the default configuration.",
+    fileConfigDescription: "I have a customized configuration file for initializing ROSE. Please let me load it now.",
     fileConfig: "Select a configuration file...",
-    fileConfigBtn: "Choose file",
+    fileConfigBtn: "Let me choose the config file",
+    defaultBtn: "Go ahead with default",
     urlConfig: "Specifiy a URL to an Rose repository..."
   },
 

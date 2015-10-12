@@ -78,7 +78,11 @@ export default {
     extraFeatures: "Features for researchers and developers",
     extraFeaturesLabel: "ROSE has additional features for field researchers and ROSE developers. These features are normally not visible, but can be activated here.",
     resetRose: "Reset ROSE configuration",
-    resetRoseLabel: "Here you can reset ROSE's configurations. The initialization wizard will appear again asking you to load either a default configuration or a specific study configuration file."
+    resetRoseLabel: "Here you can reset ROSE's configurations. The initialization wizard will appear again asking you to load either a default configuration or a specific study configuration file.",
+    manualUpdate: "Manual configuration update",
+    manualUpdateLabel: "Because social media pages change there design from time to time, ROSE occasionally requires an update to adapt to these changes. Here you can trigger this update manually.",
+    autoUpdate: "Automatically update configuration",
+    autoUpdateLabel: "Switch on the automatic update function if ROSE shall automatically adapt to recent changes in social media pages."
   },
 
   // Comments Page

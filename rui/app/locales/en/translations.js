@@ -52,11 +52,20 @@ export default {
     subtitle: "Here you can take notes of everything that attracted your attention"
   },
 
-  // Backup Page
+  // Data Management aka Backup Page
   backup: {
     title: "Data Management",
-    subtitle: "Here you can review, download and wipe all data recorded and collected by ROSE. If you press the \"Download\" button you can store all data in a file locally on your computer."
+    subtitle: "Here you can review, download and wipe all data recorded and collected by ROSE. If you press the \"Download\" button you can store all data in a file locally on your computer.",
+    resetData: "Wipe data",
+    resetDataLabel: "Wipe all data collect by ROSE",
+    export: "Export data",
+    exportLabel: "Export all collected data to hand it over to the researchers for data analysis"
   },
+  
+  resetDataModal: {
+    question: "Confirm wiping all collected data",
+    warning: "Are you sure you want to delete all data collected? This action cannot be undone."
+  },  
 
   // Settings Page
   settings: {

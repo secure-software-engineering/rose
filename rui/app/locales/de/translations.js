@@ -34,13 +34,13 @@ export default {
   },
 
   wizard: {
-    header: "Welcome to Rose",
-    description: "In this step we first need to configure Rose to work properly.",
-    configOptions: "Choose one option to configure Rose.",
+    header: "Welcome to ROSE",
+    description: "In this step we first need to configure ROSE to work properly.",
+    configOptions: "Choose one option to configure ROSE.",
     defaultConfig: "Take the default configuration.",
     fileConfig: "Select a configuration file...",
     fileConfigBtn: "Choose file",
-    urlConfig: "Specifiy a URL to an Rose repository..."
+    urlConfig: "Specifiy a URL to an ROSE repository..."
   },
 
   // Diary Page
@@ -98,7 +98,7 @@ export default {
 
     issue1: {
       question: "Where does ROSE collect the data about my Facebook usage and my inserted comments?",
-      answer: "<p>Rose exclusively collects data in your web browser. ROSE can provide a pre-assembled Mail which you can use to transmit your data to the study advisor. ROSE does not transmit data to Facebook; Facebook can not detect your usage of ROSE with their computer systems. ROSE neither transmits data itself to the study advisor nor receives them.</p><p>There is a disadvantage of this privacy aware concept of ROSE, though: ROSE data can be lost in case system bugs emerge on your computer. With the deletion of ROSE from your web browser all stored data is irretrievably lost.</p>"
+      answer: "<p>ROSE exclusively collects data in your web browser. ROSE can provide a pre-assembled Mail which you can use to transmit your data to the study advisor. ROSE does not transmit data to Facebook; Facebook can not detect your usage of ROSE with their computer systems. ROSE neither transmits data itself to the study advisor nor receives them.</p><p>There is a disadvantage of this privacy aware concept of ROSE, though: ROSE data can be lost in case system bugs emerge on your computer. With the deletion of ROSE from your web browser all stored data is irretrievably lost.</p>"
     },
     issue2: {
       question: "Are my ROSE study comments visible for other study participants or Facebook users?",

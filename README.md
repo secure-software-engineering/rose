@@ -32,7 +32,7 @@ In the following paper we describe how we use ROSE in our empirical field studie
 Build
 -----
 
-You can build your own copy of ROSE with the folowing steps:
+To build ROSE you need `node, npm, bower, ember-cli and gulp` installed. You can build your own copy of ROSE with the folowing steps
 
 1. Install dependencies with `npm`
     ```

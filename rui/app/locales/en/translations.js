@@ -17,7 +17,7 @@ export default {
     details: "Details",
     reset: "Reset",
     update: "Update",
-    confirm: "Confirm"
+    confirm: "Confirm",
   },
 
   // Sidebar Menu
@@ -37,13 +37,17 @@ export default {
   },
 
   wizard: {
-    header: "Welcome to Rose",
-    description: "In this step we first need to configure Rose to work properly.",
-    configOptions: "Choose one option to configure Rose.",
-    defaultConfig: "Take the default configuration.",
+    header: "Welcome to ROSE",
+    description: "In this step we first need to configure ROSE to work properly.",
+    configOptions: "Choose one option to configure ROSE.",
+    defaultConfigHeader: "Use default configuration.",
+    fileConfigHeader: "Use configuration file",
+    defaultConfigDescription: "I have no configuration file to customize the configuration of ROSE. Please initialize ROSE with the default configuration.",
+    fileConfigDescription: "I have a customized configuration file for initializing ROSE. Please let me load it now.",
     fileConfig: "Select a configuration file...",
-    fileConfigBtn: "Choose file",
-    urlConfig: "Specifiy a URL to an Rose repository..."
+    fileConfigBtn: "Let me choose the config file",
+    defaultBtn: "Go ahead with default",
+    urlConfig: "Specifiy a URL to an ROSE repository..."
   },
 
   // Diary Page
@@ -52,10 +56,19 @@ export default {
     subtitle: "Here you can take notes of everything that attracted your attention"
   },
 
-  // Backup Page
+  // Data Management aka Backup Page
   backup: {
     title: "Data Management",
-    subtitle: "Here you can review, download and wipe all data recorded and collected by ROSE. If you press the \"Download\" button you can store all data in a file locally on your computer."
+    subtitle: "Here you can review, download and wipe all data recorded and collected by ROSE. If you press the \"Download\" button you can store all data in a file locally on your computer.",
+    resetData: "Wipe data",
+    resetDataLabel: "Wipe all data collect by ROSE",
+    export: "Export data",
+    exportLabel: "Export all collected data to hand it over to the researchers for data analysis"
+  },
+
+  resetDataModal: {
+    question: "Confirm wiping all collected data",
+    warning: "Are you sure you want to delete all data collected? This action cannot be undone."
   },
 
   // Settings Page
@@ -69,7 +82,16 @@ export default {
     extraFeatures: "Features for researchers and developers",
     extraFeaturesLabel: "ROSE has additional features for field researchers and ROSE developers. These features are normally not visible, but can be activated here.",
     resetRose: "Reset ROSE configuration",
-    resetRoseLabel: "Here you can reset ROSE's configurations. The initialization wizard will appear again asking you to load either a default configuration or a specific study configuration file."
+    resetRoseLabel: "Here you can reset ROSE's configurations. The initialization wizard will appear again asking you to load either a default configuration or a specific study configuration file.",
+    manualUpdate: "Manual configuration update",
+    manualUpdateLabel: "Because social media pages change there design from time to time, ROSE occasionally requires an update to adapt to these changes. Here you can trigger this update manually.",
+    autoUpdate: "Automatically update configuration",
+    autoUpdateLabel: "Switch on the automatic update function if ROSE shall automatically adapt to recent changes in social media pages."
+  },
+
+  resetConfigModal: {
+    question: "Confirm resetting the configuration of ROSE",
+    warning: "Are you sure you want to reset the configuration of ROSE. This action will bring you back to the configuration wizard. All collected data will remain unchanged.",
   },
 
   // Comments Page
@@ -101,7 +123,7 @@ export default {
 
     issue1: {
       question: "Where does ROSE collect the data about my Facebook usage and my inserted comments?",
-      answer: "<p>Rose exclusively collects data in your web browser. ROSE can provide a pre-assembled Mail which you can use to transmit your data to the study advisor. ROSE does not transmit data to Facebook; Facebook can not detect your usage of ROSE with their computer systems. ROSE neither transmits data itself to the study advisor nor receives them.</p><p>There is a disadvantage of this privacy aware concept of ROSE, though: ROSE data can be lost in case system bugs emerge on your computer. With the deletion of ROSE from your web browser all stored data is irretrievably lost.</p>"
+      answer: "<p>ROSE exclusively collects data in your web browser. ROSE can provide a pre-assembled Mail which you can use to transmit your data to the study advisor. ROSE does not transmit data to Facebook; Facebook can not detect your usage of ROSE with their computer systems. ROSE neither transmits data itself to the study advisor nor receives them.</p><p>There is a disadvantage of this privacy aware concept of ROSE, though: ROSE data can be lost in case system bugs emerge on your computer. With the deletion of ROSE from your web browser all stored data is irretrievably lost.</p>"
     },
     issue2: {
       question: "Are my ROSE study comments visible for other study participants or Facebook users?",

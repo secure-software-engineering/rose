@@ -1448,8 +1448,6 @@ define('rose/initializers/export-application-global', ['exports', 'ember', 'rose
     }
   }
 
-  ;
-
   exports['default'] = {
     name: 'export-application-global',
 
@@ -1544,6 +1542,236 @@ define('rose/instance-initializers/ember-i18n', ['exports', 'ember', 'ember-i18n
   };
 
 });
+define('rose/liquid-fire/tests/modules/liquid-fire/action.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/action.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/action.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/animate.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/animate.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/animate.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/components/liquid-measured.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire/components');
+  test('modules/liquid-fire/components/liquid-measured.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/components/liquid-measured.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/components/liquid-spacer.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire/components');
+  test('modules/liquid-fire/components/liquid-spacer.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/components/liquid-spacer.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/constrainables.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/constrainables.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/constrainables.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/constraint.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/constraint.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/constraint.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/constraints.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/constraints.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/constraints.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/dsl.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/dsl.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/dsl.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/ember-internals.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/ember-internals.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/ember-internals.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/growable.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/growable.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/growable.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/index.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/index.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/index.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/internal-rules.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/internal-rules.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/internal-rules.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/modal.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/modal.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/modal.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/modals.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/modals.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/modals.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/mutation-observer.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/mutation-observer.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/mutation-observer.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/promise.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/promise.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/promise.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/router-dsl-ext.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/router-dsl-ext.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/router-dsl-ext.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/rule.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/rule.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/rule.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/running-transition.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/running-transition.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/running-transition.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/tabbable.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/tabbable.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/tabbable.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/transition-map.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/transition-map.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/transition-map.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/velocity-ext.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/velocity-ext.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/velocity-ext.js should pass jshint.');
+  });
+
+});
+define('rose/liquid-fire/tests/modules/liquid-fire/version-warnings.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - modules/liquid-fire');
+  test('modules/liquid-fire/version-warnings.js should pass jshint', function () {
+    ok(true, 'modules/liquid-fire/version-warnings.js should pass jshint.');
+  });
+
+});
 define('rose/locales/de/config', ['exports'], function (exports) {
 
   'use strict';
@@ -1606,13 +1834,13 @@ define('rose/locales/de/translations', ['exports'], function (exports) {
     },
 
     wizard: {
-      header: "Welcome to Rose",
-      description: "In this step we first need to configure Rose to work properly.",
-      configOptions: "Choose one option to configure Rose.",
+      header: "Welcome to ROSE",
+      description: "In this step we first need to configure ROSE to work properly.",
+      configOptions: "Choose one option to configure ROSE.",
       defaultConfig: "Take the default configuration.",
       fileConfig: "Select a configuration file...",
       fileConfigBtn: "Choose file",
-      urlConfig: "Specifiy a URL to an Rose repository..."
+      urlConfig: "Specifiy a URL to an ROSE repository..."
     },
 
     // Diary Page
@@ -1670,7 +1898,7 @@ define('rose/locales/de/translations', ['exports'], function (exports) {
 
       issue1: {
         question: "Where does ROSE collect the data about my Facebook usage and my inserted comments?",
-        answer: "<p>Rose exclusively collects data in your web browser. ROSE can provide a pre-assembled Mail which you can use to transmit your data to the study advisor. ROSE does not transmit data to Facebook; Facebook can not detect your usage of ROSE with their computer systems. ROSE neither transmits data itself to the study advisor nor receives them.</p><p>There is a disadvantage of this privacy aware concept of ROSE, though: ROSE data can be lost in case system bugs emerge on your computer. With the deletion of ROSE from your web browser all stored data is irretrievably lost.</p>"
+        answer: "<p>ROSE exclusively collects data in your web browser. ROSE can provide a pre-assembled Mail which you can use to transmit your data to the study advisor. ROSE does not transmit data to Facebook; Facebook can not detect your usage of ROSE with their computer systems. ROSE neither transmits data itself to the study advisor nor receives them.</p><p>There is a disadvantage of this privacy aware concept of ROSE, though: ROSE data can be lost in case system bugs emerge on your computer. With the deletion of ROSE from your web browser all stored data is irretrievably lost.</p>"
       },
       issue2: {
         question: "Are my ROSE study comments visible for other study participants or Facebook users?",
@@ -1809,13 +2037,17 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
     },
 
     wizard: {
-      header: "Welcome to Rose",
-      description: "In this step we first need to configure Rose to work properly.",
-      configOptions: "Choose one option to configure Rose.",
-      defaultConfig: "Take the default configuration.",
+      header: "Welcome to ROSE",
+      description: "In this step we first need to configure ROSE to work properly.",
+      configOptions: "Choose one option to configure ROSE.",
+      defaultConfigHeader: "Use default configuration.",
+      fileConfigHeader: "Use configuration file",
+      defaultConfigDescription: "I have no configuration file to customize the configuration of ROSE. Please initialize ROSE with the default configuration.",
+      fileConfigDescription: "I have a customized configuration file for initializing ROSE. Please let me load it now.",
       fileConfig: "Select a configuration file...",
-      fileConfigBtn: "Choose file",
-      urlConfig: "Specifiy a URL to an Rose repository..."
+      fileConfigBtn: "Let me choose the config file",
+      defaultBtn: "Go ahead with default",
+      urlConfig: "Specifiy a URL to an ROSE repository..."
     },
 
     // Diary Page
@@ -1824,10 +2056,19 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
       subtitle: "Here you can take notes of everything that attracted your attention"
     },
 
-    // Backup Page
+    // Data Management aka Backup Page
     backup: {
       title: "Data Management",
-      subtitle: "Here you can review, download and wipe all data recorded and collected by ROSE. If you press the \"Download\" button you can store all data in a file locally on your computer."
+      subtitle: "Here you can review, download and wipe all data recorded and collected by ROSE. If you press the \"Download\" button you can store all data in a file locally on your computer.",
+      resetData: "Wipe data",
+      resetDataLabel: "Wipe all data collect by ROSE",
+      "export": "Export data",
+      exportLabel: "Export all collected data to hand it over to the researchers for data analysis"
+    },
+
+    resetDataModal: {
+      question: "Confirm wiping all collected data",
+      warning: "Are you sure you want to delete all data collected? This action cannot be undone."
     },
 
     // Settings Page
@@ -1841,7 +2082,16 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
       extraFeatures: "Features for researchers and developers",
       extraFeaturesLabel: "ROSE has additional features for field researchers and ROSE developers. These features are normally not visible, but can be activated here.",
       resetRose: "Reset ROSE configuration",
-      resetRoseLabel: "Here you can reset ROSE's configurations. The initialization wizard will appear again asking you to load either a default configuration or a specific study configuration file."
+      resetRoseLabel: "Here you can reset ROSE's configurations. The initialization wizard will appear again asking you to load either a default configuration or a specific study configuration file.",
+      manualUpdate: "Manual configuration update",
+      manualUpdateLabel: "Because social media pages change there design from time to time, ROSE occasionally requires an update to adapt to these changes. Here you can trigger this update manually.",
+      autoUpdate: "Automatically update configuration",
+      autoUpdateLabel: "Switch on the automatic update function if ROSE shall automatically adapt to recent changes in social media pages."
+    },
+
+    resetConfigModal: {
+      question: "Confirm resetting the configuration of ROSE",
+      warning: "Are you sure you want to reset the configuration of ROSE. This action will bring you back to the configuration wizard. All collected data will remain unchanged."
     },
 
     // Comments Page
@@ -1873,7 +2123,7 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
 
       issue1: {
         question: "Where does ROSE collect the data about my Facebook usage and my inserted comments?",
-        answer: "<p>Rose exclusively collects data in your web browser. ROSE can provide a pre-assembled Mail which you can use to transmit your data to the study advisor. ROSE does not transmit data to Facebook; Facebook can not detect your usage of ROSE with their computer systems. ROSE neither transmits data itself to the study advisor nor receives them.</p><p>There is a disadvantage of this privacy aware concept of ROSE, though: ROSE data can be lost in case system bugs emerge on your computer. With the deletion of ROSE from your web browser all stored data is irretrievably lost.</p>"
+        answer: "<p>ROSE exclusively collects data in your web browser. ROSE can provide a pre-assembled Mail which you can use to transmit your data to the study advisor. ROSE does not transmit data to Facebook; Facebook can not detect your usage of ROSE with their computer systems. ROSE neither transmits data itself to the study advisor nor receives them.</p><p>There is a disadvantage of this privacy aware concept of ROSE, though: ROSE data can be lost in case system bugs emerge on your computer. With the deletion of ROSE from your web browser all stored data is irretrievably lost.</p>"
       },
       issue2: {
         question: "Are my ROSE study comments visible for other study participants or Facebook users?",
@@ -1963,11 +2213,12 @@ define('rose/models/comment', ['exports', 'ember-data'], function (exports, DS) 
     createdAt: DS['default'].attr('string', { defaultValue: function defaultValue() {
         return new Date().toJSON();
       } }),
+    checkbox: DS['default'].attr('array'),
     updatedAt: DS['default'].attr(),
     isPrivate: DS['default'].attr('boolean'),
     rating: DS['default'].attr('array'),
     contentId: DS['default'].attr('string'),
-    engage: DS['default'].attr('string'),
+    type: DS['default'].attr('string'),
     network: DS['default'].attr()
   });
 
@@ -3122,7 +3373,7 @@ define('rose/pods/components/installation-wizard/template', ['exports'], functio
         ["inline","t",["wizard.defaultConfigHeader"],[],["loc",[null,[15,32],[15,66]]]],
         ["inline","t",["wizard.defaultConfigDescription"],[],["loc",[null,[17,14],[17,53]]]],
         ["element","action",["selectDefaultConfig"],[],["loc",[null,[21,18],[21,50]]]],
-        ["inline","t",["action.select"],[],["loc",[null,[22,12],[22,33]]]],
+        ["inline","t",["wizard.defaultBtn"],[],["loc",[null,[22,12],[22,37]]]],
         ["inline","t",["wizard.fileConfigHeader"],[],["loc",[null,[27,32],[27,63]]]],
         ["inline","t",["wizard.fileConfigDescription"],[],["loc",[null,[29,14],[29,50]]]],
         ["element","action",["openFileChooser"],[],["loc",[null,[33,18],[33,46]]]],
@@ -7485,7 +7736,7 @@ define('rose/templates/modal/reset-config', ['exports'], function (exports) {
         return morphs;
       },
       statements: [
-        ["block","ui-modal",[],["class","reset-config","approve",["subexpr","action",["approveModal"],[],["loc",[null,[1,41],[1,64]]]]],0,null,["loc",[null,[1,0],[18,13]]]]
+        ["block","ui-modal",[],["class","reset-config","onApprove",["subexpr","action",["approveModal"],[],["loc",[null,[1,43],[1,66]]]]],0,null,["loc",[null,[1,0],[18,13]]]]
       ],
       locals: [],
       templates: [child0]
@@ -7630,7 +7881,7 @@ define('rose/templates/modal/reset-data', ['exports'], function (exports) {
         return morphs;
       },
       statements: [
-        ["block","ui-modal",[],["class","reset-data","approve",["subexpr","action",["approveModal"],[],["loc",[null,[1,39],[1,62]]]]],0,null,["loc",[null,[1,0],[17,13]]]]
+        ["block","ui-modal",[],["class","reset-data","onApprove",["subexpr","action",["approveModal"],[],["loc",[null,[1,41],[1,64]]]]],0,null,["loc",[null,[1,0],[17,13]]]]
       ],
       locals: [],
       templates: [child0]
@@ -10152,7 +10403,7 @@ define('rose/tests/controllers/settings.jshint', function () {
 
   module('JSHint - controllers');
   test('controllers/settings.js should pass jshint', function() { 
-    ok(false, 'controllers/settings.js should pass jshint.\ncontrollers/settings.js: line 1, col 26, Missing semicolon.\ncontrollers/settings.js: line 2, col 45, Missing semicolon.\ncontrollers/settings.js: line 4, col 31, Missing semicolon.\ncontrollers/settings.js: line 18, col 39, Missing semicolon.\ncontrollers/settings.js: line 19, col 41, Missing semicolon.\ncontrollers/settings.js: line 23, col 73, Missing semicolon.\ncontrollers/settings.js: line 24, col 32, Missing semicolon.\ncontrollers/settings.js: line 28, col 38, Missing semicolon.\ncontrollers/settings.js: line 32, col 55, Missing semicolon.\ncontrollers/settings.js: line 33, col 11, Missing semicolon.\ncontrollers/settings.js: line 34, col 9, Missing semicolon.\ncontrollers/settings.js: line 38, col 54, Missing semicolon.\ncontrollers/settings.js: line 49, col 44, Missing semicolon.\ncontrollers/settings.js: line 51, col 47, Missing semicolon.\ncontrollers/settings.js: line 52, col 9, Missing semicolon.\ncontrollers/settings.js: line 55, col 3, Missing semicolon.\ncontrollers/settings.js: line 30, col 50, \'e\' is defined but never used.\n\n17 errors'); 
+    ok(false, 'controllers/settings.js should pass jshint.\ncontrollers/settings.js: line 30, col 50, \'e\' is defined but never used.\n\n1 error'); 
   });
 
 });
@@ -10162,7 +10413,7 @@ define('rose/tests/controllers/study-creator.jshint', function () {
 
   module('JSHint - controllers');
   test('controllers/study-creator.js should pass jshint', function() { 
-    ok(false, 'controllers/study-creator.js should pass jshint.\ncontrollers/study-creator.js: line 1, col 26, Missing semicolon.\ncontrollers/study-creator.js: line 9, col 69, Missing semicolon.\ncontrollers/study-creator.js: line 14, col 69, Missing semicolon.\ncontrollers/study-creator.js: line 19, col 31, Missing semicolon.\ncontrollers/study-creator.js: line 23, col 27, Missing semicolon.\ncontrollers/study-creator.js: line 32, col 95, Missing semicolon.\ncontrollers/study-creator.js: line 35, col 91, Missing semicolon.\ncontrollers/study-creator.js: line 37, col 25, Missing semicolon.\ncontrollers/study-creator.js: line 38, col 11, Missing semicolon.\ncontrollers/study-creator.js: line 40, col 45, Missing semicolon.\ncontrollers/study-creator.js: line 41, col 32, Missing semicolon.\ncontrollers/study-creator.js: line 42, col 54, Missing semicolon.\ncontrollers/study-creator.js: line 43, col 50, Missing semicolon.\ncontrollers/study-creator.js: line 45, col 52, Missing semicolon.\ncontrollers/study-creator.js: line 49, col 50, Missing semicolon.\ncontrollers/study-creator.js: line 53, col 47, Missing semicolon.\ncontrollers/study-creator.js: line 59, col 48, Missing semicolon.\ncontrollers/study-creator.js: line 60, col 47, Missing semicolon.\ncontrollers/study-creator.js: line 61, col 78, Missing semicolon.\ncontrollers/study-creator.js: line 62, col 17, Missing semicolon.\ncontrollers/study-creator.js: line 63, col 15, Missing semicolon.\ncontrollers/study-creator.js: line 65, col 11, Missing semicolon.\ncontrollers/study-creator.js: line 69, col 60, Missing semicolon.\ncontrollers/study-creator.js: line 73, col 61, Missing semicolon.\ncontrollers/study-creator.js: line 76, col 3, Missing semicolon.\n\n25 errors'); 
+    ok(true, 'controllers/study-creator.js should pass jshint.'); 
   });
 
 });
@@ -10259,7 +10510,7 @@ define('rose/tests/locales/de/config.jshint', function () {
 
   module('JSHint - locales/de');
   test('locales/de/config.js should pass jshint', function() { 
-    ok(false, 'locales/de/config.js should pass jshint.\nlocales/de/config.js: line 16, col 2, Missing semicolon.\n\n1 error'); 
+    ok(true, 'locales/de/config.js should pass jshint.'); 
   });
 
 });
@@ -10279,7 +10530,7 @@ define('rose/tests/locales/en/config.jshint', function () {
 
   module('JSHint - locales/en');
   test('locales/en/config.js should pass jshint', function() { 
-    ok(false, 'locales/en/config.js should pass jshint.\nlocales/en/config.js: line 16, col 2, Missing semicolon.\n\n1 error'); 
+    ok(true, 'locales/en/config.js should pass jshint.'); 
   });
 
 });
@@ -10489,7 +10740,7 @@ define('rose/tests/routes/application.jshint', function () {
 
   module('JSHint - routes');
   test('routes/application.js should pass jshint', function() { 
-    ok(false, 'routes/application.js should pass jshint.\nroutes/application.js: line 16, col 35, Missing semicolon.\nroutes/application.js: line 20, col 7, Missing semicolon.\n\n2 errors'); 
+    ok(true, 'routes/application.js should pass jshint.'); 
   });
 
 });
@@ -10499,7 +10750,7 @@ define('rose/tests/routes/backup.jshint', function () {
 
   module('JSHint - routes');
   test('routes/backup.js should pass jshint', function() { 
-    ok(false, 'routes/backup.js should pass jshint.\nroutes/backup.js: line 17, col 113, Missing semicolon.\nroutes/backup.js: line 18, col 121, Missing semicolon.\nroutes/backup.js: line 19, col 121, Missing semicolon.\nroutes/backup.js: line 20, col 123, Missing semicolon.\nroutes/backup.js: line 21, col 125, Missing semicolon.\n\n5 errors'); 
+    ok(true, 'routes/backup.js should pass jshint.'); 
   });
 
 });
@@ -10616,7 +10867,7 @@ define('rose/tests/transforms/array.jshint', function () {
 
   module('JSHint - transforms');
   test('transforms/array.js should pass jshint', function() { 
-    ok(false, 'transforms/array.js should pass jshint.\ntransforms/array.js: line 6, col 40, Expected \'===\' and instead saw \'==\'.\ntransforms/array.js: line 11, col 16, Expected \'===\' and instead saw \'==\'.\ntransforms/array.js: line 12, col 26, Missing semicolon.\ntransforms/array.js: line 13, col 23, Expected \'===\' and instead saw \'==\'.\n\n4 errors'); 
+    ok(false, 'transforms/array.js should pass jshint.\ntransforms/array.js: line 6, col 40, Expected \'===\' and instead saw \'==\'.\ntransforms/array.js: line 11, col 16, Expected \'===\' and instead saw \'==\'.\ntransforms/array.js: line 13, col 23, Expected \'===\' and instead saw \'==\'.\n\n3 errors'); 
   });
 
 });
@@ -12491,7 +12742,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.091498ab"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.aef48f1e"});
 }
 
 /* jshint ignore:end */

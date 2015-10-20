@@ -19,9 +19,11 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 import { sha1 as hash } from '../crypto';
+import ConfigsModel from 'rose/models/system-config';
 
 let type = 'fb-login';
 let login = false;
+let configs = new ConfigsModel();
 
 let getLatestStatus = function() {
   return new Promise((resolve) => {
@@ -53,7 +55,7 @@ let store = function() {
 
 let checkStatus = async function() {
   let id = $.cookie('c_user');
-  let loginTmp = (id) ? hash(id) : false;
+  let loginTmp = (id) ? hash(id, configs.get('salt'), configs.get('hashLength')) : false;
 
   if (login !== loginTmp) {
     login = loginTmp;
@@ -69,8 +71,9 @@ let start = async function() {
 
   if ((new RegExp('^https:\/\/[\w\.\-]*(' + networkDomain.replace(/\./g, '\\$&') + ')$')).test(window.location.origin)) {
     login = await getLatestStatus();
-
-    checkStatus();
+    configs.fetch({success: () => {
+      checkStatus();
+    }})
   }
 };
 

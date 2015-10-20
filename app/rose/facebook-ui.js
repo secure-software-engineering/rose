@@ -211,7 +211,7 @@ export default (function () {
     $('body').on('click', '.rose.comment', function(evt) {
         // Receive id for content element
         var $container = $(evt.currentTarget).siblings('.userContentWrapper');
-        var extractorResult = ExtractorEngine.extractFieldsFromContainer($container, this._statusUpdateExtractor);
+        var extractorResult = ExtractorEngine.extractFieldsFromContainer($container, this._statusUpdateExtractor, this._configs);
 
         //Show sidebar
         $('.ui.sidebar').sidebar('push page');

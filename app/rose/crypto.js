@@ -18,22 +18,17 @@ You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SystemConfigModel from 'rose/models/system-config';
-
 export default {
     /**
      * Generates the SHA1 hash of a message.
      * @param {String} message - The message to be hashed.
      * @returns {String}
      */
-    sha1: function sha1(message) {
-        var configs = new SystemConfigModel();
-        configs.fetch();
-        var md = forge.md.sha1.create();
-        var salt = configs.get('salt');
-        md.update(salt + message);
-        var hash = md.digest().toHex();
+    sha1: function sha1(message, salt, hashLength) {
+        let md = forge.md.sha1.create()
+        md.update(salt + message)
+        let hash = md.digest().toHex()
 
-        return hash.slice(0, configs.get('hashLength'));
+        return hash.slice(0, hashLength)
     }
-};
+}

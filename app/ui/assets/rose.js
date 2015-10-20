@@ -1309,6 +1309,8 @@ define('rose/controllers/study-creator', ['exports', 'ember'], function (exports
       fetchBaseFile: function fetchBaseFile() {
         var _this = this;
 
+        this.set('networks', []);
+
         var url = this.get('model.repositoryURL');
         Ember['default'].$.getJSON(url + 'base.json').then(function (baseJSON) {
           if (baseJSON.networks) {
@@ -12742,7 +12744,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.aef48f1e"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.22ea1c4d"});
 }
 
 /* jshint ignore:end */

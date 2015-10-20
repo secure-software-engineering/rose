@@ -46,6 +46,8 @@ export default Ember.Controller.extend({
     },
 
     fetchBaseFile () {
+      this.set('networks', [])
+
       const url = this.get('model.repositoryURL')
       Ember.$.getJSON(url + 'base.json')
         .then((baseJSON) => {

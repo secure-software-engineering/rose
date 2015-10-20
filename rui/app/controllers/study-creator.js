@@ -4,6 +4,14 @@ export default Ember.Controller.extend({
   baseFileIsLoading: false,
   networks: [],
 
+  updateIntervals: [
+    { label: 'hourly', value: 3600000 },
+    { label: 'daily', value: 86400000 },
+    { label: 'weekly', value: 604800000 },
+    { label: 'monthly', value: 2629743830 },
+    { label: 'yearly', value: 31556926000 }
+  ],
+
   getExtractors (url) {
     return Ember.$.getJSON(url)
       .then((list) => list.map((item) => Ember.Object.create(item)))

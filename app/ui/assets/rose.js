@@ -1256,6 +1256,8 @@ define('rose/controllers/study-creator', ['exports', 'ember'], function (exports
     baseFileIsLoading: false,
     networks: [],
 
+    updateIntervals: [{ label: 'hourly', value: 3600000 }, { label: 'daily', value: 86400000 }, { label: 'weekly', value: 604800000 }, { label: 'monthly', value: 2629743830 }, { label: 'yearly', value: 31556926000 }],
+
     getExtractors: function getExtractors(url) {
       return Ember['default'].$.getJSON(url).then(function (list) {
         return list.map(function (item) {
@@ -2296,7 +2298,8 @@ define('rose/models/study-creator-setting', ['exports', 'ember-data'], function 
     autoUpdateIsEnabled: DS['default'].attr('boolean'),
     fileName: DS['default'].attr('string', { defaultValue: 'rose-study-configuration.txt' }),
     networks: DS['default'].hasMany('network', { async: true }),
-    fingerprint: DS['default'].attr('string')
+    fingerprint: DS['default'].attr('string'),
+    updateInterval: DS['default'].attr('number')
   });
 
 });
@@ -9277,11 +9280,11 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
               return el0;
             },
             buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-              var element1 = dom.childAt(fragment, [1]);
+              var element2 = dom.childAt(fragment, [1]);
               var morphs = new Array(3);
-              morphs[0] = dom.createMorphAt(dom.childAt(element1, [1]),1,1);
-              morphs[1] = dom.createMorphAt(dom.childAt(element1, [3]),0,0);
-              morphs[2] = dom.createMorphAt(dom.childAt(element1, [5]),0,0);
+              morphs[0] = dom.createMorphAt(dom.childAt(element2, [1]),1,1);
+              morphs[1] = dom.createMorphAt(dom.childAt(element2, [3]),0,0);
+              morphs[2] = dom.createMorphAt(dom.childAt(element2, [5]),0,0);
               return morphs;
             },
             statements: [
@@ -9453,13 +9456,13 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
               return el0;
             },
             buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-              var element0 = dom.childAt(fragment, [1]);
+              var element1 = dom.childAt(fragment, [1]);
               var morphs = new Array(5);
-              morphs[0] = dom.createMorphAt(dom.childAt(element0, [1]),1,1);
-              morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
-              morphs[2] = dom.createMorphAt(dom.childAt(element0, [5]),0,0);
-              morphs[3] = dom.createMorphAt(dom.childAt(element0, [7]),0,0);
-              morphs[4] = dom.createMorphAt(dom.childAt(element0, [9]),0,0);
+              morphs[0] = dom.createMorphAt(dom.childAt(element1, [1]),1,1);
+              morphs[1] = dom.createMorphAt(dom.childAt(element1, [3]),0,0);
+              morphs[2] = dom.createMorphAt(dom.childAt(element1, [5]),0,0);
+              morphs[3] = dom.createMorphAt(dom.childAt(element1, [7]),0,0);
+              morphs[4] = dom.createMorphAt(dom.childAt(element1, [9]),0,0);
               return morphs;
             },
             statements: [
@@ -9722,43 +9725,43 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
             return el0;
           },
           buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-            var element2 = dom.childAt(fragment, [1]);
-            var element3 = dom.childAt(element2, [1]);
-            var element4 = dom.childAt(element2, [3]);
-            var element5 = dom.childAt(element4, [1, 1]);
-            var element6 = dom.childAt(element4, [5, 1, 1]);
-            var element7 = dom.childAt(element6, [1]);
-            var element8 = dom.childAt(element6, [3]);
-            var element9 = dom.childAt(fragment, [3]);
-            var element10 = dom.childAt(element9, [1]);
-            var element11 = dom.childAt(element9, [3]);
-            var element12 = dom.childAt(element11, [1, 1]);
-            var element13 = dom.childAt(element11, [5, 1, 1]);
-            var element14 = dom.childAt(element13, [1]);
-            var element15 = dom.childAt(element13, [3]);
+            var element3 = dom.childAt(fragment, [1]);
+            var element4 = dom.childAt(element3, [1]);
+            var element5 = dom.childAt(element3, [3]);
+            var element6 = dom.childAt(element5, [1, 1]);
+            var element7 = dom.childAt(element5, [5, 1, 1]);
+            var element8 = dom.childAt(element7, [1]);
+            var element9 = dom.childAt(element7, [3]);
+            var element10 = dom.childAt(fragment, [3]);
+            var element11 = dom.childAt(element10, [1]);
+            var element12 = dom.childAt(element10, [3]);
+            var element13 = dom.childAt(element12, [1, 1]);
+            var element14 = dom.childAt(element12, [5, 1, 1]);
+            var element15 = dom.childAt(element14, [1]);
+            var element16 = dom.childAt(element14, [3]);
             var morphs = new Array(22);
-            morphs[0] = dom.createMorphAt(element3,1,1);
-            morphs[1] = dom.createMorphAt(dom.childAt(element3, [3]),0,0);
-            morphs[2] = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
-            morphs[3] = dom.createMorphAt(dom.childAt(element5, [3]),0,0);
-            morphs[4] = dom.createMorphAt(dom.childAt(element5, [5]),0,0);
-            morphs[5] = dom.createMorphAt(dom.childAt(element4, [3]),1,1);
-            morphs[6] = dom.createElementMorph(element7);
-            morphs[7] = dom.createMorphAt(element7,0,0);
-            morphs[8] = dom.createElementMorph(element8);
-            morphs[9] = dom.createMorphAt(element8,0,0);
-            morphs[10] = dom.createMorphAt(element10,1,1);
-            morphs[11] = dom.createMorphAt(element10,3,3);
-            morphs[12] = dom.createMorphAt(dom.childAt(element12, [1]),0,0);
-            morphs[13] = dom.createMorphAt(dom.childAt(element12, [3]),0,0);
-            morphs[14] = dom.createMorphAt(dom.childAt(element12, [5]),0,0);
-            morphs[15] = dom.createMorphAt(dom.childAt(element12, [7]),0,0);
-            morphs[16] = dom.createMorphAt(dom.childAt(element12, [9]),0,0);
-            morphs[17] = dom.createMorphAt(dom.childAt(element11, [3]),1,1);
-            morphs[18] = dom.createElementMorph(element14);
-            morphs[19] = dom.createMorphAt(element14,0,0);
-            morphs[20] = dom.createElementMorph(element15);
-            morphs[21] = dom.createMorphAt(element15,0,0);
+            morphs[0] = dom.createMorphAt(element4,1,1);
+            morphs[1] = dom.createMorphAt(dom.childAt(element4, [3]),0,0);
+            morphs[2] = dom.createMorphAt(dom.childAt(element6, [1]),0,0);
+            morphs[3] = dom.createMorphAt(dom.childAt(element6, [3]),0,0);
+            morphs[4] = dom.createMorphAt(dom.childAt(element6, [5]),0,0);
+            morphs[5] = dom.createMorphAt(dom.childAt(element5, [3]),1,1);
+            morphs[6] = dom.createElementMorph(element8);
+            morphs[7] = dom.createMorphAt(element8,0,0);
+            morphs[8] = dom.createElementMorph(element9);
+            morphs[9] = dom.createMorphAt(element9,0,0);
+            morphs[10] = dom.createMorphAt(element11,1,1);
+            morphs[11] = dom.createMorphAt(element11,3,3);
+            morphs[12] = dom.createMorphAt(dom.childAt(element13, [1]),0,0);
+            morphs[13] = dom.createMorphAt(dom.childAt(element13, [3]),0,0);
+            morphs[14] = dom.createMorphAt(dom.childAt(element13, [5]),0,0);
+            morphs[15] = dom.createMorphAt(dom.childAt(element13, [7]),0,0);
+            morphs[16] = dom.createMorphAt(dom.childAt(element13, [9]),0,0);
+            morphs[17] = dom.createMorphAt(dom.childAt(element12, [3]),1,1);
+            morphs[18] = dom.createElementMorph(element15);
+            morphs[19] = dom.createMorphAt(element15,0,0);
+            morphs[20] = dom.createElementMorph(element16);
+            morphs[21] = dom.createMorphAt(element16,0,0);
             return morphs;
           },
           statements: [
@@ -9830,10 +9833,10 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element16 = dom.childAt(fragment, [1]);
+          var element17 = dom.childAt(fragment, [1]);
           var morphs = new Array(2);
-          morphs[0] = dom.createMorphAt(element16,1,1);
-          morphs[1] = dom.createMorphAt(element16,3,3);
+          morphs[0] = dom.createMorphAt(element17,1,1);
+          morphs[1] = dom.createMorphAt(element17,3,3);
           return morphs;
         },
         statements: [
@@ -9841,6 +9844,121 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
           ["block","if",[["get","network.isEnabled",["loc",[null,[87,14],[87,31]]]]],[],0,null,["loc",[null,[87,8],[164,13]]]]
         ],
         locals: ["network"],
+        templates: [child0]
+      };
+    }());
+    var child1 = (function() {
+      var child0 = (function() {
+        return {
+          meta: {
+            "revision": "Ember@1.13.10",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 188,
+                "column": 6
+              },
+              "end": {
+                "line": 192,
+                "column": 6
+              }
+            },
+            "moduleName": "rose/templates/study-creator.hbs"
+          },
+          arity: 1,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("        ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("div");
+            dom.setAttribute(el1,"class","item");
+            var el2 = dom.createTextNode("\n          ");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createComment("");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("\n        ");
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var element0 = dom.childAt(fragment, [1]);
+            var morphs = new Array(2);
+            morphs[0] = dom.createAttrMorph(element0, 'data-value');
+            morphs[1] = dom.createMorphAt(element0,1,1);
+            return morphs;
+          },
+          statements: [
+            ["attribute","data-value",["get","interval.value",["loc",[null,[189,39],[189,53]]]]],
+            ["content","interval.label",["loc",[null,[190,10],[190,28]]]]
+          ],
+          locals: ["interval"],
+          templates: []
+        };
+      }());
+      return {
+        meta: {
+          "revision": "Ember@1.13.10",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 182,
+              "column": 4
+            },
+            "end": {
+              "line": 194,
+              "column": 4
+            }
+          },
+          "moduleName": "rose/templates/study-creator.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","default text");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("i");
+          dom.setAttribute(el1,"class","dropdown icon");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","menu");
+          var el2 = dom.createTextNode("\n");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("      ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(2);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),0,0);
+          morphs[1] = dom.createMorphAt(dom.childAt(fragment, [5]),1,1);
+          return morphs;
+        },
+        statements: [
+          ["inline","t",["model.updateInterval"],[],["loc",[null,[185,32],[185,60]]]],
+          ["block","each",[["get","updateIntervals",["loc",[null,[188,14],[188,29]]]]],[],0,null,["loc",[null,[188,6],[192,15]]]]
+        ],
+        locals: [],
         templates: [child0]
       };
     }());
@@ -9854,7 +9972,7 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 192,
+            "line": 210,
             "column": 0
           }
         },
@@ -10122,6 +10240,29 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createComment("");
@@ -10148,54 +10289,58 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element17 = dom.childAt(fragment, [0, 3]);
-        var element18 = dom.childAt(fragment, [2]);
-        var element19 = dom.childAt(element18, [1]);
-        var element20 = dom.childAt(element18, [3]);
-        var element21 = dom.childAt(element18, [5]);
-        var element22 = dom.childAt(element18, [7]);
-        var element23 = dom.childAt(element18, [9]);
-        var element24 = dom.childAt(element23, [5]);
-        var element25 = dom.childAt(element24, [3]);
-        var element26 = dom.childAt(element18, [11]);
-        var element27 = dom.childAt(element18, [13]);
-        var element28 = dom.childAt(element18, [15]);
-        var element29 = dom.childAt(element18, [17]);
-        var element30 = dom.childAt(element18, [19]);
-        var morphs = new Array(33);
-        morphs[0] = dom.createMorphAt(element17,1,1);
-        morphs[1] = dom.createMorphAt(dom.childAt(element17, [3]),0,0);
-        morphs[2] = dom.createMorphAt(dom.childAt(element19, [1]),0,0);
-        morphs[3] = dom.createMorphAt(dom.childAt(element19, [3]),0,0);
-        morphs[4] = dom.createMorphAt(element19,5,5);
-        morphs[5] = dom.createMorphAt(dom.childAt(element20, [1]),0,0);
-        morphs[6] = dom.createMorphAt(dom.childAt(element20, [3]),0,0);
-        morphs[7] = dom.createMorphAt(element20,5,5);
-        morphs[8] = dom.createMorphAt(dom.childAt(element21, [1]),0,0);
-        morphs[9] = dom.createMorphAt(dom.childAt(element21, [3]),0,0);
-        morphs[10] = dom.createMorphAt(element21,5,5);
-        morphs[11] = dom.createMorphAt(dom.childAt(element22, [1]),0,0);
-        morphs[12] = dom.createMorphAt(dom.childAt(element22, [3]),0,0);
-        morphs[13] = dom.createMorphAt(element22,5,5);
-        morphs[14] = dom.createMorphAt(dom.childAt(element23, [1]),0,0);
-        morphs[15] = dom.createMorphAt(dom.childAt(element23, [3]),0,0);
-        morphs[16] = dom.createMorphAt(element24,1,1);
-        morphs[17] = dom.createAttrMorph(element25, 'class');
-        morphs[18] = dom.createElementMorph(element25);
-        morphs[19] = dom.createMorphAt(dom.childAt(element26, [1]),0,0);
-        morphs[20] = dom.createMorphAt(dom.childAt(element26, [3]),0,0);
-        morphs[21] = dom.createMorphAt(dom.childAt(element26, [5]),1,1);
-        morphs[22] = dom.createMorphAt(dom.childAt(element27, [1]),0,0);
-        morphs[23] = dom.createMorphAt(dom.childAt(element27, [3]),0,0);
-        morphs[24] = dom.createMorphAt(element27,5,5);
-        morphs[25] = dom.createMorphAt(dom.childAt(element28, [1]),0,0);
-        morphs[26] = dom.createMorphAt(dom.childAt(element28, [3]),0,0);
-        morphs[27] = dom.createMorphAt(element28,5,5);
-        morphs[28] = dom.createMorphAt(dom.childAt(element29, [1]),0,0);
-        morphs[29] = dom.createMorphAt(dom.childAt(element29, [3]),0,0);
-        morphs[30] = dom.createMorphAt(element29,5,5);
-        morphs[31] = dom.createElementMorph(element30);
-        morphs[32] = dom.createMorphAt(element30,1,1);
+        var element18 = dom.childAt(fragment, [0, 3]);
+        var element19 = dom.childAt(fragment, [2]);
+        var element20 = dom.childAt(element19, [1]);
+        var element21 = dom.childAt(element19, [3]);
+        var element22 = dom.childAt(element19, [5]);
+        var element23 = dom.childAt(element19, [7]);
+        var element24 = dom.childAt(element19, [9]);
+        var element25 = dom.childAt(element24, [5]);
+        var element26 = dom.childAt(element25, [3]);
+        var element27 = dom.childAt(element19, [11]);
+        var element28 = dom.childAt(element19, [13]);
+        var element29 = dom.childAt(element19, [15]);
+        var element30 = dom.childAt(element19, [17]);
+        var element31 = dom.childAt(element19, [19]);
+        var element32 = dom.childAt(element19, [21]);
+        var morphs = new Array(36);
+        morphs[0] = dom.createMorphAt(element18,1,1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element18, [3]),0,0);
+        morphs[2] = dom.createMorphAt(dom.childAt(element20, [1]),0,0);
+        morphs[3] = dom.createMorphAt(dom.childAt(element20, [3]),0,0);
+        morphs[4] = dom.createMorphAt(element20,5,5);
+        morphs[5] = dom.createMorphAt(dom.childAt(element21, [1]),0,0);
+        morphs[6] = dom.createMorphAt(dom.childAt(element21, [3]),0,0);
+        morphs[7] = dom.createMorphAt(element21,5,5);
+        morphs[8] = dom.createMorphAt(dom.childAt(element22, [1]),0,0);
+        morphs[9] = dom.createMorphAt(dom.childAt(element22, [3]),0,0);
+        morphs[10] = dom.createMorphAt(element22,5,5);
+        morphs[11] = dom.createMorphAt(dom.childAt(element23, [1]),0,0);
+        morphs[12] = dom.createMorphAt(dom.childAt(element23, [3]),0,0);
+        morphs[13] = dom.createMorphAt(element23,5,5);
+        morphs[14] = dom.createMorphAt(dom.childAt(element24, [1]),0,0);
+        morphs[15] = dom.createMorphAt(dom.childAt(element24, [3]),0,0);
+        morphs[16] = dom.createMorphAt(element25,1,1);
+        morphs[17] = dom.createAttrMorph(element26, 'class');
+        morphs[18] = dom.createElementMorph(element26);
+        morphs[19] = dom.createMorphAt(dom.childAt(element27, [1]),0,0);
+        morphs[20] = dom.createMorphAt(dom.childAt(element27, [3]),0,0);
+        morphs[21] = dom.createMorphAt(dom.childAt(element27, [5]),1,1);
+        morphs[22] = dom.createMorphAt(dom.childAt(element28, [1]),0,0);
+        morphs[23] = dom.createMorphAt(dom.childAt(element28, [3]),0,0);
+        morphs[24] = dom.createMorphAt(element28,5,5);
+        morphs[25] = dom.createMorphAt(dom.childAt(element29, [1]),0,0);
+        morphs[26] = dom.createMorphAt(dom.childAt(element29, [3]),0,0);
+        morphs[27] = dom.createMorphAt(element29,5,5);
+        morphs[28] = dom.createMorphAt(dom.childAt(element30, [1]),0,0);
+        morphs[29] = dom.createMorphAt(dom.childAt(element30, [3]),0,0);
+        morphs[30] = dom.createMorphAt(element30,5,5);
+        morphs[31] = dom.createMorphAt(dom.childAt(element31, [1]),0,0);
+        morphs[32] = dom.createMorphAt(dom.childAt(element31, [3]),0,0);
+        morphs[33] = dom.createMorphAt(element31,5,5);
+        morphs[34] = dom.createElementMorph(element32);
+        morphs[35] = dom.createMorphAt(element32,1,1);
         return morphs;
       },
       statements: [
@@ -10227,14 +10372,17 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         ["inline","t",["studyCreator.autoUpdate"],[],["loc",[null,[170,11],[170,42]]]],
         ["inline","t",["studyCreator.autoUpdateDesc"],[],["loc",[null,[171,7],[171,42]]]],
         ["inline","ui-checkbox",[],["checked",["subexpr","@mut",[["get","model.autoUpdateIsEnabled",["loc",[null,[173,26],[173,51]]]]],[],[]],"class","toggle","label",["subexpr","boolean-to-yesno",[["get","model.autoUpdateIsEnabled",["loc",[null,[175,42],[175,67]]]]],[],["loc",[null,[175,24],[175,68]]]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[176,27],[176,50]]]]],["loc",[null,[173,4],[176,52]]]],
-        ["inline","t",["studyCreator.exportConfig"],[],["loc",[null,[180,11],[180,44]]]],
-        ["inline","t",["studyCreator.exportConfigDesc"],[],["loc",[null,[181,7],[181,44]]]],
-        ["inline","input",[],["value",["subexpr","@mut",[["get","model.fileName",["loc",[null,[183,18],[183,32]]]]],[],[]],"insert-newline","saveSettings","focus-out","saveSettings"],["loc",[null,[183,4],[185,38]]]],
-        ["element","action",["download"],[],["loc",[null,[188,36],[188,57]]]],
-        ["inline","t",["action.download"],[],["loc",[null,[189,4],[189,27]]]]
+        ["inline","t",["studyCreator.updateInterval"],[],["loc",[null,[180,11],[180,46]]]],
+        ["inline","t",["studyCreator.updateIntervalLabel"],[],["loc",[null,[181,7],[181,47]]]],
+        ["block","ui-dropdown",[],["class","selection","value",["subexpr","@mut",[["get","model.updateInterval",["loc",[null,[183,26],[183,46]]]]],[],[]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[184,29],[184,52]]]]],1,null,["loc",[null,[182,4],[194,20]]]],
+        ["inline","t",["studyCreator.exportConfig"],[],["loc",[null,[198,11],[198,44]]]],
+        ["inline","t",["studyCreator.exportConfigDesc"],[],["loc",[null,[199,7],[199,44]]]],
+        ["inline","input",[],["value",["subexpr","@mut",[["get","model.fileName",["loc",[null,[201,18],[201,32]]]]],[],[]],"insert-newline","saveSettings","focus-out","saveSettings"],["loc",[null,[201,4],[203,38]]]],
+        ["element","action",["download"],[],["loc",[null,[206,36],[206,57]]]],
+        ["inline","t",["action.download"],[],["loc",[null,[207,4],[207,27]]]]
       ],
       locals: [],
-      templates: [child0]
+      templates: [child0, child1]
     };
   }()));
 

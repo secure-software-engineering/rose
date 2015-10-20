@@ -9,5 +9,6 @@ export default DS.Model.extend({
   autoUpdateIsEnabled: DS.attr('boolean'),
   fileName: DS.attr('string', { defaultValue: 'rose-study-configuration.txt' }),
   networks: DS.hasMany('network', { async: true }),
-  fingerprint: DS.attr('string')
+  fingerprint: DS.attr('string'),
+  updateInterval: DS.attr('number')
 });

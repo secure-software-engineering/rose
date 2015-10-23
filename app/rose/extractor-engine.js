@@ -20,6 +20,7 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 import log from 'rose/log';
 import ExtractorCollection from 'rose/collections/extractors';
 import {sha1 as hash} from 'rose/crypto';
+import ConfigsModel from 'rose/models/system-config';
 
 class ExtractorEngine {
   constructor(extractorCollection) {
@@ -30,9 +31,11 @@ class ExtractorEngine {
       this.extractors = new ExtractorCollection();
       this.extractors.fetch();
     }
+    this.configs = new ConfigsModel();
+    this.configs.fetch();
   }
 
-  static extractFieldsFromContainer($container, extractor) {
+  static extractFieldsFromContainer($container, extractor, configs) {
     var fields = extractor.get('fields');
     var data = {};
 
@@ -62,7 +65,7 @@ class ExtractorEngine {
           }
 
           if (field.hash) {
-            datum = hash(datum);
+            datum = hash(datum, configs.get('salt'), configs.get('hashLength'));
           }
 
           data[field.name] = datum;
@@ -76,7 +79,7 @@ class ExtractorEngine {
 
   extractFieldsFromContainerByName($container, extractorName) {
     var extractor = this.extractors.findWhere({name: extractorName});
-    return ExtractorEngine.extractFieldsFromContainer($container, extractor);
+    return ExtractorEngine.extractFieldsFromContainer($container, extractor, this.configs);
   }
 
   handleURL(extractor) {

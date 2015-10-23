@@ -177,6 +177,24 @@
   </div>
 
   <div class="field">
+    <label>{{t "studyCreator.updateInterval"}}</label>
+    <p>{{t "studyCreator.updateIntervalLabel"}}</p>
+    {{#ui-dropdown  class="selection"
+                    value=settings.system.updateInterval
+                    onChange=(action "saveSettings")}}
+      <div class="default text">Select Interval</div>
+      <i class="dropdown icon"></i>
+      <div class="menu">
+        {{#each updateIntervals as |interval|}}
+        <div class="item" data-value={{interval.value}}>
+          {{t interval.label}}
+        </div>
+        {{/each}}
+      </div>
+    {{/ui-dropdown}}
+  </div>
+
+  <div class="field">
     <label>{{t "studyCreator.exportConfig"}}</label>
     <p>{{t "studyCreator.exportConfigDesc"}}</p>
 

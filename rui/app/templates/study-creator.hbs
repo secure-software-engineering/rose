@@ -180,16 +180,16 @@
     <label>{{t "studyCreator.updateInterval"}}</label>
     <p>{{t "studyCreator.updateIntervalLabel"}}</p>
     {{#ui-dropdown  class="selection"
-                    value=model.updateInterval
+                    value=settings.system.updateInterval
                     onChange=(action "saveSettings")}}
-      <div class="default text">{{t "model.updateInterval"}}</div>
+      <div class="default text">Select Interval</div>
       <i class="dropdown icon"></i>
       <div class="menu">
-      {{#each updateIntervals as |interval|}}
+        {{#each updateIntervals as |interval|}}
         <div class="item" data-value={{interval.value}}>
-          {{interval.label}}
+          {{t interval.label}}
         </div>
-      {{/each}}
+        {{/each}}
       </div>
     {{/ui-dropdown}}
   </div>

@@ -9856,11 +9856,11 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
               "source": null,
               "start": {
                 "line": 188,
-                "column": 6
+                "column": 8
               },
               "end": {
                 "line": 192,
-                "column": 6
+                "column": 8
               }
             },
             "moduleName": "rose/templates/study-creator.hbs"
@@ -9894,7 +9894,7 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
           },
           statements: [
             ["attribute","data-value",["get","interval.value",["loc",[null,[189,39],[189,53]]]]],
-            ["content","interval.label",["loc",[null,[190,10],[190,28]]]]
+            ["inline","t",[["get","interval.label",["loc",[null,[190,14],[190,28]]]]],[],["loc",[null,[190,10],[190,30]]]]
           ],
           locals: ["interval"],
           templates: []
@@ -9925,7 +9925,7 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
           dom.appendChild(el0, el1);
           var el1 = dom.createElement("div");
           dom.setAttribute(el1,"class","default text");
-          var el2 = dom.createComment("");
+          var el2 = dom.createTextNode("Select Interval");
           dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n      ");
@@ -9949,14 +9949,12 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(2);
-          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),0,0);
-          morphs[1] = dom.createMorphAt(dom.childAt(fragment, [5]),1,1);
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [5]),1,1);
           return morphs;
         },
         statements: [
-          ["inline","t",["model.updateInterval"],[],["loc",[null,[185,32],[185,60]]]],
-          ["block","each",[["get","updateIntervals",["loc",[null,[188,14],[188,29]]]]],[],0,null,["loc",[null,[188,6],[192,15]]]]
+          ["block","each",[["get","updateIntervals",["loc",[null,[188,16],[188,31]]]]],[],0,null,["loc",[null,[188,8],[192,17]]]]
         ],
         locals: [],
         templates: [child0]
@@ -10374,7 +10372,7 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         ["inline","ui-checkbox",[],["checked",["subexpr","@mut",[["get","model.autoUpdateIsEnabled",["loc",[null,[173,26],[173,51]]]]],[],[]],"class","toggle","label",["subexpr","boolean-to-yesno",[["get","model.autoUpdateIsEnabled",["loc",[null,[175,42],[175,67]]]]],[],["loc",[null,[175,24],[175,68]]]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[176,27],[176,50]]]]],["loc",[null,[173,4],[176,52]]]],
         ["inline","t",["studyCreator.updateInterval"],[],["loc",[null,[180,11],[180,46]]]],
         ["inline","t",["studyCreator.updateIntervalLabel"],[],["loc",[null,[181,7],[181,47]]]],
-        ["block","ui-dropdown",[],["class","selection","value",["subexpr","@mut",[["get","model.updateInterval",["loc",[null,[183,26],[183,46]]]]],[],[]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[184,29],[184,52]]]]],1,null,["loc",[null,[182,4],[194,20]]]],
+        ["block","ui-dropdown",[],["class","selection","value",["subexpr","@mut",[["get","settings.system.updateInterval",["loc",[null,[183,26],[183,56]]]]],[],[]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[184,29],[184,52]]]]],1,null,["loc",[null,[182,4],[194,20]]]],
         ["inline","t",["studyCreator.exportConfig"],[],["loc",[null,[198,11],[198,44]]]],
         ["inline","t",["studyCreator.exportConfigDesc"],[],["loc",[null,[199,7],[199,44]]]],
         ["inline","input",[],["value",["subexpr","@mut",[["get","model.fileName",["loc",[null,[201,18],[201,32]]]]],[],[]],"insert-newline","saveSettings","focus-out","saveSettings"],["loc",[null,[201,4],[203,38]]]],
@@ -12892,7 +12890,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.22ea1c4d"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.b97ec45f"});
 }
 
 /* jshint ignore:end */

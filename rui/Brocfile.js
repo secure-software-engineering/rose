@@ -5,6 +5,10 @@ var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 var app = new EmberApp({
   fingerprint: {
     enabled: false
+  },
+  emberHighCharts: {
+    includeHighCharts: false,
+    includeHighStock: true
   }
 });
 
@@ -22,8 +26,5 @@ var app = new EmberApp({
 // along with the exports of each module as its value.
 
 app.import(app.bowerDirectory + '/FileSaver/FileSaver.js');
-
-app.import(app.bowerDirectory + '/highstock/js/highstock.src.js');
-app.import(app.bowerDirectory + '/highstock/js/modules/exporting.src.js');
 
 module.exports = app.toTree();

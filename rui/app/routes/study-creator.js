@@ -1,12 +1,11 @@
 import Ember from 'ember';
+import studyCreatorDefaults from '../defaults/study-creator'
 
 export default Ember.Route.extend({
-  model: function () {
-    const self = this;
-
-    return this.store.find('study-creator-setting').then(function (settings) {
+  model () {
+    return this.store.find('study-creator-setting').then((settings) => {
       if (Ember.isEmpty(settings)) {
-        return  self.store.createRecord('study-creator-setting');
+        return this.store.createRecord('study-creator-setting', studyCreatorDefaults);
       }
 
       return settings.get('firstObject');

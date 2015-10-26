@@ -1343,6 +1343,23 @@ define('rose/controllers/study-creator', ['exports', 'ember'], function (exports
   });
 
 });
+define('rose/defaults/study-creator', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = {
+    roseCommentsIsEnabled: true,
+    roseCommentsRatingIsEnabled: true,
+    salt: 'ROSE',
+    hashLength: 8,
+    repositoryURL: 'https://secure-software-engineering.github.io/rose/example/',
+    fingerprint: '25E769C697EC2C20DA3BDDE9F188CF170FA234E8',
+    autoUpdateIsEnabled: true,
+    updateInterval: 86400000,
+    fileName: 'rose-study-configuration.txt'
+  };
+
+});
 define('rose/helpers/boolean-to-yesno', ['exports', 'ember', 'ember-i18n'], function (exports, Ember, ember_i18n) {
 
   'use strict';
@@ -4452,17 +4469,17 @@ define('rose/routes/settings', ['exports', 'ember'], function (exports, Ember) {
 	exports['default'] = Ember['default'].Route.extend({});
 
 });
-define('rose/routes/study-creator', ['exports', 'ember'], function (exports, Ember) {
+define('rose/routes/study-creator', ['exports', 'ember', 'rose/defaults/study-creator'], function (exports, Ember, studyCreatorDefaults) {
 
   'use strict';
 
   exports['default'] = Ember['default'].Route.extend({
     model: function model() {
-      var self = this;
+      var _this = this;
 
       return this.store.find('study-creator-setting').then(function (settings) {
         if (Ember['default'].isEmpty(settings)) {
-          return self.store.createRecord('study-creator-setting');
+          return _this.store.createRecord('study-creator-setting', studyCreatorDefaults['default']);
         }
 
         return settings.get('firstObject');
@@ -10565,6 +10582,16 @@ define('rose/tests/controllers/study-creator.jshint', function () {
   });
 
 });
+define('rose/tests/defaults/study-creator.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - defaults');
+  test('defaults/study-creator.js should pass jshint', function() { 
+    ok(true, 'defaults/study-creator.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/helpers/boolean-to-yesno.jshint', function () {
 
   'use strict';
@@ -12890,7 +12917,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.b97ec45f"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.57d2c23c"});
 }
 
 /* jshint ignore:end */

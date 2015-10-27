@@ -77,3 +77,11 @@ kango.addMessageListener('StartExtractorEngine', (event) => {
     extractorEngine.register();
   }});
 });
+
+kango.addMessageListener('application-log', async (event) => {
+  const applicationLog = await localforage.getItem('application-log') || []
+  const log = { date: new Date().getTime() }
+  
+  applicationLog.push(Object.assign(log, event.data))
+  await localforage.setItem('application-log', applicationLog)
+})

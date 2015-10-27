@@ -9,7 +9,7 @@ let getItem = (key) => {
 };
 
 export default Ember.Route.extend({
-  model: function() {
+  model () {
     let promises = [
       getItem('click-activity-records'),
       getItem('mousemove-activity-records'),

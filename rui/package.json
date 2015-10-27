@@ -33,6 +33,7 @@
     "ember-data": "1.0.0-beta.18",
     "ember-disable-proxy-controllers": "^1.0.0",
     "ember-export-application-global": "^1.0.3",
+    "ember-highcharts": "0.2.1",
     "ember-i18n": "4.1.1",
     "ember-i18n-inject": "0.0.1",
     "ember-localforage-adapter": "0.7.3",

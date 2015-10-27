@@ -327,6 +327,13 @@ define('rose/app', ['exports', 'ember', 'ember/resolver', 'ember/load-initialize
   exports['default'] = App;
 
 });
+define('rose/components/high-charts', ['exports', 'ember-highcharts/components/high-charts'], function (exports, HighCharts) {
+
+	'use strict';
+
+	exports['default'] = HighCharts['default'];
+
+});
 define('rose/components/lf-outlet', ['exports', 'liquid-fire/ember-internals'], function (exports, ember_internals) {
 
 	'use strict';
@@ -1175,6 +1182,188 @@ define('rose/controllers/diary', ['exports', 'ember'], function (exports, Ember)
   });
 
 });
+define('rose/controllers/index', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  exports['default'] = Ember['default'].Controller.extend({
+    clickChartOptions: {
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: 'Mouse Clicks'
+      },
+      xAxis: {
+        ordinal: false
+      },
+      yAxis: {
+        title: {
+          text: 'Number of Clicks'
+        },
+        allowDecimals: false
+      }
+    },
+
+    clickChartData: Ember['default'].computed('model', function () {
+      var model = this.get('model');
+      var data = model[0];
+
+      if (data) {
+        return [{
+          data: data.map(function (record) {
+            return [record.date, record.value];
+          })
+        }];
+      }
+    }),
+
+    mouseMoveChartOptions: {
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: 'Mouse Movement'
+      },
+      xAxis: {
+        ordinal: false
+      },
+      yAxis: {
+        title: {
+          text: 'Distance in Pixels'
+        },
+        allowDecimals: false
+      }
+    },
+
+    mouseMoveChartData: Ember['default'].computed('model', function () {
+      var model = this.get('model');
+      var data = model[1];
+
+      if (data) {
+        return [{
+          data: data.map(function (record) {
+            return [record.date, record.value];
+          })
+        }];
+      }
+    }),
+
+    scrollChartOptions: {
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: 'Page Scroll'
+      },
+      xAxis: {
+        ordinal: false
+      },
+      yAxis: {
+        title: {
+          text: 'Distance in Pixels'
+        },
+        allowDecimals: false
+      }
+    },
+
+    scrollChartData: Ember['default'].computed('model', function () {
+      var model = this.get('model');
+      var data = model[2];
+
+      if (data) {
+        return [{
+          data: data.map(function (record) {
+            return [record.date, record.value];
+          })
+        }];
+      }
+    }),
+
+    windowChartOptions: {
+      chart: {
+        type: 'line',
+        zoomType: 'x'
+      },
+      title: {
+        text: 'Window Activity'
+      },
+      xAxis: {
+        ordinal: false
+      },
+      yAxis: {
+        title: {
+          text: 'Window Status'
+        },
+        allowDecimals: false
+      },
+      navigator: {
+        series: {
+          type: 'column'
+        }
+      }
+    },
+
+    windowChartData: Ember['default'].computed('model', function () {
+      var model = this.get('model');
+      var data = model[3];
+
+      if (data) {
+        return [{
+          step: true,
+          data: data.map(function (record) {
+            var status = (function (value) {
+              if (value.open && value.active) return 2;else if (value.open && !value.active) return 1;else if (!value.open && !value.active) return 0;else throw new Error('window activity tracker data is corrupt');
+            })(record.value);
+            return [record.date, status];
+          })
+        }];
+      }
+    }),
+
+    loginChartOptions: {
+      chart: {
+        type: 'line',
+        zoomType: 'x'
+      },
+      title: {
+        text: 'Login Status'
+      },
+      xAxis: {
+        ordinal: false
+      },
+      yAxis: {
+        title: {
+          text: 'Distance in Pixels'
+        },
+        allowDecimals: false
+      },
+      navigator: {
+        series: {
+          type: 'column'
+        }
+      }
+    },
+
+    loginChartData: Ember['default'].computed('model', function () {
+      var model = this.get('model');
+      var data = model[4];
+
+      if (data) {
+        return [{
+          step: true,
+          data: data.map(function (record) {
+            var status = (function (value) {
+              if (!value) return 0;else return 1;
+            })(record.value);
+            return [record.date, status];
+          })
+        }];
+      }
+    })
+  });
+
+});
 define('rose/controllers/interactions', ['exports', 'ember'], function (exports, Ember) {
 
   'use strict';
@@ -1341,6 +1530,23 @@ define('rose/controllers/study-creator', ['exports', 'ember'], function (exports
       }
     }
   });
+
+});
+define('rose/defaults/study-creator', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = {
+    roseCommentsIsEnabled: true,
+    roseCommentsRatingIsEnabled: true,
+    salt: 'ROSE',
+    hashLength: 8,
+    repositoryURL: 'https://secure-software-engineering.github.io/rose/example/',
+    fingerprint: '25E769C697EC2C20DA3BDDE9F188CF170FA234E8',
+    autoUpdateIsEnabled: true,
+    updateInterval: 86400000,
+    fileName: 'rose-study-configuration.txt'
+  };
 
 });
 define('rose/helpers/boolean-to-yesno', ['exports', 'ember', 'ember-i18n'], function (exports, Ember, ember_i18n) {
@@ -2949,190 +3155,6 @@ define('rose/pods/components/file-input/template', ['exports'], function (export
   }()));
 
 });
-define('rose/pods/components/high-chart/component', ['exports', 'ember'], function (exports, Ember) {
-
-  'use strict';
-
-  exports['default'] = Ember['default'].Component.extend({
-    classNames: ['highcharts-wrapper'],
-
-    _renderChart: (function () {
-      this.drawLater();
-    }).on('didInsertElement'),
-
-    drawLater: function drawLater() {
-      Ember['default'].run.scheduleOnce('afterRender', this, 'draw');
-    },
-
-    draw: function draw() {
-      this.$().highcharts('StockChart', {
-        chart: {
-          height: 800,
-          zoomType: 'x'
-        },
-
-        title: {
-          text: 'Activity Records'
-        },
-
-        navigator: {
-          series: {
-            type: 'column',
-            // data: mouseVals,
-            step: true
-          },
-          yAxis: {
-            type: 'logarithmic'
-          }
-        },
-
-        rangeSelector: {
-          enabled: true,
-          buttons: [{
-            type: 'day',
-            count: 1,
-            text: 'Day'
-          }, {
-            type: 'week',
-            count: 1,
-            text: 'Week'
-          }, {
-            type: 'month',
-            count: 1,
-            text: 'Month'
-          }, {
-            type: 'all',
-            text: 'All'
-          }],
-          buttonTheme: {
-            width: 50
-          }
-        },
-
-        tooltip: {
-          pointFormat: 'Date: <b>{point.x:%B %e, %Y %H:%M}</b><br>Value: <b>{point.y}</b>'
-        },
-
-        // xAxis: {
-        //   ordinal: false,
-        //   min: dayBeforeFirst(mouseRecords),
-        //   max: dayAfterLast(mouseRecords)
-        // },
-
-        yAxis: [{
-          min: 0,
-          labels: {
-            align: 'right',
-            x: -3
-          },
-          title: {
-            text: 'Move'
-          },
-          height: '30%',
-          offset: 0,
-          lineWidth: 2
-        }, {
-          min: 0,
-          labels: {
-            align: 'right',
-            x: -3
-          },
-          title: {
-            text: 'Click'
-          },
-          top: '33%',
-          height: '30%',
-          offset: 0,
-          lineWidth: 2
-        }, {
-          min: 0,
-          labels: {
-            align: 'right',
-            x: -3
-          },
-          title: {
-            text: 'Scroll'
-          },
-          top: '66%',
-          height: '30%',
-          offset: 0,
-          lineWidth: 2
-        }],
-
-        // series: [{
-        //   type: 'scatter',
-        //   name: 'Move',
-        //   data: mouseVals,
-        //   yAxis: 0
-        // }, {
-        //   type: 'scatter',
-        //   name: 'Click',
-        //   data: clickVals,
-        //   yAxis: 1
-        // }, {
-        //   type: 'scatter',
-        //   name: 'Scroll',
-        //   data: scrollVals,
-        //   yAxis: 2
-        // }],
-
-        plotOptions: {
-          series: {
-            pointWidth: 5
-          }
-        }
-      });
-    }
-  });
-
-});
-define('rose/pods/components/high-chart/template', ['exports'], function (exports) {
-
-  'use strict';
-
-  exports['default'] = Ember.HTMLBars.template((function() {
-    return {
-      meta: {
-        "revision": "Ember@1.13.10",
-        "loc": {
-          "source": null,
-          "start": {
-            "line": 1,
-            "column": 0
-          },
-          "end": {
-            "line": 2,
-            "column": 0
-          }
-        },
-        "moduleName": "rose/pods/components/high-chart/template.hbs"
-      },
-      arity: 0,
-      cachedFragment: null,
-      hasRendered: false,
-      buildFragment: function buildFragment(dom) {
-        var el0 = dom.createDocumentFragment();
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        return el0;
-      },
-      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var morphs = new Array(1);
-        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
-        dom.insertBoundary(fragment, 0);
-        return morphs;
-      },
-      statements: [
-        ["content","yield",["loc",[null,[1,0],[1,9]]]]
-      ],
-      locals: [],
-      templates: []
-    };
-  }()));
-
-});
 define('rose/pods/components/installation-wizard/component', ['exports', 'ember', 'ic-ajax'], function (exports, Ember, ic_ajax) {
 
   'use strict';
@@ -4452,17 +4474,17 @@ define('rose/routes/settings', ['exports', 'ember'], function (exports, Ember) {
 	exports['default'] = Ember['default'].Route.extend({});
 
 });
-define('rose/routes/study-creator', ['exports', 'ember'], function (exports, Ember) {
+define('rose/routes/study-creator', ['exports', 'ember', 'rose/defaults/study-creator'], function (exports, Ember, studyCreatorDefaults) {
 
   'use strict';
 
   exports['default'] = Ember['default'].Route.extend({
     model: function model() {
-      var self = this;
+      var _this = this;
 
       return this.store.find('study-creator-setting').then(function (settings) {
         if (Ember['default'].isEmpty(settings)) {
-          return self.store.createRecord('study-creator-setting');
+          return _this.store.createRecord('study-creator-setting', studyCreatorDefaults['default']);
         }
 
         return settings.get('firstObject');
@@ -5189,6 +5211,53 @@ define('rose/templates/comments', ['exports'], function (exports) {
       ],
       locals: [],
       templates: [child0]
+    };
+  }()));
+
+});
+define('rose/templates/components/high-charts', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    return {
+      meta: {
+        "revision": "Ember@1.13.10",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 2,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/components/high-charts.hbs"
+      },
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+        dom.insertBoundary(fragment, 0);
+        return morphs;
+      },
+      statements: [
+        ["content","yield",["loc",[null,[1,0],[1,9]]]]
+      ],
+      locals: [],
+      templates: []
     };
   }()));
 
@@ -7397,7 +7466,7 @@ define('rose/templates/index', ['exports'], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 2,
+            "line": 6,
             "column": 0
           }
         },
@@ -7412,16 +7481,40 @@ define('rose/templates/index', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var morphs = new Array(1);
+        var morphs = new Array(5);
         morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+        morphs[1] = dom.createMorphAt(fragment,2,2,contextualElement);
+        morphs[2] = dom.createMorphAt(fragment,4,4,contextualElement);
+        morphs[3] = dom.createMorphAt(fragment,6,6,contextualElement);
+        morphs[4] = dom.createMorphAt(fragment,8,8,contextualElement);
         dom.insertBoundary(fragment, 0);
         return morphs;
       },
       statements: [
-        ["inline","high-chart",[],["data",["subexpr","@mut",[["get","model",["loc",[null,[1,18],[1,23]]]]],[],[]]],["loc",[null,[1,0],[1,25]]]]
+        ["inline","high-charts",[],["mode","StockChart","content",["subexpr","@mut",[["get","clickChartData",["loc",[null,[1,40],[1,54]]]]],[],[]],"chartOptions",["subexpr","@mut",[["get","clickChartOptions",["loc",[null,[1,68],[1,85]]]]],[],[]]],["loc",[null,[1,0],[1,87]]]],
+        ["inline","high-charts",[],["mode","StockChart","content",["subexpr","@mut",[["get","mouseMoveChartData",["loc",[null,[2,40],[2,58]]]]],[],[]],"chartOptions",["subexpr","@mut",[["get","mouseMoveChartOptions",["loc",[null,[2,72],[2,93]]]]],[],[]]],["loc",[null,[2,0],[2,95]]]],
+        ["inline","high-charts",[],["mode","StockChart","content",["subexpr","@mut",[["get","scrollChartData",["loc",[null,[3,40],[3,55]]]]],[],[]],"chartOptions",["subexpr","@mut",[["get","scrollChartOptions",["loc",[null,[3,69],[3,87]]]]],[],[]]],["loc",[null,[3,0],[3,89]]]],
+        ["inline","high-charts",[],["mode","StockChart","content",["subexpr","@mut",[["get","windowChartData",["loc",[null,[4,40],[4,55]]]]],[],[]],"chartOptions",["subexpr","@mut",[["get","windowChartOptions",["loc",[null,[4,69],[4,87]]]]],[],[]]],["loc",[null,[4,0],[4,89]]]],
+        ["inline","high-charts",[],["mode","StockChart","content",["subexpr","@mut",[["get","loginChartData",["loc",[null,[5,40],[5,54]]]]],[],[]],"chartOptions",["subexpr","@mut",[["get","loginChartOptions",["loc",[null,[5,68],[5,85]]]]],[],[]]],["loc",[null,[5,0],[5,87]]]]
       ],
       locals: [],
       templates: []
@@ -10535,6 +10628,16 @@ define('rose/tests/controllers/diary.jshint', function () {
   });
 
 });
+define('rose/tests/controllers/index.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - controllers');
+  test('controllers/index.js should pass jshint', function() { 
+    ok(false, 'controllers/index.js should pass jshint.\ncontrollers/index.js: line 131, col 15, Expected \'{\' and instead saw \'return\'.\ncontrollers/index.js: line 133, col 15, Expected \'{\' and instead saw \'return\'.\ncontrollers/index.js: line 135, col 15, Expected \'{\' and instead saw \'return\'.\ncontrollers/index.js: line 137, col 15, Expected \'{\' and instead saw \'throw\'.\ncontrollers/index.js: line 179, col 15, Expected \'{\' and instead saw \'return\'.\ncontrollers/index.js: line 181, col 15, Expected \'{\' and instead saw \'return\'.\n\n6 errors'); 
+  });
+
+});
 define('rose/tests/controllers/interactions.jshint', function () {
 
   'use strict';
@@ -10562,6 +10665,16 @@ define('rose/tests/controllers/study-creator.jshint', function () {
   module('JSHint - controllers');
   test('controllers/study-creator.js should pass jshint', function() { 
     ok(true, 'controllers/study-creator.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/defaults/study-creator.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - defaults');
+  test('defaults/study-creator.js should pass jshint', function() { 
+    ok(true, 'defaults/study-creator.js should pass jshint.'); 
   });
 
 });
@@ -10819,16 +10932,6 @@ define('rose/tests/pods/components/file-input/component.jshint', function () {
   module('JSHint - pods/components/file-input');
   test('pods/components/file-input/component.js should pass jshint', function() { 
     ok(true, 'pods/components/file-input/component.js should pass jshint.'); 
-  });
-
-});
-define('rose/tests/pods/components/high-chart/component.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - pods/components/high-chart');
-  test('pods/components/high-chart/component.js should pass jshint', function() { 
-    ok(true, 'pods/components/high-chart/component.js should pass jshint.'); 
   });
 
 });
@@ -11328,6 +11431,32 @@ define('rose/tests/unit/controllers/diary-test.jshint', function () {
   module('JSHint - unit/controllers');
   test('unit/controllers/diary-test.js should pass jshint', function() { 
     ok(true, 'unit/controllers/diary-test.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/unit/controllers/index-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('controller:index', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  // Replace this with your real tests.
+  ember_qunit.test('it exists', function (assert) {
+    var controller = this.subject();
+    assert.ok(controller);
+  });
+
+});
+define('rose/tests/unit/controllers/index-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/controllers');
+  test('unit/controllers/index-test.js should pass jshint', function() { 
+    ok(true, 'unit/controllers/index-test.js should pass jshint.'); 
   });
 
 });
@@ -12890,7 +13019,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.b97ec45f"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.e2167a8d"});
 }
 
 /* jshint ignore:end */

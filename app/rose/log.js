@@ -54,4 +54,8 @@ export default function (module, message) {
     })();
 
     console.log('[ROSE, module: %s, time: %s] %s', module, time, message);
+    kango.dispatchMessage('application-log', {
+        module, 
+        message
+    })
 }

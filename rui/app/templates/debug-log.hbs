@@ -1,0 +1,26 @@
+<h2 class="ui dividing header">
+  <i class="settings icon"></i>
+  <div class="content">
+    {{t "debugLog.title"}}
+    <div class="sub header">{{t "debugLog.subtitle"}}</div>
+  </div>
+</h2>
+
+<table class="ui celled table">
+  <thead>
+    <tr>
+	    <th>{{t "debugLog.date"}}</th>
+	    <th>{{t "debugLog.message"}}</th>
+	    <th>{{t "debugLog.module"}}</th>
+  	</tr>
+  </thead>
+  <tbody>
+  	{{#each model as |log|}}
+    <tr>
+      <td>{{moment-format log.date "LLL"}}</td>
+      <td>{{log.message}}</td>
+      <td>{{log.module}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>

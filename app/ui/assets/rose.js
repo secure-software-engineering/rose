@@ -1562,6 +1562,43 @@ define('rose/helpers/boolean-to-yesno', ['exports', 'ember', 'ember-i18n'], func
   exports['default'] = Ember['default'].HTMLBars.makeBoundHelper(booleanToYesno);
 
 });
+define('rose/helpers/moment-duration', ['exports', 'ember-moment/helpers/moment-duration'], function (exports, moment_duration) {
+
+	'use strict';
+
+
+
+	exports.default = moment_duration.default;
+
+});
+define('rose/helpers/moment-format', ['exports', 'ember', 'rose/config/environment', 'ember-moment/helpers/moment-format'], function (exports, Ember, config, Helper) {
+
+  'use strict';
+
+  exports['default'] = Helper['default'].extend({
+    globalOutputFormat: Ember['default'].get(config['default'], 'moment.outputFormat'),
+    globalAllowEmpty: !!Ember['default'].get(config['default'], 'moment.allowEmpty')
+  });
+
+});
+define('rose/helpers/moment-from-now', ['exports', 'ember', 'rose/config/environment', 'ember-moment/helpers/moment-from-now'], function (exports, Ember, config, Helper) {
+
+  'use strict';
+
+  exports['default'] = Helper['default'].extend({
+    globalAllowEmpty: !!Ember['default'].get(config['default'], 'moment.allowEmpty')
+  });
+
+});
+define('rose/helpers/moment-to-now', ['exports', 'ember', 'rose/config/environment', 'ember-moment/helpers/moment-to-now'], function (exports, Ember, config, Helper) {
+
+  'use strict';
+
+  exports['default'] = Helper['default'].extend({
+    globalAllowEmpty: !!Ember['default'].get(config['default'], 'moment.allowEmpty')
+  });
+
+});
 define('rose/initializers/app-version', ['exports', 'rose/config/environment', 'ember'], function (exports, config, Ember) {
 
   'use strict';
@@ -1596,35 +1633,6 @@ define('rose/initializers/ember-i18n', ['exports', 'rose/instance-initializers/e
       instanceInitializer['default'].initialize(application);
     }
   };
-
-});
-define('rose/initializers/ember-moment', ['exports', 'ember-moment/helpers/moment', 'ember-moment/helpers/ago', 'ember-moment/helpers/duration', 'ember'], function (exports, moment, ago, duration, Ember) {
-
-  'use strict';
-
-  var initialize = function initialize() /* container, app */{
-    var registerHelper;
-
-    if (Ember['default'].HTMLBars) {
-      registerHelper = function (helperName, fn) {
-        Ember['default'].HTMLBars._registerHelper(helperName, Ember['default'].HTMLBars.makeBoundHelper(fn));
-      };
-    } else {
-      registerHelper = Ember['default'].Handlebars.helper;
-    };
-
-    registerHelper('moment', moment['default']);
-    registerHelper('ago', ago['default']);
-    registerHelper('duration', duration['default']);
-  };
-
-  exports['default'] = {
-    name: 'ember-moment',
-
-    initialize: initialize
-  };
-
-  exports.initialize = initialize;
 
 });
 define('rose/initializers/export-application-global', ['exports', 'ember', 'rose/config/environment'], function (exports, Ember, config) {
@@ -2993,7 +3001,7 @@ define('rose/pods/components/diary-entry/template', ['exports'], function (expor
         return morphs;
       },
       statements: [
-        ["inline","moment",[["get","model.createdAt",["loc",[null,[6,32],[6,47]]]]],[],["loc",[null,[6,23],[6,49]]]],
+        ["inline","moment-format",[["get","model.createdAt",["loc",[null,[6,39],[6,54]]]]],[],["loc",[null,[6,23],[6,56]]]],
         ["block","liquid-if",[["get","isEditable",["loc",[null,[9,15],[9,25]]]]],[],0,1,["loc",[null,[9,2],[15,16]]]],
         ["block","if",[["get","isEditable",["loc",[null,[18,8],[18,18]]]]],[],2,3,["loc",[null,[18,2],[29,9]]]],
         ["block","if",[["get","model.isPrivate",["loc",[null,[30,8],[30,23]]]]],[],4,5,["loc",[null,[30,2],[38,9]]]],
@@ -3956,7 +3964,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
         ["inline","t",["comments.you"],[],["loc",[null,[5,20],[5,40]]]],
         ["inline","t",["comments.commentedOn"],[],["loc",[null,[5,45],[5,73]]]],
         ["content","model.contentId",["loc",[null,[5,82],[5,101]]]],
-        ["inline","moment",[["get","model.createdAt",["loc",[null,[7,32],[7,47]]]]],[],["loc",[null,[7,23],[7,49]]]],
+        ["inline","moment-format",[["get","model.createdAt",["loc",[null,[7,39],[7,54]]]]],[],["loc",[null,[7,23],[7,56]]]],
         ["block","each",[["get","model.rating",["loc",[null,[8,12],[8,24]]]]],[],0,null,["loc",[null,[8,4],[13,13]]]],
         ["block","liquid-if",[["get","isEditable",["loc",[null,[16,15],[16,25]]]]],[],1,2,["loc",[null,[16,2],[22,16]]]],
         ["block","if",[["get","isEditable",["loc",[null,[25,8],[25,18]]]]],[],3,4,["loc",[null,[25,2],[36,9]]]],
@@ -4282,7 +4290,7 @@ define('rose/pods/components/rose-interaction/template', ['exports'], function (
         ["content","model.origin.observer",["loc",[null,[5,20],[5,45]]]],
         ["inline","t",["interactions.actionOn"],[],["loc",[null,[5,50],[5,79]]]],
         ["content","model.contentId",["loc",[null,[5,88],[5,107]]]],
-        ["inline","moment",[["get","model.createdAt",["loc",[null,[7,32],[7,47]]]]],[],["loc",[null,[7,23],[7,49]]]],
+        ["inline","moment-format",[["get","model.createdAt",["loc",[null,[7,39],[7,54]]]]],[],["loc",[null,[7,23],[7,56]]]],
         ["block","liquid-if",[["get","showDetails",["loc",[null,[10,15],[10,26]]]]],[],0,null,["loc",[null,[10,2],[14,16]]]],
         ["element","action",["toggleDetails"],[],["loc",[null,[17,7],[17,33]]]],
         ["inline","t",["action.details"],[],["loc",[null,[17,34],[17,56]]]],
@@ -4314,6 +4322,7 @@ define('rose/router', ['exports', 'ember', 'rose/config/environment'], function 
     this.route('interactions', { path: '/:network_name/interactions' });
     this.route('privacysettings', { path: '/:network_name/privacysettings' });
     this.route('study-creator');
+    this.route('debug-log', {});
   });
 
 });
@@ -4406,6 +4415,21 @@ define('rose/routes/comments', ['exports', 'ember'], function (exports, Ember) {
       return this.store.find('comment', { network: params.network_name });
     }
   });
+
+});
+define('rose/routes/debug-log', ['exports', 'ember'], function (exports, Ember) {
+
+	'use strict';
+
+	exports['default'] = Ember['default'].Route.extend({
+		model: function model() {
+			return new Promise(function (resolve, reject) {
+				kango.invokeAsyncCallback('localforage.getItem', 'application-log', function (log) {
+					resolve(log);
+				});
+			});
+		}
+	});
 
 });
 define('rose/routes/diary', ['exports', 'ember'], function (exports, Ember) {
@@ -4512,6 +4536,66 @@ define('rose/services/liquid-fire-transitions', ['exports', 'liquid-fire/transit
 	'use strict';
 
 	exports['default'] = TransitionMap['default'];
+
+});
+define('rose/services/moment', ['exports', 'ember', 'moment'], function (exports, Ember, _moment) {
+
+  'use strict';
+
+  var computed = Ember['default'].computed;
+
+  exports['default'] = Ember['default'].Service.extend({
+    _locale: null,
+    _timeZone: null,
+
+    locale: computed({
+      get: function get() {
+        return this.get('_locale');
+      },
+      set: function set(propertyKey, locale) {
+        this.set('_locale', locale);
+        return locale;
+      }
+    }),
+
+    timeZone: computed({
+      get: function get() {
+        return this.get('_timeZone');
+      },
+      set: function set(propertyKey, timeZone) {
+        if (_moment['default'].tz) {
+          this.set('_timeZone', timeZone);
+          return timeZone;
+        } else {
+          Ember['default'].Logger.warn('[ember-moment] attempted to set timezone, but moment-timezone unavailable.');
+        }
+      }
+    }),
+
+    changeLocale: function changeLocale(locale) {
+      this.set('locale', locale);
+    },
+
+    changeTimeZone: function changeTimeZone(timeZone) {
+      this.set('timeZone', timeZone);
+    },
+
+    moment: function moment() {
+      var time = _moment['default'].apply(undefined, arguments);
+      var locale = this.get('locale');
+      var timeZone = this.get('timeZone');
+
+      if (locale) {
+        time = time.locale(locale);
+      }
+
+      if (timeZone && time.tz) {
+        time = time.tz(timeZone);
+      }
+
+      return time;
+    }
+  });
 
 });
 define('rose/services/settings', ['exports', 'ember'], function (exports, Ember) {
@@ -7077,6 +7161,205 @@ define('rose/templates/components/ui-radio', ['exports'], function (exports) {
   }()));
 
 });
+define('rose/templates/debug-log', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    var child0 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@1.13.10",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 18,
+              "column": 3
+            },
+            "end": {
+              "line": 24,
+              "column": 4
+            }
+          },
+          "moduleName": "rose/templates/debug-log.hbs"
+        },
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("tr");
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("td");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("td");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("td");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element0 = dom.childAt(fragment, [1]);
+          var morphs = new Array(3);
+          morphs[0] = dom.createMorphAt(dom.childAt(element0, [1]),0,0);
+          morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
+          morphs[2] = dom.createMorphAt(dom.childAt(element0, [5]),0,0);
+          return morphs;
+        },
+        statements: [
+          ["inline","moment-format",[["get","log.date",["loc",[null,[20,26],[20,34]]]],"LLL"],[],["loc",[null,[20,10],[20,42]]]],
+          ["content","log.message",["loc",[null,[21,10],[21,25]]]],
+          ["content","log.module",["loc",[null,[22,10],[22,24]]]]
+        ],
+        locals: ["log"],
+        templates: []
+      };
+    }());
+    return {
+      meta: {
+        "revision": "Ember@1.13.10",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 27,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/debug-log.hbs"
+      },
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h2");
+        dom.setAttribute(el1,"class","ui dividing header");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("i");
+        dom.setAttribute(el2,"class","settings icon");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","content");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3,"class","sub header");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("table");
+        dom.setAttribute(el1,"class","ui celled table");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("thead");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("tr");
+        var el4 = dom.createTextNode("\n	    ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("th");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n	    ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("th");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n	    ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("th");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n  	");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("tbody");
+        var el3 = dom.createTextNode("\n");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element1 = dom.childAt(fragment, [0, 3]);
+        var element2 = dom.childAt(fragment, [2]);
+        var element3 = dom.childAt(element2, [1, 1]);
+        var morphs = new Array(6);
+        morphs[0] = dom.createMorphAt(element1,1,1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element1, [3]),0,0);
+        morphs[2] = dom.createMorphAt(dom.childAt(element3, [1]),0,0);
+        morphs[3] = dom.createMorphAt(dom.childAt(element3, [3]),0,0);
+        morphs[4] = dom.createMorphAt(dom.childAt(element3, [5]),0,0);
+        morphs[5] = dom.createMorphAt(dom.childAt(element2, [3]),1,1);
+        return morphs;
+      },
+      statements: [
+        ["inline","t",["debugLog.title"],[],["loc",[null,[4,4],[4,26]]]],
+        ["inline","t",["debugLog.subtitle"],[],["loc",[null,[5,28],[5,53]]]],
+        ["inline","t",["debugLog.date"],[],["loc",[null,[12,9],[12,30]]]],
+        ["inline","t",["debugLog.message"],[],["loc",[null,[13,9],[13,33]]]],
+        ["inline","t",["debugLog.module"],[],["loc",[null,[14,9],[14,32]]]],
+        ["block","each",[["get","model",["loc",[null,[18,11],[18,16]]]]],[],0,null,["loc",[null,[18,3],[24,13]]]]
+      ],
+      locals: [],
+      templates: [child0]
+    };
+  }()));
+
+});
 define('rose/templates/diary', ['exports'], function (exports) {
 
   'use strict';
@@ -8636,7 +8919,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
         ["inline","t",["settings.manualUpdateLabel"],[],["loc",[null,[48,7],[48,41]]]],
         ["element","action",["manualUpdate"],[],["loc",[null,[49,30],[49,55]]]],
         ["inline","t",["action.update"],[],["loc",[null,[49,56],[49,77]]]],
-        ["inline","moment",[["get","settings.system.timestamp",["loc",[null,[50,26],[50,51]]]]],[],["loc",[null,[50,17],[50,53]]]],
+        ["inline","moment-format",[["get","settings.system.timestamp",["loc",[null,[50,33],[50,58]]]]],[],["loc",[null,[50,17],[50,60]]]],
         ["inline","t",["settings.autoUpdate"],[],["loc",[null,[54,11],[54,38]]]],
         ["inline","t",["settings.autoUpdateLabel"],[],["loc",[null,[55,7],[55,39]]]],
         ["inline","ui-checkbox",[],["class","toggle","checked",["subexpr","@mut",[["get","settings.system.autoUpdateIsEnabled",["loc",[null,[57,26],[57,61]]]]],[],[]],"label",["subexpr","boolean-to-yesno",[["get","settings.system.autoUpdateIsEnabled",["loc",[null,[58,42],[58,77]]]]],[],["loc",[null,[58,24],[58,78]]]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[59,27],[59,50]]]]],["loc",[null,[56,4],[59,52]]]],
@@ -8997,13 +9280,13 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element1 = dom.childAt(fragment, [1]);
-          var element2 = dom.childAt(element1, [3]);
+          var element2 = dom.childAt(fragment, [1]);
+          var element3 = dom.childAt(element2, [3]);
           var morphs = new Array(4);
-          morphs[0] = dom.createMorphAt(element1,1,1);
-          morphs[1] = dom.createMorphAt(element2,1,1);
-          morphs[2] = dom.createMorphAt(element2,2,2);
-          morphs[3] = dom.createMorphAt(element2,3,3);
+          morphs[0] = dom.createMorphAt(element2,1,1);
+          morphs[1] = dom.createMorphAt(element3,1,1);
+          morphs[2] = dom.createMorphAt(element3,2,2);
+          morphs[3] = dom.createMorphAt(element3,3,3);
           return morphs;
         },
         statements: [
@@ -9059,6 +9342,48 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
           templates: []
         };
       }());
+      var child1 = (function() {
+        return {
+          meta: {
+            "revision": "Ember@1.13.10",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 46,
+                "column": 8
+              },
+              "end": {
+                "line": 48,
+                "column": 8
+              }
+            },
+            "moduleName": "rose/templates/sidebar-menu.hbs"
+          },
+          arity: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("          ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+            return morphs;
+          },
+          statements: [
+            ["inline","t",["sidebarMenu.debugLog"],[],["loc",[null,[47,10],[47,38]]]]
+          ],
+          locals: [],
+          templates: []
+        };
+      }());
       return {
         meta: {
           "revision": "Ember@1.13.10",
@@ -9069,7 +9394,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
               "column": 2
             },
             "end": {
-              "line": 48,
+              "line": 51,
               "column": 2
             }
           },
@@ -9096,6 +9421,8 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
           dom.appendChild(el2, el3);
           var el3 = dom.createComment("");
           dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
           var el3 = dom.createTextNode("      ");
           dom.appendChild(el2, el3);
           dom.appendChild(el1, el2);
@@ -9108,62 +9435,23 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var element0 = dom.childAt(fragment, [1]);
-          var morphs = new Array(2);
+          var element1 = dom.childAt(element0, [3]);
+          var morphs = new Array(3);
           morphs[0] = dom.createMorphAt(element0,1,1);
-          morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),1,1);
+          morphs[1] = dom.createMorphAt(element1,1,1);
+          morphs[2] = dom.createMorphAt(element1,2,2);
           return morphs;
         },
         statements: [
           ["inline","t",["sidebarMenu.extraFeatures"],[],["loc",[null,[41,6],[41,39]]]],
-          ["block","link-to",["study-creator"],["class","item"],0,null,["loc",[null,[43,8],[45,20]]]]
+          ["block","link-to",["study-creator"],["class","item"],0,null,["loc",[null,[43,8],[45,20]]]],
+          ["block","link-to",["debug-log"],["class","item"],1,null,["loc",[null,[46,8],[48,20]]]]
         ],
         locals: [],
-        templates: [child0]
+        templates: [child0, child1]
       };
     }());
     var child6 = (function() {
-      return {
-        meta: {
-          "revision": "Ember@1.13.10",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 49,
-              "column": 2
-            },
-            "end": {
-              "line": 51,
-              "column": 2
-            }
-          },
-          "moduleName": "rose/templates/sidebar-menu.hbs"
-        },
-        arity: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("    ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(1);
-          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
-          return morphs;
-        },
-        statements: [
-          ["inline","t",["sidebarMenu.help"],[],["loc",[null,[50,4],[50,28]]]]
-        ],
-        locals: [],
-        templates: []
-      };
-    }());
-    var child7 = (function() {
       return {
         meta: {
           "revision": "Ember@1.13.10",
@@ -9199,7 +9487,49 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
           return morphs;
         },
         statements: [
-          ["inline","t",["sidebarMenu.about"],[],["loc",[null,[53,4],[53,29]]]]
+          ["inline","t",["sidebarMenu.help"],[],["loc",[null,[53,4],[53,28]]]]
+        ],
+        locals: [],
+        templates: []
+      };
+    }());
+    var child7 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@1.13.10",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 55,
+              "column": 2
+            },
+            "end": {
+              "line": 57,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/templates/sidebar-menu.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+          return morphs;
+        },
+        statements: [
+          ["inline","t",["sidebarMenu.about"],[],["loc",[null,[56,4],[56,29]]]]
         ],
         locals: [],
         templates: []
@@ -9215,7 +9545,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 56,
+            "line": 59,
             "column": 0
           }
         },
@@ -9278,18 +9608,18 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element3 = dom.childAt(fragment, [0]);
+        var element4 = dom.childAt(fragment, [0]);
         var morphs = new Array(10);
-        morphs[0] = dom.createMorphAt(element3,1,1);
-        morphs[1] = dom.createMorphAt(element3,2,2);
-        morphs[2] = dom.createMorphAt(element3,3,3);
-        morphs[3] = dom.createMorphAt(element3,4,4);
-        morphs[4] = dom.createMorphAt(dom.childAt(element3, [6]),1,1);
-        morphs[5] = dom.createMorphAt(element3,8,8);
-        morphs[6] = dom.createMorphAt(dom.childAt(element3, [10]),1,1);
-        morphs[7] = dom.createMorphAt(element3,12,12);
-        morphs[8] = dom.createMorphAt(element3,13,13);
-        morphs[9] = dom.createMorphAt(element3,14,14);
+        morphs[0] = dom.createMorphAt(element4,1,1);
+        morphs[1] = dom.createMorphAt(element4,2,2);
+        morphs[2] = dom.createMorphAt(element4,3,3);
+        morphs[3] = dom.createMorphAt(element4,4,4);
+        morphs[4] = dom.createMorphAt(dom.childAt(element4, [6]),1,1);
+        morphs[5] = dom.createMorphAt(element4,8,8);
+        morphs[6] = dom.createMorphAt(dom.childAt(element4, [10]),1,1);
+        morphs[7] = dom.createMorphAt(element4,12,12);
+        morphs[8] = dom.createMorphAt(element4,13,13);
+        morphs[9] = dom.createMorphAt(element4,14,14);
         return morphs;
       },
       statements: [
@@ -9300,9 +9630,9 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
         ["inline","t",["sidebarMenu.networks"],[],["loc",[null,[16,4],[16,32]]]],
         ["block","each",[["get","networks",["loc",[null,[19,10],[19,18]]]]],[],4,null,["loc",[null,[19,2],[34,11]]]],
         ["inline","t",["sidebarMenu.more"],[],["loc",[null,[37,4],[37,28]]]],
-        ["block","liquid-if",[["get","settings.user.developerModeIsEnabled",["loc",[null,[39,15],[39,51]]]]],[],5,null,["loc",[null,[39,2],[48,16]]]],
-        ["block","link-to",["help"],["class","item"],6,null,["loc",[null,[49,2],[51,14]]]],
-        ["block","link-to",["about"],["class","item"],7,null,["loc",[null,[52,2],[54,14]]]]
+        ["block","liquid-if",[["get","settings.user.developerModeIsEnabled",["loc",[null,[39,15],[39,51]]]]],[],5,null,["loc",[null,[39,2],[51,16]]]],
+        ["block","link-to",["help"],["class","item"],6,null,["loc",[null,[52,2],[54,14]]]],
+        ["block","link-to",["about"],["class","item"],7,null,["loc",[null,[55,2],[57,14]]]]
       ],
       locals: [],
       templates: [child0, child1, child2, child3, child4, child5, child6, child7]
@@ -11015,6 +11345,16 @@ define('rose/tests/routes/comments.jshint', function () {
   });
 
 });
+define('rose/tests/routes/debug-log.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - routes');
+  test('routes/debug-log.js should pass jshint', function() { 
+    ok(false, 'routes/debug-log.js should pass jshint.\nroutes/debug-log.js: line 5, col 20, \'Promise\' is not defined.\nroutes/debug-log.js: line 5, col 38, \'reject\' is defined but never used.\n\n2 errors'); 
+  });
+
+});
 define('rose/tests/routes/diary.jshint', function () {
 
   'use strict';
@@ -12254,6 +12594,31 @@ define('rose/tests/unit/routes/comments-test.jshint', function () {
   });
 
 });
+define('rose/tests/unit/routes/debug-log-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('route:debug-log', 'Unit | Route | debug log', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  ember_qunit.test('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+
+});
+define('rose/tests/unit/routes/debug-log-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/routes');
+  test('unit/routes/debug-log-test.js should pass jshint', function() { 
+    ok(true, 'unit/routes/debug-log-test.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/unit/routes/diary-test', ['ember-qunit'], function (ember_qunit) {
 
   'use strict';
@@ -13019,7 +13384,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.e2167a8d"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.9fcf2f39"});
 }
 
 /* jshint ignore:end */

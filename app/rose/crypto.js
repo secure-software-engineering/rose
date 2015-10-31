@@ -18,17 +18,18 @@ You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export default {
-    /**
-     * Generates the SHA1 hash of a message.
-     * @param {String} message - The message to be hashed.
-     * @returns {String}
-     */
-    sha1: function sha1(message, salt, hashLength) {
-        let md = forge.md.sha1.create()
-        md.update(salt + message)
-        let hash = md.digest().toHex()
+import jsSHA from 'jssha'
 
-        return hash.slice(0, hashLength)
-    }
+export default {
+  /**
+   * Generates the SHA1 hash of a message.
+   * @param {String} message - The message to be hashed.
+   * @returns {String}
+   */
+  sha1 (message, salt, hashLength) {
+    const shaObj = new jsSHA('SHA-1', 'TEXT')
+    shaObj.update(salt + message)
+    const hash = shaObj.getHash('HEX')
+    return hash.slice(0, hashLength)
+  }
 }

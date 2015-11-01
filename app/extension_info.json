@@ -17,7 +17,6 @@
     "content_scripts": [
         "bower_components/jquery/dist/jquery.js",
         "bower_components/jquery-cookie/jquery.cookie.js",
-        "bower_components/forge/js/forge.min.js",
         "bower_components/underscore/underscore.js",
         "bower_components/backbone/backbone.js",
         "bower_components/localforage/dist/localforage.js",

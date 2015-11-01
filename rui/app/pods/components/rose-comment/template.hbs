@@ -4,7 +4,7 @@
 <div class="content">
   <a class="author">{{t "comments.you"}}</a> {{t "comments.commentedOn"}} <strong>{{model.contentId}}</strong>
   <div class="metadata">
-    <span class="date">{{moment model.createdAt}}</span>
+    <span class="date">{{moment-format model.createdAt}}</span>
     {{#each model.rating as |value|}}
     <div class="rating">
       <i class="star icon"></i>

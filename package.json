@@ -64,5 +64,8 @@
       "email": "oliverh855@gmail.com"
     }
   ],
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "jssha": "^2.0.1"
+  }
 }

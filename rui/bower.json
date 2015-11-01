@@ -17,6 +17,8 @@
     "localforage": "~1.2.1",
     "FileSaver": "*",
     "highstock": "~3.0.1",
-    "ember-data": "~1.13.0"
+    "ember-data": "~1.13.0",
+    "moment": ">= 2.8.0",
+    "moment-timezone": ">= 0.1.0"
   }
 }

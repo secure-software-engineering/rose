@@ -15,4 +15,5 @@ export default Router.map(function() {
   this.route('interactions', { path: '/:network_name/interactions'});
   this.route('privacysettings', { path: '/:network_name/privacysettings'});
   this.route('study-creator');
+  this.route('debug-log', {});
 });

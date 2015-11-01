@@ -4,7 +4,7 @@
 <div class="content">
   <a class="author">{{model.origin.observer}}</a> {{t "interactions.actionOn"}} <strong>{{model.contentId}}</strong>
   <div class="metadata">
-    <span class="date">{{moment model.createdAt}}</span>
+    <span class="date">{{moment-format model.createdAt}}</span>
   </div>
   <div class="text">
   {{#liquid-if showDetails}}

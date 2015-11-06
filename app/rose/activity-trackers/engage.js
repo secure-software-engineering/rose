@@ -18,6 +18,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
+import log from 'rose/log';
+
 let type = 'engage';
 let network = 'facebook.com';
 let checkInterval = 5000;
@@ -50,7 +52,7 @@ let check = () => {
 
 let checkAnyTabPresent = (windowActivities) => {
   if (windowActivities === null) {
-    console.log('No Tabs opened ever');
+    log('EngageTracker','No Tabs opened ever');
     running = false;
     return;
   }
@@ -64,7 +66,7 @@ let checkAnyTabPresent = (windowActivities) => {
     kango.invokeAsyncCallback('localforage.getItem', 'engage-activity-records', checkSurveyInterval);
   }
   else {
-    console.log('No Tabs open in the survey cycle');
+    log('EngageTracker','No Tabs open in the survey cycle');
     running = false;
   }
 };
@@ -89,7 +91,7 @@ let checkSurveyInterval = (engageActivities) => {
   }
   else {
     running = false;
-    console.log('both surveys done');
+    log('EngageTracker','both surveys done');
   }
 
 };
@@ -215,33 +217,33 @@ let checkConditions = (loginActivities) => {
 
   //debug
   let logData = {lastEngage, lastDisengage, open, active, recentActiveTabs, oldActiveTabs, recentPageActivity, oldPageActivity, anyOpenTabs, recentLogout};
-  console.log(logData);
+  // log('EngageTracker', JSON.stringify(logData));
   /*
    * CHECK CONDITIONS
    */
   let engage;
   if (active && (!recentActiveTabs || !recentPageActivity))  {
-    console.log('engaging: a tab is active after no recent activity');
+    log('EngageTracker','engaging: a tab is active after no recent activity');
     engage = true;
   }
   else if (open && !anyOpenTabs) {
-    console.log('engaging: a tab is opened after no tab was open');
+    log('EngageTracker','engaging: a tab is opened after no tab was open');
     engage = true;
   }
   else if (recentLogout === true) {
-    console.log('disengaging: user performed logout');
+    log('EngageTracker','disengaging: user performed logout');
     engage = false;
   }
   else if (!open && (recentPageActivity || recentActiveTabs)) {
-    console.log('disengaging: last tab is closed after recent activity');
+    log('EngageTracker','disengaging: last tab is closed after recent activity');
     engage = false;
   }
   else if (open && !active && !recentActiveTabs && oldActiveTabs) {
-    console.log('disengaging: no recent active tabs any more');
+    log('EngageTracker','disengaging: no recent active tabs any more');
     engage = false;
   }
   else if (active && !recentPageActivity && oldPageActivity) {
-    console.log('disengaging: active tab, but no recent page activity');
+    log('EngageTracker','disengaging: active tab, but no recent page activity');
     engage = false;
   }
   else {
@@ -262,17 +264,17 @@ let checkConditions = (loginActivities) => {
 
 let sendTrigger = (engage, token) => {
     if (token === control) {
-      console.log('Engage survey triggered and stored');
+      log('EngageTracker','Engage survey triggered and stored');
       store(engage);
     }
     else if (!engage) {
       kango.browser.tabs.create({url: kango.io.getResourceUrl('survey/index.html')});
-      console.log('Disengage survey triggered and stored');
+      log('EngageTracker','Disengage survey triggered and stored');
       store(engage);
     }
     else {
       if (limit < 5) {
-        console.log('Try to reach content script. Attempt: ' + (limit++));
+        log('EngageTracker','Try to reach content script. Attempt: ' + (limit++));
 
         kango.browser.tabs.getCurrent(function(tab) {
           if ((new RegExp('^https:\/\/[\w\.\-]*(' + network.replace(/\./g, '\\$&') + ')(\/|$)')).test(tab.getUrl())) {
@@ -287,7 +289,7 @@ let sendTrigger = (engage, token) => {
         setTimeout(sendTrigger, 1000 + limit*1000, engage, token);
       }
       else {
-        console.log('Failed to reach content script.');
+        log('EngageTracker','Failed to reach content script.');
         running = false;
       }
     }

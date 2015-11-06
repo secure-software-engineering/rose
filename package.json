@@ -41,17 +41,16 @@
     "kbpgp": "^2.0.46",
     "lodash": "^3.3.1",
     "multimatch": "^2.0.0",
-    "node-forge": "^0.6.20",
     "require-dot-file": "^0.4.0",
     "rsvp": "^3.1.0",
-    "semantic-ui": "^1.12.2",
+    "semantic-ui": "^2.1.5",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
     "watchify": "^2.4.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "install": "bower install && cd app/bower_components/forge && npm install && npm run minify"
+    "install": "bower install"
   },
   "author": "Fraunhofer SIT",
   "contributors": [

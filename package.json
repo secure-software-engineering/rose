@@ -41,7 +41,6 @@
     "kbpgp": "^2.0.46",
     "lodash": "^3.3.1",
     "multimatch": "^2.0.0",
-    "node-forge": "^0.6.20",
     "require-dot-file": "^0.4.0",
     "rsvp": "^3.1.0",
     "semantic-ui": "^1.12.2",

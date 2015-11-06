@@ -86,7 +86,7 @@ gulp.task('copy:staticFiles', function() {
       './icons/**/*',
       './res/**/*',
       './ui/**/*',
-      './survey/**/*'
+      './survey/index.html'
     ], { cwd: ENV.app, base: ENV.app})
     .pipe(changed(ENV.tmp))
     .pipe(gulp.dest(ENV.tmp));
@@ -117,6 +117,7 @@ gulp.task('clean:tmp', function(cb) {
 gulp.task('kango:build', [
   'build:backgroundscript',
   'build:contentscript',
+  'build:survey',
   'build:manifest',
   'copy:bowerFiles',
   'copy:staticFiles'
@@ -129,6 +130,7 @@ gulp.task('kango:build', [
 gulp.task('kango:chrome', [
   'build:backgroundscript',
   'build:contentscript',
+  'build:survey',
   'build:manifest',
   'copy:bowerFiles',
   'copy:staticFiles'
@@ -149,16 +151,16 @@ gulp.task('watch', function() {
   return gulp.watch(ENV.app + '/**/*', ['reload']);
 });
 
-gulp.task('reload', ['build:survey','kango:chrome'], function() {
+gulp.task('reload', ['kango:chrome'], function() {
   return gulp.src(ENV.app + '/**/*')
     .pipe(connect.reload());
 });
 
-gulp.task('build', ['clean:dist', 'clean:tmp', 'build:survey',], function() {
+gulp.task('build', ['clean:dist', 'clean:tmp'], function() {
   gulp.start('kango:build');
 });
 
-gulp.task('default', ['clean:dist', 'clean:tmp', 'connect', 'build:survey',], function() {
+gulp.task('default', ['clean:dist', 'clean:tmp', 'connect'], function() {
   gulp.start('watch');
   gulp.start('kango:chrome');
 });

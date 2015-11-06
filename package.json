@@ -51,7 +51,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "install": "bower install && cd app/bower_components/forge && npm install && npm run minify"
+    "install": "bower install"
   },
   "author": "Fraunhofer SIT",
   "contributors": [

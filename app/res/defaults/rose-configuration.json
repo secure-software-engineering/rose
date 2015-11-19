@@ -144,6 +144,9 @@
             "patterns": [{
                 "node": ".PageLikeButton:contains(\"Like\"), .PageLikeButton:contains(\"Gefällt mir\"),.PageLikeButton:contains(\"Like\") *, .PageLikeButton:contains(\"Gefällt mir\") *",
                 "container": ".PageLikeButton"
+            },{
+                "node": ".ego_like, .ego_like *",
+                "container": "a"
             }],
             "isEnabled": true
         }, {

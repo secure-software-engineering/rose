@@ -61,7 +61,7 @@
             "priority": 3,
             "version": "0.4",
             "patterns": [{
-                "node": ".UFILinkBright span",
+                "node": ".UFILinkBright, .UFILinkBright *",
                 "container": ".userContentWrapper",
                 "extractor": "status-update"
             }],
@@ -113,7 +113,7 @@
             "priority": 7,
             "version": "0.4",
             "patterns": [{
-                "node": ".UFILikeLink span",
+                "node": ".UFILikeLink, .UFILikeLink *",
                 "container": ".userContentWrapper",
                 "extractor": "status-update"
             }],

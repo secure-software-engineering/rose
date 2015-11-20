@@ -49,12 +49,11 @@ let SurveyUI = (function () {
     }
 
     var loadTranslation = new RSVP.Promise(function(resolve) {
-      var details, resource;
-      resource = '../res/locales/' + options.lng +'/translation.json';
+      var details;
       details = {
-        url: resource,
+        url: 'res/locales/' + options.lng +'/translation.json',
         method: 'GET',
-        async: false,
+        async: true,
         contentType: 'text'
       };
       kango.xhr.send(details, function(data) {
@@ -109,11 +108,11 @@ let SurveyUI = (function () {
   SurveyUI.prototype._getTemplate = function(template) {
     return new RSVP.Promise(function(resolve) {
       var details, resource;
-      resource = '../res/templates/' + template + '.hbs';
+      resource = 'res/templates/' + template + '.hbs';
       details = {
         url: resource,
         method: 'GET',
-        async: false,
+        async: true,
         contentType: 'text'
       };
       return kango.xhr.send(details, function(data) {

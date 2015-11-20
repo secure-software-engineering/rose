@@ -360,7 +360,7 @@
             "version": "0.2",
             "fields": [{
                 "name": "sharerId",
-                "selector": "a[data-hovercard^=\"/ajax/hovercard/user\"]:has(img)",
+                "selector": "a[data-hovercard^=\"/ajax/hovercard/\"]:has(img)",
                 "attr": "href",
                 "match": ".+profile\\\\.php\\\\?id=\\\\d+(?=\\\\&)|.+(?=\\\\?)|.+",
                 "hash": true

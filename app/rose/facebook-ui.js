@@ -210,6 +210,12 @@ export default (function () {
         var $container = $(evt.currentTarget).siblings('.userContentWrapper');
         var extractorResult = ExtractorEngine.extractFieldsFromContainer($container, this._statusUpdateExtractor, this._configs);
 
+
+        if (extractorResult.contentId === undefined) {
+          log('facebook-ui','Error: Could not obtain contentId!');
+          return
+        }
+
         //Show sidebar
         $('.ui.sidebar').sidebar('push page');
         $('.ui.sidebar').sidebar('show');
@@ -253,15 +259,9 @@ export default (function () {
 
           } else {
             let comment = {createdAt: (new Date()).toJSON(), type: 'post', network: 'facebook'};
-            if (extractorResult.contentId !== undefined) {
-              comment.contentId = extractorResult.contentId;
-              if(extractorResult.sharerId !== undefined) {
-                comment.sharerId = extractorResult.sharerId;
-              }
-            }
-            else {
-              console.error('Could not obtain contentId!');
-              comment.contentId = null;
+            comment.contentId = extractorResult.contentId;
+            if(extractorResult.sharerId !== undefined) {
+              comment.sharerId = extractorResult.sharerId;
             }
             this._activeComment = this._comments.create(comment);
             $('.sidebar textarea').val('');

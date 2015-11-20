@@ -137,6 +137,7 @@ export default (function () {
   FacebookUI.prototype.startSurvey = function(_this) {
     _this._commentMode = false;
     //Show sidebar
+    $('.ui.sidebar > div:first-child').show();
     $('.ui.sidebar > .form').hide();
     $('.ui.rating').rating('set rating', 0);
     $('.ui.sidebar').sidebar('push page');
@@ -227,6 +228,7 @@ export default (function () {
 
         //Show sidebar
         this._commentMode = true;
+        $('.ui.sidebar > div:first-child').hide();
         $('.ui.sidebar > .form').show();
         $('.ui.sidebar').sidebar('push page');
         $('.ui.sidebar').sidebar('show');

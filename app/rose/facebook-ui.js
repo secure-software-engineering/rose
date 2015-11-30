@@ -24,6 +24,7 @@ import UserSettingsModel from 'rose/models/user-settings';
 import CommentsCollection from 'rose/collections/comments';
 import ExtractorEngine from 'rose/extractor-engine';
 import ExtractorCollection from 'rose/collections/extractors';
+import log from 'rose/log';
 
 var loadCss = function loadCss(link) {
   var cssLink;
@@ -121,14 +122,10 @@ export default (function () {
   };
 
   FacebookUI.prototype.redrawUI = function() {
-    var pageletIds = ['#stream_pagelet', '#pagelet_timeline_recent', '#pagelet_timeline_main_column'];
-    for (var i = 0; i < pageletIds.length; i++) {
-      if ($(pageletIds[i]).length) {
-        this._injectCommentRibbon();
-        $('.ui.sidebar').sidebar();
-        $('.ui.radio.checkbox').checkbox();
-        break;
-      }
+    if ($('#stream_pagelet, #pagelet_timeline_recent, #pagelet_timeline_main_column, #pagelet_group').length) {
+      this._injectCommentRibbon();
+      $('.ui.sidebar').sidebar();
+      $('.ui.radio.checkbox').checkbox();
     }
   };
 
@@ -146,7 +143,7 @@ export default (function () {
         tpl = template();
       }
       catch(e) {
-        console.log(e);
+        log('facebook-ui',e);
       }
       $('body').prepend(tpl);
       $('.ui.sidebar').sidebar();
@@ -213,6 +210,12 @@ export default (function () {
         var $container = $(evt.currentTarget).siblings('.userContentWrapper');
         var extractorResult = ExtractorEngine.extractFieldsFromContainer($container, this._statusUpdateExtractor, this._configs);
 
+
+        if (extractorResult.contentId === undefined) {
+          log('facebook-ui','Error: Could not obtain contentId!');
+          return
+        }
+
         //Show sidebar
         $('.ui.sidebar').sidebar('push page');
         $('.ui.sidebar').sidebar('show');
@@ -220,7 +223,7 @@ export default (function () {
         //Check if comment for this content exists and set form
         this._activeComment = undefined;
         this._comments.fetch({success: function onCommentsFetched(){
-          console.log(extractorResult);
+          // console.log(extractorResult);
           this._activeComment = this._comments.findWhere({contentId: extractorResult.contentId});
           if (this._activeComment !== undefined) {
             var activeComment = this._activeComment.toJSON();
@@ -256,15 +259,9 @@ export default (function () {
 
           } else {
             let comment = {createdAt: (new Date()).toJSON(), type: 'post', network: 'facebook'};
-            if (extractorResult.contentId !== undefined) {
-              comment.contentId = extractorResult.contentId;
-              if(extractorResult.sharerId !== undefined) {
-                comment.sharerId = extractorResult.sharerId;
-              }
-            }
-            else {
-              console.error('Could not obtain contentId!');
-              comment.contentId = null;
+            comment.contentId = extractorResult.contentId;
+            if(extractorResult.sharerId !== undefined) {
+              comment.sharerId = extractorResult.sharerId;
             }
             this._activeComment = this._comments.create(comment);
             $('.sidebar textarea').val('');

@@ -3,8 +3,9 @@
     "roseCommentsRatingIsEnabled": true,
     "salt": "ROSE",
     "hashLength": 5,
-    "repositoryURL": "https://secure-software-engineering.github.io/rose/example/",
+    "repositoryURL": "https://secure-software-engineering.github.io/rose/example/base.json",
     "autoUpdateIsEnabled": true,
+    "secureUpdateIsEnabled": true,
     "updateInterval": 28800,
     "fileName": "base.json",
     "fingerprint": "25E769C697EC2C20DA3BDDE9F188CF170FA234E8",
@@ -44,7 +45,7 @@
             "network": "facebook",
             "type": "click",
             "priority": 1,
-            "version": "0.2",
+            "version": "0.1",
             "patterns": [{
                 "node": ".UFICommentActions .UFILikeLink:contains(\"Unlike\"), .UFICommentActions .UFILikeLink:contains(\"Gefällt mir nicht mehr\")",
                 "container": ".userContentWrapper",
@@ -55,7 +56,7 @@
             "network": "facebook",
             "type": "click",
             "priority": 2,
-            "version": "0.3",
+            "version": "0.1",
             "patterns": [{
                 "node": ".UFILinkBright span",
                 "container": ".userContentWrapper",
@@ -66,7 +67,7 @@
             "network": "facebook",
             "type": "click",
             "priority": 2,
-            "version": "0.2",
+            "version": "0.1",
             "patterns": [{
                 "node": ".fbPhotosPhotoLike span.unlike",
                 "container": ".fbPhotoSnowliftPopup"
@@ -92,7 +93,7 @@
             "network": "facebook",
             "type": "click",
             "priority": 4,
-            "version": "0.2",
+            "version": "0.1",
             "patterns": [{
                 "node": ".UFICommentActions .UFILikeLink:contains(\"Like\"), .UFICommentActions .UFILikeLink:contains(\"Gefällt mir\")",
                 "container": ".userContentWrapper",
@@ -103,7 +104,7 @@
             "network": "facebook",
             "type": "click",
             "priority": 5,
-            "version": "0.3",
+            "version": "0.1",
             "patterns": [{
                 "node": ".UFILikeLink span",
                 "container": ".userContentWrapper",
@@ -114,7 +115,7 @@
             "network": "facebook",
             "type": "click",
             "priority": 2,
-            "version": "0.2",
+            "version": "0.1",
             "patterns": [{
                 "node": ".fbPhotosPhotoLike span.like",
                 "container": ".fbPhotoSnowliftPopup"
@@ -140,7 +141,7 @@
             "network": "facebook",
             "type": "click",
             "priority": 5,
-            "version": "0.2",
+            "version": "0.1",
             "patterns": [{
                 "node": "a.friendHovercard * , a[data-hovercard*=\"user\"] *, a[href*=\"=ufi\"] *, a.titlebarText, a[href*=\"=ufi\"][data-hovercard], a[data-hovercard*=\"user\"], .webMessengerMessageGroup strong > a, #webMessengerHeaderName a",
                 "container": "a",
@@ -333,7 +334,7 @@
         "extractors": [{
             "name": "status-update",
             "network": "facebook",
-            "version": "0.2",
+            "version": "0.1",
             "fields": [{
                 "name": "sharerId",
                 "selector": "> div > div > a",

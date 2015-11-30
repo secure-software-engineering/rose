@@ -20,6 +20,7 @@
   "license": "MIT",
   "devDependencies": {
     "broccoli-asset-rev": "^2.0.2",
+    "ember-browserify": "1.1.4",
     "ember-cli": "1.13.1",
     "ember-cli-app-version": "0.3.3",
     "ember-cli-babel": "^5.0.0",
@@ -40,6 +41,7 @@
     "ember-localforage-adapter": "0.7.3",
     "ember-moment": "4.1.0",
     "liquid-fire": "^0.21.0",
+    "normalize-url": "^1.4.0",
     "semantic-ui-ember": "semantic-org/Semantic-UI-Ember#prep-1.0"
   }
 }

@@ -1,7 +1,13 @@
 import Ember from 'ember'
+import normalizeUrl from 'npm:normalize-url'
+
+function removeFileName (str) {
+  return normalizeUrl(str.substring(0, str.lastIndexOf('/')))
+}
 
 export default Ember.Controller.extend({
   baseFileIsLoading: false,
+  baseFileNotFound: false,
   networks: [],
 
   updateIntervals: [
@@ -12,18 +18,19 @@ export default Ember.Controller.extend({
     { label: 'yearly', value: 31556926000 }
   ],
 
-  getExtractors (url) {
+  getExtractors(url) {
     return Ember.$.getJSON(url)
       .then((list) => list.map((item) => Ember.Object.create(item)))
   },
 
-  getObservers (url) {
+  getObservers(url) {
     return Ember.$.getJSON(url)
       .then((list) => list.map((item) => Ember.Object.create(item)))
   },
 
   actions: {
     saveSettings: function () {
+      this.set('model.repositoryURL', normalizeUrl(this.get('model.repositoryURL')))
       this.get('model').save()
     },
 
@@ -53,18 +60,24 @@ export default Ember.Controller.extend({
       window.saveAs(new Blob([jsondata]), fileName)
     },
 
-    fetchBaseFile () {
-      this.set('networks', [])
+    fetchBaseFile() {
+      // this.set('networks', [])
+      this.setProperties({
+        networks: [],
+        baseFileNotFound: false
+      })
 
-      const url = this.get('model.repositoryURL')
-      Ember.$.getJSON(url + 'base.json')
+      const baseFileUrl = this.get('model.repositoryURL')
+      const repositoryURL = removeFileName(baseFileUrl)
+
+      Ember.$.getJSON(baseFileUrl)
         .then((baseJSON) => {
           if (baseJSON.networks) {
             const networks = baseJSON.networks
             networks.forEach((network) => {
               Ember.RSVP.Promise.all([
-                this.getExtractors(url + network.extractors),
-                this.getObservers(url + network.observers)
+                this.getExtractors(`${repositoryURL}/${network.extractors}`),
+                this.getObservers(`${repositoryURL}/${network.observers}`)
               ]).then((results) => {
                 network.extractors = results[0]
                 network.observers = results[1]
@@ -73,13 +86,14 @@ export default Ember.Controller.extend({
             })
           }
         })
+        .fail(() => this.set('baseFileNotFound', true))
     },
 
-    enableAll (itemList) {
+    enableAll(itemList) {
       itemList.forEach(item => item.set('isEnabled', true))
     },
 
-    disableAll (itemList) {
+    disableAll(itemList) {
       itemList.forEach(item => item.set('isEnabled', false))
     }
   }

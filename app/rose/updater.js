@@ -3,147 +3,119 @@ import ObserverCollection from 'rose/collections/observers'
 import ExtractorCollection from 'rose/collections/extractors'
 import NetworkCollection from 'rose/collections/networks'
 import verify from 'rose/verify.js'
-import { Promise } from 'rsvp'
 
-let configs = new ConfigModel()
-
-let cancelUpdate = (msg) => {
-  console.log(msg)
-  kango.dispatchMessage('update-result', {status: 'failure', msg})
+function removeFileName (str) {
+  return str.substring(0, str.lastIndexOf("/"));
 }
 
-let getVerified = (url, key) => {
-  let baseFile = fetch(url)
-  let baseFileSig = fetch(url + '.asc')
-
-  return Promise.all([baseFile, baseFileSig])
-    .then((requests) => {
-      return Promise.all(requests.map((request) => request.text()))
-    })
-    .then((files) => {
-      return verify(files[0], files[1], key).then((fingerprint) => {
-        if (parseInt(configs.get('fingerprint'), 16) === parseInt(fingerprint, 16)) {
-          return files[0]
+function updateExtractor (extractor) {
+  return new Promise((resolve, reject) => {
+    const extractors = new ExtractorCollection()
+    extractors.fetch({
+      success: (col, response, options) => {
+        const model = col.findWhere({
+          name: extractor.name,
+          network: extractor.network
+        })
+        if (extractor.version > model.get('version')) {
+          model.save(extractor, {
+            success: (model, response, options) => resolve(response),
+            error: (model, response, options) => reject(response)
+          })
         } else {
-          return Promise.reject(new Error('Fingerprint does not match.'))
+          resolve()
         }
-      })
+      }
     })
+  })
 }
 
-let update = () => {
-  configs.fetch({success: () => {
-      let repositoryURL = configs.get('repositoryURL')
-      let baseFileUrl = repositoryURL + 'base.json'
-      let publicKeyUrl = repositoryURL + 'public.key'
+function updateObserver (observer) {
+  return new Promise((resolve, reject) => {
+    const observers = new ObserverCollection()
+    observers.fetch({
+      success: (col, response, options) => {
+        const model = col.findWhere({
+          name: observer.name,
+          network: observer.network
+        })
+        if (observer.version > model.get('version')){
+          model.save(observer, {
+            success: (model, response, options) => resolve(response),
+            error: (model, response, options) => reject(response)
+          })
+        } else {
+          resolve()
+        }
+      }
+    })
+  })
+}
 
-      fetch(publicKeyUrl)
-        .then((request) => request.text())
-        .then((publicKey) => {
-          return getVerified(baseFileUrl, publicKey)
-            .then((confData) => {
-              confData = JSON.parse(confData);
+export async function update () {
+  const config = new ConfigModel()
 
-              if (configs.get('timestamp') >= confData.timestamp) {
-                cancelUpdate('All up-to-date')
-                return []
-              } else {
-                configs.set('timestamp', confData.timestamp)
+  config.fetch({
+    success: async (model, response, options) => {
+      const baseFileUrl = model.get('repositoryURL')
+      const baseFileSigUrl = `${baseFileUrl}.asc`
+      const fingerprint = model.get('fingerprint').toLowerCase()
+      const repositoryUrl = removeFileName(baseFileUrl)
+      const publicKeyUrl = `${repositoryUrl}/public.key`
 
-                return new Promise((resolve, reject) => {
-                  let networks = new NetworkCollection()
-                  networks.fetch({success: () => {
-                      let promises = []
+      const baseFileText = await fetch(baseFileUrl).then(res => res.text())
+      const baseFileSigText = await fetch(baseFileSigUrl).then(res => res.text())
+      const publicKeyText = await fetch(publicKeyUrl).then(res => res.text())
 
-                      // iterate through networks that are configured in Rose
-                      networks.each((network) => {
-                        let remoteNetwork = _.findWhere(confData.networks, {name: network.get('name')})
+      const signer = await verify(baseFileText, baseFileSigText, publicKeyText)
 
-                        if (remoteNetwork !== undefined) {
-                          if (remoteNetwork.observers !== undefined) {
-                            // request and verify observer file
-                            promises.push(getVerified(confData.url + remoteNetwork.observers, publicKey))
-                          }
-                          if (remoteNetwork.extractors !== undefined) {
-                            // request and verify extractor file
-                            promises.push(getVerified(confData.url + remoteNetwork.extractors, publicKey))
-                          }
-                        }
+      if (fingerprint !== signer) {
+        throw new Error('Fingerprint Missmatch')
+      }
 
-                        resolve(Promise.all(promises))
-                      })
-                  }})
+      const baseFile = JSON.parse(baseFileText)
+
+      if (baseFile.networks) {
+        baseFile.networks
+          .filter(network => network.observers || network.extractors)
+          .forEach(async network => {
+            if (network.extractors) {
+              const extractorsText = await fetch(`${repositoryUrl}/${network.extractors}`).then(res => res.text())
+              const extractorsSigText = await fetch(`${repositoryUrl}/${network.extractors}.asc`).then(res => res.text())
+
+              if (validate(extractorsText, extractorsSigText, publicKeyText, fingerprint)) {
+                const extractors = JSON.parse(extractorsText)
+                extractors.forEach(async extractor => {
+                  await updateExtractor(extractor)
                 })
               }
-            })
-        })
-        .then((observersExtractors) => {
-          if (observersExtractors.length <= 0) {
-            return Promise.resolve()
-          }
+            }
 
-          return new Promise((resolve, reject) => {
-            // Update every network by its observers/extractors
-            (new ObserverCollection()).fetch({success: (observerCollection) => {
-                (new ExtractorCollection()).fetch({success: (extractorCollection) => {
-                    let updateCounter = 0
+            if (network.observers) {
+              const observersText = await fetch(`${repositoryUrl}/${network.observers}`).then(res => res.text())
+              const observersSigText = await fetch(`${repositoryUrl}/${network.observers}.asc`).then(res => res.text())
 
-                    // for collection of observers/extractors update
-                    observersExtractors.forEach((list) => {
-                      if (list[0].type === 'input' || list[0].type === 'click') {
-                        updateCounter += updateByVersion(observerCollection, list)
-                      } else {
-                        updateCounter += updateByVersion(extractorCollection, list)
-                      }
-                    })
-
-                    // Update sucessful: save and return result
-                    configs.save()
-                    console.log('Sucessfully updated ' + updateCounter + ' observers/extractors')
-                    kango.dispatchMessage('update-result', {status: 'success', updateCounter})
-
-                    resolve()
-                }})
-            }})
+              if (validate(observersText, observersSigText, publicKeyText, fingerprint)) {
+                const observers = JSON.parse(observersText)
+                observers.forEach(async observer => {
+                  await updateObserver(observer)
+                })
+              }
+            }
           })
-        })
-        .catch((error) => {
-          cancelUpdate('Verification of base file failed:' + error)
-        })
-  }})
-}
-
-let compareVersion = (oldVersion, newVersion) => {
-  var result = false
-
-  oldVersion = oldVersion.split('.')
-  newVersion = newVersion.split('.')
-
-  for (var i = 0; i < (Math.max(oldVersion.length, newVersion.length)); i++) {
-    if (oldVersion[i] === undefined) { oldVersion[i] = 0; }
-    if (newVersion[i] === undefined) { newVersion[i] = 0; }
-
-    if (Number(oldVersion[i]) < Number(newVersion[i])) {
-      result = true
-      break
-    }
-    if (oldVersion[i] !== newVersion[i]) {
-      break
-    }
-  }
-  return result
-}
-
-let updateByVersion = (collection, newCollection) => {
-  let updateCounter = 0
-  collection.each((model) => {
-    let remoteModel = _.findWhere(newCollection, {name: model.get('name'), network: model.get('network')})
-    if (remoteModel !== undefined && compareVersion(model.get('version'), remoteModel.version)) {
-      model.save(remoteModel)
-      updateCounter++
+      }
     }
   })
-  return updateCounter
+}
+
+async function validate(data, sig, key, fp) {
+  const fingerprint = await verify(data, sig, key)
+  if (fingerprint.toLowerCase() === fp.toLowerCase()) {
+    return true
+  } else {
+    console.log('Fingerprint Missmatch')
+    return false
+  }
 }
 
 let load = (networks) => {
@@ -172,4 +144,4 @@ let load = (networks) => {
   }})
 }
 
-export default {update, load}
+export default {load, update}

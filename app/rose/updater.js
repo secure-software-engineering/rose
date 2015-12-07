@@ -106,6 +106,8 @@ export async function update () {
       }
     }
   })
+
+  return Promise.resolve()
 }
 
 async function validate(data, sig, key, fp) {

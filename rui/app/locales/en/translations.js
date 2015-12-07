@@ -27,7 +27,7 @@ export default {
     settings: "Settings",
     comments: "Comments",
     interactions: "Interactions",
-    privacySettings: "Privacy Settings",
+    extracts: "Extracts",
     networks: "Networks",
     more: "More",
     help: "Help",
@@ -109,10 +109,10 @@ export default {
     actionOn: "action on"
   },
 
-  // Privacy Settings Page
-  privacySettings: {
-    title: "Privacy Settings",
-    subtitle: "Your privacy settings for this social media site recorded by ROSE."
+  // Extracts Settings Page
+  extracts: {
+    title: "Extracts",
+    subtitle: "ROSE extracted these information"
   },
 
   // Help Page

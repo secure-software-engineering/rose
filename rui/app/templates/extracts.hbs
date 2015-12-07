@@ -1,0 +1,15 @@
+<h2 class="ui dividing header">
+  <i class="settings icon"></i>
+  <div class="content">
+    {{t "extracts.title"}}
+    <div class="sub header">{{t "extracts.subtitle"}}</div>
+  </div>
+</h2>
+
+<div class="ui comments">
+  {{#each sortedList as |extract|}}
+    {{#unless interaction.isDeleted}}
+    {{rose-extract model=extract}}
+    {{/unless}}
+  {{/each}}
+</div>

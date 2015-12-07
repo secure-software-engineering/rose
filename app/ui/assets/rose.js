@@ -78,6 +78,16 @@ define('rose/adapters/comment', ['exports', 'rose/adapters/kango-adapter'], func
   });
 
 });
+define('rose/adapters/extract', ['exports', 'rose/adapters/kango-adapter'], function (exports, KangoAdapter) {
+
+  'use strict';
+
+  exports['default'] = KangoAdapter['default'].extend({
+    collectionNamespace: 'Extracts',
+    modelNamespace: 'Extract'
+  });
+
+});
 define('rose/adapters/extractor', ['exports', 'rose/adapters/kango-adapter'], function (exports, KangoAdapter) {
 
   'use strict';
@@ -1182,6 +1192,16 @@ define('rose/controllers/diary', ['exports', 'ember'], function (exports, Ember)
   });
 
 });
+define('rose/controllers/extracts', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  exports['default'] = Ember['default'].Controller.extend({
+    listSorting: ['createdAt:desc'],
+    sortedList: Ember['default'].computed.sort('model', 'listSorting')
+  });
+
+});
 define('rose/controllers/index', ['exports', 'ember'], function (exports, Ember) {
 
   'use strict';
@@ -1442,7 +1462,7 @@ define('rose/controllers/study-creator', ['exports', 'ember', 'npm:normalize-url
   'use strict';
 
   function removeFileName(str) {
-    return normalizeUrl['default'](str.substring(0, str.lastIndexOf("/")));
+    return normalizeUrl['default'](str.substring(0, str.lastIndexOf('/')));
   }
 
   exports['default'] = Ember['default'].Controller.extend({
@@ -2056,7 +2076,7 @@ define('rose/locales/de/translations', ['exports'], function (exports) {
       settings: "Settings",
       comments: "Comments",
       interactions: "Interactions",
-      privacySettings: "Privacy Settings",
+      extracts: "Extracts",
       networks: "Networks",
       more: "More",
       help: "Help",
@@ -2117,10 +2137,10 @@ define('rose/locales/de/translations', ['exports'], function (exports) {
       actionOn: "action on"
     },
 
-    // Privacy Settings Page
-    privacySettings: {
-      title: "Privacy Settings",
-      subtitle: "Have a look at your privacy settings"
+    // Extracts Settings Page
+    extracts: {
+      title: "Extracts",
+      subtitle: "ROSE extracted these information"
     },
 
     // Help Page
@@ -2259,7 +2279,7 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
       settings: "Settings",
       comments: "Comments",
       interactions: "Interactions",
-      privacySettings: "Privacy Settings",
+      extracts: "Extracts",
       networks: "Networks",
       more: "More",
       help: "Help",
@@ -2341,10 +2361,10 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
       actionOn: "action on"
     },
 
-    // Privacy Settings Page
-    privacySettings: {
-      title: "Privacy Settings",
-      subtitle: "Your privacy settings for this social media site recorded by ROSE."
+    // Extracts Settings Page
+    extracts: {
+      title: "Extracts",
+      subtitle: "ROSE extracted these information"
     },
 
     // Help Page
@@ -2470,6 +2490,17 @@ define('rose/models/diary-entry', ['exports', 'ember-data'], function (exports, 
   });
 
   exports['default'] = model;
+
+});
+define('rose/models/extract', ['exports', 'ember-data'], function (exports, DS) {
+
+  'use strict';
+
+  exports['default'] = DS['default'].Model.extend({
+    createdAt: DS['default'].attr('string'),
+    origin: DS['default'].attr(),
+    fields: DS['default'].attr()
+  });
 
 });
 define('rose/models/extractor', ['exports', 'ember-data'], function (exports, DS) {
@@ -3992,6 +4023,318 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
   }()));
 
 });
+define('rose/pods/components/rose-extract/component', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  exports['default'] = Ember['default'].Component.extend({
+    classNames: ['comment'],
+    showDetails: false,
+
+    jsonData: (function () {
+      return JSON.stringify(this.get('model'), null, 2);
+    }).property('model'),
+
+    actions: {
+      toggleDetails: function toggleDetails() {
+        this.toggleProperty('showDetails');
+      },
+      hide: function hide() {
+        this.set('model.isPrivate', true);
+        this.get('model').save();
+      },
+      unhide: function unhide() {
+        this.set('model.isPrivate', false);
+        this.get('model').save();
+      },
+      'delete': function _delete() {
+        this.get('model').destroyRecord();
+      }
+    }
+  });
+
+});
+define('rose/pods/components/rose-extract/template', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    var child0 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@1.13.11",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 10,
+              "column": 2
+            },
+            "end": {
+              "line": 14,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/rose-extract/template.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"class","ui segment");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("pre");
+          var el3 = dom.createElement("code");
+          var el4 = dom.createComment("");
+          dom.appendChild(el3, el4);
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1, 1, 0]),0,0);
+          return morphs;
+        },
+        statements: [
+          ["content","jsonData",["loc",[null,[12,15],[12,27]]]]
+        ],
+        locals: [],
+        templates: []
+      };
+    }());
+    var child1 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@1.13.11",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 18,
+              "column": 2
+            },
+            "end": {
+              "line": 20,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/rose-extract/template.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("a");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element1 = dom.childAt(fragment, [1]);
+          var morphs = new Array(2);
+          morphs[0] = dom.createElementMorph(element1);
+          morphs[1] = dom.createMorphAt(element1,0,0);
+          return morphs;
+        },
+        statements: [
+          ["element","action",["unhide"],[],["loc",[null,[19,7],[19,26]]]],
+          ["inline","t",["action.unhide"],[],["loc",[null,[19,27],[19,48]]]]
+        ],
+        locals: [],
+        templates: []
+      };
+    }());
+    var child2 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@1.13.11",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 20,
+              "column": 2
+            },
+            "end": {
+              "line": 22,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/rose-extract/template.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("a");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element0 = dom.childAt(fragment, [1]);
+          var morphs = new Array(2);
+          morphs[0] = dom.createElementMorph(element0);
+          morphs[1] = dom.createMorphAt(element0,0,0);
+          return morphs;
+        },
+        statements: [
+          ["element","action",["hide"],[],["loc",[null,[21,7],[21,24]]]],
+          ["inline","t",["action.hide"],[],["loc",[null,[21,25],[21,44]]]]
+        ],
+        locals: [],
+        templates: []
+      };
+    }());
+    return {
+      meta: {
+        "revision": "Ember@1.13.11",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 26,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/pods/components/rose-extract/template.hbs"
+      },
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("a");
+        dom.setAttribute(el1,"class","avatar");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("i");
+        dom.setAttribute(el2,"class","circular eyedropper icon");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"class","content");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("a");
+        dom.setAttribute(el2,"class","author");
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","metadata");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("span");
+        dom.setAttribute(el3,"class","date");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","text");
+        var el3 = dom.createTextNode("\n");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","actions");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("a");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("a");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element2 = dom.childAt(fragment, [2]);
+        var element3 = dom.childAt(element2, [7]);
+        var element4 = dom.childAt(element3, [1]);
+        var element5 = dom.childAt(element3, [5]);
+        var morphs = new Array(8);
+        morphs[0] = dom.createMorphAt(dom.childAt(element2, [1]),0,0);
+        morphs[1] = dom.createMorphAt(dom.childAt(element2, [3, 1]),0,0);
+        morphs[2] = dom.createMorphAt(dom.childAt(element2, [5]),1,1);
+        morphs[3] = dom.createElementMorph(element4);
+        morphs[4] = dom.createMorphAt(element4,0,0);
+        morphs[5] = dom.createMorphAt(element3,3,3);
+        morphs[6] = dom.createElementMorph(element5);
+        morphs[7] = dom.createMorphAt(element5,0,0);
+        return morphs;
+      },
+      statements: [
+        ["content","model.origin.extractor",["loc",[null,[5,20],[5,46]]]],
+        ["inline","moment-format",[["get","model.createdAt",["loc",[null,[7,39],[7,54]]]]],[],["loc",[null,[7,23],[7,56]]]],
+        ["block","liquid-if",[["get","showDetails",["loc",[null,[10,15],[10,26]]]]],[],0,null,["loc",[null,[10,2],[14,16]]]],
+        ["element","action",["toggleDetails"],[],["loc",[null,[17,7],[17,33]]]],
+        ["inline","t",["action.details"],[],["loc",[null,[17,34],[17,56]]]],
+        ["block","if",[["get","model.isPrivate",["loc",[null,[18,8],[18,23]]]]],[],1,2,["loc",[null,[18,2],[22,9]]]],
+        ["element","action",["delete"],[],["loc",[null,[23,7],[23,26]]]],
+        ["inline","t",["action.delete"],[],["loc",[null,[23,27],[23,48]]]]
+      ],
+      locals: [],
+      templates: [child0, child1, child2]
+    };
+  }()));
+
+});
 define('rose/pods/components/rose-interaction/component', ['exports', 'ember'], function (exports, Ember) {
 
   'use strict';
@@ -4334,7 +4677,7 @@ define('rose/router', ['exports', 'ember', 'rose/config/environment'], function 
     this.route('settings');
     this.route('comments', { path: '/:network_name/comments' });
     this.route('interactions', { path: '/:network_name/interactions' });
-    this.route('privacysettings', { path: '/:network_name/privacysettings' });
+    this.route('extracts', { path: '/:network_name/extracts' });
     this.route('study-creator');
     this.route('debug-log', {});
   });
@@ -4457,6 +4800,19 @@ define('rose/routes/diary', ['exports', 'ember'], function (exports, Ember) {
   });
 
 });
+define('rose/routes/extracts', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  exports['default'] = Ember['default'].Route.extend({
+    model: function model(params) {
+      return this.store.find('extract').then(function (records) {
+        return records.filterBy('origin.network', params.network_name);
+      });
+    }
+  });
+
+});
 define('rose/routes/help', ['exports', 'ember'], function (exports, Ember) {
 
 	'use strict';
@@ -4496,13 +4852,6 @@ define('rose/routes/interactions', ['exports', 'ember'], function (exports, Embe
       });
     }
   });
-
-});
-define('rose/routes/privacysettings', ['exports', 'ember'], function (exports, Ember) {
-
-	'use strict';
-
-	exports['default'] = Ember['default'].Route.extend({});
 
 });
 define('rose/routes/settings', ['exports', 'ember'], function (exports, Ember) {
@@ -7561,6 +7910,174 @@ define('rose/templates/diary', ['exports'], function (exports) {
   }()));
 
 });
+define('rose/templates/extracts', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    var child0 = (function() {
+      var child0 = (function() {
+        return {
+          meta: {
+            "revision": "Ember@1.13.11",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 11,
+                "column": 4
+              },
+              "end": {
+                "line": 13,
+                "column": 4
+              }
+            },
+            "moduleName": "rose/templates/extracts.hbs"
+          },
+          arity: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("    ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+            return morphs;
+          },
+          statements: [
+            ["inline","rose-extract",[],["model",["subexpr","@mut",[["get","extract",["loc",[null,[12,25],[12,32]]]]],[],[]]],["loc",[null,[12,4],[12,34]]]]
+          ],
+          locals: [],
+          templates: []
+        };
+      }());
+      return {
+        meta: {
+          "revision": "Ember@1.13.11",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 10,
+              "column": 2
+            },
+            "end": {
+              "line": 14,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/templates/extracts.hbs"
+        },
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+          dom.insertBoundary(fragment, 0);
+          dom.insertBoundary(fragment, null);
+          return morphs;
+        },
+        statements: [
+          ["block","unless",[["get","interaction.isDeleted",["loc",[null,[11,14],[11,35]]]]],[],0,null,["loc",[null,[11,4],[13,15]]]]
+        ],
+        locals: ["extract"],
+        templates: [child0]
+      };
+    }());
+    return {
+      meta: {
+        "revision": "Ember@1.13.11",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 16,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/templates/extracts.hbs"
+      },
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h2");
+        dom.setAttribute(el1,"class","ui dividing header");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("i");
+        dom.setAttribute(el2,"class","settings icon");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","content");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3,"class","sub header");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"class","ui comments");
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [0, 3]);
+        var morphs = new Array(3);
+        morphs[0] = dom.createMorphAt(element0,1,1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
+        morphs[2] = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
+        return morphs;
+      },
+      statements: [
+        ["inline","t",["extracts.title"],[],["loc",[null,[4,4],[4,26]]]],
+        ["inline","t",["extracts.subtitle"],[],["loc",[null,[5,28],[5,53]]]],
+        ["block","each",[["get","sortedList",["loc",[null,[10,10],[10,20]]]]],[],0,null,["loc",[null,[10,2],[14,11]]]]
+      ],
+      locals: [],
+      templates: [child0]
+    };
+  }()));
+
+});
 define('rose/templates/help', ['exports'], function (exports) {
 
   'use strict';
@@ -8280,81 +8797,6 @@ define('rose/templates/modal/reset-data', ['exports'], function (exports) {
       ],
       locals: [],
       templates: [child0]
-    };
-  }()));
-
-});
-define('rose/templates/privacysettings', ['exports'], function (exports) {
-
-  'use strict';
-
-  exports['default'] = Ember.HTMLBars.template((function() {
-    return {
-      meta: {
-        "revision": "Ember@1.13.11",
-        "loc": {
-          "source": null,
-          "start": {
-            "line": 1,
-            "column": 0
-          },
-          "end": {
-            "line": 8,
-            "column": 0
-          }
-        },
-        "moduleName": "rose/templates/privacysettings.hbs"
-      },
-      arity: 0,
-      cachedFragment: null,
-      hasRendered: false,
-      buildFragment: function buildFragment(dom) {
-        var el0 = dom.createDocumentFragment();
-        var el1 = dom.createElement("h2");
-        dom.setAttribute(el1,"class","ui dividing header");
-        var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("i");
-        dom.setAttribute(el2,"class","settings icon");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2,"class","content");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3,"class","sub header");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        return el0;
-      },
-      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element0 = dom.childAt(fragment, [0, 3]);
-        var morphs = new Array(2);
-        morphs[0] = dom.createMorphAt(element0,1,1);
-        morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
-        return morphs;
-      },
-      statements: [
-        ["inline","t",["privacySettings.title"],[],["loc",[null,[4,4],[4,33]]]],
-        ["inline","t",["privacySettings.subtitle"],[],["loc",[null,[5,28],[5,60]]]]
-      ],
-      locals: [],
-      templates: []
     };
   }()));
 
@@ -9236,7 +9678,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
             return morphs;
           },
           statements: [
-            ["inline","t",["sidebarMenu.privacySettings"],[],["loc",[null,[30,10],[30,45]]]]
+            ["inline","t",["sidebarMenu.extracts"],[],["loc",[null,[30,10],[30,38]]]]
           ],
           locals: [],
           templates: []
@@ -9307,7 +9749,7 @@ define('rose/templates/sidebar-menu', ['exports'], function (exports) {
           ["content","network.descriptiveName",["loc",[null,[21,6],[21,33]]]],
           ["block","link-to",["comments",["get","network.name",["loc",[null,[23,30],[23,42]]]]],["class","item"],0,null,["loc",[null,[23,8],[25,20]]]],
           ["block","link-to",["interactions",["get","network.name",["loc",[null,[26,34],[26,46]]]]],["class","item"],1,null,["loc",[null,[26,8],[28,20]]]],
-          ["block","link-to",["privacysettings",["get","network.name",["loc",[null,[29,37],[29,49]]]]],["class","item"],2,null,["loc",[null,[29,8],[31,20]]]]
+          ["block","link-to",["extracts",["get","network.name",["loc",[null,[29,30],[29,42]]]]],["class","item"],2,null,["loc",[null,[29,8],[31,20]]]]
         ],
         locals: ["network"],
         templates: [child0, child1, child2]
@@ -10927,6 +11369,16 @@ define('rose/tests/adapters/comment.jshint', function () {
   });
 
 });
+define('rose/tests/adapters/extract.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - adapters');
+  test('adapters/extract.js should pass jshint', function() { 
+    ok(true, 'adapters/extract.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/adapters/extractor.jshint', function () {
 
   'use strict';
@@ -11054,6 +11506,16 @@ define('rose/tests/controllers/diary.jshint', function () {
   module('JSHint - controllers');
   test('controllers/diary.js should pass jshint', function() { 
     ok(true, 'controllers/diary.js should pass jshint.'); 
+  });
+
+});
+define('rose/tests/controllers/extracts.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - controllers');
+  test('controllers/extracts.js should pass jshint', function() { 
+    ok(true, 'controllers/extracts.js should pass jshint.'); 
   });
 
 });
@@ -11264,6 +11726,16 @@ define('rose/tests/models/diary-entry.jshint', function () {
   });
 
 });
+define('rose/tests/models/extract.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - models');
+  test('models/extract.js should pass jshint', function() { 
+    ok(true, 'models/extract.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/models/extractor.jshint', function () {
 
   'use strict';
@@ -11384,6 +11856,16 @@ define('rose/tests/pods/components/rose-comment/component.jshint', function () {
   });
 
 });
+define('rose/tests/pods/components/rose-extract/component.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - pods/components/rose-extract');
+  test('pods/components/rose-extract/component.js should pass jshint', function() { 
+    ok(true, 'pods/components/rose-extract/component.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/pods/components/rose-interaction/component.jshint', function () {
 
   'use strict';
@@ -11464,6 +11946,16 @@ define('rose/tests/routes/diary.jshint', function () {
   });
 
 });
+define('rose/tests/routes/extracts.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - routes');
+  test('routes/extracts.js should pass jshint', function() { 
+    ok(true, 'routes/extracts.js should pass jshint.'); 
+  });
+
+});
 define('rose/tests/routes/help.jshint', function () {
 
   'use strict';
@@ -11491,16 +11983,6 @@ define('rose/tests/routes/interactions.jshint', function () {
   module('JSHint - routes');
   test('routes/interactions.js should pass jshint', function() { 
     ok(true, 'routes/interactions.js should pass jshint.'); 
-  });
-
-});
-define('rose/tests/routes/privacysettings.jshint', function () {
-
-  'use strict';
-
-  module('JSHint - routes');
-  test('routes/privacysettings.js should pass jshint', function() { 
-    ok(true, 'routes/privacysettings.js should pass jshint.'); 
   });
 
 });
@@ -13483,7 +13965,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.7a6b6b8c"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.52a0a6e5"});
 }
 
 /* jshint ignore:end */

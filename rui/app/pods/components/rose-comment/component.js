@@ -4,6 +4,30 @@ export default Ember.Component.extend({
   isEditable: false,
   classNames: ['comment'],
 
+  viewport: Ember.computed('model.checkbox', function () {
+    debugger
+    const boxes = this.get('model.checkbox') || []
+
+    if (boxes.length) {
+      if (boxes[0]) return 'Newsfeed'
+      if (boxes[1]) return 'Personal profile'
+      if (boxes[2]) return 'Public page'
+    }
+
+    return 'Unkown'
+  }),
+
+  interested: Ember.computed('model.checkbox', function () {
+    const boxes = this.get('model.checkbox') || []
+
+    if (boxes.length){
+      if (boxes[3]) return 'Yes'
+      if (boxes[4]) return 'No'
+    }
+
+    return 'Unkown'
+  }),
+
   actions: {
     hide: function() {
       this.set('model.isPrivate', true);

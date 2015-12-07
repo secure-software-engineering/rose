@@ -1549,6 +1549,21 @@ define('rose/defaults/study-creator', ['exports'], function (exports) {
   };
 
 });
+define('rose/helpers/and', ['exports', 'ember', 'ember-truth-helpers/helpers/and'], function (exports, Ember, and) {
+
+  'use strict';
+
+  var forExport = null;
+
+  if (Ember['default'].Helper) {
+    forExport = Ember['default'].Helper.helper(and.andHelper);
+  } else if (Ember['default'].HTMLBars.makeBoundHelper) {
+    forExport = Ember['default'].HTMLBars.makeBoundHelper(and.andHelper);
+  }
+
+  exports['default'] = forExport;
+
+});
 define('rose/helpers/boolean-to-yesno', ['exports', 'ember', 'ember-i18n'], function (exports, Ember, ember_i18n) {
 
   'use strict';
@@ -1560,6 +1575,96 @@ define('rose/helpers/boolean-to-yesno', ['exports', 'ember', 'ember-i18n'], func
   }
 
   exports['default'] = Ember['default'].HTMLBars.makeBoundHelper(booleanToYesno);
+
+});
+define('rose/helpers/eq', ['exports', 'ember', 'ember-truth-helpers/helpers/equal'], function (exports, Ember, equal) {
+
+  'use strict';
+
+  var forExport = null;
+
+  if (Ember['default'].Helper) {
+    forExport = Ember['default'].Helper.helper(equal.equalHelper);
+  } else if (Ember['default'].HTMLBars.makeBoundHelper) {
+    forExport = Ember['default'].HTMLBars.makeBoundHelper(equal.equalHelper);
+  }
+
+  exports['default'] = forExport;
+
+});
+define('rose/helpers/gt', ['exports', 'ember', 'ember-truth-helpers/helpers/gt'], function (exports, Ember, gt) {
+
+  'use strict';
+
+  var forExport = null;
+
+  if (Ember['default'].Helper) {
+    forExport = Ember['default'].Helper.helper(gt.gtHelper);
+  } else if (Ember['default'].HTMLBars.makeBoundHelper) {
+    forExport = Ember['default'].HTMLBars.makeBoundHelper(gt.gtHelper);
+  }
+
+  exports['default'] = forExport;
+
+});
+define('rose/helpers/gte', ['exports', 'ember', 'ember-truth-helpers/helpers/gte'], function (exports, Ember, gte) {
+
+  'use strict';
+
+  var forExport = null;
+
+  if (Ember['default'].Helper) {
+    forExport = Ember['default'].Helper.helper(gte.gteHelper);
+  } else if (Ember['default'].HTMLBars.makeBoundHelper) {
+    forExport = Ember['default'].HTMLBars.makeBoundHelper(gte.gteHelper);
+  }
+
+  exports['default'] = forExport;
+
+});
+define('rose/helpers/is-array', ['exports', 'ember', 'ember-truth-helpers/helpers/is-array'], function (exports, Ember, is_array) {
+
+  'use strict';
+
+  var forExport = null;
+
+  if (Ember['default'].Helper) {
+    forExport = Ember['default'].Helper.helper(is_array.isArrayHelper);
+  } else if (Ember['default'].HTMLBars.makeBoundHelper) {
+    forExport = Ember['default'].HTMLBars.makeBoundHelper(is_array.isArrayHelper);
+  }
+
+  exports['default'] = forExport;
+
+});
+define('rose/helpers/lt', ['exports', 'ember', 'ember-truth-helpers/helpers/lt'], function (exports, Ember, lt) {
+
+  'use strict';
+
+  var forExport = null;
+
+  if (Ember['default'].Helper) {
+    forExport = Ember['default'].Helper.helper(lt.ltHelper);
+  } else if (Ember['default'].HTMLBars.makeBoundHelper) {
+    forExport = Ember['default'].HTMLBars.makeBoundHelper(lt.ltHelper);
+  }
+
+  exports['default'] = forExport;
+
+});
+define('rose/helpers/lte', ['exports', 'ember', 'ember-truth-helpers/helpers/lte'], function (exports, Ember, lte) {
+
+  'use strict';
+
+  var forExport = null;
+
+  if (Ember['default'].Helper) {
+    forExport = Ember['default'].Helper.helper(lte.lteHelper);
+  } else if (Ember['default'].HTMLBars.makeBoundHelper) {
+    forExport = Ember['default'].HTMLBars.makeBoundHelper(lte.lteHelper);
+  }
+
+  exports['default'] = forExport;
 
 });
 define('rose/helpers/moment-duration', ['exports', 'ember-moment/helpers/moment-duration'], function (exports, moment_duration) {
@@ -1597,6 +1702,66 @@ define('rose/helpers/moment-to-now', ['exports', 'ember', 'rose/config/environme
   exports['default'] = Helper['default'].extend({
     globalAllowEmpty: !!Ember['default'].get(config['default'], 'moment.allowEmpty')
   });
+
+});
+define('rose/helpers/not-eq', ['exports', 'ember', 'ember-truth-helpers/helpers/not-equal'], function (exports, Ember, not_equal) {
+
+  'use strict';
+
+  var forExport = null;
+
+  if (Ember['default'].Helper) {
+    forExport = Ember['default'].Helper.helper(not_equal.notEqualHelper);
+  } else if (Ember['default'].HTMLBars.makeBoundHelper) {
+    forExport = Ember['default'].HTMLBars.makeBoundHelper(not_equal.notEqualHelper);
+  }
+
+  exports['default'] = forExport;
+
+});
+define('rose/helpers/not', ['exports', 'ember', 'ember-truth-helpers/helpers/not'], function (exports, Ember, not) {
+
+  'use strict';
+
+  var forExport = null;
+
+  if (Ember['default'].Helper) {
+    forExport = Ember['default'].Helper.helper(not.notHelper);
+  } else if (Ember['default'].HTMLBars.makeBoundHelper) {
+    forExport = Ember['default'].HTMLBars.makeBoundHelper(not.notHelper);
+  }
+
+  exports['default'] = forExport;
+
+});
+define('rose/helpers/or', ['exports', 'ember', 'ember-truth-helpers/helpers/or'], function (exports, Ember, or) {
+
+  'use strict';
+
+  var forExport = null;
+
+  if (Ember['default'].Helper) {
+    forExport = Ember['default'].Helper.helper(or.orHelper);
+  } else if (Ember['default'].HTMLBars.makeBoundHelper) {
+    forExport = Ember['default'].HTMLBars.makeBoundHelper(or.orHelper);
+  }
+
+  exports['default'] = forExport;
+
+});
+define('rose/helpers/xor', ['exports', 'ember', 'ember-truth-helpers/helpers/xor'], function (exports, Ember, xor) {
+
+  'use strict';
+
+  var forExport = null;
+
+  if (Ember['default'].Helper) {
+    forExport = Ember['default'].Helper.helper(xor.xorHelper);
+  } else if (Ember['default'].HTMLBars.makeBoundHelper) {
+    forExport = Ember['default'].HTMLBars.makeBoundHelper(xor.xorHelper);
+  }
+
+  exports['default'] = forExport;
 
 });
 define('rose/initializers/app-version', ['exports', 'rose/config/environment', 'ember'], function (exports, config, Ember) {
@@ -1732,6 +1897,38 @@ define('rose/initializers/settings', ['exports'], function (exports) {
         name: 'settings',
         initialize: initialize
     };
+
+});
+define('rose/initializers/truth-helpers', ['exports', 'ember', 'ember-truth-helpers/utils/register-helper', 'ember-truth-helpers/helpers/and', 'ember-truth-helpers/helpers/or', 'ember-truth-helpers/helpers/equal', 'ember-truth-helpers/helpers/not', 'ember-truth-helpers/helpers/is-array', 'ember-truth-helpers/helpers/not-equal', 'ember-truth-helpers/helpers/gt', 'ember-truth-helpers/helpers/gte', 'ember-truth-helpers/helpers/lt', 'ember-truth-helpers/helpers/lte'], function (exports, Ember, register_helper, and, or, equal, not, is_array, not_equal, gt, gte, lt, lte) {
+
+  'use strict';
+
+  exports.initialize = initialize;
+
+  function initialize() /* container, application */{
+
+    // Do not register helpers from Ember 1.13 onwards, starting from 1.13 they
+    // will be auto-discovered.
+    if (Ember['default'].Helper) {
+      return;
+    }
+
+    register_helper.registerHelper('and', and.andHelper);
+    register_helper.registerHelper('or', or.orHelper);
+    register_helper.registerHelper('eq', equal.equalHelper);
+    register_helper.registerHelper('not', not.notHelper);
+    register_helper.registerHelper('is-array', is_array.isArrayHelper);
+    register_helper.registerHelper('not-eq', not_equal.notEqualHelper);
+    register_helper.registerHelper('gt', gt.gtHelper);
+    register_helper.registerHelper('gte', gte.gteHelper);
+    register_helper.registerHelper('lt', lt.ltHelper);
+    register_helper.registerHelper('lte', lte.lteHelper);
+  }
+
+  exports['default'] = {
+    name: 'truth-helpers',
+    initialize: initialize
+  };
 
 });
 define('rose/instance-initializers/ember-i18n', ['exports', 'ember', 'ember-i18n/legacy-helper', 'ember-i18n/helper', 'rose/config/environment'], function (exports, Ember, legacyHelper, Helper, ENV) {
@@ -3428,6 +3625,30 @@ define('rose/pods/components/rose-comment/component', ['exports', 'ember'], func
     isEditable: false,
     classNames: ['comment'],
 
+    viewport: Ember['default'].computed('model.checkbox', function () {
+      debugger;
+      var boxes = this.get('model.checkbox') || [];
+
+      if (boxes.length) {
+        if (boxes[0]) return 'Newsfeed';
+        if (boxes[1]) return 'Personal profile';
+        if (boxes[2]) return 'Public page';
+      }
+
+      return 'Unkown';
+    }),
+
+    interested: Ember['default'].computed('model.checkbox', function () {
+      var boxes = this.get('model.checkbox') || [];
+
+      if (boxes.length) {
+        if (boxes[3]) return 'Yes';
+        if (boxes[4]) return 'No';
+      }
+
+      return 'Unkown';
+    }),
+
     actions: {
       hide: function hide() {
         this.set('model.isPrivate', true);
@@ -3468,11 +3689,101 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           "loc": {
             "source": null,
             "start": {
+              "line": 6,
+              "column": 4
+            },
+            "end": {
+              "line": 8,
+              "column": 4
+            }
+          },
+          "moduleName": "rose/pods/components/rose-comment/template.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("strong");
+          var el2 = dom.createTextNode("posting: ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),1,1);
+          return morphs;
+        },
+        statements: [
+          ["content","model.contentId",["loc",[null,[7,23],[7,42]]]]
+        ],
+        locals: [],
+        templates: []
+      };
+    }());
+    var child1 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@1.13.11",
+          "loc": {
+            "source": null,
+            "start": {
               "line": 8,
               "column": 4
             },
             "end": {
+              "line": 10,
+              "column": 4
+            }
+          },
+          "moduleName": "rose/pods/components/rose-comment/template.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("strong");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),0,0);
+          return morphs;
+        },
+        statements: [
+          ["content","model.type",["loc",[null,[9,14],[9,28]]]]
+        ],
+        locals: [],
+        templates: []
+      };
+    }());
+    var child2 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@1.13.11",
+          "loc": {
+            "source": null,
+            "start": {
               "line": 13,
+              "column": 4
+            },
+            "end": {
+              "line": 18,
               "column": 4
             }
           },
@@ -3509,24 +3820,24 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           return morphs;
         },
         statements: [
-          ["content","value",["loc",[null,[11,6],[11,15]]]]
+          ["content","value",["loc",[null,[16,6],[16,15]]]]
         ],
         locals: ["value"],
         templates: []
       };
     }());
-    var child1 = (function() {
+    var child3 = (function() {
       return {
         meta: {
           "revision": "Ember@1.13.11",
           "loc": {
             "source": null,
             "start": {
-              "line": 16,
+              "line": 21,
               "column": 2
             },
             "end": {
-              "line": 20,
+              "line": 25,
               "column": 2
             }
           },
@@ -3558,60 +3869,60 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           return morphs;
         },
         statements: [
-          ["inline","textarea",[],["value",["subexpr","@mut",[["get","model.text",["loc",[null,[18,23],[18,33]]]]],[],[]]],["loc",[null,[18,6],[18,35]]]]
+          ["inline","textarea",[],["value",["subexpr","@mut",[["get","model.text",["loc",[null,[23,23],[23,33]]]]],[],[]]],["loc",[null,[23,6],[23,35]]]]
         ],
         locals: [],
         templates: []
       };
     }());
-    var child2 = (function() {
-      return {
-        meta: {
-          "revision": "Ember@1.13.11",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 20,
-              "column": 2
+    var child4 = (function() {
+      var child0 = (function() {
+        return {
+          meta: {
+            "revision": "Ember@1.13.11",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 26,
+                "column": 4
+              },
+              "end": {
+                "line": 28,
+                "column": 4
+              }
             },
-            "end": {
-              "line": 22,
-              "column": 2
-            }
+            "moduleName": "rose/pods/components/rose-comment/template.hbs"
           },
-          "moduleName": "rose/pods/components/rose-comment/template.hbs"
-        },
-        arity: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("    ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("div");
-          dom.setAttribute(el1,"class","ui segment");
-          var el2 = dom.createElement("pre");
-          var el3 = dom.createComment("");
-          dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(1);
-          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1, 0]),0,0);
-          return morphs;
-        },
-        statements: [
-          ["content","model.text",["loc",[null,[21,33],[21,47]]]]
-        ],
-        locals: [],
-        templates: []
-      };
-    }());
-    var child3 = (function() {
+          arity: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("    ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("div");
+            dom.setAttribute(el1,"class","ui segment");
+            var el2 = dom.createElement("pre");
+            var el3 = dom.createComment("");
+            dom.appendChild(el2, el3);
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1, 0]),0,0);
+            return morphs;
+          },
+          statements: [
+            ["content","model.text",["loc",[null,[27,33],[27,47]]]]
+          ],
+          locals: [],
+          templates: []
+        };
+      }());
       return {
         meta: {
           "revision": "Ember@1.13.11",
@@ -3622,7 +3933,99 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
               "column": 2
             },
             "end": {
+              "line": 29,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/rose-comment/template.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+          dom.insertBoundary(fragment, 0);
+          dom.insertBoundary(fragment, null);
+          return morphs;
+        },
+        statements: [
+          ["block","if",[["get","model.text",["loc",[null,[26,10],[26,20]]]]],[],0,null,["loc",[null,[26,4],[28,11]]]]
+        ],
+        locals: [],
+        templates: [child0]
+      };
+    }());
+    var child5 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@1.13.11",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 30,
+              "column": 2
+            },
+            "end": {
               "line": 32,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/rose-comment/template.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  Viewport: ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("strong");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode(" - Interested: ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("strong");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(2);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),0,0);
+          morphs[1] = dom.createMorphAt(dom.childAt(fragment, [3]),0,0);
+          return morphs;
+        },
+        statements: [
+          ["content","viewport",["loc",[null,[31,20],[31,32]]]],
+          ["content","interested",["loc",[null,[31,64],[31,78]]]]
+        ],
+        locals: [],
+        templates: []
+      };
+    }());
+    var child6 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@1.13.11",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 35,
+              "column": 2
+            },
+            "end": {
+              "line": 42,
               "column": 2
             }
           },
@@ -3668,27 +4071,27 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           return morphs;
         },
         statements: [
-          ["element","action",["save"],[],["loc",[null,[26,7],[26,24]]]],
-          ["inline","t",["action.save"],[],["loc",[null,[27,6],[27,25]]]],
-          ["element","action",["cancel"],[],["loc",[null,[29,7],[29,26]]]],
-          ["inline","t",["action.cancel"],[],["loc",[null,[30,6],[30,27]]]]
+          ["element","action",["save"],[],["loc",[null,[36,7],[36,24]]]],
+          ["inline","t",["action.save"],[],["loc",[null,[37,6],[37,25]]]],
+          ["element","action",["cancel"],[],["loc",[null,[39,7],[39,26]]]],
+          ["inline","t",["action.cancel"],[],["loc",[null,[40,6],[40,27]]]]
         ],
         locals: [],
         templates: []
       };
     }());
-    var child4 = (function() {
+    var child7 = (function() {
       return {
         meta: {
           "revision": "Ember@1.13.11",
           "loc": {
             "source": null,
             "start": {
-              "line": 32,
+              "line": 42,
               "column": 2
             },
             "end": {
-              "line": 36,
+              "line": 46,
               "column": 2
             }
           },
@@ -3721,25 +4124,25 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           return morphs;
         },
         statements: [
-          ["element","action",["edit"],[],["loc",[null,[33,7],[33,24]]]],
-          ["inline","t",["action.edit"],[],["loc",[null,[34,6],[34,25]]]]
+          ["element","action",["edit"],[],["loc",[null,[43,7],[43,24]]]],
+          ["inline","t",["action.edit"],[],["loc",[null,[44,6],[44,25]]]]
         ],
         locals: [],
         templates: []
       };
     }());
-    var child5 = (function() {
+    var child8 = (function() {
       return {
         meta: {
           "revision": "Ember@1.13.11",
           "loc": {
             "source": null,
             "start": {
-              "line": 37,
+              "line": 47,
               "column": 2
             },
             "end": {
-              "line": 41,
+              "line": 51,
               "column": 2
             }
           },
@@ -3772,25 +4175,25 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           return morphs;
         },
         statements: [
-          ["element","action",["unhide"],[],["loc",[null,[38,7],[38,26]]]],
-          ["inline","t",["action.unhide"],[],["loc",[null,[39,6],[39,27]]]]
+          ["element","action",["unhide"],[],["loc",[null,[48,7],[48,26]]]],
+          ["inline","t",["action.unhide"],[],["loc",[null,[49,6],[49,27]]]]
         ],
         locals: [],
         templates: []
       };
     }());
-    var child6 = (function() {
+    var child9 = (function() {
       return {
         meta: {
           "revision": "Ember@1.13.11",
           "loc": {
             "source": null,
             "start": {
-              "line": 41,
+              "line": 51,
               "column": 2
             },
             "end": {
-              "line": 45,
+              "line": 55,
               "column": 2
             }
           },
@@ -3823,8 +4226,8 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           return morphs;
         },
         statements: [
-          ["element","action",["hide"],[],["loc",[null,[42,7],[42,24]]]],
-          ["inline","t",["action.hide"],[],["loc",[null,[43,6],[43,25]]]]
+          ["element","action",["hide"],[],["loc",[null,[52,7],[52,24]]]],
+          ["inline","t",["action.hide"],[],["loc",[null,[53,6],[53,25]]]]
         ],
         locals: [],
         templates: []
@@ -3840,7 +4243,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
             "column": 0
           },
           "end": {
-            "line": 51,
+            "line": 61,
             "column": 0
           }
         },
@@ -3876,13 +4279,11 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
         dom.appendChild(el1, el2);
         var el2 = dom.createComment("");
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" ");
+        var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
-        var el2 = dom.createElement("strong");
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
+        var el2 = dom.createComment("");
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n  ");
+        var el2 = dom.createTextNode("  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
         dom.setAttribute(el2,"class","metadata");
@@ -3905,6 +4306,8 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
         var el2 = dom.createElement("div");
         dom.setAttribute(el2,"class","text");
         var el3 = dom.createTextNode("\n");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
         var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
@@ -3944,35 +4347,38 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element5 = dom.childAt(fragment, [2]);
         var element6 = dom.childAt(element5, [7]);
-        var element7 = dom.childAt(element5, [11]);
-        var element8 = dom.childAt(element7, [4]);
-        var morphs = new Array(10);
+        var element7 = dom.childAt(element5, [9]);
+        var element8 = dom.childAt(element5, [11]);
+        var element9 = dom.childAt(element8, [4]);
+        var morphs = new Array(11);
         morphs[0] = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
         morphs[1] = dom.createMorphAt(element5,3,3);
-        morphs[2] = dom.createMorphAt(dom.childAt(element5, [5]),0,0);
+        morphs[2] = dom.createMorphAt(element5,5,5);
         morphs[3] = dom.createMorphAt(dom.childAt(element6, [1]),0,0);
         morphs[4] = dom.createMorphAt(element6,3,3);
-        morphs[5] = dom.createMorphAt(dom.childAt(element5, [9]),1,1);
-        morphs[6] = dom.createMorphAt(element7,1,1);
-        morphs[7] = dom.createMorphAt(element7,2,2);
-        morphs[8] = dom.createElementMorph(element8);
-        morphs[9] = dom.createMorphAt(element8,1,1);
+        morphs[5] = dom.createMorphAt(element7,1,1);
+        morphs[6] = dom.createMorphAt(element7,2,2);
+        morphs[7] = dom.createMorphAt(element8,1,1);
+        morphs[8] = dom.createMorphAt(element8,2,2);
+        morphs[9] = dom.createElementMorph(element9);
+        morphs[10] = dom.createMorphAt(element9,1,1);
         return morphs;
       },
       statements: [
         ["inline","t",["comments.you"],[],["loc",[null,[5,20],[5,40]]]],
         ["inline","t",["comments.commentedOn"],[],["loc",[null,[5,45],[5,73]]]],
-        ["content","model.contentId",["loc",[null,[5,82],[5,101]]]],
-        ["inline","moment-format",[["get","model.createdAt",["loc",[null,[7,39],[7,54]]]]],[],["loc",[null,[7,23],[7,56]]]],
-        ["block","each",[["get","model.rating",["loc",[null,[8,12],[8,24]]]]],[],0,null,["loc",[null,[8,4],[13,13]]]],
-        ["block","liquid-if",[["get","isEditable",["loc",[null,[16,15],[16,25]]]]],[],1,2,["loc",[null,[16,2],[22,16]]]],
-        ["block","if",[["get","isEditable",["loc",[null,[25,8],[25,18]]]]],[],3,4,["loc",[null,[25,2],[36,9]]]],
-        ["block","if",[["get","model.isPrivate",["loc",[null,[37,8],[37,23]]]]],[],5,6,["loc",[null,[37,2],[45,9]]]],
-        ["element","action",["delete"],[],["loc",[null,[46,7],[46,26]]]],
-        ["inline","t",["action.delete"],[],["loc",[null,[47,6],[47,27]]]]
+        ["block","if",[["subexpr","eq",[["get","model.type",["loc",[null,[6,14],[6,24]]]],"post"],[],["loc",[null,[6,10],[6,32]]]]],[],0,1,["loc",[null,[6,4],[10,11]]]],
+        ["inline","moment-format",[["get","model.createdAt",["loc",[null,[12,39],[12,54]]]]],[],["loc",[null,[12,23],[12,56]]]],
+        ["block","each",[["get","model.rating",["loc",[null,[13,12],[13,24]]]]],[],2,null,["loc",[null,[13,4],[18,13]]]],
+        ["block","liquid-if",[["get","isEditable",["loc",[null,[21,15],[21,25]]]]],[],3,4,["loc",[null,[21,2],[29,16]]]],
+        ["block","if",[["subexpr","gt",[["get","model.checkbox.length",["loc",[null,[30,12],[30,33]]]],0],[],["loc",[null,[30,8],[30,36]]]]],[],5,null,["loc",[null,[30,2],[32,9]]]],
+        ["block","if",[["get","isEditable",["loc",[null,[35,8],[35,18]]]]],[],6,7,["loc",[null,[35,2],[46,9]]]],
+        ["block","if",[["get","model.isPrivate",["loc",[null,[47,8],[47,23]]]]],[],8,9,["loc",[null,[47,2],[55,9]]]],
+        ["element","action",["delete"],[],["loc",[null,[56,7],[56,26]]]],
+        ["inline","t",["action.delete"],[],["loc",[null,[57,6],[57,27]]]]
       ],
       locals: [],
-      templates: [child0, child1, child2, child3, child4, child5, child6]
+      templates: [child0, child1, child2, child3, child4, child5, child6, child7, child8, child9]
     };
   }()));
 
@@ -11280,7 +11686,7 @@ define('rose/tests/pods/components/rose-comment/component.jshint', function () {
 
   module('JSHint - pods/components/rose-comment');
   test('pods/components/rose-comment/component.js should pass jshint', function() { 
-    ok(true, 'pods/components/rose-comment/component.js should pass jshint.'); 
+    ok(false, 'pods/components/rose-comment/component.js should pass jshint.\npods/components/rose-comment/component.js: line 8, col 5, Forgotten \'debugger\' statement?\npods/components/rose-comment/component.js: line 12, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 13, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 14, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 24, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 25, col 21, Expected \'{\' and instead saw \'return\'.\n\n6 errors'); 
   });
 
 });
@@ -13383,7 +13789,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.2748979a"});
+  require("rose/app")["default"].create({"name":"rose","version":"3.0.0yiran8"});
 }
 
 /* jshint ignore:end */

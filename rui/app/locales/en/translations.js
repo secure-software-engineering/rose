@@ -25,7 +25,7 @@ export default {
     diary: "Diary",
     backup: "Data Management",
     settings: "Settings",
-    comments: "Comments",
+    comments: "Study Surveys and Notes",
     interactions: "Interactions",
     privacySettings: "Privacy Settings",
     networks: "Networks",
@@ -95,8 +95,8 @@ export default {
 
   // Comments Page
   comments: {
-    title: "Comments",
-    subtitle: "All comments you have entered using the comment sidebar.",
+    title: "Study Surveys and Notes",
+    subtitle: "All your survey responses or study notes.",
 
     you: "You",
     commentedOn: "commented on"

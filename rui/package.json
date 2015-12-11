@@ -42,6 +42,7 @@
     "ember-moment": "4.1.0",
     "ember-truth-helpers": "1.2.0",
     "liquid-fire": "^0.21.0",
+    "normalize-url": "^1.4.0",
     "semantic-ui-ember": "semantic-org/Semantic-UI-Ember#prep-1.0"
   },
   "dependencies": {}

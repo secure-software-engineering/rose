@@ -13,7 +13,7 @@ export default Router.map(function() {
   this.route('settings');
   this.route('comments', { path: '/:network_name/comments'});
   this.route('interactions', { path: '/:network_name/interactions'});
-  this.route('privacysettings', { path: '/:network_name/privacysettings'});
+  this.route('extracts', { path: '/:network_name/extracts'});
   this.route('study-creator');
   this.route('debug-log', {});
 });

@@ -1,0 +1,25 @@
+<a class="avatar">
+  <i class="circular eyedropper icon"></i>
+</a>
+<div class="content">
+  <a class="author">{{model.origin.extractor}}</a>
+  <div class="metadata">
+    <span class="date">{{moment-format model.createdAt}}</span>
+  </div>
+  <div class="text">
+  {{#liquid-if showDetails}}
+  <div class="ui segment">
+    <pre><code>{{jsonData}}</code></pre>
+  </div>
+  {{/liquid-if}}
+  </div>
+  <div class="actions">
+    <a {{action "toggleDetails"}}>{{t "action.details"}}</a>
+  {{#if model.isPrivate}}
+    <a {{action "unhide"}}>{{t "action.unhide"}}</a>
+  {{else}}
+    <a {{action "hide"}}>{{t "action.hide"}}</a>
+  {{/if}}
+    <a {{action "delete"}}>{{t "action.delete"}}</a>
+  </div>
+</div>

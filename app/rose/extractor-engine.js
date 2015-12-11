@@ -19,6 +19,7 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 import log from 'rose/log';
 import ExtractorCollection from 'rose/collections/extractors';
+import ExtractsCollection from 'rose/collections/extracts';
 import {sha1 as hash} from 'rose/crypto';
 import ConfigsModel from 'rose/models/system-config';
 
@@ -31,8 +32,30 @@ class ExtractorEngine {
       this.extractors = new ExtractorCollection();
       this.extractors.fetch();
     }
+    this.extracts = new ExtractsCollection();
+    this.extracts.fetch();
     this.configs = new ConfigsModel();
     this.configs.fetch();
+  }
+
+  storeExtract(extractor, extracts = {}) {
+
+    var data = {};
+
+    // Time
+    data.createdAt = (new Date()).toJSON();
+
+    // Save extractor name and version
+    data.origin = {
+      extractor: extractor.get('name'),
+      network: extractor.get('network'),
+      version:  extractor.get('version')
+    };
+    data.fields = extracts;
+
+    // Logging interaction
+    this.extracts.create(data);
+    log('ExtractorEngine', 'New extract stored: ' + JSON.stringify(data));
   }
 
   static extractFieldsFromContainer($container, extractor, configs) {
@@ -97,35 +120,22 @@ class ExtractorEngine {
       entry = ExtractorEngine.extractFieldsFromContainer($container, extractor);
 
       if (entry !== undefined && entry !== {}) {
-        //store Extract
-        console.log(entry);
+        this.storeExtract(extractor, entry);
+      }
+      else {
+        log('ExtractorEngine',extractor.get('name') + ' returned no resutls!');
       }
     }.bind(this));
   }
 
+  //FIXME
   schedule(extractor) {
     log('ExtractorEngine', 'Apply extractor: ' + extractor.get('name'));
 
-    //FIXME: Schedule extractor task after login
-    //Heartbeat.schedule(extractor.name, extractor.interval, {}, function() {
-        // Iterate through extracts and execute them
-        // for (var i in extractor.extracts) {
-        //     var extract = extractor.extracts[i];
-
-        //     // Handle extraction process
-        //     handle(extract);
-        // }
-    //});
-    this.handleURL(extractor);
+    // setInterval(extractor.get('interval'), this.handleURL, extractor);
   }
 
-  add(extractor) {
-    log('ExtractorEngine', 'Add extractor: ' + extractor.name);
-
-    // Push to extractors list
-    this.extractors.push(extractor);
-  }
-
+  //FIXME
   register() {
     //FIXME: Filter extractor by network
     log('ExtractorEngine', 'Register to Execution Service');

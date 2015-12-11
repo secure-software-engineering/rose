@@ -24,11 +24,15 @@ import 'babelify/polyfill';
 import log from 'rose/log';
 import ExtractorEngine from 'rose/extractor-engine';
 import ExtractorCollection from 'rose/collections/extractors';
-// import SystemConfigs from 'rose/models/system-config';
+import SystemConfig from 'rose/models/system-config';
 import Updater from 'rose/updater';
 
 import WindowTracker from 'rose/activity-trackers/window';
 import EngageTracker from 'rose/activity-trackers/engage';
+
+import ExecutionService from 'rose/execution-service'
+import Task from 'rose/task'
+
 
 /* Background Script */
 (async function() {
@@ -53,9 +57,19 @@ import EngageTracker from 'rose/activity-trackers/engage';
 
   EngageTracker.start();
 
-
-  // setTimeout(Updater.update,5000);
 })();
+
+const executionService = ExecutionService()
+const config = new SystemConfig()
+config.fetch({
+  success: (config) => {
+    executionService.schedule(Task({
+      name: 'updater',
+      rate: config.get('updateInterval'),
+      job: Updater.update
+    }))
+  }
+})
 
 kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, function(event) {
     kango.browser.tabs.create({url: kango.io.getResourceUrl('ui/index.html')});
@@ -81,7 +95,7 @@ kango.addMessageListener('StartExtractorEngine', (event) => {
 kango.addMessageListener('application-log', async (event) => {
   const applicationLog = await localforage.getItem('application-log') || []
   const log = { date: new Date().getTime() }
-  
+
   applicationLog.push(Object.assign(log, event.data))
   await localforage.setItem('application-log', applicationLog)
 })

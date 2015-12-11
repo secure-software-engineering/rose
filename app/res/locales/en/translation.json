@@ -9,6 +9,7 @@
 
   "sidebar": {
     "engageTitle": "Pre-Facebook Survey",
+    "engageInfoText": "Slightly different question",
     "infoText": "Please rate the following scales based on how you felt right after you read the post.",
     "ratingEntertain": "How entertaining is this content to you",
     "ratingAppropriate": "Do you think it is appropriate to show this content on Facebook",

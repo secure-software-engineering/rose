@@ -3679,6 +3679,7 @@ define('rose/pods/components/rose-comment/component', ['exports', 'ember'], func
         if (boxes[0]) return 'Newsfeed';
         if (boxes[1]) return 'Personal profile';
         if (boxes[2]) return 'Public page';
+        if (boxes[3]) return 'Group page';
       }
 
       return 'Unkown';
@@ -3688,8 +3689,8 @@ define('rose/pods/components/rose-comment/component', ['exports', 'ember'], func
       var boxes = this.get('model.checkbox') || [];
 
       if (boxes.length) {
-        if (boxes[3]) return 'Yes';
-        if (boxes[4]) return 'No';
+        if (boxes[4]) return 'Yes';
+        if (boxes[5]) return 'No';
       }
 
       return 'Unkown';
@@ -12258,7 +12259,7 @@ define('rose/tests/pods/components/rose-comment/component.jshint', function () {
 
   module('JSHint - pods/components/rose-comment');
   test('pods/components/rose-comment/component.js should pass jshint', function() { 
-    ok(false, 'pods/components/rose-comment/component.js should pass jshint.\npods/components/rose-comment/component.js: line 8, col 5, Forgotten \'debugger\' statement?\npods/components/rose-comment/component.js: line 12, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 13, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 14, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 24, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 25, col 21, Expected \'{\' and instead saw \'return\'.\n\n6 errors'); 
+    ok(false, 'pods/components/rose-comment/component.js should pass jshint.\npods/components/rose-comment/component.js: line 8, col 5, Forgotten \'debugger\' statement?\npods/components/rose-comment/component.js: line 12, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 13, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 14, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 15, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 25, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 26, col 21, Expected \'{\' and instead saw \'return\'.\n\n7 errors'); 
   });
 
 });
@@ -14371,7 +14372,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.b69986a2"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.bfa73ba7"});
 }
 
 /* jshint ignore:end */

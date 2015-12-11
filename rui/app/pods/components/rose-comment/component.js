@@ -12,6 +12,7 @@ export default Ember.Component.extend({
       if (boxes[0]) return 'Newsfeed'
       if (boxes[1]) return 'Personal profile'
       if (boxes[2]) return 'Public page'
+      if (boxes[3]) return 'Group page'
     }
 
     return 'Unkown'
@@ -21,8 +22,8 @@ export default Ember.Component.extend({
     const boxes = this.get('model.checkbox') || []
 
     if (boxes.length){
-      if (boxes[3]) return 'Yes'
-      if (boxes[4]) return 'No'
+      if (boxes[4]) return 'Yes'
+      if (boxes[5]) return 'No'
     }
 
     return 'Unkown'

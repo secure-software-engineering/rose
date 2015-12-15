@@ -9,8 +9,8 @@
 
   "sidebar": {
     "engageTitle": "Pre-Facebook Survey",
-    "engageInfoText": "Slightly different question",
-    "infoText": "Please rate the following scales based on how you felt right after you read the post.",
+    "engageInfoText": "Please rate the following scales based on how you felt <b>right before<b> you came to Facebook.",
+    "infoText": "Please rate the following scales based on how you felt <b>right after you read the post<b>.",
     "ratingEntertain": "How entertaining is this content to you",
     "ratingAppropriate": "Do you think it is appropriate to show this content on Facebook",
     "ratingConcentration": "Concentration",
@@ -20,7 +20,7 @@
     "optionContextNewsfeed": "Newsfeed",
     "optionContextPersonalProfile": "Personal profile",
     "optionContextPublicPage": "Public page",
-    "optionContextGroup": "Group page",
+    "optionContextGroup": "Facebook Group",
     "questionKnown": "Is this post about a topic you've been interested in previously?",
     "questionNotice": "What drew your attention to this post and what was your reaction?",
     "questionQuality": "Did you examine the quality of the information? If so, how?",

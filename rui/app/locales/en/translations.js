@@ -33,7 +33,8 @@ export default {
     help: "Help",
     about: "About",
     extraFeatures: "Researcher Features",
-    studyCreator: "Study Creator"
+    studyCreator: "Study Creator",
+    debugLog: "Application Log" 
   },
 
   wizard: {
@@ -85,7 +86,10 @@ export default {
     manualUpdate: "Manual configuration update",
     manualUpdateLabel: "Social media sites change their webpage design from time to time. ROSE requires an update to work properly when these changes occur. To trigger an update manually, press the “update” button.",
     autoUpdate: "Automatic configuration update",
-    autoUpdateLabel: "For automatic updates to recent changes in social media sites, switch on the automatic update function."
+    autoUpdateLabel: "For automatic updates to recent changes in social media sites, switch on the automatic update function.",
+    autoUpdateInterval: "Automatic update interval",
+    autoUpdateIntervalLabel: "ROSE checks for automatic configuration updates in the specified time interval."
+  
   },
 
   resetConfigModal: {

@@ -12,13 +12,13 @@
     "loader.js": "ember-cli/loader.js#3.2.0",
     "qunit": "~1.17.1",
     "ember-cli-moment-shim": "~0.1.0",
-    "semantic-ui": "~1.12.1",
     "highlightjs": "8.5.0",
     "localforage": "~1.2.1",
     "FileSaver": "*",
     "highstock": "~3.0.1",
     "ember-data": "~1.13.0",
     "moment": ">= 2.8.0",
-    "moment-timezone": ">= 0.1.0"
+    "moment-timezone": ">= 0.1.0",
+    "semantic-ui": "~2.1.6"
   }
 }

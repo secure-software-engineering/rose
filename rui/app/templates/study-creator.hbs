@@ -7,6 +7,7 @@
 </h2>
 
 <div class="ui form">
+  <h3 class="ui dividing header">{{t "studyCreator.optionalFeaturesHeader"}}</h3>
   <div class="field">
     <label>{{t "studyCreator.roseComments"}}</label>
     <p>{{t "studyCreator.roseCommentsDesc"}}</p>
@@ -27,6 +28,8 @@
                   onChange=(action "saveSettings")}}
   </div>
 
+  <h3 class="ui dividing header">{{t "studyCreator.privacyHeader"}}</h3>
+
   <div class="field">
     <label>{{t "studyCreator.salt"}}</label>
     <p>{{t "studyCreator.saltDesc"}}</p>
@@ -46,6 +49,8 @@
             insert-newline="saveSettings"
             focus-out="saveSettings"}}
   </div>
+
+  <h3 class="ui dividing header">{{t "studyCreator.repositoryHeader"}}</h3>
 
   <div class="field">
     <label>{{t "studyCreator.repositoryUrl"}}</label>
@@ -78,6 +83,8 @@
               focus-out="saveSettings"}}
     </div>
   </div>
+
+  <h3 class="ui dividing header">{{t "studyCreator.configurationHeader"}}</h3>
 
   <div class="field">
     <label>{{t "studyCreator.networks"}}</label>
@@ -170,6 +177,8 @@
       </div>
     {{/each}}
   </div>
+
+  <h3 class="ui dividing header">{{t "studyCreator.autoUpdateHeader"}}</h3>
 
   <div class="field">
     <label>{{t "studyCreator.autoUpdate"}}</label>

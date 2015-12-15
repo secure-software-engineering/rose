@@ -1,14 +1,16 @@
 {
-  "comment": "Comment",
+  "comment": "Study Note",
   "done": "Done",
   "dismiss": "Dismiss for now",
 
   "reminder": {
-    "prompt": "Don't forget to comment"
+    "prompt": "Don't forget to write a study note when you engage in informal learning."
   },
 
   "sidebar": {
-    "infoText": "Please rate the following scales based on how you feel <b>right at this moment</b>.",
+    "engageTitle": "Pre-Facebook Survey",
+    "engageInfoText": "Slightly different question",
+    "infoText": "Please rate the following scales based on how you felt right after you read the post.",
     "ratingEntertain": "How entertaining is this content to you",
     "ratingAppropriate": "Do you think it is appropriate to show this content on Facebook",
     "ratingConcentration": "Concentration",
@@ -18,16 +20,19 @@
     "optionContextNewsfeed": "Newsfeed",
     "optionContextPersonalProfile": "Personal profile",
     "optionContextPublicPage": "Public page",
-    "questionKnown": "Is this post about a topic that you have already been interested in?",
-    "questionNotice": "What made you decide to read this post?",
-    "questionQuality": "Did you examine the quality of the information? If so, how?"
+    "optionContextGroup": "Group page",
+    "questionKnown": "Is this post about a topic you've been interested in previously?",
+    "questionNotice": "What drew your attention to this post and what was your reaction?",
+    "questionQuality": "Did you examine the quality of the information? If so, how?",
+    "remark": "Now, please take a screenshot."
   },
 
   "surveyDisengage": {
-    "infoText": "Please rate the following statements using the following scale (1 = Strongly disagree, 5 = Strongly agree), which reflects your experience on Facebook JUST NOW.",
-    "ratingAwareness": "It seems I am ‘running on automatic’ when using Facebook, without much awareness of what I am doing.",
-    "ratingActivities": "I rush through activities (e.g., posting status updates, commenting, launching apps, joining groups) on Facebook without being really attentive to them.",
-    "ratingCheckUpdates": "I quickly check updates from Facebook without being aware that I am using it.",
-    "save": "Save and close"
+    "title": "Post-Facebook Survey",
+    "infoText": "Please rate the following statements based on your experience on Facebook <b>just now<b> (1 = Strongly disagree, 5 = Strongly agree).",
+    "ratingAwareness": "It seems I was ‘running on automatic’ when using Facebook, without much awareness of what I was doing.",
+    "ratingActivities": "I rushed through activities (e.g., liking, posting status updates, commenting, joining groups) on Facebook without being really attentive to them.",
+    "save": "Save and close",
+    "dismiss": "I'm not leaving FB yet"
   }
 }

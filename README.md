@@ -53,7 +53,7 @@ To build ROSE you need `node, npm, bower, ember-cli and gulp` installed. You can
     cd rui/
     npm install
     bower install
-    ember build --output-path ../app/ui/
+    ember build
     cd ..
     ```
 

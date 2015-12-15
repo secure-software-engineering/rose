@@ -2,7 +2,12 @@
   <i class="circular comment icon"></i>
 </a>
 <div class="content">
-  <a class="author">{{t "comments.you"}}</a> {{t "comments.commentedOn"}} <strong>{{model.contentId}}</strong>
+  <a class="author">{{t "comments.you"}}</a> {{t "comments.commentedOn"}}
+    {{#if (eq model.type "post")}}
+      <strong>posting: {{model.contentId}}</strong>
+    {{else}}
+      <strong>{{model.type}}</strong>
+    {{/if}}
   <div class="metadata">
     <span class="date">{{moment-format model.createdAt}}</span>
     {{#each model.rating as |value|}}
@@ -18,8 +23,13 @@
       {{textarea value=model.text}}
     </div>
   {{else}}
+    {{#if model.text}}
     <div class="ui segment"><pre>{{model.text}}</pre></div>
+    {{/if}}
   {{/liquid-if}}
+  {{#if (gt model.checkbox.length 0)}}
+  Viewport: <strong>{{viewport}}</strong> - Interested: <strong>{{interested}}</strong>
+  {{/if}}
   </div>
   <div class="actions">
   {{#if isEditable}}

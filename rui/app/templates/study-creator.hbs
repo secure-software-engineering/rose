@@ -60,6 +60,11 @@
         <i class="search icon"></i>
       </button>
     </div>
+    {{#if baseFileNotFound}}
+    <div class="ui pointing red basic label">
+      {{t "studyCreator.baseFileNotFound"}}
+    </div>
+    {{/if}}
   </div>
 
   <div class="field">
@@ -171,6 +176,16 @@
     <p>{{t "studyCreator.autoUpdateDesc"}}</p>
 
     {{ui-checkbox checked=model.autoUpdateIsEnabled
+                  class="toggle"
+                  label=(boolean-to-yesno model.autoUpdateIsEnabled)
+                  onChange=(action "saveSettings")}}
+  </div>
+
+  <div class="field">
+    <label>{{t "studyCreator.secureUpdate"}}</label>
+    <p>{{t "studyCreator.secureUpdateDesc"}}</p>
+
+    {{ui-checkbox checked=model.secureUpdateIsEnabled
                   class="toggle"
                   label=(boolean-to-yesno model.autoUpdateIsEnabled)
                   onChange=(action "saveSettings")}}

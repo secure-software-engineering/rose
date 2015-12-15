@@ -1,58 +1,59 @@
 <div class="ui vertical menu">
-  {{#link-to "index" class="header item"}}
-    ROSE
+  {{#link-to "index" class="item"}}
+    {{t "sidebarMenu.dashboard"}}
+    <i class="dashboard icon"></i>
   {{/link-to}}
   {{#link-to "diary" class="item"}}
     {{t "sidebarMenu.diary"}}
+    <i class="book icon"></i>
   {{/link-to}}
+
+  {{#each networks as |network|}}
+  <div class="item">
+    {{network.descriptiveName}} {{t "sidebarMenu.data"}}
+    <i class="{{network.name}} icon"></i>
+    <div class="menu">
+      {{#link-to "comments" network.name class="item"}}
+        {{t "sidebarMenu.comments"}}
+      {{/link-to}}
+      {{#link-to "interactions" network.name class="item"}}
+        {{t "sidebarMenu.interactions"}}
+      {{/link-to}}
+      {{#link-to "extracts" network.name class="item"}}
+        {{t "sidebarMenu.extracts"}}
+      {{/link-to}}
+    </div>
+  </div>
+  {{/each}}
+
   {{#link-to "backup" class="item"}}
     {{t "sidebarMenu.backup"}}
+    <i class="download icon"></i>
   {{/link-to}}
   {{#link-to "settings" class="item"}}
     {{t "sidebarMenu.settings"}}
+    <i class="options icon"></i>
   {{/link-to}}
-
-  <div class="header item">
-    {{t "sidebarMenu.networks"}}
-  </div>
-
-  {{#each networks as |network|}}
-    <div class="item">
-      {{network.descriptiveName}}
-      <div class="menu">
-        {{#link-to "comments" network.name class="item"}}
-          {{t "sidebarMenu.comments"}}
-        {{/link-to}}
-        {{#link-to "interactions" network.name class="item"}}
-          {{t "sidebarMenu.interactions"}}
-        {{/link-to}}
-        {{#link-to "extracts" network.name class="item"}}
-          {{t "sidebarMenu.extracts"}}
-        {{/link-to}}
-      </div>
-    </div>
-  {{/each}}
-
-  <div class="header item">
-    {{t "sidebarMenu.more"}}
-  </div>
-  {{#liquid-if settings.user.developerModeIsEnabled}}
-    <div class="item">
-      {{t "sidebarMenu.extraFeatures"}}
-      <div class="menu">
-        {{#link-to "study-creator" class="item"}}
-          {{t "sidebarMenu.studyCreator"}}
-        {{/link-to}}
-        {{#link-to "debug-log" class="item"}}
-          {{t "sidebarMenu.debugLog"}}
-        {{/link-to}}
-      </div>
-    </div>
-  {{/liquid-if}}
   {{#link-to "help" class="item"}}
     {{t "sidebarMenu.help"}}
+    <i class="help circle icon"></i>
   {{/link-to}}
+  {{#if settings.user.developerModeIsEnabled}}
+  <div class="item">
+    {{t "sidebarMenu.extraFeatures"}}
+    <i class="lab icon"></i>
+    <div class="menu">
+      {{#link-to "study-creator" class="item"}}
+        {{t "sidebarMenu.studyCreator"}}
+      {{/link-to}}
+      {{#link-to "debug-log" class="item"}}
+        {{t "sidebarMenu.debugLog"}}
+      {{/link-to}}
+    </div>
+  </div>
+  {{/if}}
   {{#link-to "about" class="item"}}
     {{t "sidebarMenu.about"}}
+    <i class="info circle icon"></i>
   {{/link-to}}
 </div>

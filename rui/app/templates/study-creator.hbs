@@ -109,7 +109,7 @@
                 <td class="collapsing">
                   {{ui-checkbox class="fitted toggle" checked=extractor.isEnabled}}
                 </td>
-                <td>{{extractor.name}}</td>
+                <td><strong>{{extractor.name}}</strong></td>
                 <td>{{extractor.version}}</td>
               </tr>
             {{/each}}
@@ -138,8 +138,8 @@
               <tr>
                 <th>{{t "studyCreator.table.enabled"}}</th>
                 <th>{{t "studyCreator.table.name"}}</th>
+                <th>{{t "studyCreator.table.description"}}</th>
                 <th>{{t "studyCreator.table.type"}}</th>
-                <th>{{t "studyCreator.table.priority"}}</th>
                 <th>{{t "studyCreator.table.version"}}</th>
               </tr>
             </thead>
@@ -149,9 +149,9 @@
                 <td class="collapsing">
                   {{ui-checkbox class="fitted toggle" checked=observer.isEnabled}}
                 </td>
-                <td>{{observer.name}}</td>
+                <td><strong>{{observer.name}}</strong></td>
+                <td>{{observer.description}}</td>
                 <td>{{observer.type}}</td>
-                <td>{{observer.priority}}</td>
                 <td>{{observer.version}}</td>
               </tr>
             {{/each}}
@@ -182,8 +182,8 @@
   </div>
 
   <div class="field">
-    <label>{{t "studyCreator.secureUpdate"}}</label>
-    <p>{{t "studyCreator.secureUpdateDesc"}}</p>
+    <label>{{t "studyCreator.forceSecureUpdate"}}</label>
+    <p>{{t "studyCreator.forceSecureUpdateDesc"}}</p>
 
     {{ui-checkbox checked=model.secureUpdateIsEnabled
                   class="toggle"

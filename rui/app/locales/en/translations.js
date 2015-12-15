@@ -22,6 +22,8 @@ export default {
 
   // Sidebar Menu
   sidebarMenu: {
+    data: "Data",
+    dashboard: "Dashboard",
     diary: "Diary",
     backup: "Data Management",
     settings: "Settings",
@@ -34,7 +36,7 @@ export default {
     about: "About",
     extraFeatures: "Researcher Features",
     studyCreator: "Study Creator",
-    debugLog: "Application Log" 
+    debugLog: "Application Log"
   },
 
   wizard: {
@@ -89,7 +91,7 @@ export default {
     autoUpdateLabel: "For automatic updates to recent changes in social media sites, switch on the automatic update function.",
     autoUpdateInterval: "Automatic update interval",
     autoUpdateIntervalLabel: "ROSE checks for automatic configuration updates in the specified time interval."
-  
+
   },
 
   resetConfigModal: {

@@ -13965,7 +13965,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.52a0a6e5"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.5e746d5b"});
 }
 
 /* jshint ignore:end */

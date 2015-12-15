@@ -42,6 +42,6 @@
     "ember-moment": "4.1.0",
     "liquid-fire": "^0.21.0",
     "normalize-url": "^1.4.0",
-    "semantic-ui-ember": "semantic-org/Semantic-UI-Ember#prep-1.0"
+    "semantic-ui-ember": "0.9.1"
   }
 }

@@ -2,18 +2,18 @@
     {
         "name": "status-update",
         "network": "facebook",
-        "version": "0.2",
+        "version": "0.3",
         "fields": [
             {
                 "name": "sharerId",
-                "selector": "> div > a",
+                "selector": "a[data-hovercard^=\"/ajax/hovercard/\"]:has(img)",
                 "attr": "href",
                 "match": ".+profile\\\\.php\\\\?id=\\\\d+(?=\\\\&)|.+(?=\\\\?)|.+",
                 "hash": true
             },
             {
                 "name": "contentId",
-                "selector": "> div.clearfix > div > div > div > div > div > span > span > a:first-child",
+                "selector": "a:has(span.timestampContent)",
                 "match": ".+(?=\\\\?)|.+",
                 "attr": "href",
                 "hash": true
@@ -54,7 +54,6 @@
         "informationUrl": "https://www.facebook.com/settings/?tab=privacy",
         "interval": 5000,
         "container": ".fbSettingsSections",
-        "network": "facebook",
         "version": "0.1",
         "fields": [
             {

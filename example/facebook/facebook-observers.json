@@ -51,10 +51,10 @@
         "network": "facebook",
         "type": "click",
         "priority": 3,
-        "version": "0.4",
+        "version": "0.5",
         "patterns": [
             {
-                "node": ".UFILinkBright span",
+                "node": ".UFILinkBright, .UFILinkBright *",
                 "container": ".userContentWrapper",
                 "extractor": "status-update"
             }
@@ -113,10 +113,10 @@
         "network": "facebook",
         "type": "click",
         "priority": 7,
-        "version": "0.4",
+        "version": "0.5",
         "patterns": [
             {
-                "node": ".UFILikeLink span",
+                "node": ".UFILikeLink, .UFILikeLink *",
                 "container": ".userContentWrapper",
                 "extractor": "status-update"
             }
@@ -148,11 +148,15 @@
         "network": "facebook",
         "type": "click",
         "priority": 9,
-        "version": "0.2",
+        "version": "0.3",
         "patterns": [
             {
                 "node": ".PageLikeButton:contains(\"Like\"), .PageLikeButton:contains(\"Gefällt mir\"),.PageLikeButton:contains(\"Like\") *, .PageLikeButton:contains(\"Gefällt mir\") *",
                 "container": ".PageLikeButton"
+            },
+            {
+                "node": ".ego_like, .ego_like *",
+                "container": "a"
             }
         ]
     },
@@ -284,11 +288,15 @@
         "network": "facebook",
         "type": "click",
         "priority": 16,
-        "version": "0.2",
+        "version": "0.3",
         "patterns": [
             {
-                "node": "a[ajaxify*=\"/join.php\"] *, a[ajaxify*=\"/join.php\"], a[ajaxify*=\"response=join\"]",
+                "node": "a[ajaxify*=\"/join.php\"] *, a[ajaxify*=\"/join.php\"], a[ajaxify*=\"response=join\"], a[ajaxify^=\"/events/feed/going\"], a[ajaxify^=\"/events/feed/going\"] *, a[ajaxify^=\"/events/dashboard/going\"], a[ajaxify^=\"/events/dashboard/going\"] *, a[ajaxify^=\"/events/permalink/going\"], a[ajaxify^=\"/events/permalink/going\"] *, a[ajaxify^=\"/events/hovercard/going\"], a[ajaxify^=\"/events/hovercard/going\"] *",
                 "container": "a"
+            },
+            {
+                "node": ".fbEventsSuggestionItem a.fbEventClassicButton:last-child[href=\"#\"]",
+                "container": ".fbEventsSuggestionItem"
             }
         ]
     },
@@ -297,11 +305,15 @@
         "network": "facebook",
         "type": "click",
         "priority": 17,
-        "version": "0.2",
+        "version": "0.3",
         "patterns": [
             {
-                "node": "a[ajaxify*=\"/associate.php\"] *, a[ajaxify*=\"/associate.php\"]",
+                "node": "a[ajaxify*=\"/associate.php\"] *, a[ajaxify*=\"/associate.php\"], a[ajaxify^=\"/events/feed/watch\"], a[ajaxify^=\"/events/feed/watch\"] *, a[ajaxify^=\"/events/dashboard/watch\"], a[ajaxify^=\"/events/dashboard/watch\"] *, a[ajaxify^=\"/events/permalink/watch\"], a[ajaxify^=\"/events/permalink/watch\"] *, a[ajaxify^=\"/events/hovercard/watch\"], a[ajaxify^=\"/events/hovercard/watch\"] *",
                 "container": "a"
+            },
+            {
+                "node": ".fbEventsSuggestionItem a.fbEventClassicButton:first-child[href=\"#\"]",
+                "container": ".fbEventsSuggestionItem"
             }
         ]
     },
@@ -310,10 +322,10 @@
         "network": "facebook",
         "type": "click",
         "priority": 18,
-        "version": "0.2",
+        "version": "0.3",
         "patterns": [
             {
-                "node": "a[ajaxify*=\"/decline.php\"] *, a[ajaxify*=\"/decline.php\"]",
+                "node": "a[ajaxify*=\"/decline.php\"] *, a[ajaxify*=\"/decline.php\"], a[ajaxify^=\"/events/feed/unwatch\"], a[ajaxify^=\"/events/feed/unwatch\"] *, a[ajaxify^=\"/events/dashboard/unwatch\"], a[ajaxify^=\"/events/dashboard/unwatch\"] *, a[ajaxify^=\"/events/permalink/unwatch\"], a[ajaxify^=\"/events/permalink/unwatch\"] *, a[ajaxify^=\"/events/hovercard/unwatch\"], a[ajaxify^=\"/events/hovercard/unwatch\"] *",
                 "container": "a"
             }
         ]

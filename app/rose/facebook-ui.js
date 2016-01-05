@@ -124,7 +124,7 @@ export default (function () {
   };
 
   FacebookUI.prototype.redrawUI = function() {
-    if ($('#stream_pagelet, #pagelet_timeline_recent, #pagelet_timeline_main_column, #pagelet_group').length) {
+    if ($('#stream_pagelet, #pagelet_timeline_recent, #pagelet_timeline_main_column, #pagelet_group_').length) {
       this._injectCommentRibbon();
       $('.ui.sidebar').sidebar();
       $('.ui.radio.checkbox').checkbox();
@@ -134,8 +134,8 @@ export default (function () {
   FacebookUI.prototype.startSurvey = function(_this) {
     _this._commentMode = false;
     //Show sidebar
-    $('.ui.sidebar .engage').show();
     $('.ui.sidebar > .form, .ui.sidebar .note').hide();
+    $('.ui.sidebar .engage').show();
     $('.ui.rating').rating('set rating', 0);
     $('.ui.sidebar').sidebar('push page');
     $('.ui.sidebar').sidebar('show');
@@ -231,8 +231,8 @@ export default (function () {
 
         //Show sidebar
         this._commentMode = true;
-        $('.ui.sidebar .engage').hide();
         $('.ui.sidebar > .form, .ui.sidebar .note').show();
+        $('.ui.sidebar .engage').hide();
         $('.ui.sidebar').sidebar('push page');
         $('.ui.sidebar').sidebar('show');
 
@@ -268,7 +268,7 @@ export default (function () {
             if (activeComment.checkbox !== undefined) {
               for (var k = 0; k < activeComment.checkbox.length;  k++) {
                 if (activeComment.checkbox[k]) {
-                  $('.ui.checkbox:eq(' + k + ')').checkbox('check');
+                  $('.ui.checkbox:not(".engage .checkbox"):eq(' + k + ')').checkbox('check');
                 }
               }
             }
@@ -301,7 +301,7 @@ export default (function () {
         if(this._configs.get('roseCommentsRatingIsEnabled')) {
           comment.rating = $('.ui.rating').rating('get rating') || [];
         }
-        comment.checkbox = $('.ui.checkbox').checkbox('is checked');
+        comment.checkbox = $('.ui.checkbox:not(".engage .checkbox")').checkbox('is checked');
         comment.updatedAt = (new Date()).toJSON();
         this._activeComment.set(comment);
         this._activeComment.save();
@@ -311,6 +311,7 @@ export default (function () {
       else {
         var engage = {};
         engage.type = 'engage';
+        engage.checkbox = $('.engage .ui.checkbox').checkbox('is checked');
         engage.rating = $('.ui.rating').rating('get rating') || [];
         engage.network = 'facebook';
         engage.createdAt = (new Date()).toJSON();

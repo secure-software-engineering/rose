@@ -4,8 +4,21 @@ export default Ember.Component.extend({
   isEditable: false,
   classNames: ['comment'],
 
+  previousActivity: Ember.computed('model.checkbox', function () {
+    const boxes = this.get('model.checkbox') || []
+
+    if (boxes.length) {
+      if (boxes[0]) return 'Schoolwork offline'
+      if (boxes[1]) return 'Schoolwork on the computer'
+      if (boxes[2]) return 'Non-work activities on the computer'
+      if (boxes[3]) return 'Non-work activities offline'
+      if (boxes[4]) return 'Not doing anything in particular'
+    }
+
+    return 'Unkown'
+  }),
+
   viewport: Ember.computed('model.checkbox', function () {
-    debugger
     const boxes = this.get('model.checkbox') || []
 
     if (boxes.length) {

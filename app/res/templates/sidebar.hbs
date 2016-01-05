@@ -1,6 +1,41 @@
 <div class="ui wide vertical sidebar menu left">
     <div class="ui item engage">
-        <h3>{{I18n 'sidebar.engageTitle'}}</h>
+        <h3>{{I18n 'sidebar.engage.title'}}</h3>
+    </div>
+    <div class="ui item form engage">
+      <div class="grouped fields">
+        <label for="context">{{I18n 'sidebar.engage.questionActivity'}}</label>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" name="context" tabindex="0" class="hidden">
+            <label>{{I18n 'sidebar.engage.schoolworkOffline'}}</label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" name="context" tabindex="0" class="hidden">
+            <label>{{I18n 'sidebar.engage.schoolworkOnline'}}</label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" name="context" tabindex="0" class="hidden">
+            <label>{{I18n 'sidebar.engage.nonworkOnline'}}</label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" name="context" tabindex="0" class="hidden">
+            <label>{{I18n 'sidebar.engage.nonworkOffline'}}</label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" name="context" tabindex="0" class="hidden">
+            <label>{{I18n 'sidebar.engage.nothingParticular'}}</label>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="ui form item">
       <div class="grouped fields">
@@ -35,7 +70,7 @@
         <div class="ui list">
             <div class="item">
                 <div class="content note">{{I18n 'sidebar.infoText'}}</div>
-                <div class="content engage">{{I18n 'sidebar.engageInfoText'}}</div>
+                <div class="content engage">{{I18n 'sidebar.engage.infoText'}}</div>
             </div>
             <div class="item">
                 <div class="content">

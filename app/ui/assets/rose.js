@@ -11418,7 +11418,7 @@ define('rose/templates/study-creator', ['exports'], function (exports) {
         ["inline","ui-checkbox",[],["checked",["subexpr","@mut",[["get","model.autoUpdateIsEnabled",["loc",[null,[187,26],[187,51]]]]],[],[]],"class","toggle","label",["subexpr","boolean-to-yesno",[["get","model.autoUpdateIsEnabled",["loc",[null,[189,42],[189,67]]]]],[],["loc",[null,[189,24],[189,68]]]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[190,27],[190,50]]]]],["loc",[null,[187,4],[190,52]]]],
         ["inline","t",["studyCreator.forceSecureUpdate"],[],["loc",[null,[194,11],[194,49]]]],
         ["inline","t",["studyCreator.forceSecureUpdateDesc"],[],["loc",[null,[195,7],[195,49]]]],
-        ["inline","ui-checkbox",[],["checked",["subexpr","@mut",[["get","model.secureUpdateIsEnabled",["loc",[null,[197,26],[197,53]]]]],[],[]],"class","toggle","label",["subexpr","boolean-to-yesno",[["get","model.autoUpdateIsEnabled",["loc",[null,[199,42],[199,67]]]]],[],["loc",[null,[199,24],[199,68]]]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[200,27],[200,50]]]]],["loc",[null,[197,4],[200,52]]]],
+        ["inline","ui-checkbox",[],["checked",["subexpr","@mut",[["get","model.secureUpdateIsEnabled",["loc",[null,[197,26],[197,53]]]]],[],[]],"class","toggle","label",["subexpr","boolean-to-yesno",[["get","model.secureUpdateIsEnabled",["loc",[null,[199,42],[199,69]]]]],[],["loc",[null,[199,24],[199,70]]]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[200,27],[200,50]]]]],["loc",[null,[197,4],[200,52]]]],
         ["inline","t",["studyCreator.updateInterval"],[],["loc",[null,[204,11],[204,46]]]],
         ["inline","t",["studyCreator.updateIntervalLabel"],[],["loc",[null,[205,7],[205,47]]]],
         ["block","ui-dropdown",[],["class","selection","value",["subexpr","@mut",[["get","settings.system.updateInterval",["loc",[null,[207,26],[207,56]]]]],[],[]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[208,29],[208,52]]]]],2,null,["loc",[null,[206,4],[218,20]]]],
@@ -14050,7 +14050,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.7d0da114"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.c4a274e2"});
 }
 
 /* jshint ignore:end */

@@ -61,7 +61,7 @@
 }
 
  /*
- * # Semantic UI - 2.1.6
+ * # Semantic UI - 2.1.7
  * https://github.com/Semantic-Org/Semantic-UI
  * http://www.semantic-ui.com/
  *
@@ -72,7 +72,7 @@
  */
 @import url('https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic&subset=latin');
 /*!
- * # Semantic UI 2.1.6 - Reset
+ * # Semantic UI 2.1.7 - Reset
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -562,7 +562,7 @@ th {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Site
+ * # Semantic UI 2.1.7 - Site
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -731,7 +731,7 @@ input::selection {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Button
+ * # Semantic UI 2.1.7 - Button
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -1018,7 +1018,9 @@ input::selection {
 .ui.vertical.animated.button .visible.content,
 .ui.vertical.animated.button .hidden.content {
   -webkit-transition: top 0.3s ease, -webkit-transform 0.3s ease;
+  transition: top 0.3s ease, -webkit-transform 0.3s ease;
   transition: top 0.3s ease, transform 0.3s ease;
+  transition: top 0.3s ease, transform 0.3s ease, -webkit-transform 0.3s ease;
 }
 
 .ui.vertical.animated.button .visible.content {
@@ -1053,7 +1055,9 @@ input::selection {
 .ui.fade.animated.button .visible.content,
 .ui.fade.animated.button .hidden.content {
   -webkit-transition: opacity 0.3s ease, -webkit-transform 0.3s ease;
+  transition: opacity 0.3s ease, -webkit-transform 0.3s ease;
   transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease, -webkit-transform 0.3s ease;
 }
 
 .ui.fade.animated.button .visible.content {
@@ -4529,7 +4533,7 @@ input::selection {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Container
+ * # Semantic UI 2.1.7 - Container
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -4692,7 +4696,7 @@ input::selection {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Divider
+ * # Semantic UI 2.1.7 - Divider
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -4963,7 +4967,7 @@ input::selection {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Flag
+ * # Semantic UI 2.1.7 - Flag
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -4996,7 +5000,7 @@ i.flag:not(.icon) {
 i.flag:not(.icon):before {
   display: inline-block;
   content: '';
-  background: url("themes/default/assets/images/flags.png") no-repeat 0px 0px;
+  background: url("themes/default/assets/images/flags.png") no-repeat -108px -1976px;
   width: 16px;
   height: 11px;
 }
@@ -6225,7 +6229,7 @@ i.flag.zimbabwe:before {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Header
+ * # Semantic UI 2.1.7 - Header
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -7046,7 +7050,7 @@ a.ui.inverted.grey.header:hover {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Icon
+ * # Semantic UI 2.1.7 - Icon
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -10358,7 +10362,7 @@ i.icon.bed:before {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Image
+ * # Semantic UI 2.1.7 - Image
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -10670,7 +10674,7 @@ img.ui.bordered.image {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Input
+ * # Semantic UI 2.1.7 - Input
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -11240,7 +11244,7 @@ img.ui.bordered.image {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Label
+ * # Semantic UI 2.1.7 - Label
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -12672,7 +12676,7 @@ a.ui.basic.label:hover {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - List
+ * # Semantic UI 2.1.7 - List
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -13732,7 +13736,7 @@ ol.ui.horizontal.list li:before,
     User Variable Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Loader
+ * # Semantic UI 2.1.7 - Loader
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -14037,7 +14041,7 @@ ol.ui.horizontal.list li:before,
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Rail
+ * # Semantic UI 2.1.7 - Rail
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -14172,7 +14176,7 @@ ol.ui.horizontal.list li:before,
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Reveal
+ * # Semantic UI 2.1.7 - Reveal
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -14233,7 +14237,9 @@ ol.ui.horizontal.list li:before,
   float: left;
   margin: 0em;
   -webkit-transition: -webkit-transform 0.5s ease 0.1s;
+  transition: -webkit-transform 0.5s ease 0.1s;
   transition: transform 0.5s ease 0.1s;
+  transition: transform 0.5s ease 0.1s, -webkit-transform 0.5s ease 0.1s;
 }
 
 .ui.slide.reveal > .visible.content {
@@ -14357,7 +14363,9 @@ ol.ui.horizontal.list li:before,
   float: left;
   margin: 0em;
   -webkit-transition: -webkit-transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1) 0.1s;
+  transition: -webkit-transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1) 0.1s;
   transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1) 0.1s;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1) 0.1s, -webkit-transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1) 0.1s;
 }
 
 .ui.move.reveal > .visible.content {
@@ -14497,7 +14505,7 @@ ol.ui.horizontal.list li:before,
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Segment
+ * # Semantic UI 2.1.7 - Segment
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -15329,7 +15337,7 @@ ol.ui.horizontal.list li:before,
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Step
+ * # Semantic UI 2.1.7 - Step
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -16015,7 +16023,7 @@ ol.ui.horizontal.list li:before,
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Breadcrumb
+ * # Semantic UI 2.1.7 - Breadcrumb
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -16147,7 +16155,7 @@ ol.ui.horizontal.list li:before,
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Form
+ * # Semantic UI 2.1.7 - Form
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -16783,11 +16791,6 @@ ol.ui.horizontal.list li:before,
   position: relative;
   cursor: default;
   point-events: none;
-  text-shadow: none !important;
-  color: transparent !important;
-  -webkit-transition: all 0s linear;
-  transition: all 0s linear;
-  z-index: 100;
 }
 
 .ui.loading.form:before {
@@ -17312,7 +17315,7 @@ ol.ui.horizontal.list li:before,
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Grid
+ * # Semantic UI 2.1.7 - Grid
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -20318,7 +20321,8 @@ Floated Menu / Item
 
 /* Coupling with segment for attachment */
 
-.ui.tabular.menu + .bottom.attached.segment {
+.ui.tabular.menu + .attached:not(.top).segment,
+.ui.tabular.menu + .attached:not(.top).segment + .attached:not(.top).segment {
   border-top: none;
   margin: 0px;
   width: 100%;
@@ -21822,7 +21826,7 @@ Floated Menu / Item
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Message
+ * # Semantic UI 2.1.7 - Message
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -22346,7 +22350,7 @@ Floated Menu / Item
     User Variable Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Table
+ * # Semantic UI 2.1.7 - Table
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -23597,7 +23601,7 @@ Floated Menu / Item
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Ad
+ * # Semantic UI 2.1.7 - Ad
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -23887,7 +23891,7 @@ Floated Menu / Item
     User Variable Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Item
+ * # Semantic UI 2.1.7 - Item
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -23926,7 +23930,9 @@ Floated Menu / Item
   border-radius: 0.28571429rem;
   box-shadow: 0px 1px 3px 0px #D4D4D5, 0px 0px 0px 1px #D4D4D5;
   -webkit-transition: box-shadow 0.1s ease, -webkit-transform 0.1s ease;
+  transition: box-shadow 0.1s ease, -webkit-transform 0.1s ease;
   transition: box-shadow 0.1s ease, transform 0.1s ease;
+  transition: box-shadow 0.1s ease, transform 0.1s ease, -webkit-transform 0.1s ease;
   z-index: '';
 }
 
@@ -24950,7 +24956,7 @@ a.ui.card:hover,
     User Variable Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Comment
+ * # Semantic UI 2.1.7 - Comment
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -25220,7 +25226,7 @@ a.ui.card:hover,
     User Variable Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Feed
+ * # Semantic UI 2.1.7 - Feed
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -25539,7 +25545,7 @@ a.ui.card:hover,
     User Variable Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Item
+ * # Semantic UI 2.1.7 - Item
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -26055,7 +26061,7 @@ a.ui.card:hover,
     User Variable Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Statistic
+ * # Semantic UI 2.1.7 - Statistic
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -26706,7 +26712,7 @@ a.ui.card:hover,
     User Variable Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Accordion
+ * # Semantic UI 2.1.7 - Accordion
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -26777,8 +26783,10 @@ a.ui.card:hover,
   margin: 0em 0.25rem 0em 0rem;
   padding: 0em;
   font-size: 1em;
-  -webkit-transition: -webkit-transform 0.1s ease, opacity 0.1s ease;
+  -webkit-transition: opacity 0.1s ease, -webkit-transform 0.1s ease;
+  transition: opacity 0.1s ease, -webkit-transform 0.1s ease;
   transition: transform 0.1s ease, opacity 0.1s ease;
+  transition: transform 0.1s ease, opacity 0.1s ease, -webkit-transform 0.1s ease;
   vertical-align: baseline;
   -webkit-transform: none;
   -ms-transform: none;
@@ -26971,7 +26979,7 @@ a.ui.card:hover,
         User Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Checkbox
+ * # Semantic UI 2.1.7 - Checkbox
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -27042,8 +27050,10 @@ a.ui.card:hover,
   content: '';
   background: #FFFFFF;
   border-radius: 0.21428571rem;
-  -webkit-transition: border 0.1s ease, opacity 0.1s ease, -webkit-transform 0.1s ease, box-shadow 0.1s ease;
+  -webkit-transition: border 0.1s ease, opacity 0.1s ease, box-shadow 0.1s ease, -webkit-transform 0.1s ease;
+  transition: border 0.1s ease, opacity 0.1s ease, box-shadow 0.1s ease, -webkit-transform 0.1s ease;
   transition: border 0.1s ease, opacity 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
+  transition: border 0.1s ease, opacity 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease, -webkit-transform 0.1s ease;
   border: 1px solid #D4D4D5;
 }
 
@@ -27062,8 +27072,10 @@ a.ui.card:hover,
   text-align: center;
   opacity: 0;
   color: rgba(0, 0, 0, 0.87);
-  -webkit-transition: border 0.1s ease, opacity 0.1s ease, -webkit-transform 0.1s ease, box-shadow 0.1s ease;
+  -webkit-transition: border 0.1s ease, opacity 0.1s ease, box-shadow 0.1s ease, -webkit-transform 0.1s ease;
+  transition: border 0.1s ease, opacity 0.1s ease, box-shadow 0.1s ease, -webkit-transform 0.1s ease;
   transition: border 0.1s ease, opacity 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
+  transition: border 0.1s ease, opacity 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease, -webkit-transform 0.1s ease;
 }
 
 /*--------------
@@ -27638,7 +27650,7 @@ a.ui.card:hover,
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Dimmer
+ * # Semantic UI 2.1.7 - Dimmer
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -27762,7 +27774,7 @@ body.dimmable > .dimmer {
 .blurring.dimmable > :not(.dimmer) {
   -webkit-filter: blur(0px) grayscale(0);
   filter: blur(0px) grayscale(0);
-  -webkit-transition: 800ms -webkit-filter ease, 800ms filter ease;
+  -webkit-transition: 800ms filter ease;
   transition: 800ms filter ease;
 }
 
@@ -27846,7 +27858,7 @@ body.dimmable > .dimmer {
         User Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Dropdown
+ * # Semantic UI 2.1.7 - Dropdown
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -28207,6 +28219,7 @@ body.dimmable > .dimmer {
   white-space: normal;
   outline: 0;
   -webkit-transform: rotateZ(0deg);
+  -ms-transform: rotate(0deg);
   transform: rotateZ(0deg);
   min-width: 14em;
   min-height: 2.7142em;
@@ -29379,7 +29392,7 @@ select.ui.dropdown {
         User Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Video
+ * # Semantic UI 2.1.7 - Video
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -29546,7 +29559,7 @@ select.ui.dropdown {
   padding-bottom: 42.85714286%;
 }
 /*!
- * # Semantic UI 2.1.6 - Modal
+ * # Semantic UI 2.1.7 - Modal
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -30105,7 +30118,7 @@ select.ui.dropdown {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Nag
+ * # Semantic UI 2.1.7 - Nag
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -30251,7 +30264,7 @@ a.ui.nag {
         User Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Popup
+ * # Semantic UI 2.1.7 - Popup
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -30667,7 +30680,7 @@ a.ui.nag {
         User Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Progress Bar
+ * # Semantic UI 2.1.7 - Progress Bar
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -31249,7 +31262,7 @@ a.ui.nag {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Rating
+ * # Semantic UI 2.1.7 - Rating
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -31529,7 +31542,7 @@ a.ui.nag {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Search
+ * # Semantic UI 2.1.7 - Search
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -31798,7 +31811,44 @@ a.ui.nag {
 *******************************/
 
 /*--------------
-    Categories
+    Selection
+---------------*/
+
+.ui.search.selection .prompt {
+  border-radius: 0.28571429rem;
+}
+
+/* Remove input */
+
+.ui.search.selection > .icon.input > .remove.icon {
+  pointer-events: none;
+  position: absolute;
+  left: auto;
+  opacity: 0;
+  color: '';
+  top: 0em;
+  right: 0em;
+  -webkit-transition: color 0.1s ease, opacity 0.1s ease;
+  transition: color 0.1s ease, opacity 0.1s ease;
+}
+
+.ui.search.selection > .icon.input > .active.remove.icon {
+  cursor: pointer;
+  opacity: 0.8;
+  pointer-events: auto;
+}
+
+.ui.search.selection > .icon.input:not([class*="left icon"]) > .icon ~ .remove.icon {
+  right: 1.85714em;
+}
+
+.ui.search.selection > .icon.input > .remove.icon:hover {
+  opacity: 1;
+  color: #DB2828;
+}
+
+/*--------------
+    Category
 ---------------*/
 
 .ui.category.search .results {
@@ -31927,7 +31977,7 @@ a.ui.nag {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Shape
+ * # Semantic UI 2.1.7 - Shape
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -31947,8 +31997,10 @@ a.ui.nag {
   display: inline-block;
   -webkit-perspective: 2000px;
   perspective: 2000px;
-  -webkit-transition: -webkit-transform 0.6s ease-in-out, left 0.6s ease-in-out, width 0.6s ease-in-out, height 0.6s ease-in-out;
+  -webkit-transition: left 0.6s ease-in-out, width 0.6s ease-in-out, height 0.6s ease-in-out, -webkit-transform 0.6s ease-in-out;
+  transition: left 0.6s ease-in-out, width 0.6s ease-in-out, height 0.6s ease-in-out, -webkit-transform 0.6s ease-in-out;
   transition: transform 0.6s ease-in-out, left 0.6s ease-in-out, width 0.6s ease-in-out, height 0.6s ease-in-out;
+  transition: transform 0.6s ease-in-out, left 0.6s ease-in-out, width 0.6s ease-in-out, height 0.6s ease-in-out, -webkit-transform 0.6s ease-in-out;
 }
 
 .ui.shape .sides {
@@ -32058,8 +32110,10 @@ a.ui.nag {
 }
 
 .ui.shape.animating .sides {
-  -webkit-transition: -webkit-transform 0.6s ease-in-out, left 0.6s ease-in-out, width 0.6s ease-in-out, height 0.6s ease-in-out;
+  -webkit-transition: left 0.6s ease-in-out, width 0.6s ease-in-out, height 0.6s ease-in-out, -webkit-transform 0.6s ease-in-out;
+  transition: left 0.6s ease-in-out, width 0.6s ease-in-out, height 0.6s ease-in-out, -webkit-transform 0.6s ease-in-out;
   transition: transform 0.6s ease-in-out, left 0.6s ease-in-out, width 0.6s ease-in-out, height 0.6s ease-in-out;
+  transition: transform 0.6s ease-in-out, left 0.6s ease-in-out, width 0.6s ease-in-out, height 0.6s ease-in-out, -webkit-transform 0.6s ease-in-out;
 }
 
 .ui.shape.animating .side {
@@ -32083,7 +32137,7 @@ a.ui.nag {
         User Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Sidebar
+ * # Semantic UI 2.1.7 - Sidebar
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -32125,8 +32179,6 @@ a.ui.nag {
 .ui.sidebar > * {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  -webkit-transform: rotateZ(0deg);
-  transform: rotateZ(0deg);
 }
 
 /*--------------
@@ -32205,7 +32257,9 @@ body.pushable {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   -webkit-transition: -webkit-transform 500ms ease;
+  transition: -webkit-transform 500ms ease;
   transition: transform 500ms ease;
+  transition: transform 500ms ease, -webkit-transform 500ms ease;
   will-change: transform;
   z-index: 101;
 }
@@ -32221,7 +32275,9 @@ body.pushable {
   overflow: hidden;
   min-height: 100%;
   -webkit-transition: -webkit-transform 500ms ease;
+  transition: -webkit-transform 500ms ease;
   transition: transform 500ms ease;
+  transition: transform 500ms ease, -webkit-transform 500ms ease;
   z-index: 2;
 }
 
@@ -32370,14 +32426,14 @@ html.ios body {
 
 /* Left / Right */
 
-.ui[class*="very thin"].left.sidebar,
-.ui[class*="very thin"].right.sidebar {
-  width: 60px;
-}
-
 .ui.thin.left.sidebar,
 .ui.thin.right.sidebar {
   width: 150px;
+}
+
+.ui[class*="very thin"].left.sidebar,
+.ui[class*="very thin"].right.sidebar {
+  width: 60px;
 }
 
 .ui.left.sidebar,
@@ -32397,16 +32453,16 @@ html.ios body {
 
 /* Left Visible */
 
-.ui.visible[class*="very thin"].left.sidebar ~ .fixed,
-.ui.visible[class*="very thin"].left.sidebar ~ .pusher {
-  -webkit-transform: translate3d(60px, 0, 0);
-  transform: translate3d(60px, 0, 0);
-}
-
 .ui.visible.thin.left.sidebar ~ .fixed,
 .ui.visible.thin.left.sidebar ~ .pusher {
   -webkit-transform: translate3d(150px, 0, 0);
   transform: translate3d(150px, 0, 0);
+}
+
+.ui.visible[class*="very thin"].left.sidebar ~ .fixed,
+.ui.visible[class*="very thin"].left.sidebar ~ .pusher {
+  -webkit-transform: translate3d(60px, 0, 0);
+  transform: translate3d(60px, 0, 0);
 }
 
 .ui.visible.wide.left.sidebar ~ .fixed,
@@ -32423,16 +32479,16 @@ html.ios body {
 
 /* Right Visible */
 
-.ui.visible[class*="very thin"].right.sidebar ~ .fixed,
-.ui.visible[class*="very thin"].right.sidebar ~ .pusher {
-  -webkit-transform: translate3d(-60px, 0, 0);
-  transform: translate3d(-60px, 0, 0);
-}
-
 .ui.visible.thin.right.sidebar ~ .fixed,
 .ui.visible.thin.right.sidebar ~ .pusher {
   -webkit-transform: translate3d(-150px, 0, 0);
   transform: translate3d(-150px, 0, 0);
+}
+
+.ui.visible[class*="very thin"].right.sidebar ~ .fixed,
+.ui.visible[class*="very thin"].right.sidebar ~ .pusher {
+  -webkit-transform: translate3d(-60px, 0, 0);
+  transform: translate3d(-60px, 0, 0);
 }
 
 .ui.visible.wide.right.sidebar ~ .fixed,
@@ -32488,7 +32544,9 @@ html.ios body {
 .animating.ui.overlay.sidebar,
 .ui.visible.overlay.sidebar {
   -webkit-transition: -webkit-transform 500ms ease;
+  transition: -webkit-transform 500ms ease;
   transition: transform 500ms ease;
+  transition: transform 500ms ease, -webkit-transform 500ms ease;
 }
 
 /* End - Sidebar */
@@ -32530,7 +32588,9 @@ html.ios body {
 
 .ui.push.sidebar {
   -webkit-transition: -webkit-transform 500ms ease;
+  transition: -webkit-transform 500ms ease;
   transition: transform 500ms ease;
+  transition: transform 500ms ease, -webkit-transform 500ms ease;
   z-index: 102;
 }
 
@@ -32581,7 +32641,9 @@ html.ios body {
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
   -webkit-transition: -webkit-transform 500ms ease;
+  transition: -webkit-transform 500ms ease;
   transition: transform 500ms ease;
+  transition: transform 500ms ease, -webkit-transform 500ms ease;
 }
 
 /*--------------
@@ -32620,7 +32682,9 @@ html.ios body {
 
 .ui.animating.slide.along.sidebar {
   -webkit-transition: -webkit-transform 500ms ease;
+  transition: -webkit-transform 500ms ease;
   transition: transform 500ms ease;
+  transition: transform 500ms ease, -webkit-transform 500ms ease;
 }
 
 /* End */
@@ -32666,7 +32730,9 @@ html.ios body {
 
 .ui.animating.slide.out.sidebar {
   -webkit-transition: -webkit-transform 500ms ease;
+  transition: -webkit-transform 500ms ease;
   transition: transform 500ms ease;
+  transition: transform 500ms ease, -webkit-transform 500ms ease;
 }
 
 /* End */
@@ -32684,7 +32750,9 @@ html.ios body {
 
 .ui.scale.down.sidebar {
   -webkit-transition: -webkit-transform 500ms ease;
+  transition: -webkit-transform 500ms ease;
   transition: transform 500ms ease;
+  transition: transform 500ms ease, -webkit-transform 500ms ease;
   z-index: 102;
 }
 
@@ -32740,7 +32808,9 @@ html.ios body {
 
 .ui.animating.scale.down > .visible.ui.sidebar {
   -webkit-transition: -webkit-transform 500ms ease;
+  transition: -webkit-transform 500ms ease;
   transition: transform 500ms ease;
+  transition: transform 500ms ease, -webkit-transform 500ms ease;
 }
 
 .ui.visible.scale.down.sidebar ~ .pusher,
@@ -32772,7 +32842,7 @@ html.ios body {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Sticky
+ * # Semantic UI 2.1.7 - Sticky
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -32847,7 +32917,7 @@ html.ios body {
          Site Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Tab
+ * # Semantic UI 2.1.7 - Tab
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -32935,7 +33005,7 @@ html.ios body {
         User Overrides
 *******************************/
 /*!
- * # Semantic UI 2.1.6 - Transition
+ * # Semantic UI 2.1.7 - Transition
  * http://github.com/semantic-org/semantic-ui/
  *
  *

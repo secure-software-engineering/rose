@@ -124,7 +124,7 @@ export default (function () {
   };
 
   FacebookUI.prototype.redrawUI = function() {
-    if ($('#stream_pagelet, #pagelet_timeline_recent, #pagelet_timeline_main_column, #pagelet_group').length) {
+    if ($('#stream_pagelet, #pagelet_timeline_recent, #pagelet_timeline_main_column, #pagelet_group_').length) {
       this._injectCommentRibbon();
       $('.ui.sidebar').sidebar();
       $('.ui.radio.checkbox').checkbox();

@@ -10,7 +10,7 @@
   "sidebar": {
     "engage": {
       "title": "Pre-Facebook Survey",
-      "infoText": "Please rate the following scales based on how you felt <b>right before<b> you came to Facebook.",
+      "infoText": "Please rate the following scales based on how you felt <b>right before</b> you came to Facebook.",
       "questionActivity": "What was the last thing you did right before you came to Facebook?",
       "schoolworkOffline": "Schoolwork offline",
       "schoolworkOnline": "Schoolwork on the computer",
@@ -18,7 +18,7 @@
       "nonworkOffline": "Non-work activities offline",
       "nothingParticular": "Not doing anything in particular"
     },
-    "infoText": "Please rate the following scales based on how you felt <b>right after you read the post<b>.",
+    "infoText": "Please rate the following scales based on how you felt <b>right after you read the post</b>.",
     "ratingEntertain": "How entertaining is this content to you",
     "ratingAppropriate": "Do you think it is appropriate to show this content on Facebook",
     "ratingConcentration": "Concentration",
@@ -37,7 +37,7 @@
 
   "surveyDisengage": {
     "title": "Post-Facebook Survey",
-    "infoText": "Please rate the following statements based on your experience on Facebook <b>just now<b> (1 = Strongly disagree, 5 = Strongly agree).",
+    "infoText": "Please rate the following statements based on your experience on Facebook <b>just now</b> (1 = Strongly disagree, 5 = Strongly agree).",
     "ratingAwareness": "It seems I was ‘running on automatic’ when using Facebook, without much awareness of what I was doing.",
     "ratingActivities": "I rushed through activities (e.g., liking, posting status updates, commenting, joining groups) on Facebook without being really attentive to them.",
     "save": "Save and close",

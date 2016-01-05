@@ -268,7 +268,7 @@ export default (function () {
             if (activeComment.checkbox !== undefined) {
               for (var k = 0; k < activeComment.checkbox.length;  k++) {
                 if (activeComment.checkbox[k]) {
-                  $('.ui.checkbox:eq(' + k + ')').checkbox('check');
+                  $('.ui.checkbox:not(".engage .checkbox"):eq(' + k + ')').checkbox('check');
                 }
               }
             }
@@ -301,7 +301,7 @@ export default (function () {
         if(this._configs.get('roseCommentsRatingIsEnabled')) {
           comment.rating = $('.ui.rating').rating('get rating') || [];
         }
-        comment.checkbox = $('.ui.checkbox').checkbox('is checked');
+        comment.checkbox = $('.ui.checkbox:not(".engage .checkbox")').checkbox('is checked');
         comment.updatedAt = (new Date()).toJSON();
         this._activeComment.set(comment);
         this._activeComment.save();
@@ -311,7 +311,7 @@ export default (function () {
       else {
         var engage = {};
         engage.type = 'engage';
-        engage.checkbox = $('.ui.checkbox').checkbox('is checked');
+        engage.checkbox = $('.engage .ui.checkbox').checkbox('is checked');
         engage.rating = $('.ui.rating').rating('get rating') || [];
         engage.network = 'facebook';
         engage.createdAt = (new Date()).toJSON();

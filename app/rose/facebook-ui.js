@@ -311,6 +311,7 @@ export default (function () {
       else {
         var engage = {};
         engage.type = 'engage';
+        engage.checkbox = $('.ui.checkbox').checkbox('is checked');
         engage.rating = $('.ui.rating').rating('get rating') || [];
         engage.network = 'facebook';
         engage.createdAt = (new Date()).toJSON();

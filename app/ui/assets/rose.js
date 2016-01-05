@@ -3677,8 +3677,21 @@ define('rose/pods/components/rose-comment/component', ['exports', 'ember'], func
     isEditable: false,
     classNames: ['comment'],
 
+    previousActivity: Ember['default'].computed('model.checkbox', function () {
+      var boxes = this.get('model.checkbox') || [];
+
+      if (boxes.length) {
+        if (boxes[0]) return 'Schoolwork offline';
+        if (boxes[1]) return 'Schoolwork on the computer';
+        if (boxes[2]) return 'Non-work activities on the computer';
+        if (boxes[3]) return 'Non-work activities offline';
+        if (boxes[4]) return 'Not doing anything in particular';
+      }
+
+      return 'Unkown';
+    }),
+
     viewport: Ember['default'].computed('model.checkbox', function () {
-      debugger;
       var boxes = this.get('model.checkbox') || [];
 
       if (boxes.length) {
@@ -4074,11 +4087,55 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           "loc": {
             "source": null,
             "start": {
-              "line": 35,
+              "line": 33,
               "column": 2
             },
             "end": {
-              "line": 42,
+              "line": 35,
+              "column": 2
+            }
+          },
+          "moduleName": "rose/pods/components/rose-comment/template.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  Previous activity: ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("strong");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),0,0);
+          return morphs;
+        },
+        statements: [
+          ["content","previousActivity",["loc",[null,[34,29],[34,49]]]]
+        ],
+        locals: [],
+        templates: []
+      };
+    }());
+    var child7 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@1.13.11",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 38,
+              "column": 2
+            },
+            "end": {
+              "line": 45,
               "column": 2
             }
           },
@@ -4124,27 +4181,27 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           return morphs;
         },
         statements: [
-          ["element","action",["save"],[],["loc",[null,[36,7],[36,24]]]],
-          ["inline","t",["action.save"],[],["loc",[null,[37,6],[37,25]]]],
-          ["element","action",["cancel"],[],["loc",[null,[39,7],[39,26]]]],
-          ["inline","t",["action.cancel"],[],["loc",[null,[40,6],[40,27]]]]
+          ["element","action",["save"],[],["loc",[null,[39,7],[39,24]]]],
+          ["inline","t",["action.save"],[],["loc",[null,[40,6],[40,25]]]],
+          ["element","action",["cancel"],[],["loc",[null,[42,7],[42,26]]]],
+          ["inline","t",["action.cancel"],[],["loc",[null,[43,6],[43,27]]]]
         ],
         locals: [],
         templates: []
       };
     }());
-    var child7 = (function() {
+    var child8 = (function() {
       return {
         meta: {
           "revision": "Ember@1.13.11",
           "loc": {
             "source": null,
             "start": {
-              "line": 42,
+              "line": 45,
               "column": 2
             },
             "end": {
-              "line": 46,
+              "line": 49,
               "column": 2
             }
           },
@@ -4177,25 +4234,25 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           return morphs;
         },
         statements: [
-          ["element","action",["edit"],[],["loc",[null,[43,7],[43,24]]]],
-          ["inline","t",["action.edit"],[],["loc",[null,[44,6],[44,25]]]]
+          ["element","action",["edit"],[],["loc",[null,[46,7],[46,24]]]],
+          ["inline","t",["action.edit"],[],["loc",[null,[47,6],[47,25]]]]
         ],
         locals: [],
         templates: []
       };
     }());
-    var child8 = (function() {
+    var child9 = (function() {
       return {
         meta: {
           "revision": "Ember@1.13.11",
           "loc": {
             "source": null,
             "start": {
-              "line": 47,
+              "line": 50,
               "column": 2
             },
             "end": {
-              "line": 51,
+              "line": 54,
               "column": 2
             }
           },
@@ -4228,25 +4285,25 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           return morphs;
         },
         statements: [
-          ["element","action",["unhide"],[],["loc",[null,[48,7],[48,26]]]],
-          ["inline","t",["action.unhide"],[],["loc",[null,[49,6],[49,27]]]]
+          ["element","action",["unhide"],[],["loc",[null,[51,7],[51,26]]]],
+          ["inline","t",["action.unhide"],[],["loc",[null,[52,6],[52,27]]]]
         ],
         locals: [],
         templates: []
       };
     }());
-    var child9 = (function() {
+    var child10 = (function() {
       return {
         meta: {
           "revision": "Ember@1.13.11",
           "loc": {
             "source": null,
             "start": {
-              "line": 51,
+              "line": 54,
               "column": 2
             },
             "end": {
-              "line": 55,
+              "line": 58,
               "column": 2
             }
           },
@@ -4279,8 +4336,8 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
           return morphs;
         },
         statements: [
-          ["element","action",["hide"],[],["loc",[null,[52,7],[52,24]]]],
-          ["inline","t",["action.hide"],[],["loc",[null,[53,6],[53,25]]]]
+          ["element","action",["hide"],[],["loc",[null,[55,7],[55,24]]]],
+          ["inline","t",["action.hide"],[],["loc",[null,[56,6],[56,25]]]]
         ],
         locals: [],
         templates: []
@@ -4296,7 +4353,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
             "column": 0
           },
           "end": {
-            "line": 61,
+            "line": 64,
             "column": 0
           }
         },
@@ -4364,6 +4421,8 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
         dom.appendChild(el2, el3);
         var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
@@ -4403,7 +4462,7 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
         var element7 = dom.childAt(element5, [9]);
         var element8 = dom.childAt(element5, [11]);
         var element9 = dom.childAt(element8, [4]);
-        var morphs = new Array(11);
+        var morphs = new Array(12);
         morphs[0] = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
         morphs[1] = dom.createMorphAt(element5,3,3);
         morphs[2] = dom.createMorphAt(element5,5,5);
@@ -4411,10 +4470,11 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
         morphs[4] = dom.createMorphAt(element6,3,3);
         morphs[5] = dom.createMorphAt(element7,1,1);
         morphs[6] = dom.createMorphAt(element7,2,2);
-        morphs[7] = dom.createMorphAt(element8,1,1);
-        morphs[8] = dom.createMorphAt(element8,2,2);
-        morphs[9] = dom.createElementMorph(element9);
-        morphs[10] = dom.createMorphAt(element9,1,1);
+        morphs[7] = dom.createMorphAt(element7,3,3);
+        morphs[8] = dom.createMorphAt(element8,1,1);
+        morphs[9] = dom.createMorphAt(element8,2,2);
+        morphs[10] = dom.createElementMorph(element9);
+        morphs[11] = dom.createMorphAt(element9,1,1);
         return morphs;
       },
       statements: [
@@ -4424,14 +4484,15 @@ define('rose/pods/components/rose-comment/template', ['exports'], function (expo
         ["inline","moment-format",[["get","model.createdAt",["loc",[null,[12,39],[12,54]]]]],[],["loc",[null,[12,23],[12,56]]]],
         ["block","each",[["get","model.rating",["loc",[null,[13,12],[13,24]]]]],[],2,null,["loc",[null,[13,4],[18,13]]]],
         ["block","liquid-if",[["get","isEditable",["loc",[null,[21,15],[21,25]]]]],[],3,4,["loc",[null,[21,2],[29,16]]]],
-        ["block","if",[["subexpr","gt",[["get","model.checkbox.length",["loc",[null,[30,12],[30,33]]]],0],[],["loc",[null,[30,8],[30,36]]]]],[],5,null,["loc",[null,[30,2],[32,9]]]],
-        ["block","if",[["get","isEditable",["loc",[null,[35,8],[35,18]]]]],[],6,7,["loc",[null,[35,2],[46,9]]]],
-        ["block","if",[["get","model.isPrivate",["loc",[null,[47,8],[47,23]]]]],[],8,9,["loc",[null,[47,2],[55,9]]]],
-        ["element","action",["delete"],[],["loc",[null,[56,7],[56,26]]]],
-        ["inline","t",["action.delete"],[],["loc",[null,[57,6],[57,27]]]]
+        ["block","if",[["subexpr","eq",[["get","model.type",["loc",[null,[30,12],[30,22]]]],"post"],[],["loc",[null,[30,8],[30,30]]]]],[],5,null,["loc",[null,[30,2],[32,9]]]],
+        ["block","if",[["subexpr","eq",[["get","model.type",["loc",[null,[33,12],[33,22]]]],"engage"],[],["loc",[null,[33,8],[33,32]]]]],[],6,null,["loc",[null,[33,2],[35,9]]]],
+        ["block","if",[["get","isEditable",["loc",[null,[38,8],[38,18]]]]],[],7,8,["loc",[null,[38,2],[49,9]]]],
+        ["block","if",[["get","model.isPrivate",["loc",[null,[50,8],[50,23]]]]],[],9,10,["loc",[null,[50,2],[58,9]]]],
+        ["element","action",["delete"],[],["loc",[null,[59,7],[59,26]]]],
+        ["inline","t",["action.delete"],[],["loc",[null,[60,6],[60,27]]]]
       ],
       locals: [],
-      templates: [child0, child1, child2, child3, child4, child5, child6, child7, child8, child9]
+      templates: [child0, child1, child2, child3, child4, child5, child6, child7, child8, child9, child10]
     };
   }()));
 
@@ -12344,7 +12405,7 @@ define('rose/tests/pods/components/rose-comment/component.jshint', function () {
 
   module('JSHint - pods/components/rose-comment');
   test('pods/components/rose-comment/component.js should pass jshint', function() { 
-    ok(false, 'pods/components/rose-comment/component.js should pass jshint.\npods/components/rose-comment/component.js: line 8, col 5, Forgotten \'debugger\' statement?\npods/components/rose-comment/component.js: line 12, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 13, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 14, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 15, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 25, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 26, col 21, Expected \'{\' and instead saw \'return\'.\n\n7 errors'); 
+    ok(false, 'pods/components/rose-comment/component.js should pass jshint.\npods/components/rose-comment/component.js: line 11, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 12, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 13, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 14, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 15, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 25, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 26, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 27, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 28, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 38, col 21, Expected \'{\' and instead saw \'return\'.\npods/components/rose-comment/component.js: line 39, col 21, Expected \'{\' and instead saw \'return\'.\n\n11 errors'); 
   });
 
 });
@@ -14457,7 +14518,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.30fd4d33"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.71b4e73c"});
 }
 
 /* jshint ignore:end */

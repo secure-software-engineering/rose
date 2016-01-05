@@ -8,8 +8,16 @@
   },
 
   "sidebar": {
-    "engageTitle": "Pre-Facebook Survey",
-    "engageInfoText": "Please rate the following scales based on how you felt <b>right before<b> you came to Facebook.",
+    "engage": {
+      "title": "Pre-Facebook Survey",
+      "infoText": "Please rate the following scales based on how you felt <b>right before<b> you came to Facebook.",
+      "questionActivity": "What was the last thing you did right before you came to Facebook?",
+      "schoolworkOffline": "Schoolwork offline",
+      "schoolworkOnline": "Schoolwork on the computer",
+      "nonworkOnline": "Non-work activities on the computer",
+      "nonworkOffline": "Non-work activities offline",
+      "nothingParticular": "Not doing anything in particular"
+    },
     "infoText": "Please rate the following scales based on how you felt <b>right after you read the post<b>.",
     "ratingEntertain": "How entertaining is this content to you",
     "ratingAppropriate": "Do you think it is appropriate to show this content on Facebook",

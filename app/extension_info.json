@@ -1,9 +1,11 @@
 {
-    "name": "ROSE",
-    "description": "Research tool for field studies in online social networks.",
+    "name": "ROSE (Millennial Study Version)",
+    "description": "Research tool for field studies of online social network usage. This version was tailored for the Millenial Facebook User Study.",
     "creator": "Fraunhofer Institute SIT",
-    "version": "3.0.0",
-    "homepage_url": "https://dipo.sit.fraunhofer.de/",
+    "version": "3.0.1", 
+    "version_name": "3.0.1 yiran",
+    "homepage_url": "https://github.com/secure-software-engineering/rose", 
+
     "background_scripts": [
         "scripts/chromereload.js",
         "bower_components/jquery/dist/jquery.js",
@@ -31,5 +33,5 @@
         "caption": "ROSE",
         "tooltipText": "ROSE Browser Plugin",
         "icon": "icons/button.png"
-    }
+    },
 }

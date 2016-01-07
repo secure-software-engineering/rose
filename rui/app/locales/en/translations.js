@@ -112,7 +112,8 @@ export default {
   interactions: {
     title: "Interactions",
     subtitle: "All your recent interactions on this social media site recorded by ROSE.",
-    actionOn: "action on"
+    actionOn: "action on",
+    action: "action"
   },
 
   // Extracts Settings Page

@@ -84,7 +84,14 @@ class ExtractorEngine {
 
           //extract detailed info with match
           if (field.match !== undefined) {
-            datum = datum.match(new RegExp(field.match, 'g'))[0];
+            var matches = datum.match(new RegExp(field.match, "g"));
+            if (matches !== null) {
+              datum = matches[0];
+            }
+            else {
+              log('ExtractorEngine', 'RegEx ' + field.match + ' for field ' + field.name + ' failed on ' + datum)
+              continue;
+            }
           }
 
           if (field.hash) {

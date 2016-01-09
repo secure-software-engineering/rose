@@ -466,9 +466,9 @@
             "network": "reddit",
             "type": "click",
             "priority": 10,
-            "version": "0.1",
+            "version": "0.2",
             "patterns": [{
-                "node": ".thing.link div[data-event-action='upvote']",
+                "node": ".thing.link .unvoted div[data-event-action='upvote'], .thing.link .dislikes div[data-event-action='upvote']",
                 "container": ".thing",
                 "extractor": "link"
             }],
@@ -478,9 +478,9 @@
             "network": "reddit",
             "type": "click",
             "priority": 11,
-            "version": "0.1",
+            "version": "0.2",
             "patterns": [{
-                "node": ".thing.link div[data-event-action='downvote']",
+                "node": ".thing.link .unvoted div[data-event-action='downvote'], .thing.link .likes div[data-event-action='downvote']",
                 "container": ".thing",
                 "extractor": "link"
             }],
@@ -490,9 +490,9 @@
             "network": "reddit",
             "type": "click",
             "priority": 20,
-            "version": "0.1",
+            "version": "0.2",
             "patterns": [{
-                "node": ".thing.comment div[data-event-action='upvote']",
+                "node": ".thing.comment .unvoted div[data-event-action='upvote'], .thing.comment .dislikes div[data-event-action='upvote']",
                 "container": ".thing",
                 "extractor": "comment"
             }],
@@ -502,9 +502,57 @@
             "network": "reddit",
             "type": "click",
             "priority": 21,
+            "version": "0.2",
+            "patterns": [{
+                "node": ".thing.comment .unvoted div[data-event-action='downvote'], .thing.comment .likes div[data-event-action='downvote']",
+                "container": ".thing",
+                "extractor": "comment"
+            }],
+            "isEnabled": true
+        },{
+            "name": "revoke-upvote-link",
+            "network": "reddit",
+            "type": "click",
+            "priority": 40,
             "version": "0.1",
             "patterns": [{
-                "node": ".thing.comment div[data-event-action='downvote']",
+                "node": ".thing.link .likes div[data-event-action='upvote']",
+                "container": ".thing",
+                "extractor": "link"
+            }],
+            "isEnabled": true
+        },{
+            "name": "revoke-downvote-link",
+            "network": "reddit",
+            "type": "click",
+            "priority": 41,
+            "version": "0.1",
+            "patterns": [{
+                "node": ".thing.link .dislikes div[data-event-action='downvote']",
+                "container": ".thing",
+                "extractor": "link"
+            }],
+            "isEnabled": true
+        },{
+            "name": "revoke-upvote-comment",
+            "network": "reddit",
+            "type": "click",
+            "priority": 42,
+            "version": "0.1",
+            "patterns": [{
+                "node": ".thing.comment .likes div[data-event-action='upvote']",
+                "container": ".thing",
+                "extractor": "comment"
+            }],
+            "isEnabled": true
+        },{
+            "name": "revoke-downvote-comment",
+            "network": "reddit",
+            "type": "click",
+            "priority": 43,
+            "version": "0.1",
+            "patterns": [{
+                "node": ".thing.comment .dislikes div[data-event-action='downvote']",
                 "container": ".thing",
                 "extractor": "comment"
             }],

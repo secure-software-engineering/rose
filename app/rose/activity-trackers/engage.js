@@ -24,7 +24,7 @@ let type = 'engage';
 let network = 'facebook.com';
 let checkInterval = 5000;
 let idleInterval = 180000;
-let surveyInterval = 3600000;
+let surveyInterval = 1800000;
 let _windowActivities, _pageActivities, _engageActivities, _loginActivities;
 let lastEngage,lastDisengage,_currentTime,_surveyTime;
 let running = false;

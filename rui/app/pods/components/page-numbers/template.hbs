@@ -10,15 +10,15 @@
     {{/if}}
 
     {{#each pageItems as |item|}}
-      {{#if item.current}}
+        {{#if item.current}}
         <a class="active item">
             {{item.page}}
         </a>
-      {{else}}
+        {{else}}
         <a class="item" {{action "pageClicked" item.page}}>
             {{item.page}}
         </a>
-      {{/if}}
+        {{/if}}
     {{/each}}
 
     {{#if canStepForward}}

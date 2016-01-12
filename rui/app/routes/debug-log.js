@@ -7,7 +7,7 @@ export default Ember.Route.extend({
         return new Promise((resolve, reject) => {
             kango.invokeAsyncCallback('localforage.getItem', 'application-log', (log) => {
                 log.forEach(item => debugLog.push(item))
-                resolve(debugLog)
+                resolve(debugLog.reverse())
             })
         })
     }

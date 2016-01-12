@@ -1259,12 +1259,10 @@ define('rose/controllers/debug-log', ['exports', 'ember', 'ember-cli-pagination/
 
     exports['default'] = Ember['default'].Controller.extend({
         model: [],
-        modelSorting: ['date:desc'],
-        log: Ember['default'].computed.sort('model', 'modelSorting'),
         queryParams: ["page", "perPage"],
         page: 1,
-        perPage: 10,
-        pagedContent: pagedArray['default']('log', { pageBinding: "page", perPageBinding: "perPage" }),
+        perPage: 20,
+        pagedContent: pagedArray['default']('model', { pageBinding: "page", perPageBinding: "perPage" }),
         totalPagesBinding: "pagedContent.totalPages"
     });
 
@@ -3754,11 +3752,11 @@ define('rose/pods/components/page-numbers/template', ['exports'], function (expo
               "source": null,
               "start": {
                 "line": 13,
-                "column": 6
+                "column": 8
               },
               "end": {
                 "line": 17,
-                "column": 6
+                "column": 8
               }
             },
             "moduleName": "rose/pods/components/page-numbers/template.hbs"
@@ -3803,11 +3801,11 @@ define('rose/pods/components/page-numbers/template', ['exports'], function (expo
               "source": null,
               "start": {
                 "line": 17,
-                "column": 6
+                "column": 8
               },
               "end": {
                 "line": 21,
-                "column": 6
+                "column": 8
               }
             },
             "moduleName": "rose/pods/components/page-numbers/template.hbs"
@@ -3880,7 +3878,7 @@ define('rose/pods/components/page-numbers/template', ['exports'], function (expo
           return morphs;
         },
         statements: [
-          ["block","if",[["get","item.current",["loc",[null,[13,12],[13,24]]]]],[],0,1,["loc",[null,[13,6],[21,13]]]]
+          ["block","if",[["get","item.current",["loc",[null,[13,14],[13,26]]]]],[],0,1,["loc",[null,[13,8],[21,15]]]]
         ],
         locals: ["item"],
         templates: [child0, child1]
@@ -5535,7 +5533,7 @@ define('rose/routes/debug-log', ['exports', 'ember'], function (exports, Ember) 
                     log.forEach(function (item) {
                         return debugLog.push(item);
                     });
-                    resolve(debugLog);
+                    resolve(debugLog.reverse());
                 });
             });
         }

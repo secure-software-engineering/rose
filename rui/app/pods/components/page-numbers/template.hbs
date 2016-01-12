@@ -1,0 +1,33 @@
+<div class="ui pagination menu">
+    {{#if canStepBackward}}
+        <a class="icon item" {{action "incrementPage" -1}}>
+            <i class="left arrow icon"></i>
+        </a>
+    {{else}}
+        <a class="icon item disabled">
+            <i class="left arrow icon"></i>
+        </a>
+    {{/if}}
+
+    {{#each pageItems as |item|}}
+      {{#if item.current}}
+        <a class="active item">
+            {{item.page}}
+        </a>
+      {{else}}
+        <a class="item" {{action "pageClicked" item.page}}>
+            {{item.page}}
+        </a>
+      {{/if}}
+    {{/each}}
+
+    {{#if canStepForward}}
+    <a class="icon item" {{action "incrementPage" 1}}>
+        <i class="right arrow icon"></i>
+    </a>
+    {{else}}
+    <a class="icon item disabled">
+        <i class="right arrow icon"></i>
+    </a>
+    {{/if}}
+</div>

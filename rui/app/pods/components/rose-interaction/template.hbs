@@ -2,7 +2,14 @@
   <i class="circular pointing right icon"></i>
 </a>
 <div class="content">
-  <a class="author">{{model.origin.observer}}</a> {{t "interactions.actionOn"}} <strong>{{model.contentId}}</strong>
+  <a class="author">{{model.origin.observer}}</a>
+  {{#if model.origin.target.contentId}}
+    {{t "interactions.actionOn"}} <strong>{{model.origin.target.contentId}}</strong>
+  {{else if model.origin.target.commentId}}
+    {{t "interactions.actionOn"}} <strong>{{model.origin.target.commentId}}</strong>
+  {{else}}
+    {{t "interactions.action"}}
+  {{/if}}
   <div class="metadata">
     <span class="date">{{moment-format model.createdAt}}</span>
   </div>

@@ -9,5 +9,7 @@
 <div class="ui comments">
   {{#each sortedList as |comment|}}
     {{rose-comment model=comment}}
+  {{else}}
+    {{no-data-message}}
   {{/each}}
 </div>

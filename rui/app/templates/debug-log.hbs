@@ -6,16 +6,18 @@
   </div>
 </h2>
 
+{{page-numbers content=pagedContent}}
+
 <table class="ui celled table">
   <thead>
     <tr>
-	    <th>{{t "debugLog.date"}}</th>
-	    <th>{{t "debugLog.message"}}</th>
-	    <th>{{t "debugLog.module"}}</th>
-  	</tr>
+      <th>{{t "debugLog.date"}}</th>
+      <th>{{t "debugLog.message"}}</th>
+      <th>{{t "debugLog.module"}}</th>
+    </tr>
   </thead>
   <tbody>
-  	{{#each model as |log|}}
+    {{#each pagedContent as |log|}}
     <tr>
       <td>{{moment-format log.date "LLL"}}</td>
       <td>{{log.message}}</td>
@@ -24,3 +26,4 @@
     {{/each}}
   </tbody>
 </table>
+

@@ -44,16 +44,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 }
 
+/* resets for facebook */
+
 body.pushable {
     background-color: #e9eaed !important;
 }
 
 body.pushable>.pusher {
    background: #e9eaed;
-    overflow: visible;
+   overflow: visible;
 }
 
-/* reset needed for semantic layout */
 .ui.sidebar *, .ui.sidebar :after, .ui.sidebar :before {
   box-sizing: inherit;
 }
@@ -62,9 +63,17 @@ body.pushable>.pusher {
   font-size: 120% !important;
 }
 
-.ui.form .grouped.fields>label, .ui.checkbox label, .ui.checkbox .box, .ui.checkbox label {
- font-size: 90%;
+.ui label {
+    cursor: default;
+    font-weight: normal;
+    vertical-align: baseline;
 }
+
+.ui.form .grouped.fields>label, .ui.checkbox label, .ui.checkbox .box, .ui.checkbox label {
+     font-size: 90%;
+}
+
+/* custom styles */
 
 .ui.star.rating {
     padding-top: 10px;

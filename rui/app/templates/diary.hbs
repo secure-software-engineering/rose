@@ -24,5 +24,7 @@
 <div class="ui comments">
   {{#each sortedList as |entry|}}
     {{diary-entry model=entry}}
+  {{else}}
+    {{no-data-message}}
   {{/each}}
 </div>

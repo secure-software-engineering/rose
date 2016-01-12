@@ -11,5 +11,7 @@
     {{#unless interaction.isDeleted}}
     {{rose-interaction model=interaction}}
     {{/unless}}
+  {{else}}
+    {{no-data-message}}
   {{/each}}
 </div>

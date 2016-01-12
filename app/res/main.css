@@ -65,7 +65,7 @@ body.pushable>.pusher {
 
 .ui label {
     cursor: default;
-    font-weight: normal;
+    font-weight: normal !important;
     vertical-align: baseline;
 }
 

@@ -11,5 +11,7 @@
     {{#unless interaction.isDeleted}}
     {{rose-extract model=extract}}
     {{/unless}}
+  {{else}}
+    {{no-data-message}}
   {{/each}}
 </div>

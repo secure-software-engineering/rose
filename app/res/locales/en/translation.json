@@ -1,7 +1,7 @@
 {
   "comment": "Study Note",
-  "done": "Done",
-  "dismiss": "Dismiss for now",
+  "done": "Submit",
+  "dismiss": "Dismiss",
 
   "reminder": {
     "prompt": "Don't forget to write a study note when you engage in informal learning."
@@ -18,7 +18,7 @@
       "nonworkOffline": "Non-work activities offline",
       "nothingParticular": "Not doing anything in particular"
     },
-    "infoText": "Please rate the following scales based on how you felt <b>right after you read the post</b>.",
+    "infoText": "Please rate the following scales based on how you felt <b>when</b> you read the post.",
     "ratingEntertain": "How entertaining is this content to you",
     "ratingAppropriate": "Do you think it is appropriate to show this content on Facebook",
     "ratingConcentration": "Concentration",
@@ -41,6 +41,6 @@
     "ratingAwareness": "It seems I was ‘running on automatic’ when using Facebook, without much awareness of what I was doing.",
     "ratingActivities": "I rushed through activities (e.g., liking, posting status updates, commenting, joining groups) on Facebook without being really attentive to them.",
     "save": "Save and close",
-    "dismiss": "I'm not leaving FB yet"
+    "dismiss": "Dismiss for now"
   }
 }

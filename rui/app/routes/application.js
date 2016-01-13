@@ -26,6 +26,14 @@ export default Ember.Route.extend({
       settings.destroyRecord()
         .then(() => this.get('settings').setup())
         .then(() => this.transitionTo('application'));
+    },
+
+    loading() {
+      this.controller.set('isLoading', true)
+      this.router.one('didTransition', () => {
+        this.controller.set('isLoading', false)
+      })
+      return true
     }
   }
 });

@@ -1158,6 +1158,8 @@ define('rose/controllers/application', ['exports', 'ember'], function (exports, 
   'use strict';
 
   exports['default'] = Ember['default'].Controller.extend({
+    isLoading: false,
+
     actions: {
       cancelWizard: function cancelWizard() {
         var settings = this.get('settings.user');
@@ -5470,6 +5472,16 @@ define('rose/routes/application', ['exports', 'ember'], function (exports, Ember
         }).then(function () {
           return _this.transitionTo('application');
         });
+      },
+
+      loading: function loading() {
+        var _this2 = this;
+
+        this.controller.set('isLoading', true);
+        this.router.one('didTransition', function () {
+          _this2.controller.set('isLoading', false);
+        });
+        return true;
       }
     }
   });
@@ -6032,7 +6044,6 @@ define('rose/templates/application', ['exports'], function (exports) {
           var el3 = dom.createTextNode("\n    ");
           dom.appendChild(el2, el3);
           var el3 = dom.createElement("div");
-          dom.setAttribute(el3,"class","ui segment");
           var el4 = dom.createTextNode("\n      ");
           dom.appendChild(el3, el4);
           var el4 = dom.createComment("");
@@ -6052,13 +6063,16 @@ define('rose/templates/application', ['exports'], function (exports) {
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var element0 = dom.childAt(fragment, [1]);
-          var morphs = new Array(2);
+          var element1 = dom.childAt(element0, [3, 1]);
+          var morphs = new Array(3);
           morphs[0] = dom.createMorphAt(dom.childAt(element0, [1]),1,1);
-          morphs[1] = dom.createMorphAt(dom.childAt(element0, [3, 1]),1,1);
+          morphs[1] = dom.createAttrMorph(element1, 'class');
+          morphs[2] = dom.createMorphAt(element1,1,1);
           return morphs;
         },
         statements: [
           ["inline","partial",["sidebar-menu"],[],["loc",[null,[9,4],[9,30]]]],
+          ["attribute","class",["concat",["ui segment ",["subexpr","if",[["get","isLoading",["loc",[null,[13,32],[13,41]]]],"loading"],[],["loc",[null,[13,27],[13,53]]]]]]],
           ["content","outlet",["loc",[null,[14,6],[14,16]]]]
         ],
         locals: [],
@@ -15577,7 +15591,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.200770b9"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.211d90ae"});
 }
 
 /* jshint ignore:end */

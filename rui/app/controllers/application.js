@@ -1,6 +1,8 @@
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
+  isLoading: false,
+  
   actions: {
     cancelWizard() {
       let settings = this.get('settings.user');

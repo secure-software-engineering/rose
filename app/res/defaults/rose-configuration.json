@@ -371,6 +371,20 @@
                 "container": "#globalContainer"
             }],
             "isEnabled": true
+        }, {
+            "name": "delete-status-update",
+            "network": "facebook",
+            "type": "click",
+            "priority": 90,
+            "version": "0.1",
+            "patterns": [{
+                "node": "form[action^=\"/ajax/timeline/delete\"] [type=\"submit\"]",
+                "container": "form"
+            },{
+                "node": "[action=\"/ajax/groups/mall/delete.php\"] [type=\"submit\"], [action=\"/ajax/groups/mall/delete.php\"] [type=\"submit\"] *",
+                "container": "form"
+                }],
+            "isEnabled": true
         }],
         "extractors": [{
             "name": "status-update",

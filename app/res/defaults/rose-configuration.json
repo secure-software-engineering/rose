@@ -88,12 +88,17 @@
             "name": "unlike-page",
             "network": "facebook",
             "type": "click",
-            "priority": 5,
-            "version": "0.2",
+            "priority": 21,
+            "version": "0.3",
             "patterns": [{
-                "node": ".PageLikeButton:contains(\"Unlike\"), .PageLikeButton:contains(\"Gefällt mir nicht mehr\")",
-                "container": ".PageLikeButton"
-            }],
+                "node": ".InterestListMenuDisconnect a, .InterestListMenuDisconnect a *",
+                "container": ".uiContextualLayer",
+                "description": "The context menu which opens on the liked button on posts or lists of liked pages."
+            },{
+                "node": ".__MenuItem:first-child a[href=\"#\"], .__MenuItem:first-child a[href=\"#\"] *",
+                "container": ".uiContextualLayer",
+                "description": "The context menu on like button at the coverimage of a fb-page."
+                }],
             "isEnabled": true
         }, {
             "name": "like-comment",
@@ -140,11 +145,20 @@
             "name": "like-page",
             "network": "facebook",
             "type": "click",
-            "priority": 9,
-            "version": "0.2",
+            "priority": 20,
+            "version": "0.3",
             "patterns": [{
-                "node": ".PageLikeButton:contains(\"Like\"), .PageLikeButton:contains(\"Gefällt mir\"),.PageLikeButton:contains(\"Like\") *, .PageLikeButton:contains(\"Gefällt mir\") *",
-                "container": ".PageLikeButton"
+                "node": ".PageLikeButton:not(\".PageLikedButton\"), .PageLikeButton:not(\".PageLikedButton\") *",
+                "container": "#fbProfileCover"
+            },{
+                "node": ".PageLikeButton:not(\".PageLikedButton\"), .PageLikeButton:not(\".PageLikedButton\") *",
+                "container": ".userContent"
+            },{
+                "node": ".PageLikeButton:not(\".PageLikedButton\"), .PageLikeButton:not(\".PageLikedButton\") *",
+                "container": ".userContentWrapper"
+            },{
+                "node": ".PageLikeButton:not(\".PageLikedButton\"), .PageLikeButton:not(\".PageLikedButton\") *",
+                "container": "li"
             },{
                 "node": ".ego_like, .ego_like *",
                 "container": "a"

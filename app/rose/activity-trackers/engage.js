@@ -18,7 +18,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
-import log from 'rose/log';
+import debugLog from 'rose/log';
 
 let type = 'engage';
 let network = 'facebook.com';
@@ -30,6 +30,13 @@ let lastEngage,lastDisengage,_currentTime,_surveyTime;
 let running = false;
 
 let control, limit;
+
+let lastLog = '';
+let log = function(msg) {
+  if (lastLog === msg) return;
+  debugLog('EngageTracker',msg);
+  lastLog = msg;
+}
 
 let store = function(engage) {
   _engageActivities = _engageActivities || [];
@@ -52,7 +59,7 @@ let check = () => {
 
 let checkAnyTabPresent = (windowActivities) => {
   if (windowActivities === null) {
-    log('EngageTracker','No Tabs opened ever');
+    log('No Tabs opened ever');
     running = false;
     return;
   }
@@ -66,7 +73,7 @@ let checkAnyTabPresent = (windowActivities) => {
     kango.invokeAsyncCallback('localforage.getItem', 'engage-activity-records', checkSurveyInterval);
   }
   else {
-    log('EngageTracker','No Tabs open in the survey cycle');
+    log('No Tabs open in the survey cycle');
     running = false;
   }
 };
@@ -91,7 +98,7 @@ let checkSurveyInterval = (engageActivities) => {
   }
   else {
     running = false;
-    log('EngageTracker','both surveys done');
+    log('both surveys done');
   }
 
 };
@@ -217,33 +224,33 @@ let checkConditions = (loginActivities) => {
 
   //debug
   let logData = {lastEngage, lastDisengage, open, active, recentActiveTabs, oldActiveTabs, recentPageActivity, oldPageActivity, anyOpenTabs, recentLogout};
-  // log('EngageTracker', JSON.stringify(logData));
+  // log( JSON.stringify(logData));
   /*
    * CHECK CONDITIONS
    */
   let engage;
   if (active && (!recentActiveTabs || !recentPageActivity))  {
-    log('EngageTracker','engaging: a tab is active after no recent activity');
+    log('engaging: a tab is active after no recent activity');
     engage = true;
   }
   else if (open && !anyOpenTabs) {
-    log('EngageTracker','engaging: a tab is opened after no tab was open');
+    log('engaging: a tab is opened after no tab was open');
     engage = true;
   }
   else if (recentLogout === true) {
-    log('EngageTracker','disengaging: user performed logout');
+    log('disengaging: user performed logout');
     engage = false;
   }
   else if (!open && (recentPageActivity || recentActiveTabs)) {
-    log('EngageTracker','disengaging: last tab is closed after recent activity');
+    log('disengaging: last tab is closed after recent activity');
     engage = false;
   }
   else if (open && !active && !recentActiveTabs && oldActiveTabs) {
-    log('EngageTracker','disengaging: no recent active tabs any more');
+    log('disengaging: no recent active tabs any more');
     engage = false;
   }
   else if (active && !recentPageActivity && oldPageActivity) {
-    log('EngageTracker','disengaging: active tab, but no recent page activity');
+    log('disengaging: active tab, but no recent page activity');
     engage = false;
   }
   else {
@@ -264,17 +271,17 @@ let checkConditions = (loginActivities) => {
 
 let sendTrigger = (engage, token) => {
     if (token === control) {
-      log('EngageTracker','Engage survey triggered and stored');
+      log('Engage survey triggered and stored');
       store(engage);
     }
     else if (!engage) {
       kango.browser.tabs.create({url: kango.io.getResourceUrl('survey/index.html')});
-      log('EngageTracker','Disengage survey triggered and stored');
+      log('Disengage survey triggered and stored');
       store(engage);
     }
     else {
       if (limit < 5) {
-        log('EngageTracker','Try to reach content script. Attempt: ' + (limit++));
+        log('Try to reach content script. Attempt: ' + (limit++));
 
         kango.browser.tabs.getCurrent(function(tab) {
           if ((new RegExp('^https:\/\/[\w\.\-]*(' + network.replace(/\./g, '\\$&') + ')(\/|$)')).test(tab.getUrl())) {
@@ -289,7 +296,7 @@ let sendTrigger = (engage, token) => {
         setTimeout(sendTrigger, 1000 + limit*1000, engage, token);
       }
       else {
-        log('EngageTracker','Failed to reach content script.');
+        log('Failed to reach content script.');
         running = false;
       }
     }

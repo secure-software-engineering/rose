@@ -226,6 +226,12 @@
             "patterns": [{
                 "node": "form[action*=updatestatus] button[type=\"submit\"]",
                 "container": "form[action*=updatestatus]"
+            },{
+                "node": "#timeline_composer_container [type=\"submit\"] *, #timeline_composer_container [type=\"submit\"]",
+                "container": "#timeline_composer_container"
+            },{
+                "node": "#pagelet_group_ [type=\"submit\"], #pagelet_group_ [type=\"submit\"] *",
+                "container": ".groupComposerCleanWrap"
             }],
             "isEnabled": true
         }, {

@@ -249,6 +249,17 @@
             }],
             "isEnabled": true
         }, {
+            "name": "share-status-chat",
+            "network": "facebook",
+            "type": "click",
+            "priority": 41,
+            "version": "0.1",
+            "patterns": [{
+                "node": ".uiGrid+[data-testid] .rfloat [type=\"submit\"]:last-child, .uiGrid+[data-testid] .rfloat [type=\"submit\"]:last-child *",
+                "container": "[data-reactroot]"
+            }],
+            "isEnabled": true
+        }, {
             "name": "create-event",
             "network": "facebook",
             "type": "click",

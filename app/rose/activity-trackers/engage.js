@@ -225,9 +225,10 @@ let checkConditions = (loginActivities) => {
     }
   }
 
-  //debug
-  let logData = {open, active, recentActiveTabs, oldActiveTabs, recentPageActivity, oldPageActivity, anyOpenTabs, recentLogout};
-  console.log( logData);
+  // debug
+  // let logData = {open, active, recentActiveTabs, oldActiveTabs, recentPageActivity, oldPageActivity, anyOpenTabs, recentLogout};
+  //console.log( logData);
+
   /*
    * CHECK CONDITIONS
    */

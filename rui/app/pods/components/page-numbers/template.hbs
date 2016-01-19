@@ -10,14 +10,17 @@
     {{/if}}
 
     {{#each pageItems as |item|}}
+        {{#if item.dots}}
+            <div class="disabled item">...</div>
+        {{/if}}
         {{#if item.current}}
-        <a class="active item">
-            {{item.page}}
-        </a>
+            {{#link-to (query-params page=item.page) class="item active"}}
+                {{item.page}}
+            {{/link-to}}
         {{else}}
-        <a class="item" {{action "pageClicked" item.page}}>
-            {{item.page}}
-        </a>
+            {{#link-to (query-params page=item.page) class="item"}}
+                {{item.page}}
+            {{/link-to}}
         {{/if}}
     {{/each}}
 

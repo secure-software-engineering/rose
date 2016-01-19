@@ -46,7 +46,7 @@
   <div class="field">
     <label>{{t "settings.manualUpdate"}}</label>
     <p>{{t "settings.manualUpdateLabel"}}</p>
-    <button class="ui button" {{action "manualUpdate"}}>{{t "action.update"}}</button>
+    <button class="ui {{if updateInProgress "loading"}} button" {{action "manualUpdate"}}>{{t "action.update"}}</button>
     Last Update: {{moment-format settings.system.timestamp}}
   </div>
 

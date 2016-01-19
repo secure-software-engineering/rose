@@ -21,8 +21,14 @@
 
 <div class="ui divider"></div>
 
+{{#if pagedContent}}
+  {{page-numbers  content=pagedContent
+                  numPagesToShow=5
+                  showFL=true}}
+{{/if}}
+
 <div class="ui comments">
-  {{#each sortedList as |entry|}}
+  {{#each pagedContent as |entry|}}
     {{diary-entry model=entry}}
   {{else}}
     {{no-data-message}}

@@ -6,8 +6,14 @@
   </div>
 </h2>
 
+{{#if pagedContent}}
+  {{page-numbers  content=pagedContent
+                  numPagesToShow=5
+                  showFL=true}}
+{{/if}}
+
 <div class="ui comments">
-  {{#each sortedList as |interaction|}}
+  {{#each pagedContent as |interaction|}}
     {{#unless interaction.isDeleted}}
     {{rose-interaction model=interaction}}
     {{/unless}}

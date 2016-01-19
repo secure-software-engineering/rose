@@ -156,7 +156,7 @@ export default {
 
       //Integrate observers into DOM
       integrate(obs);
-      log('ObserverEngine', 'Integrated ' + obs.length + ' observers');
+      console.log('ROSE ObserverEngine: Integrated ' + obs.length + ' observers');
     }});
     extractorEngine = new ExtractorEngine();
   }

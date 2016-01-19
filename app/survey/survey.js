@@ -135,7 +135,19 @@ let SurveyUI = (function () {
         disengage.network = 'facebook';
         disengage.createdAt = (new Date()).toJSON();
         commentsCollection.create(disengage, {success: () => {
-          window.close();
+
+          kango.invokeAsyncCallback('localforage.getItem', 'engage-activity-records', (engageActivities) => {
+            engageActivities = engageActivities || [];
+            engageActivities.push({
+              type: 'engage',
+              date: Date.now(),
+              value: 3 //COMPLETE_DISENGAGE
+            });
+
+            kango.invokeAsyncCallback('localforage.setItem', 'engage-activity-records', engageActivities, () => {
+              window.close();
+            });
+          });
         }});
       }});
     }.bind(this));

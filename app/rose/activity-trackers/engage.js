@@ -20,13 +20,18 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 import debugLog from 'rose/log';
 
+const TRIGGERED_ENGAGE    = 0;
+const TRIGGERED_DISENGAGE = 1;
+const COMPLETE_ENGAGE     = 2;
+const COMPLETE_DISENGAGE  = 3;
+
 let type = 'engage';
 let network = 'facebook.com';
 let checkInterval = 5000;
 let idleInterval = 180000;
 let surveyInterval = 1800000;
 let _windowActivities, _pageActivities, _engageActivities, _loginActivities;
-let lastEngage,lastDisengage,_currentTime,_surveyTime;
+let lastSurvey, engageDone, disengageDone, _currentTime,_surveyTime;
 let running = false;
 
 let control, limit;
@@ -43,7 +48,7 @@ let store = function(engage) {
   _engageActivities.push({
     type: type,
     date: Date.now(),
-    value: engage
+    value: engage ? TRIGGERED_ENGAGE : TRIGGERED_DISENGAGE
   });
 
   kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', _engageActivities, () => {
@@ -83,24 +88,22 @@ let checkSurveyInterval = (engageActivities) => {
 
   // get time last surveys were triggered
   let groupedEngageActivities = _.groupBy(_engageActivities, 'value');
-  if (groupedEngageActivities.true !== undefined) {
-    lastEngage = _.sortBy(groupedEngageActivities.true, 'date').pop().date;
-  }
-  else lastEngage = undefined;
-  if (groupedEngageActivities.false !== undefined) {
-    lastDisengage = _.sortBy(groupedEngageActivities.false, 'date').pop().date;
-  }
-  else lastDisengage = undefined;
 
-  //do not procede if both surveys were triggered in the range of the surveyintervall
-  if (lastEngage === undefined || lastDisengage === undefined || lastEngage < _surveyTime || lastDisengage < _surveyTime) {
-    kango.invokeAsyncCallback('localforage.getItem', 'scroll-activity-records', getMousemoveActivity);
+  let lastSurvey = [];
+  for (var i = 0; i <= COMPLETE_DISENGAGE; i++) {
+    if (groupedEngageActivities[i] !== undefined) lastSurvey[i] = _.sortBy(groupedEngageActivities[i], 'date').pop().date;
   }
-  else {
+
+  //do not procede if both surveys were triggered or stored in the range of the surveyintervall
+  engageDone = lastSurvey[COMPLETE_ENGAGE] > _surveyTime || lastSurvey[TRIGGERED_ENGAGE] > (_currentTime - idleInterval);
+  disengageDone = lastSurvey[COMPLETE_DISENGAGE] > _surveyTime || lastSurvey[TRIGGERED_DISENGAGE] > (_currentTime - idleInterval);
+  if (engageDone && disengageDone) {
     running = false;
     log('both surveys done');
   }
-
+  else {
+    kango.invokeAsyncCallback('localforage.getItem', 'scroll-activity-records', getMousemoveActivity);
+  }
 };
 
 let getMousemoveActivity = (scrollActivities) => {
@@ -217,40 +220,40 @@ let checkConditions = (loginActivities) => {
   //login status
   let recentLogout = false;
   if (_loginActivities.length > 1) {
-    if (_loginActivities[0].value === false && _loginActivities[1].value !== false && _loginActivities[0].date > idleTime && _loginActivities[1].date > lastEngage) {
+    if (_loginActivities[0].value === false && _loginActivities[1].value !== false && _loginActivities[0].date > idleTime) {
       recentLogout = true;
     }
   }
 
   //debug
-  let logData = {lastEngage, lastDisengage, open, active, recentActiveTabs, oldActiveTabs, recentPageActivity, oldPageActivity, anyOpenTabs, recentLogout};
-  // log( JSON.stringify(logData));
+  let logData = {open, active, recentActiveTabs, oldActiveTabs, recentPageActivity, oldPageActivity, anyOpenTabs, recentLogout};
+  console.log( logData);
   /*
    * CHECK CONDITIONS
    */
-  let engage;
+  let engage, engageCondition;
   if (active && (!recentActiveTabs || !recentPageActivity))  {
-    log('engaging: a tab is active after no recent activity');
+    engageCondition = 'engaging: a tab is active after no recent activity';
     engage = true;
   }
   else if (open && !anyOpenTabs) {
-    log('engaging: a tab is opened after no tab was open');
+    engageCondition = 'engaging: a tab is opened after no tab was open';
     engage = true;
   }
   else if (recentLogout === true) {
-    log('disengaging: user performed logout');
+    engageCondition = 'disengaging: user performed logout';
     engage = false;
   }
   else if (!open && (recentPageActivity || recentActiveTabs)) {
-    log('disengaging: last tab is closed after recent activity');
+    engageCondition = 'disengaging: last tab is closed after recent activity';
     engage = false;
   }
   else if (open && !active && !recentActiveTabs && oldActiveTabs) {
-    log('disengaging: no recent active tabs any more');
+    engageCondition = 'disengaging: no recent active tabs any more';
     engage = false;
   }
   else if (active && !recentPageActivity && oldPageActivity) {
-    log('disengaging: active tab, but no recent page activity');
+    engageCondition = 'disengaging: active tab, but no recent page activity';
     engage = false;
   }
   else {
@@ -259,24 +262,26 @@ let checkConditions = (loginActivities) => {
   }
 
   //store when last dis-/engage has passed longer than survey interval
-  if ((!engage && (lastDisengage === undefined || lastDisengage < _surveyTime)) || (engage && (lastEngage === undefined || lastEngage < _surveyTime))) {
-    //store and trigger
+  if ((engage && !engageDone) || (!engage && !disengageDone)) {
+    //trigger
+    log(engageCondition)
     limit = 0;
     sendTrigger(engage, Date.now());
   }
   else {
+    log(engageCondition + ', but survey was already triggered or completed.')
     running = false;
   }
 };
 
 let sendTrigger = (engage, token) => {
     if (token === control) {
-      log('Engage survey triggered and stored');
+      log('Engage survey triggered');
       store(engage);
     }
     else if (!engage) {
       kango.browser.tabs.create({url: kango.io.getResourceUrl('survey/index.html')});
-      log('Disengage survey triggered and stored');
+      log('Disengage survey triggered');
       store(engage);
     }
     else {

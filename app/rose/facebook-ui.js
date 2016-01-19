@@ -315,9 +315,22 @@ export default (function () {
         engage.rating = $('.ui.rating').rating('get rating') || [];
         engage.network = 'facebook';
         engage.createdAt = (new Date()).toJSON();
-        $('.ui.sidebar').sidebar('hide');
-        $('.ui.sidebar.uncover').sidebar('hide');
-        this._comments.create(engage);
+        this._comments.create(engage, {success: () => {
+
+          kango.invokeAsyncCallback('localforage.getItem', 'engage-activity-records', (engageActivities) => {
+            engageActivities = engageActivities || [];
+            engageActivities.push({
+              type: 'engage',
+              date: Date.now(),
+              value: 2 //COMPLETE_ENGAGE
+            });
+
+            kango.invokeAsyncCallback('localforage.setItem', 'engage-activity-records', engageActivities, () => {
+              $('.ui.sidebar').sidebar('hide');
+              $('.ui.sidebar.uncover').sidebar('hide');
+            });
+          });
+        }});
       }
     }.bind(this));
 

@@ -2,8 +2,8 @@
     "name": "ROSE (Millennial Study Version)",
     "description": "Research tool for field studies of online social network usage. This version was tailored for the Millennial Facebook User Study.",
     "creator": "Fraunhofer Institute SIT",
-    "version": "3.0.1",
-    "version_name": "3.0.1 yiran",
+    "version": "3.0.2",
+    "version_name": "3.0.2 yiran",
     "homepage_url": "https://github.com/secure-software-engineering/rose",
 
     "background_scripts": [

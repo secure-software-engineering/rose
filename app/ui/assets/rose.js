@@ -1251,7 +1251,13 @@ define('rose/controllers/comments', ['exports', 'ember', 'ember-cli-pagination/c
 
   exports['default'] = Ember['default'].Controller.extend({
     listSorting: ['createdAt:desc'],
-    sortedList: Ember['default'].computed.sort('model', 'listSorting')
+    sortedList: Ember['default'].computed.sort('model', 'listSorting'),
+
+    queryParams: ["page"],
+    page: 1,
+    perPage: 20,
+    pagedContent: pagedArray['default']('sortedList', { pageBinding: "page", perPageBinding: "perPage" }),
+    totalPagesBinding: "pagedContent.totalPages"
   });
 
 });
@@ -11030,7 +11036,11 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    Last Update: ");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(": ");
         dom.appendChild(el2, el3);
         var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
@@ -11116,7 +11126,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var element10 = dom.childAt(element4, [9]);
         var element11 = dom.childAt(element4, [13]);
         var element12 = dom.childAt(element11, [5]);
-        var morphs = new Array(26);
+        var morphs = new Array(27);
         morphs[0] = dom.createMorphAt(element3,1,1);
         morphs[1] = dom.createMorphAt(dom.childAt(element3, [3]),0,0);
         morphs[2] = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
@@ -11134,15 +11144,16 @@ define('rose/templates/settings', ['exports'], function (exports) {
         morphs[14] = dom.createElementMorph(element9);
         morphs[15] = dom.createMorphAt(element9,0,0);
         morphs[16] = dom.createMorphAt(element8,7,7);
-        morphs[17] = dom.createMorphAt(dom.childAt(element10, [1]),0,0);
-        morphs[18] = dom.createMorphAt(dom.childAt(element10, [3]),0,0);
-        morphs[19] = dom.createMorphAt(element10,5,5);
-        morphs[20] = dom.createMorphAt(element4,11,11);
-        morphs[21] = dom.createMorphAt(dom.childAt(element11, [1]),0,0);
-        morphs[22] = dom.createMorphAt(dom.childAt(element11, [3]),0,0);
-        morphs[23] = dom.createElementMorph(element12);
-        morphs[24] = dom.createMorphAt(element12,1,1);
-        morphs[25] = dom.createMorphAt(fragment,4,4,contextualElement);
+        morphs[17] = dom.createMorphAt(element8,9,9);
+        morphs[18] = dom.createMorphAt(dom.childAt(element10, [1]),0,0);
+        morphs[19] = dom.createMorphAt(dom.childAt(element10, [3]),0,0);
+        morphs[20] = dom.createMorphAt(element10,5,5);
+        morphs[21] = dom.createMorphAt(element4,11,11);
+        morphs[22] = dom.createMorphAt(dom.childAt(element11, [1]),0,0);
+        morphs[23] = dom.createMorphAt(dom.childAt(element11, [3]),0,0);
+        morphs[24] = dom.createElementMorph(element12);
+        morphs[25] = dom.createMorphAt(element12,1,1);
+        morphs[26] = dom.createMorphAt(fragment,4,4,contextualElement);
         return morphs;
       },
       statements: [
@@ -11162,7 +11173,8 @@ define('rose/templates/settings', ['exports'], function (exports) {
         ["attribute","class",["concat",["ui ",["subexpr","if",[["get","updateInProgress",["loc",[null,[49,27],[49,43]]]],"loading"],[],["loc",[null,[49,22],[49,55]]]]," button"]]],
         ["element","action",["manualUpdate"],[],["loc",[null,[49,64],[49,89]]]],
         ["inline","t",["action.update"],[],["loc",[null,[49,90],[49,111]]]],
-        ["inline","moment-format",[["get","settings.system.timestamp",["loc",[null,[50,33],[50,58]]]]],[],["loc",[null,[50,17],[50,60]]]],
+        ["inline","t",["settings.lastChecked"],[],["loc",[null,[50,4],[50,32]]]],
+        ["inline","moment-format",[["get","settings.system.lastChecked",["loc",[null,[50,50],[50,77]]]]],[],["loc",[null,[50,34],[50,79]]]],
         ["inline","t",["settings.autoUpdate"],[],["loc",[null,[54,11],[54,38]]]],
         ["inline","t",["settings.autoUpdateLabel"],[],["loc",[null,[55,7],[55,39]]]],
         ["inline","ui-checkbox",[],["class","toggle","checked",["subexpr","@mut",[["get","settings.system.autoUpdateIsEnabled",["loc",[null,[57,26],[57,61]]]]],[],[]],"label",["subexpr","boolean-to-yesno",[["get","settings.system.autoUpdateIsEnabled",["loc",[null,[58,42],[58,77]]]]],[],["loc",[null,[58,24],[58,78]]]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[59,27],[59,50]]]]],["loc",[null,[56,4],[59,52]]]],
@@ -13361,7 +13373,7 @@ define('rose/tests/controllers/comments.jshint', function () {
 
   module('JSHint - controllers');
   test('controllers/comments.js should pass jshint', function() { 
-    ok(false, 'controllers/comments.js should pass jshint.\ncontrollers/comments.js: line 8, col 3, Expected \'}\' to match \'{\' from line 4 and instead saw \'queryParams\'.\ncontrollers/comments.js: line 8, col 14, Expected \')\' and instead saw \':\'.\ncontrollers/comments.js: line 8, col 24, Expected an identifier and instead saw \',\'.\ncontrollers/comments.js: line 8, col 24, Expected an assignment or function call and instead saw an expression.\ncontrollers/comments.js: line 9, col 9, Label \'page\' on 1 statement.\ncontrollers/comments.js: line 10, col 3, Expected an assignment or function call and instead saw an expression.\ncontrollers/comments.js: line 10, col 10, Expected \'(end)\' and instead saw \':\'.\ncontrollers/comments.js: line 10, col 3, \'perPage\' is not defined.\ncontrollers/comments.js: line 2, col 8, \'pagedArray\' is defined but never used.\n\n9 errors'); 
+    ok(true, 'controllers/comments.js should pass jshint.'); 
   });
 
 });
@@ -15957,7 +15969,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.02920a7d"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.b8d6f84e"});
 }
 
 /* jshint ignore:end */

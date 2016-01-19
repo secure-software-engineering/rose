@@ -3,7 +3,7 @@ import pagedArray from 'ember-cli-pagination/computed/paged-array';
 
 export default Ember.Controller.extend({
   listSorting: ['createdAt:desc'],
-  sortedList: Ember.computed.sort('model', 'listSorting')
+  sortedList: Ember.computed.sort('model', 'listSorting'),
 
   queryParams: ["page"],
   page: 1,

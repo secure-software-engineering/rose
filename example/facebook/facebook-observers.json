@@ -85,12 +85,18 @@
         "name": "unlike-page",
         "network": "facebook",
         "type": "click",
-        "priority": 5,
-        "version": "0.2",
+        "priority": 21,
+        "version": "0.3",
         "patterns": [
             {
-                "node": ".PageLikeButton:contains(\"Unlike\"), .PageLikeButton:contains(\"Gefällt mir nicht mehr\")",
-                "container": ".PageLikeButton"
+                "node": ".InterestListMenuDisconnect a, .InterestListMenuDisconnect a *",
+                "container": ".uiContextualLayer",
+                "description": "The context menu which opens on the liked button on posts or lists of liked pages."
+            },
+            {
+                "node": ".__MenuItem:first-child a[href=\"#\"], .__MenuItem:first-child a[href=\"#\"] *",
+                "container": ".uiContextualLayer",
+                "description": "The context menu on like button at the coverimage of a fb-page."
             }
         ]
     },
@@ -147,12 +153,24 @@
         "name": "like-page",
         "network": "facebook",
         "type": "click",
-        "priority": 9,
+        "priority": 20,
         "version": "0.3",
         "patterns": [
             {
-                "node": ".PageLikeButton:contains(\"Like\"), .PageLikeButton:contains(\"Gefällt mir\"),.PageLikeButton:contains(\"Like\") *, .PageLikeButton:contains(\"Gefällt mir\") *",
-                "container": ".PageLikeButton"
+                "node": ".PageLikeButton:not(\".PageLikedButton\"), .PageLikeButton:not(\".PageLikedButton\") *",
+                "container": "#fbProfileCover"
+            },
+            {
+                "node": ".PageLikeButton:not(\".PageLikedButton\"), .PageLikeButton:not(\".PageLikedButton\") *",
+                "container": ".userContent"
+            },
+            {
+                "node": ".PageLikeButton:not(\".PageLikedButton\"), .PageLikeButton:not(\".PageLikedButton\") *",
+                "container": ".userContentWrapper"
+            },
+            {
+                "node": ".PageLikeButton:not(\".PageLikedButton\"), .PageLikeButton:not(\".PageLikedButton\") *",
+                "container": "li"
             },
             {
                 "node": ".ego_like, .ego_like *",
@@ -250,6 +268,14 @@
             {
                 "node": "form[action*=updatestatus] button[type=\"submit\"]",
                 "container": "form[action*=updatestatus]"
+            },
+            {
+                "node": "#timeline_composer_container [type=\"submit\"] *, #timeline_composer_container [type=\"submit\"]",
+                "container": "#timeline_composer_container"
+            },
+            {
+                "node": "#pagelet_group_ [type=\"submit\"], #pagelet_group_ [type=\"submit\"] *",
+                "container": ".groupComposerCleanWrap"
             }
         ]
     },
@@ -257,8 +283,8 @@
         "name": "share-status",
         "network": "facebook",
         "type": "click",
-        "priority": 14,
-        "version": "0.2",
+        "priority": 40,
+        "version": "0.3",
         "patterns": [
             {
                 "node": "a[ajaxify*=\"share/dialog/submit\"] *, a[ajaxify*=\"share/dialog/submit\"]",
@@ -271,11 +297,25 @@
         ]
     },
     {
+        "name": "share-status-chat",
+        "network": "facebook",
+        "type": "click",
+        "priority": 41,
+        "version": "0.1",
+        "patterns": [
+            {
+                "node": ".uiGrid+[data-testid] .rfloat [type=\"submit\"]:last-child, .uiGrid+[data-testid] .rfloat [type=\"submit\"]:last-child *",
+                "container": "[data-reactroot]"
+            }
+        ],
+        "isEnabled": true
+    },
+    {
         "name": "create-event",
         "network": "facebook",
         "type": "click",
-        "priority": 15,
-        "version": "0.2",
+        "priority": 73,
+        "version": "0.3",
         "patterns": [
             {
                 "node": "form[action*=\"plans/create\"] button[type=\"submit\"]",
@@ -287,7 +327,7 @@
         "name": "join-event",
         "network": "facebook",
         "type": "click",
-        "priority": 16,
+        "priority": 72,
         "version": "0.3",
         "patterns": [
             {
@@ -304,7 +344,7 @@
         "name": "associate-event",
         "network": "facebook",
         "type": "click",
-        "priority": 17,
+        "priority": 70,
         "version": "0.3",
         "patterns": [
             {
@@ -321,7 +361,7 @@
         "name": "decline-event",
         "network": "facebook",
         "type": "click",
-        "priority": 18,
+        "priority": 71,
         "version": "0.3",
         "patterns": [
             {
@@ -334,8 +374,8 @@
         "name": "friend-request-add",
         "network": "facebook",
         "type": "click",
-        "priority": 19,
-        "version": "0.2",
+        "priority": 80,
+        "version": "0.3",
         "patterns": [
             {
                 "node": ".stickyHeaderWrap .button.FriendRequestAdd, .stickyHeaderWrap button.FriendRequestAdd *, .uiBoxWhite .button.FriendRequestAdd, .uiBoxWhite button.FriendRequestAdd *",
@@ -359,8 +399,8 @@
         "name": "unfriend",
         "network": "facebook",
         "type": "click",
-        "priority": 20,
-        "version": "0.2",
+        "priority": 83,
+        "version": "0.3",
         "patterns": [
             {
                 "node": ".FriendListUnfriend *",
@@ -376,8 +416,8 @@
         "name": "friend-request-confirm",
         "network": "facebook",
         "type": "click",
-        "priority": 21,
-        "version": "0.2",
+        "priority": 81,
+        "version": "0.3",
         "patterns": [
             {
                 "node": ".requestStatus button[name=\"actions[accept]\"]",
@@ -393,8 +433,8 @@
         "name": "friend-request-reject",
         "network": "facebook",
         "type": "click",
-        "priority": 22,
-        "version": "0.2",
+        "priority": 82,
+        "version": "0.3",
         "patterns": [
             {
                 "node": ".requestStatus button[name=\"actions[reject]\"]",
@@ -405,5 +445,23 @@
                 "container": "#globalContainer"
             }
         ]
+    },
+    {
+        "name": "delete-status-update",
+        "network": "facebook",
+        "type": "click",
+        "priority": 90,
+        "version": "0.1",
+        "patterns": [
+            {
+                "node": "form[action^=\"/ajax/timeline/delete\"] [type=\"submit\"]",
+                "container": "form"
+            },
+            {
+                "node": "[action=\"/ajax/groups/mall/delete.php\"] [type=\"submit\"], [action=\"/ajax/groups/mall/delete.php\"] [type=\"submit\"] *",
+                "container": "form"
+            }
+        ],
+        "isEnabled": true
     }
 ]

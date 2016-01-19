@@ -4,6 +4,7 @@ import languages from '../locales/languages'
 const { Promise } = Ember.RSVP
 
 export default Ember.Controller.extend({
+  updateInProgress: false,
   availableLanguages: languages,
   updateIntervals: [
     { label: 'hourly', value: 3600000 },
@@ -25,9 +26,11 @@ export default Ember.Controller.extend({
     },
 
     manualUpdate () {
-      kango.dispatchMessage('Update')
+      this.set('updateInProgress', true)
+      kango.dispatchMessage('update-start')
 
-      kango.addMessageListener('update-result', (e) => {
+      kango.addMessageListener('update-successful', () => {
+        this.set('updateInProgress', false)
         this.get('settings.system').reload().then(() => {
           kango.removeMessageListener('update-result')
         })

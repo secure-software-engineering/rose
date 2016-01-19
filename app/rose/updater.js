@@ -55,30 +55,41 @@ function updateObserver (observer) {
 export async function update () {
   const config = new ConfigModel()
 
-  config.fetch({
-    success: async (model, response, options) => {
-      const baseFileUrl = model.get('repositoryURL')
-      const baseFileSigUrl = `${baseFileUrl}.asc`
-      const fingerprint = model.get('fingerprint').toLowerCase()
-      const repositoryUrl = removeFileName(baseFileUrl)
-      const publicKeyUrl = `${repositoryUrl}/public.key`
+  return new Promise((resolve) => {
+    config.fetch({
+      success: async (model, response, options) => {
+        const baseFileUrl = model.get('repositoryURL')
+        const baseFileSigUrl = `${baseFileUrl}.asc`
+        const fingerprint = model.get('fingerprint').toLowerCase()
+        const repositoryUrl = removeFileName(baseFileUrl)
+        const publicKeyUrl = `${repositoryUrl}/public.key`
 
-      const baseFileText = await fetch(baseFileUrl).then(res => res.text())
-      const baseFileSigText = await fetch(baseFileSigUrl).then(res => res.text())
-      const publicKeyText = await fetch(publicKeyUrl).then(res => res.text())
+        const baseFileText = await fetch(baseFileUrl).then(res => res.text())
+        const baseFileSigText = await fetch(baseFileSigUrl).then(res => res.text())
+        const publicKeyText = await fetch(publicKeyUrl).then(res => res.text())
 
-      const signer = await verify(baseFileText, baseFileSigText, publicKeyText)
+        const signer = await verify(baseFileText, baseFileSigText, publicKeyText)
 
-      if (fingerprint !== signer) {
-        throw new Error('Fingerprint Missmatch')
-      }
+        if (fingerprint !== signer) {
+          throw new Error('Fingerprint Missmatch')
+        }
 
-      const baseFile = JSON.parse(baseFileText)
+        const baseFile = JSON.parse(baseFileText)
 
-      if (baseFile.networks) {
-        baseFile.networks
-          .filter(network => network.observers || network.extractors)
-          .forEach(async network => {
+        let stats = []
+
+        if (baseFile.networks) {
+          let networks = baseFile.networks.filter((network) => {
+            return network.observers || network.extractors
+          })
+
+          for (let network of networks) {
+            let networkStats = {
+              name: network.name,
+              updatedExtractors: [],
+              updatedObservers: []
+            }
+
             if (network.extractors) {
               const extractorsText = await fetch(`${repositoryUrl}/${network.extractors}`).then(res => res.text())
               const extractorsSigText = await fetch(`${repositoryUrl}/${network.extractors}.asc`).then(res => res.text())
@@ -86,7 +97,8 @@ export async function update () {
               if (validate(extractorsText, extractorsSigText, publicKeyText, fingerprint)) {
                 const extractors = JSON.parse(extractorsText)
                 extractors.forEach(async extractor => {
-                  await updateExtractor(extractor)
+                  let updatedExtractor = await updateExtractor(extractor)
+                  if (updatedExtractor) networkStats.updatedExtractors.push(updatedExtractor)
                 })
               }
             }
@@ -98,16 +110,22 @@ export async function update () {
               if (validate(observersText, observersSigText, publicKeyText, fingerprint)) {
                 const observers = JSON.parse(observersText)
                 observers.forEach(async observer => {
-                  await updateObserver(observer)
+                  let updatedObserver = await updateObserver(observer)
+                  if (updatedObserver) networkStats.updatedObservers.push(updatedObserver)
                 })
               }
             }
-          })
-      }
-    }
-  })
 
-  return Promise.resolve()
+            stats.push(networkStats)
+          }
+        }
+
+        config.set('timestamp', new Date().getTime()).save()
+
+        resolve(stats)
+      }
+    })
+  })
 }
 
 async function validate(data, sig, key, fp) {

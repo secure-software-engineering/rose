@@ -72,8 +72,12 @@ kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, fu
 });
 
 
-kango.addMessageListener('Update', () => {
-  Updater.update();
+kango.addMessageListener('update-start', () => {
+  Updater.update()
+    .then((statistics) => {
+      log("Updater", JSON.stringify(statistics))
+    })
+    .then(() => kango.dispatchMessage('update-successful'));
 });
 
 kango.addMessageListener('LoadNetworks', (event) => {

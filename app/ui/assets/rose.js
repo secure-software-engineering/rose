@@ -1510,6 +1510,7 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
   var Promise = Ember['default'].RSVP.Promise;
 
   exports['default'] = Ember['default'].Controller.extend({
+    updateInProgress: false,
     availableLanguages: languages['default'],
     updateIntervals: [{ label: 'hourly', value: 3600000 }, { label: 'daily', value: 86400000 }, { label: 'weekly', value: 604800000 }, { label: 'monthly', value: 2629743830 }, { label: 'yearly', value: 31556926000 }],
 
@@ -1527,9 +1528,11 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
       manualUpdate: function manualUpdate() {
         var _this = this;
 
-        kango.dispatchMessage('Update');
+        this.set('updateInProgress', true);
+        kango.dispatchMessage('update-start');
 
-        kango.addMessageListener('update-result', function (e) {
+        kango.addMessageListener('update-successful', function () {
+          _this.set('updateInProgress', false);
           _this.get('settings.system').reload().then(function () {
             kango.removeMessageListener('update-result');
           });
@@ -10662,7 +10665,6 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("button");
-        dom.setAttribute(el3,"class","ui button");
         var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
@@ -10752,7 +10754,7 @@ define('rose/templates/settings', ['exports'], function (exports) {
         var element10 = dom.childAt(element4, [9]);
         var element11 = dom.childAt(element4, [13]);
         var element12 = dom.childAt(element11, [5]);
-        var morphs = new Array(25);
+        var morphs = new Array(26);
         morphs[0] = dom.createMorphAt(element3,1,1);
         morphs[1] = dom.createMorphAt(dom.childAt(element3, [3]),0,0);
         morphs[2] = dom.createMorphAt(dom.childAt(element5, [1]),0,0);
@@ -10766,18 +10768,19 @@ define('rose/templates/settings', ['exports'], function (exports) {
         morphs[10] = dom.createMorphAt(element7,5,5);
         morphs[11] = dom.createMorphAt(dom.childAt(element8, [1]),0,0);
         morphs[12] = dom.createMorphAt(dom.childAt(element8, [3]),0,0);
-        morphs[13] = dom.createElementMorph(element9);
-        morphs[14] = dom.createMorphAt(element9,0,0);
-        morphs[15] = dom.createMorphAt(element8,7,7);
-        morphs[16] = dom.createMorphAt(dom.childAt(element10, [1]),0,0);
-        morphs[17] = dom.createMorphAt(dom.childAt(element10, [3]),0,0);
-        morphs[18] = dom.createMorphAt(element10,5,5);
-        morphs[19] = dom.createMorphAt(element4,11,11);
-        morphs[20] = dom.createMorphAt(dom.childAt(element11, [1]),0,0);
-        morphs[21] = dom.createMorphAt(dom.childAt(element11, [3]),0,0);
-        morphs[22] = dom.createElementMorph(element12);
-        morphs[23] = dom.createMorphAt(element12,1,1);
-        morphs[24] = dom.createMorphAt(fragment,4,4,contextualElement);
+        morphs[13] = dom.createAttrMorph(element9, 'class');
+        morphs[14] = dom.createElementMorph(element9);
+        morphs[15] = dom.createMorphAt(element9,0,0);
+        morphs[16] = dom.createMorphAt(element8,7,7);
+        morphs[17] = dom.createMorphAt(dom.childAt(element10, [1]),0,0);
+        morphs[18] = dom.createMorphAt(dom.childAt(element10, [3]),0,0);
+        morphs[19] = dom.createMorphAt(element10,5,5);
+        morphs[20] = dom.createMorphAt(element4,11,11);
+        morphs[21] = dom.createMorphAt(dom.childAt(element11, [1]),0,0);
+        morphs[22] = dom.createMorphAt(dom.childAt(element11, [3]),0,0);
+        morphs[23] = dom.createElementMorph(element12);
+        morphs[24] = dom.createMorphAt(element12,1,1);
+        morphs[25] = dom.createMorphAt(fragment,4,4,contextualElement);
         return morphs;
       },
       statements: [
@@ -10794,8 +10797,9 @@ define('rose/templates/settings', ['exports'], function (exports) {
         ["inline","ui-checkbox",[],["class","toggle","checked",["subexpr","@mut",[["get","settings.user.developerModeIsEnabled",["loc",[null,[41,26],[41,62]]]]],[],[]],"label",["subexpr","boolean-to-yesno",[["get","settings.user.developerModeIsEnabled",["loc",[null,[42,42],[42,78]]]]],[],["loc",[null,[42,24],[42,79]]]],"onChange",["subexpr","action",["saveSettings"],[],["loc",[null,[43,27],[43,50]]]]],["loc",[null,[40,4],[43,52]]]],
         ["inline","t",["settings.manualUpdate"],[],["loc",[null,[47,11],[47,40]]]],
         ["inline","t",["settings.manualUpdateLabel"],[],["loc",[null,[48,7],[48,41]]]],
-        ["element","action",["manualUpdate"],[],["loc",[null,[49,30],[49,55]]]],
-        ["inline","t",["action.update"],[],["loc",[null,[49,56],[49,77]]]],
+        ["attribute","class",["concat",["ui ",["subexpr","if",[["get","updateInProgress",["loc",[null,[49,27],[49,43]]]],"loading"],[],["loc",[null,[49,22],[49,55]]]]," button"]]],
+        ["element","action",["manualUpdate"],[],["loc",[null,[49,64],[49,89]]]],
+        ["inline","t",["action.update"],[],["loc",[null,[49,90],[49,111]]]],
         ["inline","moment-format",[["get","settings.system.timestamp",["loc",[null,[50,33],[50,58]]]]],[],["loc",[null,[50,17],[50,60]]]],
         ["inline","t",["settings.autoUpdate"],[],["loc",[null,[54,11],[54,38]]]],
         ["inline","t",["settings.autoUpdateLabel"],[],["loc",[null,[55,7],[55,39]]]],
@@ -13055,7 +13059,7 @@ define('rose/tests/controllers/settings.jshint', function () {
 
   module('JSHint - controllers');
   test('controllers/settings.js should pass jshint', function() { 
-    ok(false, 'controllers/settings.js should pass jshint.\ncontrollers/settings.js: line 30, col 50, \'e\' is defined but never used.\n\n1 error'); 
+    ok(true, 'controllers/settings.js should pass jshint.'); 
   });
 
 });
@@ -15591,7 +15595,7 @@ catch(err) {
 if (runningTests) {
   require("rose/tests/test-helper");
 } else {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.211d90ae"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0.02920a7d"});
 }
 
 /* jshint ignore:end */

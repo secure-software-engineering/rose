@@ -6,7 +6,11 @@
   </div>
 </h2>
 
-{{page-numbers content=pagedContent}}
+{{#if pagedContent}}
+  {{page-numbers  content=pagedContent
+                  numPagesToShow=5
+                  showFL=true}}
+{{/if}}
 
 <table class="ui celled table">
   <thead>

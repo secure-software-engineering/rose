@@ -1245,7 +1245,7 @@ define('rose/controllers/backup', ['exports', 'ember'], function (exports, Ember
   });
 
 });
-define('rose/controllers/comments', ['exports', 'ember'], function (exports, Ember) {
+define('rose/controllers/comments', ['exports', 'ember', 'ember-cli-pagination/computed/paged-array'], function (exports, Ember, pagedArray) {
 
   'use strict';
 
@@ -1261,7 +1261,7 @@ define('rose/controllers/debug-log', ['exports', 'ember', 'ember-cli-pagination/
 
     exports['default'] = Ember['default'].Controller.extend({
         model: [],
-        queryParams: ["page", "perPage"],
+        queryParams: ["page"],
         page: 1,
         perPage: 20,
         pagedContent: pagedArray['default']('model', { pageBinding: "page", perPageBinding: "perPage" }),
@@ -1294,13 +1294,19 @@ define('rose/controllers/diary', ['exports', 'ember'], function (exports, Ember)
   });
 
 });
-define('rose/controllers/extracts', ['exports', 'ember'], function (exports, Ember) {
+define('rose/controllers/extracts', ['exports', 'ember', 'ember-cli-pagination/computed/paged-array'], function (exports, Ember, pagedArray) {
 
   'use strict';
 
   exports['default'] = Ember['default'].Controller.extend({
     listSorting: ['createdAt:desc'],
-    sortedList: Ember['default'].computed.sort('model', 'listSorting')
+    sortedList: Ember['default'].computed.sort('model', 'listSorting'),
+
+    queryParams: ["page"],
+    page: 1,
+    perPage: 20,
+    pagedContent: pagedArray['default']('sortedList', { pageBinding: "page", perPageBinding: "perPage" }),
+    totalPagesBinding: "pagedContent.totalPages"
   });
 
 });
@@ -1486,13 +1492,19 @@ define('rose/controllers/index', ['exports', 'ember'], function (exports, Ember)
   });
 
 });
-define('rose/controllers/interactions', ['exports', 'ember'], function (exports, Ember) {
+define('rose/controllers/interactions', ['exports', 'ember', 'ember-cli-pagination/computed/paged-array'], function (exports, Ember, pagedArray) {
 
   'use strict';
 
   exports['default'] = Ember['default'].Controller.extend({
     listSorting: ['createdAt:desc'],
-    sortedList: Ember['default'].computed.sort('model', 'listSorting')
+    sortedList: Ember['default'].computed.sort('model', 'listSorting'),
+
+    queryParams: ["page"],
+    page: 1,
+    perPage: 20,
+    pagedContent: pagedArray['default']('sortedList', { pageBinding: "page", perPageBinding: "perPage" }),
+    totalPagesBinding: "pagedContent.totalPages"
   });
 
 });
@@ -3690,9 +3702,9 @@ define('rose/pods/components/page-numbers/template', ['exports'], function (expo
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element2 = dom.childAt(fragment, [1]);
+          var element1 = dom.childAt(fragment, [1]);
           var morphs = new Array(1);
-          morphs[0] = dom.createElementMorph(element2);
+          morphs[0] = dom.createElementMorph(element1);
           return morphs;
         },
         statements: [
@@ -3760,7 +3772,7 @@ define('rose/pods/components/page-numbers/template', ['exports'], function (expo
                 "column": 8
               },
               "end": {
-                "line": 17,
+                "line": 15,
                 "column": 8
               }
             },
@@ -3771,45 +3783,79 @@ define('rose/pods/components/page-numbers/template', ['exports'], function (expo
           hasRendered: false,
           buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
-            var el1 = dom.createTextNode("        ");
+            var el1 = dom.createTextNode("            ");
             dom.appendChild(el0, el1);
-            var el1 = dom.createElement("a");
-            dom.setAttribute(el1,"class","active item");
-            var el2 = dom.createTextNode("\n            ");
-            dom.appendChild(el1, el2);
-            var el2 = dom.createComment("");
-            dom.appendChild(el1, el2);
-            var el2 = dom.createTextNode("\n        ");
+            var el1 = dom.createElement("div");
+            dom.setAttribute(el1,"class","disabled item");
+            var el2 = dom.createTextNode("...");
             dom.appendChild(el1, el2);
             dom.appendChild(el0, el1);
             var el1 = dom.createTextNode("\n");
             dom.appendChild(el0, el1);
             return el0;
           },
-          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-            var morphs = new Array(1);
-            morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),1,1);
-            return morphs;
-          },
+          buildRenderNodes: function buildRenderNodes() { return []; },
           statements: [
-            ["content","item.page",["loc",[null,[15,12],[15,25]]]]
+
           ],
           locals: [],
           templates: []
         };
       }());
       var child1 = (function() {
+        var child0 = (function() {
+          return {
+            meta: {
+              "revision": "Ember@1.13.11",
+              "loc": {
+                "source": null,
+                "start": {
+                  "line": 17,
+                  "column": 12
+                },
+                "end": {
+                  "line": 19,
+                  "column": 12
+                }
+              },
+              "moduleName": "rose/pods/components/page-numbers/template.hbs"
+            },
+            arity: 0,
+            cachedFragment: null,
+            hasRendered: false,
+            buildFragment: function buildFragment(dom) {
+              var el0 = dom.createDocumentFragment();
+              var el1 = dom.createTextNode("                ");
+              dom.appendChild(el0, el1);
+              var el1 = dom.createComment("");
+              dom.appendChild(el0, el1);
+              var el1 = dom.createTextNode("\n");
+              dom.appendChild(el0, el1);
+              return el0;
+            },
+            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+              var morphs = new Array(1);
+              morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+              return morphs;
+            },
+            statements: [
+              ["content","item.page",["loc",[null,[18,16],[18,29]]]]
+            ],
+            locals: [],
+            templates: []
+          };
+        }());
         return {
           meta: {
             "revision": "Ember@1.13.11",
             "loc": {
               "source": null,
               "start": {
-                "line": 17,
+                "line": 16,
                 "column": 8
               },
               "end": {
-                "line": 21,
+                "line": 20,
                 "column": 8
               }
             },
@@ -3820,34 +3866,104 @@ define('rose/pods/components/page-numbers/template', ['exports'], function (expo
           hasRendered: false,
           buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
-            var el1 = dom.createTextNode("        ");
-            dom.appendChild(el0, el1);
-            var el1 = dom.createElement("a");
-            dom.setAttribute(el1,"class","item");
-            var el2 = dom.createTextNode("\n            ");
-            dom.appendChild(el1, el2);
-            var el2 = dom.createComment("");
-            dom.appendChild(el1, el2);
-            var el2 = dom.createTextNode("\n        ");
-            dom.appendChild(el1, el2);
-            dom.appendChild(el0, el1);
-            var el1 = dom.createTextNode("\n");
+            var el1 = dom.createComment("");
             dom.appendChild(el0, el1);
             return el0;
           },
           buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-            var element1 = dom.childAt(fragment, [1]);
-            var morphs = new Array(2);
-            morphs[0] = dom.createElementMorph(element1);
-            morphs[1] = dom.createMorphAt(element1,1,1);
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+            dom.insertBoundary(fragment, 0);
+            dom.insertBoundary(fragment, null);
             return morphs;
           },
           statements: [
-            ["element","action",["pageClicked",["get","item.page",["loc",[null,[18,47],[18,56]]]]],[],["loc",[null,[18,24],[18,58]]]],
-            ["content","item.page",["loc",[null,[19,12],[19,25]]]]
+            ["block","link-to",[["subexpr","query-params",[],["page",["get","item.page",["loc",[null,[17,42],[17,51]]]]],["loc",[null,[17,23],[17,52]]]]],["class","item active"],0,null,["loc",[null,[17,12],[19,24]]]]
           ],
           locals: [],
-          templates: []
+          templates: [child0]
+        };
+      }());
+      var child2 = (function() {
+        var child0 = (function() {
+          return {
+            meta: {
+              "revision": "Ember@1.13.11",
+              "loc": {
+                "source": null,
+                "start": {
+                  "line": 21,
+                  "column": 12
+                },
+                "end": {
+                  "line": 23,
+                  "column": 12
+                }
+              },
+              "moduleName": "rose/pods/components/page-numbers/template.hbs"
+            },
+            arity: 0,
+            cachedFragment: null,
+            hasRendered: false,
+            buildFragment: function buildFragment(dom) {
+              var el0 = dom.createDocumentFragment();
+              var el1 = dom.createTextNode("                ");
+              dom.appendChild(el0, el1);
+              var el1 = dom.createComment("");
+              dom.appendChild(el0, el1);
+              var el1 = dom.createTextNode("\n");
+              dom.appendChild(el0, el1);
+              return el0;
+            },
+            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+              var morphs = new Array(1);
+              morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+              return morphs;
+            },
+            statements: [
+              ["content","item.page",["loc",[null,[22,16],[22,29]]]]
+            ],
+            locals: [],
+            templates: []
+          };
+        }());
+        return {
+          meta: {
+            "revision": "Ember@1.13.11",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 20,
+                "column": 8
+              },
+              "end": {
+                "line": 24,
+                "column": 8
+              }
+            },
+            "moduleName": "rose/pods/components/page-numbers/template.hbs"
+          },
+          arity: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+            dom.insertBoundary(fragment, 0);
+            dom.insertBoundary(fragment, null);
+            return morphs;
+          },
+          statements: [
+            ["block","link-to",[["subexpr","query-params",[],["page",["get","item.page",["loc",[null,[21,42],[21,51]]]]],["loc",[null,[21,23],[21,52]]]]],["class","item"],0,null,["loc",[null,[21,12],[23,24]]]]
+          ],
+          locals: [],
+          templates: [child0]
         };
       }());
       return {
@@ -3860,7 +3976,7 @@ define('rose/pods/components/page-numbers/template', ['exports'], function (expo
               "column": 4
             },
             "end": {
-              "line": 22,
+              "line": 25,
               "column": 4
             }
           },
@@ -3873,20 +3989,24 @@ define('rose/pods/components/page-numbers/template', ['exports'], function (expo
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(1);
+          var morphs = new Array(2);
           morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+          morphs[1] = dom.createMorphAt(fragment,1,1,contextualElement);
           dom.insertBoundary(fragment, 0);
           dom.insertBoundary(fragment, null);
           return morphs;
         },
         statements: [
-          ["block","if",[["get","item.current",["loc",[null,[13,14],[13,26]]]]],[],0,1,["loc",[null,[13,8],[21,15]]]]
+          ["block","if",[["get","item.dots",["loc",[null,[13,14],[13,23]]]]],[],0,null,["loc",[null,[13,8],[15,15]]]],
+          ["block","if",[["get","item.current",["loc",[null,[16,14],[16,26]]]]],[],1,2,["loc",[null,[16,8],[24,15]]]]
         ],
         locals: ["item"],
-        templates: [child0, child1]
+        templates: [child0, child1, child2]
       };
     }());
     var child3 = (function() {
@@ -3896,11 +4016,11 @@ define('rose/pods/components/page-numbers/template', ['exports'], function (expo
           "loc": {
             "source": null,
             "start": {
-              "line": 24,
+              "line": 27,
               "column": 4
             },
             "end": {
-              "line": 28,
+              "line": 31,
               "column": 4
             }
           },
@@ -3934,7 +4054,7 @@ define('rose/pods/components/page-numbers/template', ['exports'], function (expo
           return morphs;
         },
         statements: [
-          ["element","action",["incrementPage",1],[],["loc",[null,[25,25],[25,53]]]]
+          ["element","action",["incrementPage",1],[],["loc",[null,[28,25],[28,53]]]]
         ],
         locals: [],
         templates: []
@@ -3947,11 +4067,11 @@ define('rose/pods/components/page-numbers/template', ['exports'], function (expo
           "loc": {
             "source": null,
             "start": {
-              "line": 28,
+              "line": 31,
               "column": 4
             },
             "end": {
-              "line": 32,
+              "line": 35,
               "column": 4
             }
           },
@@ -3996,8 +4116,8 @@ define('rose/pods/components/page-numbers/template', ['exports'], function (expo
             "column": 0
           },
           "end": {
-            "line": 33,
-            "column": 6
+            "line": 37,
+            "column": 0
           }
         },
         "moduleName": "rose/pods/components/page-numbers/template.hbs"
@@ -4022,20 +4142,22 @@ define('rose/pods/components/page-numbers/template', ['exports'], function (expo
         var el2 = dom.createComment("");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element3 = dom.childAt(fragment, [0]);
+        var element2 = dom.childAt(fragment, [0]);
         var morphs = new Array(3);
-        morphs[0] = dom.createMorphAt(element3,1,1);
-        morphs[1] = dom.createMorphAt(element3,3,3);
-        morphs[2] = dom.createMorphAt(element3,5,5);
+        morphs[0] = dom.createMorphAt(element2,1,1);
+        morphs[1] = dom.createMorphAt(element2,3,3);
+        morphs[2] = dom.createMorphAt(element2,5,5);
         return morphs;
       },
       statements: [
         ["block","if",[["get","canStepBackward",["loc",[null,[2,10],[2,25]]]]],[],0,1,["loc",[null,[2,4],[10,11]]]],
-        ["block","each",[["get","pageItems",["loc",[null,[12,12],[12,21]]]]],[],2,null,["loc",[null,[12,4],[22,13]]]],
-        ["block","if",[["get","canStepForward",["loc",[null,[24,10],[24,24]]]]],[],3,4,["loc",[null,[24,4],[32,11]]]]
+        ["block","each",[["get","pageItems",["loc",[null,[12,12],[12,21]]]]],[],2,null,["loc",[null,[12,4],[25,13]]]],
+        ["block","if",[["get","canStepForward",["loc",[null,[27,10],[27,24]]]]],[],3,4,["loc",[null,[27,4],[35,11]]]]
       ],
       locals: [],
       templates: [child0, child1, child2, child3, child4]
@@ -6314,11 +6436,53 @@ define('rose/templates/comments', ['exports'], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 10,
+              "line": 9,
+              "column": 0
+            },
+            "end": {
+              "line": 13,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/comments.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+          return morphs;
+        },
+        statements: [
+          ["inline","page-numbers",[],["content",["subexpr","@mut",[["get","pagedContent",["loc",[null,[10,26],[10,38]]]]],[],[]],"numPagesToShow",5,"showFL",true],["loc",[null,[10,2],[12,31]]]]
+        ],
+        locals: [],
+        templates: []
+      };
+    }());
+    var child1 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@1.13.11",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 16,
               "column": 2
             },
             "end": {
-              "line": 12,
+              "line": 18,
               "column": 2
             }
           },
@@ -6343,24 +6507,24 @@ define('rose/templates/comments', ['exports'], function (exports) {
           return morphs;
         },
         statements: [
-          ["inline","rose-comment",[],["model",["subexpr","@mut",[["get","comment",["loc",[null,[11,25],[11,32]]]]],[],[]]],["loc",[null,[11,4],[11,34]]]]
+          ["inline","rose-comment",[],["model",["subexpr","@mut",[["get","comment",["loc",[null,[17,25],[17,32]]]]],[],[]]],["loc",[null,[17,4],[17,34]]]]
         ],
         locals: ["comment"],
         templates: []
       };
     }());
-    var child1 = (function() {
+    var child2 = (function() {
       return {
         meta: {
           "revision": "Ember@1.13.11",
           "loc": {
             "source": null,
             "start": {
-              "line": 12,
+              "line": 18,
               "column": 2
             },
             "end": {
-              "line": 14,
+              "line": 20,
               "column": 2
             }
           },
@@ -6385,7 +6549,7 @@ define('rose/templates/comments', ['exports'], function (exports) {
           return morphs;
         },
         statements: [
-          ["content","no-data-message",["loc",[null,[13,4],[13,23]]]]
+          ["content","no-data-message",["loc",[null,[19,4],[19,23]]]]
         ],
         locals: [],
         templates: []
@@ -6401,7 +6565,7 @@ define('rose/templates/comments', ['exports'], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 16,
+            "line": 22,
             "column": 0
           }
         },
@@ -6442,6 +6606,10 @@ define('rose/templates/comments', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
         var el1 = dom.createElement("div");
         dom.setAttribute(el1,"class","ui comments");
         var el2 = dom.createTextNode("\n");
@@ -6455,19 +6623,21 @@ define('rose/templates/comments', ['exports'], function (exports) {
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0, 3]);
-        var morphs = new Array(3);
+        var morphs = new Array(4);
         morphs[0] = dom.createMorphAt(element0,1,1);
         morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
-        morphs[2] = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
+        morphs[2] = dom.createMorphAt(fragment,2,2,contextualElement);
+        morphs[3] = dom.createMorphAt(dom.childAt(fragment, [4]),1,1);
         return morphs;
       },
       statements: [
         ["inline","t",["comments.title"],[],["loc",[null,[4,4],[4,26]]]],
         ["inline","t",["comments.subtitle"],[],["loc",[null,[5,28],[5,53]]]],
-        ["block","each",[["get","sortedList",["loc",[null,[10,10],[10,20]]]]],[],0,1,["loc",[null,[10,2],[14,11]]]]
+        ["block","if",[["get","pagedContent",["loc",[null,[9,6],[9,18]]]]],[],0,null,["loc",[null,[9,0],[13,7]]]],
+        ["block","each",[["get","pagedContent",["loc",[null,[16,10],[16,22]]]]],[],1,2,["loc",[null,[16,2],[20,11]]]]
       ],
       locals: [],
-      templates: [child0, child1]
+      templates: [child0, child1, child2]
     };
   }()));
 
@@ -8828,11 +8998,53 @@ define('rose/templates/debug-log', ['exports'], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 20,
+              "line": 9,
+              "column": 0
+            },
+            "end": {
+              "line": 13,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/debug-log.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+          return morphs;
+        },
+        statements: [
+          ["inline","page-numbers",[],["content",["subexpr","@mut",[["get","pagedContent",["loc",[null,[10,26],[10,38]]]]],[],[]],"numPagesToShow",5,"showFL",true],["loc",[null,[10,2],[12,31]]]]
+        ],
+        locals: [],
+        templates: []
+      };
+    }());
+    var child1 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@1.13.11",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 24,
               "column": 4
             },
             "end": {
-              "line": 26,
+              "line": 30,
               "column": 4
             }
           },
@@ -8880,9 +9092,9 @@ define('rose/templates/debug-log', ['exports'], function (exports) {
           return morphs;
         },
         statements: [
-          ["inline","moment-format",[["get","log.date",["loc",[null,[22,26],[22,34]]]],"LLL"],[],["loc",[null,[22,10],[22,42]]]],
-          ["content","log.message",["loc",[null,[23,10],[23,25]]]],
-          ["content","log.module",["loc",[null,[24,10],[24,24]]]]
+          ["inline","moment-format",[["get","log.date",["loc",[null,[26,26],[26,34]]]],"LLL"],[],["loc",[null,[26,10],[26,42]]]],
+          ["content","log.message",["loc",[null,[27,10],[27,25]]]],
+          ["content","log.module",["loc",[null,[28,10],[28,24]]]]
         ],
         locals: ["log"],
         templates: []
@@ -8898,7 +9110,7 @@ define('rose/templates/debug-log', ['exports'], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 30,
+            "line": 34,
             "column": 0
           }
         },
@@ -8941,7 +9153,7 @@ define('rose/templates/debug-log', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
+        var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("table");
         dom.setAttribute(el1,"class","ui celled table");
@@ -9009,14 +9221,14 @@ define('rose/templates/debug-log', ['exports'], function (exports) {
       statements: [
         ["inline","t",["debugLog.title"],[],["loc",[null,[4,4],[4,26]]]],
         ["inline","t",["debugLog.subtitle"],[],["loc",[null,[5,28],[5,53]]]],
-        ["inline","page-numbers",[],["content",["subexpr","@mut",[["get","pagedContent",["loc",[null,[9,23],[9,35]]]]],[],[]]],["loc",[null,[9,0],[9,37]]]],
-        ["inline","t",["debugLog.date"],[],["loc",[null,[14,10],[14,31]]]],
-        ["inline","t",["debugLog.message"],[],["loc",[null,[15,10],[15,34]]]],
-        ["inline","t",["debugLog.module"],[],["loc",[null,[16,10],[16,33]]]],
-        ["block","each",[["get","pagedContent",["loc",[null,[20,12],[20,24]]]]],[],0,null,["loc",[null,[20,4],[26,13]]]]
+        ["block","if",[["get","pagedContent",["loc",[null,[9,6],[9,18]]]]],[],0,null,["loc",[null,[9,0],[13,7]]]],
+        ["inline","t",["debugLog.date"],[],["loc",[null,[18,10],[18,31]]]],
+        ["inline","t",["debugLog.message"],[],["loc",[null,[19,10],[19,34]]]],
+        ["inline","t",["debugLog.module"],[],["loc",[null,[20,10],[20,33]]]],
+        ["block","each",[["get","pagedContent",["loc",[null,[24,12],[24,24]]]]],[],1,null,["loc",[null,[24,4],[30,13]]]]
       ],
       locals: [],
-      templates: [child0]
+      templates: [child0, child1]
     };
   }()));
 
@@ -9256,6 +9468,48 @@ define('rose/templates/extracts', ['exports'], function (exports) {
 
   exports['default'] = Ember.HTMLBars.template((function() {
     var child0 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@1.13.11",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 9,
+              "column": 0
+            },
+            "end": {
+              "line": 13,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/extracts.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+          return morphs;
+        },
+        statements: [
+          ["inline","page-numbers",[],["content",["subexpr","@mut",[["get","pagedContent",["loc",[null,[10,26],[10,38]]]]],[],[]],"numPagesToShow",5,"showFL",true],["loc",[null,[10,2],[12,31]]]]
+        ],
+        locals: [],
+        templates: []
+      };
+    }());
+    var child1 = (function() {
       var child0 = (function() {
         return {
           meta: {
@@ -9263,11 +9517,11 @@ define('rose/templates/extracts', ['exports'], function (exports) {
             "loc": {
               "source": null,
               "start": {
-                "line": 11,
+                "line": 17,
                 "column": 4
               },
               "end": {
-                "line": 13,
+                "line": 19,
                 "column": 4
               }
             },
@@ -9292,7 +9546,7 @@ define('rose/templates/extracts', ['exports'], function (exports) {
             return morphs;
           },
           statements: [
-            ["inline","rose-extract",[],["model",["subexpr","@mut",[["get","extract",["loc",[null,[12,25],[12,32]]]]],[],[]]],["loc",[null,[12,4],[12,34]]]]
+            ["inline","rose-extract",[],["model",["subexpr","@mut",[["get","extract",["loc",[null,[18,25],[18,32]]]]],[],[]]],["loc",[null,[18,4],[18,34]]]]
           ],
           locals: [],
           templates: []
@@ -9304,11 +9558,11 @@ define('rose/templates/extracts', ['exports'], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 10,
+              "line": 16,
               "column": 2
             },
             "end": {
-              "line": 14,
+              "line": 20,
               "column": 2
             }
           },
@@ -9331,24 +9585,24 @@ define('rose/templates/extracts', ['exports'], function (exports) {
           return morphs;
         },
         statements: [
-          ["block","unless",[["get","interaction.isDeleted",["loc",[null,[11,14],[11,35]]]]],[],0,null,["loc",[null,[11,4],[13,15]]]]
+          ["block","unless",[["get","interaction.isDeleted",["loc",[null,[17,14],[17,35]]]]],[],0,null,["loc",[null,[17,4],[19,15]]]]
         ],
         locals: ["extract"],
         templates: [child0]
       };
     }());
-    var child1 = (function() {
+    var child2 = (function() {
       return {
         meta: {
           "revision": "Ember@1.13.11",
           "loc": {
             "source": null,
             "start": {
-              "line": 14,
+              "line": 20,
               "column": 2
             },
             "end": {
-              "line": 16,
+              "line": 22,
               "column": 2
             }
           },
@@ -9373,7 +9627,7 @@ define('rose/templates/extracts', ['exports'], function (exports) {
           return morphs;
         },
         statements: [
-          ["content","no-data-message",["loc",[null,[15,4],[15,23]]]]
+          ["content","no-data-message",["loc",[null,[21,4],[21,23]]]]
         ],
         locals: [],
         templates: []
@@ -9389,7 +9643,7 @@ define('rose/templates/extracts', ['exports'], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 18,
+            "line": 24,
             "column": 0
           }
         },
@@ -9430,6 +9684,10 @@ define('rose/templates/extracts', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
         var el1 = dom.createElement("div");
         dom.setAttribute(el1,"class","ui comments");
         var el2 = dom.createTextNode("\n");
@@ -9443,19 +9701,21 @@ define('rose/templates/extracts', ['exports'], function (exports) {
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0, 3]);
-        var morphs = new Array(3);
+        var morphs = new Array(4);
         morphs[0] = dom.createMorphAt(element0,1,1);
         morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
-        morphs[2] = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
+        morphs[2] = dom.createMorphAt(fragment,2,2,contextualElement);
+        morphs[3] = dom.createMorphAt(dom.childAt(fragment, [4]),1,1);
         return morphs;
       },
       statements: [
         ["inline","t",["extracts.title"],[],["loc",[null,[4,4],[4,26]]]],
         ["inline","t",["extracts.subtitle"],[],["loc",[null,[5,28],[5,53]]]],
-        ["block","each",[["get","sortedList",["loc",[null,[10,10],[10,20]]]]],[],0,1,["loc",[null,[10,2],[16,11]]]]
+        ["block","if",[["get","pagedContent",["loc",[null,[9,6],[9,18]]]]],[],0,null,["loc",[null,[9,0],[13,7]]]],
+        ["block","each",[["get","pagedContent",["loc",[null,[16,10],[16,22]]]]],[],1,2,["loc",[null,[16,2],[22,11]]]]
       ],
       locals: [],
-      templates: [child0, child1]
+      templates: [child0, child1, child2]
     };
   }()));
 
@@ -9724,6 +9984,48 @@ define('rose/templates/interactions', ['exports'], function (exports) {
 
   exports['default'] = Ember.HTMLBars.template((function() {
     var child0 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@1.13.11",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 9,
+              "column": 0
+            },
+            "end": {
+              "line": 13,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/interactions.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+          return morphs;
+        },
+        statements: [
+          ["inline","page-numbers",[],["content",["subexpr","@mut",[["get","pagedContent",["loc",[null,[10,26],[10,38]]]]],[],[]],"numPagesToShow",5,"showFL",true],["loc",[null,[10,2],[12,31]]]]
+        ],
+        locals: [],
+        templates: []
+      };
+    }());
+    var child1 = (function() {
       var child0 = (function() {
         return {
           meta: {
@@ -9731,11 +10033,11 @@ define('rose/templates/interactions', ['exports'], function (exports) {
             "loc": {
               "source": null,
               "start": {
-                "line": 11,
+                "line": 17,
                 "column": 4
               },
               "end": {
-                "line": 13,
+                "line": 19,
                 "column": 4
               }
             },
@@ -9760,7 +10062,7 @@ define('rose/templates/interactions', ['exports'], function (exports) {
             return morphs;
           },
           statements: [
-            ["inline","rose-interaction",[],["model",["subexpr","@mut",[["get","interaction",["loc",[null,[12,29],[12,40]]]]],[],[]]],["loc",[null,[12,4],[12,42]]]]
+            ["inline","rose-interaction",[],["model",["subexpr","@mut",[["get","interaction",["loc",[null,[18,29],[18,40]]]]],[],[]]],["loc",[null,[18,4],[18,42]]]]
           ],
           locals: [],
           templates: []
@@ -9772,11 +10074,11 @@ define('rose/templates/interactions', ['exports'], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 10,
+              "line": 16,
               "column": 2
             },
             "end": {
-              "line": 14,
+              "line": 20,
               "column": 2
             }
           },
@@ -9799,24 +10101,24 @@ define('rose/templates/interactions', ['exports'], function (exports) {
           return morphs;
         },
         statements: [
-          ["block","unless",[["get","interaction.isDeleted",["loc",[null,[11,14],[11,35]]]]],[],0,null,["loc",[null,[11,4],[13,15]]]]
+          ["block","unless",[["get","interaction.isDeleted",["loc",[null,[17,14],[17,35]]]]],[],0,null,["loc",[null,[17,4],[19,15]]]]
         ],
         locals: ["interaction"],
         templates: [child0]
       };
     }());
-    var child1 = (function() {
+    var child2 = (function() {
       return {
         meta: {
           "revision": "Ember@1.13.11",
           "loc": {
             "source": null,
             "start": {
-              "line": 14,
+              "line": 20,
               "column": 2
             },
             "end": {
-              "line": 16,
+              "line": 22,
               "column": 2
             }
           },
@@ -9841,7 +10143,7 @@ define('rose/templates/interactions', ['exports'], function (exports) {
           return morphs;
         },
         statements: [
-          ["content","no-data-message",["loc",[null,[15,4],[15,23]]]]
+          ["content","no-data-message",["loc",[null,[21,4],[21,23]]]]
         ],
         locals: [],
         templates: []
@@ -9857,7 +10159,7 @@ define('rose/templates/interactions', ['exports'], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 18,
+            "line": 24,
             "column": 0
           }
         },
@@ -9898,6 +10200,10 @@ define('rose/templates/interactions', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
         var el1 = dom.createElement("div");
         dom.setAttribute(el1,"class","ui comments");
         var el2 = dom.createTextNode("\n");
@@ -9911,19 +10217,21 @@ define('rose/templates/interactions', ['exports'], function (exports) {
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0, 3]);
-        var morphs = new Array(3);
+        var morphs = new Array(4);
         morphs[0] = dom.createMorphAt(element0,1,1);
         morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
-        morphs[2] = dom.createMorphAt(dom.childAt(fragment, [2]),1,1);
+        morphs[2] = dom.createMorphAt(fragment,2,2,contextualElement);
+        morphs[3] = dom.createMorphAt(dom.childAt(fragment, [4]),1,1);
         return morphs;
       },
       statements: [
         ["inline","t",["interactions.title"],[],["loc",[null,[4,4],[4,30]]]],
         ["inline","t",["interactions.subtitle"],[],["loc",[null,[5,28],[5,57]]]],
-        ["block","each",[["get","sortedList",["loc",[null,[10,10],[10,20]]]]],[],0,1,["loc",[null,[10,2],[16,11]]]]
+        ["block","if",[["get","pagedContent",["loc",[null,[9,6],[9,18]]]]],[],0,null,["loc",[null,[9,0],[13,7]]]],
+        ["block","each",[["get","pagedContent",["loc",[null,[16,10],[16,22]]]]],[],1,2,["loc",[null,[16,2],[22,11]]]]
       ],
       locals: [],
-      templates: [child0, child1]
+      templates: [child0, child1, child2]
     };
   }()));
 
@@ -12999,7 +13307,7 @@ define('rose/tests/controllers/comments.jshint', function () {
 
   module('JSHint - controllers');
   test('controllers/comments.js should pass jshint', function() { 
-    ok(true, 'controllers/comments.js should pass jshint.'); 
+    ok(false, 'controllers/comments.js should pass jshint.\ncontrollers/comments.js: line 8, col 3, Expected \'}\' to match \'{\' from line 4 and instead saw \'queryParams\'.\ncontrollers/comments.js: line 8, col 14, Expected \')\' and instead saw \':\'.\ncontrollers/comments.js: line 8, col 24, Expected an identifier and instead saw \',\'.\ncontrollers/comments.js: line 8, col 24, Expected an assignment or function call and instead saw an expression.\ncontrollers/comments.js: line 9, col 9, Label \'page\' on 1 statement.\ncontrollers/comments.js: line 10, col 3, Expected an assignment or function call and instead saw an expression.\ncontrollers/comments.js: line 10, col 10, Expected \'(end)\' and instead saw \':\'.\ncontrollers/comments.js: line 10, col 3, \'perPage\' is not defined.\ncontrollers/comments.js: line 2, col 8, \'pagedArray\' is defined but never used.\n\n9 errors'); 
   });
 
 });

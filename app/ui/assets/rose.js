@@ -1269,13 +1269,19 @@ define('rose/controllers/debug-log', ['exports', 'ember', 'ember-cli-pagination/
     });
 
 });
-define('rose/controllers/diary', ['exports', 'ember'], function (exports, Ember) {
+define('rose/controllers/diary', ['exports', 'ember', 'ember-cli-pagination/computed/paged-array'], function (exports, Ember, pagedArray) {
 
   'use strict';
 
   exports['default'] = Ember['default'].Controller.extend({
     listSorting: ['createdAt:desc'],
     sortedList: Ember['default'].computed.sort('model', 'listSorting'),
+
+    queryParams: ["page"],
+    page: 1,
+    perPage: 20,
+    pagedContent: pagedArray['default']('sortedList', { pageBinding: "page", perPageBinding: "perPage" }),
+    totalPagesBinding: "pagedContent.totalPages",
 
     diaryInputIsEmpty: Ember['default'].computed.empty('diaryInput'),
 
@@ -9245,11 +9251,53 @@ define('rose/templates/diary', ['exports'], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 25,
+              "line": 24,
+              "column": 0
+            },
+            "end": {
+              "line": 28,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/diary.hbs"
+        },
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment,1,1,contextualElement);
+          return morphs;
+        },
+        statements: [
+          ["inline","page-numbers",[],["content",["subexpr","@mut",[["get","pagedContent",["loc",[null,[25,26],[25,38]]]]],[],[]],"numPagesToShow",5,"showFL",true],["loc",[null,[25,2],[27,31]]]]
+        ],
+        locals: [],
+        templates: []
+      };
+    }());
+    var child1 = (function() {
+      return {
+        meta: {
+          "revision": "Ember@1.13.11",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 31,
               "column": 2
             },
             "end": {
-              "line": 27,
+              "line": 33,
               "column": 2
             }
           },
@@ -9274,24 +9322,24 @@ define('rose/templates/diary', ['exports'], function (exports) {
           return morphs;
         },
         statements: [
-          ["inline","diary-entry",[],["model",["subexpr","@mut",[["get","entry",["loc",[null,[26,24],[26,29]]]]],[],[]]],["loc",[null,[26,4],[26,31]]]]
+          ["inline","diary-entry",[],["model",["subexpr","@mut",[["get","entry",["loc",[null,[32,24],[32,29]]]]],[],[]]],["loc",[null,[32,4],[32,31]]]]
         ],
         locals: ["entry"],
         templates: []
       };
     }());
-    var child1 = (function() {
+    var child2 = (function() {
       return {
         meta: {
           "revision": "Ember@1.13.11",
           "loc": {
             "source": null,
             "start": {
-              "line": 27,
+              "line": 33,
               "column": 2
             },
             "end": {
-              "line": 29,
+              "line": 35,
               "column": 2
             }
           },
@@ -9316,7 +9364,7 @@ define('rose/templates/diary', ['exports'], function (exports) {
           return morphs;
         },
         statements: [
-          ["content","no-data-message",["loc",[null,[28,4],[28,23]]]]
+          ["content","no-data-message",["loc",[null,[34,4],[34,23]]]]
         ],
         locals: [],
         templates: []
@@ -9332,7 +9380,7 @@ define('rose/templates/diary', ['exports'], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 31,
+            "line": 37,
             "column": 0
           }
         },
@@ -9417,6 +9465,10 @@ define('rose/templates/diary', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
         var el1 = dom.createElement("div");
         dom.setAttribute(el1,"class","ui comments");
         var el2 = dom.createTextNode("\n");
@@ -9433,7 +9485,7 @@ define('rose/templates/diary', ['exports'], function (exports) {
         var element1 = dom.childAt(fragment, [2]);
         var element2 = dom.childAt(element1, [3]);
         var element3 = dom.childAt(element1, [5]);
-        var morphs = new Array(9);
+        var morphs = new Array(10);
         morphs[0] = dom.createMorphAt(element0,1,1);
         morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),0,0);
         morphs[2] = dom.createMorphAt(dom.childAt(element1, [1]),1,1);
@@ -9442,7 +9494,8 @@ define('rose/templates/diary', ['exports'], function (exports) {
         morphs[5] = dom.createMorphAt(element2,1,1);
         morphs[6] = dom.createElementMorph(element3);
         morphs[7] = dom.createMorphAt(element3,1,1);
-        morphs[8] = dom.createMorphAt(dom.childAt(fragment, [6]),1,1);
+        morphs[8] = dom.createMorphAt(fragment,6,6,contextualElement);
+        morphs[9] = dom.createMorphAt(dom.childAt(fragment, [8]),1,1);
         return morphs;
       },
       statements: [
@@ -9454,10 +9507,11 @@ define('rose/templates/diary', ['exports'], function (exports) {
         ["inline","t",["action.save"],[],["loc",[null,[15,4],[15,23]]]],
         ["element","action",["cancel"],[],["loc",[null,[17,28],[17,47]]]],
         ["inline","t",["action.cancel"],[],["loc",[null,[18,4],[18,25]]]],
-        ["block","each",[["get","sortedList",["loc",[null,[25,10],[25,20]]]]],[],0,1,["loc",[null,[25,2],[29,11]]]]
+        ["block","if",[["get","pagedContent",["loc",[null,[24,6],[24,18]]]]],[],0,null,["loc",[null,[24,0],[28,7]]]],
+        ["block","each",[["get","pagedContent",["loc",[null,[31,10],[31,22]]]]],[],1,2,["loc",[null,[31,2],[35,11]]]]
       ],
       locals: [],
-      templates: [child0, child1]
+      templates: [child0, child1, child2]
     };
   }()));
 

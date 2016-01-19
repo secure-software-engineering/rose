@@ -17,6 +17,7 @@ function updateExtractor (extractor) {
           name: extractor.name,
           network: extractor.network
         })
+        if (!model) return resolve()
         if (extractor.version > model.get('version')) {
           model.save(extractor, {
             success: (model, response, options) => resolve(response),
@@ -39,6 +40,7 @@ function updateObserver (observer) {
           name: observer.name,
           network: observer.network
         })
+        if (!model) return resolve()
         if (observer.version > model.get('version')){
           model.save(observer, {
             success: (model, response, options) => resolve(response),
@@ -120,7 +122,7 @@ export async function update () {
           }
         }
 
-        config.set('timestamp', new Date().getTime()).save()
+        config.set('lastChecked', new Date().getTime()).save()
 
         resolve(stats)
       }

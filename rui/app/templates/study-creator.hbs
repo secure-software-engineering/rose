@@ -84,6 +84,16 @@
     </div>
   </div>
 
+  <div class="field">
+    <label>{{t "studyCreator.enableSecureMode"}}</label>
+    <p>{{t "studyCreator.enableSecureModeDesc"}}</p>
+
+    {{ui-checkbox checked=model.secureModeIsEnabled
+                  class="toggle"
+                  label=(boolean-to-yesno model.secureModeIsEnabled)
+                  onChange=(action "saveSettigns")}}
+  </div>
+
   <h3 class="ui dividing header">{{t "studyCreator.configurationHeader"}}</h3>
 
   <div class="field">

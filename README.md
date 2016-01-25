@@ -68,7 +68,7 @@ During development you can make use of watch processes:
 
 1. Rebuild UI with watch in `rui/`
     ```
-    ember build -w --output-path ../app/ui/
+    ember build -w
     ````
 
 2. Rebuild ROSE with watch and reload

@@ -448,7 +448,7 @@
             "informationUrl": "https://www.facebook.com/settings/?tab=privacy",
             "interval": 259200000,
             "container": ".fbSettingsSections",
-            "version": "0.1",
+            "version": "0.2",
             "fields": [{
                 "name": "viewFuturePosts",
                 "attr": "content",

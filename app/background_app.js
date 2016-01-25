@@ -65,7 +65,19 @@ config.fetch({
       job: Updater.update
     }))
   }
-})
+});
+
+(new ExtractorCollection).fetch({success: (extractorCol) => {
+  let extractorEngine = new ExtractorEngine(extractorCol);
+  extractorEngine.register(function (extractor, interval, job) {
+      executionService.schedule(Task({
+        name: extractor,
+        rate: interval,
+        job: job
+      }))
+  });
+}});
+
 
 kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, function(event) {
     kango.browser.tabs.create({url: kango.io.getResourceUrl('ui/index.html')});
@@ -82,14 +94,6 @@ kango.addMessageListener('update-start', () => {
 
 kango.addMessageListener('LoadNetworks', (event) => {
     Updater.load(event.data);
-});
-
-kango.addMessageListener('StartExtractorEngine', (event) => {
-  let extractorCol = new ExtractorCollection();
-  extractorCol.fetch({success: (extractorCol) => {
-    let extractorEngine = new ExtractorEngine(extractorCol);
-    extractorEngine.register();
-  }});
 });
 
 kango.addMessageListener('application-log', async (event) => {

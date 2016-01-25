@@ -14,7 +14,7 @@ An extractor is denoted as a JSON object. The skeleton of an extractor contains 
 
 * `type`: String. The `type` field denotes wether the extractor is handlung html elements, like a container sent from an observer or an url which has to be called. The following values are allowed in this field: `container`, `url`. Dependent on this field, other fields are necessary for the observer to work.
 
-* `interval`: String (optional: only applies for URL extractors). The `interval` field denotes how often the extractor's is executed.
+* `interval`: String (optional: only applies for URL extractors). The `interval` field denotes how often the extractor's is executed in milliseconds.
 
 * `informationUrl`: String (optional: only applies for URL extractors). The `informationUrl` denotes which url contains the data the extractor is looking for.
 

@@ -26,6 +26,7 @@ import ExtractorEngine from 'rose/extractor-engine';
 import ExtractorCollection from 'rose/collections/extractors';
 import SystemConfig from 'rose/models/system-config';
 import Updater from 'rose/updater';
+import Doctor from 'rose/doctor';
 
 import WindowTracker from 'rose/activity-trackers/window';
 
@@ -53,6 +54,7 @@ import Task from 'rose/task'
   }
 
   WindowTracker.start();
+
 })();
 
 const executionService = ExecutionService()
@@ -66,6 +68,13 @@ config.fetch({
     }))
   }
 })
+
+Doctor.repairMissingInteractions();
+executionService.schedule(Task({
+  name: 'repairInteractions',
+  rate: 3600000,
+  job: Doctor.repairMissingInteractions
+}))
 
 kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, function(event) {
     kango.browser.tabs.create({url: kango.io.getResourceUrl('ui/index.html')});

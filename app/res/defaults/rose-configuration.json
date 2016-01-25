@@ -441,40 +441,6 @@
                 "hash": true
             }],
             "isEnabled": true
-        }, {
-            "name": "privacy-settings",
-            "network": "facebook",
-            "type": "url",
-            "informationUrl": "https://www.facebook.com/settings/?tab=privacy",
-            "interval": 5000,
-            "container": ".fbSettingsSections",
-            "version": "0.1",
-            "fields": [{
-                "name": "viewFuturePosts",
-                "attr": "content",
-                "selector": ".fbSettingsSectionsItem:nth-child(1) .fbSettingsListItem:nth-child(1) .fbSettingsListItemContent > div:last-child"
-            }, {
-                "name": "sendFriendRequests",
-                "attr": "content",
-                "selector": ".fbSettingsSectionsItem:nth-child(2) .fbSettingsListItem:nth-child(1) .fbSettingsListItemContent > div:last-child"
-            }, {
-                "name": "MessageFilter",
-                "attr": "content",
-                "selector": ".fbSettingsSectionsItem:nth-child(2) .fbSettingsListItem:nth-child(2) .fbSettingsListItemContent > div:last-child"
-            }, {
-                "name": "EMailLookup",
-                "attr": "content",
-                "selector": ".fbSettingsSectionsItem:nth-child(3) .fbSettingsListItem:nth-child(1) .fbSettingsListItemContent > div:last-child"
-            }, {
-                "name": "PhonenumberLookup",
-                "attr": "content",
-                "selector": ".fbSettingsSectionsItem:nth-child(3) .fbSettingsListItem:nth-child(2) .fbSettingsListItemContent > div:last-child"
-            }, {
-                "name": "SearchEngines",
-                "attr": "content",
-                "selector": ".fbSettingsSectionsItem:nth-child(3) .fbSettingsListItem:nth-child(3) .fbSettingsListItemContent > div:last-child"
-            }],
-            "isEnabled": true
         }],
         "isEnabled": true
     }]

@@ -141,29 +141,33 @@ async function validate(data, sig, key, fp) {
 }
 
 let load = (networks) => {
-  (new NetworkCollection()).fetch({success: (networkCol) => {
-      (new ObserverCollection()).fetch({success: (observerCol) => {
-          (new ExtractorCollection()).fetch({success: (extractorCol) => {
-              for (var i = 0; i < networks.length; i++) {
-                if (networks[i].observers !== undefined) {
-                  for (var j = 0; j < networks[i].observers.length; j++) {
-                    observerCol.create(networks[i].observers[j])
-                  }
-                }
-                if (networks[i].extractors !== undefined) {
-                  for (var k = 0; k < networks[i].extractors.length; k++) {
-                    extractorCol.create(networks[i].extractors[k])
-                  }
-                // call extractorEngine to start
-                }
 
-                delete networks[i].observers
-                delete networks[i].extractors
-                networkCol.create(networks[i])
-              }
-          }})
-      }})
-  }})
+  return new Promise((resolve) => {
+    (new NetworkCollection()).fetch({success: (networkCol) => {
+        (new ObserverCollection()).fetch({success: (observerCol) => {
+            (new ExtractorCollection()).fetch({success: (extractorCol) => {
+                for (var i = 0; i < networks.length; i++) {
+                  if (networks[i].observers !== undefined) {
+                    for (var j = 0; j < networks[i].observers.length; j++) {
+                      observerCol.create(networks[i].observers[j])
+                    }
+                  }
+                  if (networks[i].extractors !== undefined) {
+                    for (var k = 0; k < networks[i].extractors.length; k++) {
+                      extractorCol.create(networks[i].extractors[k])
+                    }
+                  }
+
+                  delete networks[i].observers
+                  delete networks[i].extractors
+                  networkCol.create(networks[i], {success: () => {
+                    resolve()
+                  }})
+                }
+            }})
+        }})
+    }})
+  });
 }
 
 export default {load, update}

@@ -36,11 +36,6 @@ import Task from 'rose/task'
 /* Background Script */
 (async function() {
 
-  //*******************************//
-  // Careful deletes all Rose data //
-  //*******************************//
-  // localforage.clear();
-
   const installDate = await localforage.getItem('install-date')
   if (!installDate) {
     await localforage.setItem('install-date', new Date().toJSON());
@@ -55,9 +50,13 @@ import Task from 'rose/task'
   WindowTracker.start();
 })();
 
-const executionService = ExecutionService()
-const config = new SystemConfig()
-config.fetch({
+
+////////////////
+// Scheduling //
+////////////////
+
+const executionService = ExecutionService();
+(new SystemConfig()).fetch({
   success: (config) => {
     executionService.schedule(Task({
       name: 'updater',
@@ -68,6 +67,7 @@ config.fetch({
 });
 
 (new ExtractorCollection).fetch({success: (extractorCol) => {
+///////////////
   let extractorEngine = new ExtractorEngine(extractorCol);
   extractorEngine.register(function (extractor, interval, job) {
       executionService.schedule(Task({
@@ -78,6 +78,9 @@ config.fetch({
   });
 }});
 
+///////////////
+// Messaging //
+///////////////
 
 kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, function(event) {
     kango.browser.tabs.create({url: kango.io.getResourceUrl('ui/index.html')});
@@ -87,7 +90,7 @@ kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, fu
 kango.addMessageListener('update-start', () => {
   Updater.update()
     .then((statistics) => {
-      log("Updater", JSON.stringify(statistics))
+      log('Updater', JSON.stringify(statistics))
     })
     .then(() => kango.dispatchMessage('update-successful'));
 });

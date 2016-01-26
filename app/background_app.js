@@ -48,6 +48,8 @@ import Task from 'rose/task'
   }
 
   WindowTracker.start();
+  startExtractorEngine();
+
 })();
 
 
@@ -66,17 +68,20 @@ const executionService = ExecutionService();
   }
 });
 
-(new ExtractorCollection).fetch({success: (extractorCol) => {
-///////////////
-  let extractorEngine = new ExtractorEngine(extractorCol);
-  extractorEngine.register(function (extractor, interval, job) {
-      executionService.schedule(Task({
-        name: extractor,
-        rate: interval,
-        job: job
-      }))
-  });
-}});
+function startExtractorEngine () {
+  (new ExtractorCollection()).fetch({success: (extractorCol) => {
+    if (extractorCol.length) {
+      (new ExtractorEngine(extractorCol)).register(function (extractor, interval, job) {
+        executionService.schedule(Task({
+          name: extractor,
+          rate: interval,
+          job: job
+        }))
+      });
+    }
+  }});
+}
+
 
 ///////////////
 // Messaging //
@@ -96,7 +101,9 @@ kango.addMessageListener('update-start', () => {
 });
 
 kango.addMessageListener('LoadNetworks', (event) => {
-    Updater.load(event.data);
+  Updater.load(event.data).then(() => {
+    startExtractorEngine();
+  })
 });
 
 kango.addMessageListener('application-log', async (event) => {

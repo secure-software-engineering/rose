@@ -62,8 +62,6 @@ To build ROSE you need `node, npm, bower, ember-cli and gulp` installed. You can
     gulp build
     ```
 
-The Safari build currently requires to replace `button.png` with `rose-safari-icon.png` in `dist/safari/rose_3.x.x.safariextension/icons`.
-
 During development you can make use of watch processes:
 
 1. Rebuild UI with watch in `rui/`

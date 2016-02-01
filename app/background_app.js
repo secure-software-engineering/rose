@@ -48,6 +48,11 @@ import Task from 'rose/task'
     await localforage.setItem('rose-data-version', '2.0');
   }
 
+  const roseVersion = await localforage.getItem('rose-version')
+  if (!roseVersion || roseVersion < '3.0.0') {
+    await localforage.setItem('rose-version', '3.0.0');
+  }
+
   WindowTracker.start();
   EngageTracker.start();
   startExtractorEngine();

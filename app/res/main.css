@@ -85,6 +85,10 @@ body.pushable>.pusher {
     line-height: 1.3;
 }
 
+.ui.form .fields>.field {
+    min-width: 15%;
+}
+
 .ui.form textarea:not([rows]), .ui.form textarea, .ui textarea {
     height: 5em;
     min-height: 5em;

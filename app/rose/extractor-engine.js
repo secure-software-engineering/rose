@@ -84,7 +84,7 @@ class ExtractorEngine {
 
           //extract detailed info with match
           if (field.match !== undefined) {
-            var matches = datum.match(new RegExp(field.match, "g"));
+            var matches = datum.match(new RegExp(field.match, 'g'));
             if (matches !== null) {
               datum = matches[0];
             }
@@ -130,27 +130,17 @@ class ExtractorEngine {
         this.storeExtract(extractor, entry);
       }
       else {
-        log('ExtractorEngine',extractor.get('name') + ' returned no resutls!');
+        log('ExtractorEngine',extractor.get('name') + ' returned no results!');
       }
     }.bind(this));
   }
 
-  //FIXME
-  schedule(extractor) {
-    log('ExtractorEngine', 'Apply extractor: ' + extractor.get('name'));
-
-    // setInterval(extractor.get('interval'), this.handleURL, extractor);
-  }
-
-  //FIXME
-  register() {
-    //FIXME: Filter extractor by network
+  register(scheduler) {
     log('ExtractorEngine', 'Register to Execution Service');
     let periodicExtractors = this.extractors.where({type: 'url'});
 
     for (var i = 0; i < periodicExtractors.length; i++) {
-      // Apply extractor and register it to Heartbeat
-      this.schedule(periodicExtractors[i]);
+      scheduler(periodicExtractors[i].get('name'), periodicExtractors[i].get('interval'), this.handleURL.bind(this, periodicExtractors[i]));
     }
 
   }

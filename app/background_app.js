@@ -37,11 +37,6 @@ import Task from 'rose/task'
 /* Background Script */
 (async function() {
 
-  //*******************************//
-  // Careful deletes all Rose data //
-  //*******************************//
-  // localforage.clear();
-
   const installDate = await localforage.getItem('install-date')
   if (!installDate) {
     await localforage.setItem('install-date', new Date().toJSON());
@@ -54,12 +49,17 @@ import Task from 'rose/task'
   }
 
   WindowTracker.start();
+  startExtractorEngine();
 
 })();
 
-const executionService = ExecutionService()
-const config = new SystemConfig()
-config.fetch({
+
+////////////////
+// Scheduling //
+////////////////
+
+const executionService = ExecutionService();
+(new SystemConfig()).fetch({
   success: (config) => {
     executionService.schedule(Task({
       name: 'updater',
@@ -67,7 +67,21 @@ config.fetch({
       job: Updater.update
     }))
   }
-})
+});
+
+function startExtractorEngine () {
+  (new ExtractorCollection()).fetch({success: (extractorCol) => {
+    if (extractorCol.length) {
+      (new ExtractorEngine(extractorCol)).register(function (extractor, interval, job) {
+        executionService.schedule(Task({
+          name: extractor,
+          rate: interval,
+          job: job
+        }))
+      });
+    }
+  }});
+}
 
 Doctor.repairMissingInteractions();
 executionService.schedule(Task({
@@ -75,6 +89,11 @@ executionService.schedule(Task({
   rate: 3600000,
   job: Doctor.repairMissingInteractions
 }))
+
+
+///////////////
+// Messaging //
+///////////////
 
 kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, function(event) {
     kango.browser.tabs.create({url: kango.io.getResourceUrl('ui/index.html')});
@@ -84,21 +103,15 @@ kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, fu
 kango.addMessageListener('update-start', () => {
   Updater.update()
     .then((statistics) => {
-      log("Updater", JSON.stringify(statistics))
+      log('Updater', JSON.stringify(statistics))
     })
     .then(() => kango.dispatchMessage('update-successful'));
 });
 
 kango.addMessageListener('LoadNetworks', (event) => {
-    Updater.load(event.data);
-});
-
-kango.addMessageListener('StartExtractorEngine', (event) => {
-  let extractorCol = new ExtractorCollection();
-  extractorCol.fetch({success: (extractorCol) => {
-    let extractorEngine = new ExtractorEngine(extractorCol);
-    extractorEngine.register();
-  }});
+  Updater.load(event.data).then(() => {
+    startExtractorEngine();
+  })
 });
 
 kango.addMessageListener('application-log', async (event) => {

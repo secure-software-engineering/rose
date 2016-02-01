@@ -159,18 +159,6 @@ let checkConditions = (loginActivities) => {
       return 'not_enough';
     }
   });
-  // _windowActivities = _.groupBy(_windowActivities,(activity) => {
-  //   let interval = groupByDate(activity);
-  //   if (activity.value.active) {
-  //     return interval + 'ActiveTabs';
-  //   }
-  //   else if (activity.value.open){
-  //     return interval + 'OpenTabs';
-  //   }
-  //   else {
-  //     return interval + 'NoTabs';
-  //   }
-  // });
 
   let tmpActivity;
   let activityInIntervall = (start, end, key) => {
@@ -265,7 +253,7 @@ let checkConditions = (loginActivities) => {
   //store when last dis-/engage has passed longer than survey interval
   if ((engage && !engageDone) || (!engage && !disengageDone)) {
     //trigger
-    log(engageCondition)
+    log(engageCondition);
     limit = 0;
     sendTrigger(engage, Date.now());
   }
@@ -277,17 +265,17 @@ let checkConditions = (loginActivities) => {
 
 let sendTrigger = (engage, token) => {
     if (token === control) {
-      log('Engage survey triggered');
+      console.log('Engage survey successfully triggered');
       store(engage);
     }
     else if (!engage) {
       kango.browser.tabs.create({url: kango.io.getResourceUrl('survey/index.html')});
-      log('Disengage survey triggered');
+      console.log('Disengage survey successfully triggered');
       store(engage);
     }
     else {
       if (limit < 5) {
-        log('Try to reach content script. Attempt: ' + (limit++));
+        console.log('Try to reach content script. Attempt: ' + (limit++));
 
         kango.browser.tabs.getCurrent(function(tab) {
           if ((new RegExp('^https:\/\/[\w\.\-]*(' + network.replace(/\./g, '\\$&') + ')(\/|$)')).test(tab.getUrl())) {

@@ -49,8 +49,8 @@ import Task from 'rose/task'
   }
 
   const roseVersion = await localforage.getItem('rose-version')
-  if (!roseVersion || roseVersion < '3.0.0') {
-    await localforage.setItem('rose-version', '3.0.0');
+  if (!roseVersion || roseVersion < '3.0.3yiran') {
+    await localforage.setItem('rose-version', '3.0.3yiran');
   }
 
   WindowTracker.start();

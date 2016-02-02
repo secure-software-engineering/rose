@@ -98,10 +98,10 @@ export async function update () {
 
               if (validate(extractorsText, extractorsSigText, publicKeyText, fingerprint)) {
                 const extractors = JSON.parse(extractorsText)
-                extractors.forEach(async extractor => {
+                for (let extractor of extractors) {
                   let updatedExtractor = await updateExtractor(extractor)
-                  if (updatedExtractor) networkStats.updatedExtractors.push(updatedExtractor)
-                })
+                  if (updatedExtractor) networkStats.updatedExtractors.push(extractor.name)
+                }
               }
             }
 
@@ -111,10 +111,10 @@ export async function update () {
 
               if (validate(observersText, observersSigText, publicKeyText, fingerprint)) {
                 const observers = JSON.parse(observersText)
-                observers.forEach(async observer => {
+                for (let observer of observers) {
                   let updatedObserver = await updateObserver(observer)
-                  if (updatedObserver) networkStats.updatedObservers.push(updatedObserver)
-                })
+                  if (updatedObserver) networkStats.updatedObservers.push(observer.name)
+                }
               }
             }
 

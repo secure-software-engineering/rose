@@ -293,6 +293,10 @@
             {
                 "node": "form[action*=\"sharer/submit\"] button[type=\"submit\"]",
                 "container": "form[action*=\"sharer/submit\"]"
+            },
+            {
+                "node": "[data-reactroot] .rfloat div > button > span:contains(\"Post\")",
+                "container": "[data-reactroot]"
             }
         ]
     },

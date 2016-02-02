@@ -284,7 +284,7 @@
         "network": "facebook",
         "type": "click",
         "priority": 40,
-        "version": "0.3",
+        "version": "0.4",
         "patterns": [
             {
                 "node": "a[ajaxify*=\"share/dialog/submit\"] *, a[ajaxify*=\"share/dialog/submit\"]",

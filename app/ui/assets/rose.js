@@ -2061,6 +2061,11 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
     no: "No",
     on: "On",
     off: "Off",
+    hourly: "Hourly",
+    daily: "Daily",
+    weekly: "Weekly",
+    monthly: "Monthly",
+    yearly: "Yearly",
 
     action: {
       save: "Save",
@@ -2147,7 +2152,6 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
       autoUpdateLabel: "For automatic updates to recent changes in social media sites, switch on the automatic update function.",
       autoUpdateInterval: "Automatic update interval",
       autoUpdateIntervalLabel: "ROSE checks for automatic configuration updates in the specified time interval."
-
     },
 
     resetConfigModal: {
@@ -2254,7 +2258,39 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
       exportConfig: "Export configuration file",
       exportConfigDesc: "Here you can export a configuration file with all the settings entered on this page. Your participants can load this file into their installations of ROSE.",
       fingerprint: "Pattern repository signing key fingerprint",
-      fingerprintDesc: "For reasons of security, the patterns stored in the pattern repository need to be signed with a RSA private key. This signature is validated before ROSE loads any patterns. Please enter the fingerprint of the public key ROSE shall use to verify the digital signature."
+      fingerprintDesc: "For reasons of security, the patterns stored in the pattern repository need to be signed with a RSA private key. This signature is validated before ROSE loads any patterns. Please enter the fingerprint of the public key ROSE shall use to verify the digital signature.",
+      optionalFeaturesHeader: "Optional features",
+      privacyHeader: "Privacy settings",
+      repositoryHeader: "Configure tracking package repository",
+      configurationHeader: "Configure tracking",
+      autoUpdateHeader: "Configure automatic tracking package updates",
+      networks: "Websites to track",
+      networksDesc: "Here you can enable or disable which websites shall be tracked by ROSE",
+      extractors: "Available data extractors",
+      observers: "Available interaction observers",
+      enableAll: "Enable all available",
+      disableAll: "Disable all available",
+      forceSecureUpdate: "Force secure update",
+      forceSecureUpdateDesc: "If turned on, update of the tracking package is only allowed from a trustworthy source. You need to provide the correct fingerprint for the signing key above.",
+      updateInterval: "Interval to check for an updated tracking package",
+      updateIntervalLabel: "Choose a time interval to check for tracking package updates",
+
+      table: {
+        enabled: "Status (on/off)",
+        name: "Pattern name",
+        version: "Current version",
+        description: "Description",
+        type: "Type"
+      }
+    },
+
+    // Application Log
+    debugLog: {
+      title: "Application Log",
+      subtitle: "This page shows all log messages thrown by ROSE application modules",
+      date: "Timestamp",
+      message: "Log message",
+      module: "Module name"
     }
   };
 });
@@ -12532,7 +12568,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+a883836d"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+9852da8b"});
 }
 
 /* jshint ignore:end */

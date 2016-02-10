@@ -4,7 +4,7 @@
         "network": "facebook",
         "type": "input",
         "priority": 1,
-        "version": "0.1",
+        "version": "0.2",
         "patterns": [
             {
                 "node": ".fbNubFlyoutInner textarea.uiTextareaAutogrow",
@@ -14,6 +14,11 @@
             {
                 "node": "#pagelet_web_messenger textarea.uiTextareaAutogrow",
                 "container": "#pagelet_web_messenger div[role=\"main\"]",
+                "extractor": "chat-user-link"
+            },
+            {
+                "node": ".fbNubFlyoutInner div[role=\"textbox\"]",
+                "container": ".fbNubFlyoutInner",
                 "extractor": "chat-user-link"
             }
         ]

@@ -5,7 +5,7 @@ const import_from_armored_pgp = denodeify(kbpgp.KeyManager.import_from_armored_p
 const unbox = denodeify(kbpgp.unbox)
 
 function verify (data, sig, key) {
-  return import_from_armored_pgp({raw: key}).then((kms) => {
+  return import_from_armored_pgp({armored: key}).then((kms) => {
     const ring = new kbpgp.keyring.KeyRing()
     ring.add_key_manager(kms)
     return unbox({

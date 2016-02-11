@@ -78,7 +78,8 @@ export async function update () {
 
         const baseFile = JSON.parse(baseFileText)
 
-        let stats = []
+        const stats = []
+        let updated = false
 
         if (baseFile.networks) {
           let networks = baseFile.networks.filter((network) => {
@@ -96,7 +97,7 @@ export async function update () {
               const extractorsText = await fetch(`${repositoryUrl}/${network.extractors}`).then(res => res.text())
               const extractorsSigText = await fetch(`${repositoryUrl}/${network.extractors}.asc`).then(res => res.text())
 
-              if (validate(extractorsText, extractorsSigText, publicKeyText, fingerprint)) {
+              if (await validate(extractorsText, extractorsSigText, publicKeyText, fingerprint)) {
                 const extractors = JSON.parse(extractorsText)
                 for (let extractor of extractors) {
                   let updatedExtractor = await updateExtractor(extractor)
@@ -109,7 +110,7 @@ export async function update () {
               const observersText = await fetch(`${repositoryUrl}/${network.observers}`).then(res => res.text())
               const observersSigText = await fetch(`${repositoryUrl}/${network.observers}.asc`).then(res => res.text())
 
-              if (validate(observersText, observersSigText, publicKeyText, fingerprint)) {
+              if (await validate(observersText, observersSigText, publicKeyText, fingerprint)) {
                 const observers = JSON.parse(observersText)
                 for (let observer of observers) {
                   let updatedObserver = await updateObserver(observer)
@@ -119,10 +120,17 @@ export async function update () {
             }
 
             stats.push(networkStats)
+
+            if (networkStats.updatedExtractors.length > 0 || networkStats.updatedObservers.length > 0) {
+              updated = true;
+            }
           }
         }
 
         config.set('lastChecked', new Date().getTime()).save()
+        if (updated) {
+          config.set('lastUpdated', new Date().getTime()).save()
+        }
 
         resolve(stats)
       }
@@ -131,7 +139,15 @@ export async function update () {
 }
 
 async function validate(data, sig, key, fp) {
-  const fingerprint = await verify(data, sig, key)
+  let fingerprint
+
+  try {
+    fingerprint = await verify(data, sig, key)
+  } catch(e) {
+    console.log(e)
+    return false
+  }
+
   if (fingerprint.toLowerCase() === fp.toLowerCase()) {
     return true
   } else {

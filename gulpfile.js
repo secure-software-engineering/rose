@@ -27,10 +27,11 @@ var manifest = require(ENV.manifest);
 gulp.task('build:contentscript', function() {
   var noBowerFiles = multimatch(manifest.content_scripts, ['**', '!bower_components/{,**/}*.*', '!res/{,**/}*.*', '!ui/{,**/}*.*']);
 
-  return watchify(browserify(noBowerFiles, { paths: [ ENV.app ] }), watchify.args)
-    .transform(babelify.configure({
-        optional: ['es7.asyncFunctions']
-      }))
+  return browserify('./app/content_app.js', { paths: [ ENV.app ] })
+    .transform("babelify", {
+      presets: ["es2015"],
+      plugins: ["transform-async-to-generator"]
+    })
     .bundle()
     .pipe(source('contentscript.js'))
     .pipe(buffer())
@@ -41,10 +42,11 @@ gulp.task('build:contentscript', function() {
 gulp.task('build:backgroundscript', function() {
   var noBowerFiles = multimatch(manifest.background_scripts, ['**', '!bower_components/{,**/}*.*', '!res/{,**/}*.*', '!ui/{,**/}*.*']);
 
-  return watchify(browserify(noBowerFiles, { paths: [ ENV.app ] }), watchify.args)
-    .transform(babelify.configure({
-        optional: ['es7.asyncFunctions']
-      }))
+  return browserify('./app/background_app.js', { paths: [ ENV.app ], debug: true })
+    .transform("babelify", {
+      presets: ["es2015"],
+      plugins: ["transform-async-to-generator"]
+    })
     .bundle()
     .pipe(source('backgroundscript.js'))
     .pipe(buffer())

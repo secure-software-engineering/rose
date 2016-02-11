@@ -7,7 +7,6 @@ var jeditor = require('gulp-json-editor');
 
 var babelify = require('babelify');
 var browserify = require('browserify');
-var watchify = require('watchify');
 var del = require('del');
 var exec = require('child_process').exec;
 var multimatch = require('multimatch');

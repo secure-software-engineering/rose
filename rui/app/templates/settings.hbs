@@ -47,7 +47,21 @@
     <label>{{t "settings.manualUpdate"}}</label>
     <p>{{t "settings.manualUpdateLabel"}}</p>
     <button class="ui {{if updateInProgress "loading"}} button" {{action "manualUpdate"}}>{{t "action.update"}}</button>
-    Last Update: {{moment-format settings.system.timestamp}}
+    <p></p>
+    <p>
+      {{#if settings.system.lastChecked}}
+        Last Checked: {{moment-format settings.system.lastChecked}}
+      {{else}}
+        Last Checked: never
+      {{/if}}
+    </p>
+    <p>
+      {{#if settings.system.lastUpdated}}
+        Last Update: {{moment-format settings.system.lastUpdated}}
+      {{else}}
+        Last Update: never
+      {{/if}}
+    </p>
   </div>
 
   <div class="field">

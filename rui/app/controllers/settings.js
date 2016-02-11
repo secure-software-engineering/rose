@@ -32,7 +32,7 @@ export default Ember.Controller.extend({
       kango.addMessageListener('update-successful', () => {
         this.set('updateInProgress', false)
         this.get('settings.system').reload().then(() => {
-          kango.removeMessageListener('update-result')
+          kango.removeMessageListener('update-successful')
         })
       })
     },

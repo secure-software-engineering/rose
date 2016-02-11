@@ -240,7 +240,7 @@
             "network": "facebook",
             "type": "click",
             "priority": 13,
-            "version": "0.2",
+            "version": "0.3",
             "patterns": [{
                 "node": "form[action*=updatestatus] button[type=\"submit\"]",
                 "container": "form[action*=updatestatus]"
@@ -250,6 +250,9 @@
             },{
                 "node": "#pagelet_group_ [type=\"submit\"], #pagelet_group_ [type=\"submit\"] *",
                 "container": ".groupComposerCleanWrap"
+            },{
+                "node": "#pagelet_composer button[type=\"submit\"]",
+                "container": "#pagelet_composer"
             }],
             "isEnabled": true
         }, {

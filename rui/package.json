@@ -39,11 +39,12 @@
     "ember-data": "1.13.15",
     "ember-disable-proxy-controllers": "^1.0.1",
     "ember-export-application-global": "^1.0.4",
-    "ember-highcharts": "0.2.1",
+    "ember-highcharts": "0.4.0",
     "ember-i18n": "4.1.1",
     "ember-i18n-inject": "0.0.1",
     "ember-localforage-adapter": "0.7.3",
     "ember-moment": "4.1.0",
+    "highcharts": "4.2.3",
     "liquid-fire": "^0.21.0",
     "normalize-url": "^1.4.0",
     "semantic-ui-ember": "0.9.1"

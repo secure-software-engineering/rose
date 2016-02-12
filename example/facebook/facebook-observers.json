@@ -91,7 +91,7 @@
         "network": "facebook",
         "type": "click",
         "priority": 21,
-        "version": "0.3",
+        "version": "0.4",
         "patterns": [
             {
                 "node": ".InterestListMenuDisconnect a, .InterestListMenuDisconnect a *",
@@ -99,7 +99,7 @@
                 "description": "The context menu which opens on the liked button on posts or lists of liked pages."
             },
             {
-                "node": ".__MenuItem:first-child a[href=\"#\"], .__MenuItem:first-child a[href=\"#\"] *",
+                "node": "ul[role=\"menu\"] li:first-child:nth-last-child(5) a span",
                 "container": ".uiContextualLayer",
                 "description": "The context menu on like button at the coverimage of a fb-page."
             }
@@ -268,7 +268,7 @@
         "network": "facebook",
         "type": "click",
         "priority": 13,
-        "version": "0.3",
+        "version": "0.4",
         "patterns": [
             {
                 "node": "form[action*=updatestatus] button[type=\"submit\"]",
@@ -283,8 +283,8 @@
                 "container": ".groupComposerCleanWrap"
             },
             {
-                "node": "#pagelet_composer button[type=\"submit\"]",
-                "container": "#pagelet_composer"
+                "node": "[data-reactroot] .rfloat div > button > span:contains(\"Post\")",
+                "container": "[data-reactroot]"
             }
         ]
     },
@@ -292,8 +292,8 @@
         "name": "share-status",
         "network": "facebook",
         "type": "click",
-        "priority": 40,
-        "version": "0.4",
+        "priority": 20,
+        "version": "0.5",
         "patterns": [
             {
                 "node": "a[ajaxify*=\"share/dialog/submit\"] *, a[ajaxify*=\"share/dialog/submit\"]",
@@ -302,10 +302,6 @@
             {
                 "node": "form[action*=\"sharer/submit\"] button[type=\"submit\"]",
                 "container": "form[action*=\"sharer/submit\"]"
-            },
-            {
-                "node": "[data-reactroot] .rfloat div > button > span:contains(\"Post\")",
-                "container": "[data-reactroot]"
             }
         ]
     },

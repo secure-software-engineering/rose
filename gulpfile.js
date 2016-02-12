@@ -26,12 +26,17 @@ var manifest = require(ENV.manifest);
 gulp.task('build:contentscript', function() {
   var noBowerFiles = multimatch(manifest.content_scripts, ['**', '!bower_components/{,**/}*.*', '!res/{,**/}*.*', '!ui/{,**/}*.*']);
 
-  return browserify('./app/content_app.js', { paths: [ ENV.app ] })
+  return browserify('./app/content_app.js', { paths: [ ENV.app ], debug: true })
     .transform("babelify", {
       presets: ["es2015"],
       plugins: ["transform-async-to-generator"]
     })
     .bundle()
+    .on('error', function (err) {
+      console.log(err.message);
+      console.log(err.codeFrame);
+      this.emit('end');
+    })
     .pipe(source('contentscript.js'))
     .pipe(buffer())
     // .pipe(uglify())
@@ -47,6 +52,12 @@ gulp.task('build:backgroundscript', function() {
       plugins: ["transform-async-to-generator"]
     })
     .bundle()
+    .on('error', function (err) {
+      console.log(err.message);
+      console.log(err.codeFrame);
+      this.emit('end');
+    })
+    // .on('error', function (err) { console.log(JSON.stringify(err, null, 2)); })
     .pipe(source('backgroundscript.js'))
     .pipe(buffer())
     // .pipe(uglify())

@@ -3,3 +3,9 @@ kango
 kango-runtime
 dist
 node_modules
+
+# added by GitSavvy
+/rui/
+
+# added by GitSavvy
+/semantic/

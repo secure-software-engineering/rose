@@ -296,8 +296,8 @@
         "version": "0.5",
         "patterns": [
             {
-                "node": "a[ajaxify*=\"share/dialog/submit\"] *, a[ajaxify*=\"share/dialog/submit\"]",
-                "container": "a"
+                "node": "a[ajaxify*=\"/share/dialog/submit/\"] span",
+                "container": "li.__MenuItem"
             },
             {
                 "node": "form[action*=\"sharer/submit\"] button[type=\"submit\"]",

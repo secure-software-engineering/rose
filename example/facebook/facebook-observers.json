@@ -91,7 +91,7 @@
         "network": "facebook",
         "type": "click",
         "priority": 21,
-        "version": "0.3",
+        "version": "0.4",
         "patterns": [
             {
                 "node": ".InterestListMenuDisconnect a, .InterestListMenuDisconnect a *",
@@ -99,8 +99,8 @@
                 "description": "The context menu which opens on the liked button on posts or lists of liked pages."
             },
             {
-                "node": ".__MenuItem:first-child a[href=\"#\"], .__MenuItem:first-child a[href=\"#\"] *",
-                "container": ".uiContextualLayer",
+                "node": "li.__MenuItem > a[href=\"#\"] span",
+                "container": "ul[role=\"menu\"]",
                 "description": "The context menu on like button at the coverimage of a fb-page."
             }
         ]
@@ -292,12 +292,12 @@
         "name": "share-status",
         "network": "facebook",
         "type": "click",
-        "priority": 40,
-        "version": "0.4",
+        "priority": 20,
+        "version": "0.5",
         "patterns": [
             {
-                "node": "a[ajaxify*=\"share/dialog/submit\"] *, a[ajaxify*=\"share/dialog/submit\"]",
-                "container": "a"
+                "node": "a[ajaxify*=\"/share/dialog/submit/\"] span",
+                "container": "li.__MenuItem"
             },
             {
                 "node": "form[action*=\"sharer/submit\"] button[type=\"submit\"]",

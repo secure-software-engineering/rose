@@ -1,4 +1,4 @@
-import { denodeify } from 'rsvp'
+import denodeify from 'denodeify'
 import kbpgp from 'kbpgp'
 
 const import_from_armored_pgp = denodeify(kbpgp.KeyManager.import_from_armored_pgp)

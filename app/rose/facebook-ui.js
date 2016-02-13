@@ -75,7 +75,7 @@ export default (function () {
       options.lng = options.fallbackLng;
     }
 
-    var loadTranslation = new RSVP.Promise(function(resolve) {
+    var loadTranslation = new Promise(function(resolve) {
       var details, resource;
       resource = 'res/locales/' + options.lng +'/translation.json';
       details = {
@@ -185,7 +185,7 @@ export default (function () {
   FacebookUI.prototype._getTemplate = function(template) {
     var promise;
     var cachedTemplates = this._templates;
-    promise = new RSVP.Promise(function(resolve) {
+    promise = new Promise(function(resolve) {
       if (cachedTemplates[template] !== undefined) {
         return resolve(cachedTemplates[template]);
       }

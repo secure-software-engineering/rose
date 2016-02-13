@@ -22,7 +22,6 @@
         "bower_components/localforage/dist/localforage.js",
         "bower_components/kango-localforage-backbone/dist/localforage.backbone.js",
         "res/semantic/semantic.js",
-        "bower_components/rsvp/rsvp.js",
         "bower_components/handlebars/handlebars.js",
         "bower_components/i18next/i18next.js",
         "content_app.js"

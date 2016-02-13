@@ -15,6 +15,7 @@
     "babelify": "^7.2.0",
     "browserify": "^13.0.0",
     "del": "^2.2.0",
+    "denodeify": "^1.2.1",
     "gulp": "^3.8.11",
     "gulp-changed": "^1.1.1",
     "gulp-connect": "^2.2.0",
@@ -22,9 +23,7 @@
     "gulp-json-editor": "^2.2.1",
     "gulp-uglify": "^1.1.0",
     "kbpgp": "^2.0.46",
-    "lodash": "^4.3.0",
     "multimatch": "^2.0.0",
-    "rsvp": "^3.1.0",
     "semantic-ui": "^2.1.5",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0"

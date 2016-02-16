@@ -281,10 +281,6 @@
             {
                 "node": "#pagelet_group_ [type=\"submit\"], #pagelet_group_ [type=\"submit\"] *",
                 "container": ".groupComposerCleanWrap"
-            },
-            {
-                "node": "[data-reactroot] .rfloat div > button > span:contains(\"Post\")",
-                "container": "[data-reactroot]"
             }
         ]
     },
@@ -302,6 +298,10 @@
             {
                 "node": "form[action*=\"sharer/submit\"] button[type=\"submit\"]",
                 "container": "form[action*=\"sharer/submit\"]"
+            },
+            {
+                "node": "[data-reactroot] .rfloat div > button > span:contains(\"Post\")",
+                "container": "[data-reactroot]"
             }
         ]
     },

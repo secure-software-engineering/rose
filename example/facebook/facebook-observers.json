@@ -268,7 +268,7 @@
         "network": "facebook",
         "type": "click",
         "priority": 13,
-        "version": "0.4",
+        "version": "0.5",
         "patterns": [
             {
                 "node": "form[action*=updatestatus] button[type=\"submit\"]",
@@ -289,7 +289,7 @@
         "network": "facebook",
         "type": "click",
         "priority": 20,
-        "version": "0.5",
+        "version": "0.6",
         "patterns": [
             {
                 "node": "a[ajaxify*=\"/share/dialog/submit/\"] span",

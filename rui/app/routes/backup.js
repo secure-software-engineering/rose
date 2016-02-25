@@ -14,11 +14,11 @@ let getItem = (key) => {
 export default Ember.Route.extend({
   model: function() {
     let promises = [
-      this.store.find('comment').then((records) => { return {type: 'comment', data: records.invoke('serialize')} }),
-      this.store.find('interaction').then((records) => { return {type: 'interaction', data: records.invoke('serialize')} }),
-      this.store.find('diary-entry').then((records) => { return {type: 'diary-entry', data: records.invoke('serialize')} }),
-      this.store.find('user-setting').then((records) => { return {type: 'user-setting', data: records.invoke('serialize')} }),
-      this.store.find('system-config').then((records) => { return {type: 'system-config', data: records.invoke('serialize')} }),
+      this.store.findAll('comment').then((records) => { return {type: 'comment', data: records.invoke('serialize')} }),
+      this.store.findAll('interaction').then((records) => { return {type: 'interaction', data: records.invoke('serialize')} }),
+      this.store.findAll('diary-entry').then((records) => { return {type: 'diary-entry', data: records.invoke('serialize')} }),
+      this.store.findAll('user-setting').then((records) => { return {type: 'user-setting', data: records.invoke('serialize')} }),
+      this.store.findAll('system-config').then((records) => { return {type: 'system-config', data: records.invoke('serialize')} }),
       getItem('click-activity-records'),
       getItem('mousemove-activity-records'),
       getItem('window-activity-records'),

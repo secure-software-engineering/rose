@@ -1,16 +1,1 @@
-body {
-  padding-top: 15px;
-}
-
-.ui.comments .comment.diary-entry .metadata {
-  margin-left: 0;
-}
-
-.ui.comments .comment pre {
-  font-family: inherit;
-  margin: 0;
-}
-
-.hidden {
-  display: none;
-}
+body{padding-top:15px}.ui.comments .comment.diary-entry .metadata{margin-left:0}.ui.comments .comment pre{font-family:inherit;margin:0}.hidden{display:none}

@@ -1,0 +1,58 @@
+<h2 class="ui dividing header">
+  <i class="settings icon"></i>
+  <div class="content">
+    {{model.name}}
+    <div class="sub header">{{model.description}}</div>
+  </div>
+</h2>
+
+<form class="ui form">
+  <div class="field">
+    <label>name</label>
+    {{input value=model.name}}
+  </div>
+
+  <div class="field">
+    <label>network</label>
+    {{input value=model.network}}
+  </div>
+
+  <div class="field">
+    <label>type</label>
+    {{input value=model.type}}
+  </div>
+
+  <div class="field">
+    <label>priority</label>
+    {{input type="number" value=model.priority}}
+  </div>
+
+  <div class="field">
+    <label>version</label>
+    {{input value=model.version}}
+  </div>
+
+  {{#each model.patterns as |pattern index|}}
+  <h4 class="ui dividing header">Pattern {{index}}</h4>
+  <div class="field">
+    <label>node</label>
+    {{input value=pattern.node}}
+  </div>
+
+  <div class="field">
+    <label>parent</label>
+    {{input value=pattern.parent}}
+  </div>
+
+  {{#if pattern.extractor}}
+  <div class="field">
+    <label>extractor</label>
+    {{input value=pattern.extractor}}
+  </div>
+  {{/if}}
+  {{/each}}
+
+  <button class="ui primary button" {{action "save"}}>Save</button>
+  <button class="ui button" {{action "cancel"}}>Cancel</button>
+  <button class="ui secondary button" {{action "addPattern"}}>Add Pattern</button>
+</form>

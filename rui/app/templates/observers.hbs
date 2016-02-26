@@ -6,12 +6,22 @@
   </div>
 </h2>
 
-<ul>
+<div class="ui celled ordered list">
     {{#each model as |observer|}}
-    <li>
-        {{#link-to 'observer' observer}}
+      <div class="item">
+        <div class="right floated content">
+          <button class="ui right mini red labeled icon button" {{action "removeObserver" observer}}>
+            <i class="remove icon"></i>
+            Remove
+          </button>
+        </div>
+        <div class="content">
+          {{#link-to 'observer' observer}}
             {{observer.name}}
-        {{/link-to}}
-    </li>
+          {{/link-to}}
+        </div>
+      </div>
     {{/each}}
-</ul>
+</div>
+
+<button class="ui primary button" {{action "addObserver"}}>Add Observer</button>

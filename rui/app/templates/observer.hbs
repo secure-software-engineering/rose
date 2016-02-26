@@ -6,7 +6,11 @@
   </div>
 </h2>
 
-<form class="ui form">
+<form class="ui form {{if model.hasDirtyAttributes "warning"}}">
+  <div class="ui warning message">
+    <div class="header">You have unsaved changes!</div>
+  </div>
+
   <div class="field">
     <label>name</label>
     {{input value=model.name}}
@@ -33,7 +37,13 @@
   </div>
 
   {{#each model.patterns as |pattern index|}}
-  <h4 class="ui dividing header">Pattern {{index}}</h4>
+  <h4 class="ui dividing header">
+    <div class="content">Pattern &#35;{{index}}</div>
+    <div class="ui red horizontal label" style="float: right" {{action "removePattern" pattern}}>
+      <i class="remove icon"></i>
+      Remove
+    </div>
+  </h4>
   <div class="field">
     <label>node</label>
     {{input value=pattern.node}}
@@ -44,15 +54,13 @@
     {{input value=pattern.parent}}
   </div>
 
-  {{#if pattern.extractor}}
   <div class="field">
     <label>extractor</label>
     {{input value=pattern.extractor}}
   </div>
-  {{/if}}
   {{/each}}
 
   <button class="ui primary button" {{action "save"}}>Save</button>
-  <button class="ui button" {{action "cancel"}}>Cancel</button>
+  <button class="ui button" {{action "discard"}}>Discard</button>
   <button class="ui secondary button" {{action "addPattern"}}>Add Pattern</button>
 </form>

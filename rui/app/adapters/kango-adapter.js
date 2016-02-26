@@ -4,8 +4,9 @@ import _concat from 'npm:lodash/concat'
 import _filter from 'npm:lodash/filter'
 import _map from 'npm:lodash/map'
 import _without from 'npm:lodash/without'
+import uuid from 'npm:uuid'
 
-function getItem(key, isCollection = false) {
+function getItem(key) {
     return new Ember.RSVP.Promise((resolve, reject) => {
         kango.invokeAsyncCallback('localforage.getItem', key, (data) => {
             resolve(data)
@@ -34,6 +35,10 @@ export default DS.Adapter.extend({
         return true
     },
 
+    generateIdForRecord(store, type, inputProperties) {
+        return uuid.v4()
+    },
+
     findRecord(store, type, id, snapshot) {
         const modelName = this.modelNamespace
         const key = [modelName, id].join('/')
@@ -51,7 +56,7 @@ export default DS.Adapter.extend({
         const data = this.serialize(snapshot, { includeId: true })
 
         return setItem(key, data)
-            .then(() => getItem(collectionName, true))
+            .then(() => getItem(collectionName))
             .then(collection => _concat(collection, key))
             .then(collection => setItem(collectionName, collection))
     },
@@ -72,7 +77,7 @@ export default DS.Adapter.extend({
         const key = [modelName, id].join('/')
 
         return removeItem(key)
-            .then(getItem(collectionName))
+            .then(() => getItem(collectionName))
             .then(collection => _without(collection, key))
             .then(collection => setItem(collectionName, collection))
     },
@@ -80,7 +85,7 @@ export default DS.Adapter.extend({
     findAll(store, type, sinceToken, snapshotRecordArray) {
         const collectionName = this.collectionNamespace
 
-        return getItem(collectionName, true)
+        return getItem(collectionName)
             .then(collection => _map(collection, item => getItem(item)))
             .then(queries => Ember.RSVP.all(queries))
     },

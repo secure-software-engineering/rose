@@ -1,144 +1,101 @@
-import Ember from 'ember';
-import DS from 'ember-data';
-import LFQueue from './utils/queue';
+import Ember from 'ember'
+import DS from 'ember-data'
+import _concat from 'npm:lodash/concat'
+import _filter from 'npm:lodash/filter'
+import _map from 'npm:lodash/map'
+import _without from 'npm:lodash/without'
+import uuid from 'npm:uuid'
+
+function getItem(key) {
+    return new Ember.RSVP.Promise((resolve, reject) => {
+        kango.invokeAsyncCallback('localforage.getItem', key, (data) => {
+            resolve(data)
+        })
+    })
+}
+
+function setItem(key, value) {
+    return new Ember.RSVP.Promise((resolve, reject) => {
+        kango.invokeAsyncCallback('localforage.setItem', key, value, (data) => {
+            resolve()
+        })
+    })
+}
+
+function removeItem(key) {
+    return new Ember.RSVP.Promise((resolve, reject) => {
+        kango.invokeAsyncCallback('localforage.removeItem', key, () => {
+            resolve()
+        })
+    })
+}
 
 export default DS.Adapter.extend({
-  queue: LFQueue.create(),
+    shouldReloadAll() {
+        return true
+    },
 
-  createRecord: function(store, type, snapshot) {
-    const collectionNamespace = this.collectionNamespace;
-    const modelNamespace = this.modelNamespace;
-    const id = snapshot.id;
-    const serializer = store.serializerFor(snapshot.modelName);
-    const recordHash = serializer.serialize(snapshot, { includeId: true });
+    generateIdForRecord(store, type, inputProperties) {
+        return uuid.v4()
+    },
 
-    return this.queue.attach(function (resolve) {
-      kango.invokeAsyncCallback('localforage.getItem', collectionNamespace, function (list) {
-        if (Ember.isEmpty(list)){
-          list = [];
-        }
+    findRecord(store, type, id, snapshot) {
+        const modelName = this.modelNamespace
+        const key = [modelName, id].join('/')
 
-        if (!list.contains(modelNamespace + '/' + id)) {
-          list.push(modelNamespace + '/' + id);
-        }
+        return getItem(key).then(record => {
+            return (!record) ? Ember.RSVP.reject() : record
+        })
+    },
 
-        kango.invokeAsyncCallback('localforage.setItem', collectionNamespace, list, function () {
-          kango.invokeAsyncCallback('localforage.setItem', modelNamespace + '/' + id, recordHash, function () {
-            resolve(recordHash);
-          });
-        });
-      });
-    });
-  },
+    createRecord(store, type, snapshot) {
+        const modelName = this.modelNamespace
+        const collectionName = this.collectionNamespace
+        const id = snapshot.id
+        const key = [modelName, id].join('/')
+        const data = this.serialize(snapshot, { includeId: true })
 
-  findAll: function() {
-    return getList(this.collectionNamespace)
-      .then(function(comments) {
-        if (Ember.isEmpty(comments)) {
-          return [];
-        }
+        return setItem(key, data)
+            .then(() => getItem(collectionName))
+            .then(collection => _concat(collection, key))
+            .then(collection => setItem(collectionName, collection))
+    },
 
-        let promises = [];
+    updateRecord(store, type, snapshot) {
+        const modelName = this.modelNamespace
+        const id = snapshot.id
+        const key = [modelName, id].join('/')
+        const data = this.serialize(snapshot, { includeId: true })
 
-        comments.forEach(function(id) {
-          promises.push(getItem(id));
-        });
+        return setItem(key, data)
+    },
 
-        return Ember.RSVP.all(promises).then(function(comments) {
-          return comments.map(function(comment) {
-            comment.rating = [].concat(comment.rating);
-            return comment;
-          });
-        });
-      });
-  },
+    deleteRecord(store, type, snapshot) {
+        const modelName = this.modelNamespace
+        const collectionName = this.collectionNamespace
+        const id = snapshot.id
+        const key = [modelName, id].join('/')
 
-  find: function(store, type, id, snapshot) {
-    var adapter = this;
+        return removeItem(key)
+            .then(() => getItem(collectionName))
+            .then(collection => _without(collection, key))
+            .then(collection => setItem(collectionName, collection))
+    },
 
-    return getItem(adapter.modelNamespace + '/' + id);
-  },
+    findAll(store, type, sinceToken, snapshotRecordArray) {
+        const collectionName = this.collectionNamespace
 
-  findQuery: function(store, type, query, recordArray) {
-    return getList(this.collectionNamespace)
-      .then(function(comments) {
-        if (Ember.isEmpty(comments)) {
-          return [];
-        }
+        return getItem(collectionName)
+            .then(collection => _map(collection, item => getItem(item)))
+            .then(queries => Ember.RSVP.all(queries))
+    },
 
-        let promises = [];
+    query(store, type, query, recordArray) {
+        const collectionName = this.collectionNamespace
 
-        comments.forEach(function(id) {
-          promises.push(getItem(id));
-        });
-
-        return Ember.RSVP.all(promises).then(function(comments) {
-          return comments.filter(function(comment) {
-            let result = false;
-
-            Object.keys(query).forEach(function(key) {
-              result = comment[key] == query[key];
-            });
-
-            return result;
-          });
-        });
-      });
-  },
-
-  deleteRecord: function(store, type, snapshot) {
-    let id = snapshot.id;
-    return this.removeItem(id);
-  },
-
-  updateRecord: function(store, type, snapshot) {
-    const id = snapshot.id;
-    const modelNamespace = this.modelNamespace;
-    const recordHash = snapshot.serialize({ includeId: true });
-
-    return this.queue.attach(function(resolve, reject) {
-      kango.invokeAsyncCallback('localforage.setItem',  modelNamespace + '/' + id, recordHash, function() {
-        resolve();
-      });
-    });
-  },
-
-  removeItem: function(id) {
-    const collectionNamespace = this.collectionNamespace;
-    const modelNamespace = this.modelNamespace;
-
-    return this.queue.attach(function(resolve, reject) {
-      kango.invokeAsyncCallback('localforage.getItem', collectionNamespace, function(collection) {
-        if (!Ember.isEmpty(collection)) {
-          let index = collection.indexOf(modelNamespace + '/' + id);
-
-          if (index > -1) {
-            collection.splice(index, 1);
-
-            kango.invokeAsyncCallback('localforage.setItem', collectionNamespace, collection, function() {
-              kango.invokeAsyncCallback('localforage.removeItem', modelNamespace + '/' + id, function() {
-                resolve();
-              });
-            });
-          }
-        }
-      });
-    });
-  }
+        return getItem(collectionName)
+            .then(collection => _map(collection, item => getItem(item)))
+            .then(queries => Ember.RSVP.all(queries))
+            .then(records => _filter(records, query))
+    }
 });
-
-function getList(namespace) {
-  return new Ember.RSVP.Promise(function(resolve, reject) {
-    kango.invokeAsyncCallback('localforage.getItem', namespace, function(list) {
-      resolve(list);
-    });
-  });
-}
-
-function getItem(id) {
-  return new Ember.RSVP.Promise(function(resolve, reject) {
-    kango.invokeAsyncCallback('localforage.getItem', id, function(item) {
-      resolve(item);
-    });
-  });
-}

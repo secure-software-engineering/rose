@@ -1,11 +1,9 @@
 import Ember from 'ember';
 
-const { Promise } = Ember.RSVP;
-
 export default Ember.Route.extend({
   beforeModel() {
     let settings = this.get('settings');
-    return Promise.all([settings.setup()]);
+    return settings.setup();
   },
 
   afterModel() {
@@ -15,7 +13,7 @@ export default Ember.Route.extend({
   setupController(controller, model) {
     this._super(controller, model)
 
-    return this.store.find('network').then((networks) => {
+    return this.store.findAll('network').then((networks) => {
       controller.set('networks', networks);
     })
   },
@@ -29,10 +27,12 @@ export default Ember.Route.extend({
     },
 
     loading() {
-      this.controller.set('isLoading', true)
-      this.router.one('didTransition', () => {
-        this.controller.set('isLoading', false)
-      })
+      if (this.controller) {
+        this.controller.set('isLoading', true)
+        this.router.one('didTransition', () => {
+          this.controller.set('isLoading', false)
+        })
+      }
       return true
     }
   }

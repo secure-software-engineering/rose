@@ -10,17 +10,19 @@
   <div class="field">
     <label>{{t "settings.language"}}</label>
     <p>{{t "settings.languageLabel"}}</p>
+
     {{#ui-dropdown  class="selection"
-                    value=settings.user.currentLanguage
-                    onChange=(action "changeI18nLanguage")}}
+                    selected=settings.user.currentLanguage
+                    onChange=(action 'changeI18nLanguage')}}
       <div class="default text">{{t "settings.language"}}</div>
+      <input type="hidden" name="interval" value={{settings.user.currentLanguage}} />
       <i class="dropdown icon"></i>
       <div class="menu">
-      {{#each availableLanguages as |language|}}
-        <div class="item" data-value={{language.code}}>
-          {{language.name}}
-        </div>
-      {{/each}}
+        {{#each availableLanguages as |language|}}
+          <div class="item" data-value={{language.code}}>
+            {{language.name}}
+          </div>
+        {{/each}}
       </div>
     {{/ui-dropdown}}
   </div>
@@ -33,6 +35,7 @@
                   label=(boolean-to-yesno settings.user.commentReminderIsEnabled)
                   onChange=(action "saveSettings")}}
   </div>
+
 
   <div class="field">
     <label>{{t "settings.extraFeatures"}}</label>
@@ -79,15 +82,16 @@
     <p>{{t "settings.autoUpdateIntervalLabel"}}</p>
 
     {{#ui-dropdown  class="selection"
-                    value=settings.system.updateInterval
-                    onChange=(action "saveSettings")}}
-      <div class="default text">Select Interval</div>
+                    selected=settings.system.updateInterval
+                    onChange=(action 'saveSettings')}}
+      <div class="default text">Select an interval</div>
+      <input type="hidden" name="interval" value={{settings.system.updateInterval}} />
       <i class="dropdown icon"></i>
       <div class="menu">
         {{#each updateIntervals as |interval|}}
-        <div class="item" data-value={{interval.value}}>
-          {{t interval.label}}
-        </div>
+          <div class="item" data-value={{interval.value}}>
+            {{t interval.label}}
+          </div>
         {{/each}}
       </div>
     {{/ui-dropdown}}

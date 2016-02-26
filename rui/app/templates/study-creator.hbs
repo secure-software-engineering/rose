@@ -213,16 +213,18 @@
   <div class="field">
     <label>{{t "studyCreator.updateInterval"}}</label>
     <p>{{t "studyCreator.updateIntervalLabel"}}</p>
+
     {{#ui-dropdown  class="selection"
-                    value=settings.system.updateInterval
-                    onChange=(action "saveSettings")}}
-      <div class="default text">Select Interval</div>
+                    selected=model.updateInterval
+                    onChange=(action 'saveSettings')}}
+      <div class="default text">Select an interval</div>
+      <input type="hidden" name="interval" value={{model.updateInterval}} />
       <i class="dropdown icon"></i>
       <div class="menu">
         {{#each updateIntervals as |interval|}}
-        <div class="item" data-value={{interval.value}}>
-          {{t interval.label}}
-        </div>
+          <div class="item" data-value={{interval.value}}>
+            {{t interval.label}}
+          </div>
         {{/each}}
       </div>
     {{/ui-dropdown}}

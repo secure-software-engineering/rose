@@ -2,6 +2,10 @@ import Ember from 'ember';
 import LFAdapter from 'ember-localforage-adapter/adapters/localforage';
 
 export default LFAdapter.extend({
+  shouldReloadAll() {
+    return true
+  },
+
   loadData: function() {
     var adapter = this;
     return new Ember.RSVP.Promise(function(resolve, reject) {

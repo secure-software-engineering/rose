@@ -43,9 +43,9 @@ export default Ember.Controller.extend({
 
     approveModal () {
       return Promise.all([
-        this.store.find('extractor').then((records) => records.invoke('destroyRecord')),
-        this.store.find('network').then((records) => records.invoke('destroyRecord')),
-        this.store.find('observer').then((records) => records.invoke('destroyRecord')),
+        this.store.findAll('extractor').then((records) => records.invoke('destroyRecord')),
+        this.store.findAll('network').then((records) => records.invoke('destroyRecord')),
+        this.store.findAll('observer').then((records) => records.invoke('destroyRecord')),
         this.get('settings.user').destroyRecord(),
         this.get('settings.system').destroyRecord()
       ]).then(() => {

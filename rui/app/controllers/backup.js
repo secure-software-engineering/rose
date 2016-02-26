@@ -28,8 +28,9 @@ export default Ember.Controller.extend({
       [
         'comment',
         'interaction',
+        'extract',
         'diary-entry'
-      ].forEach((type) => this.store.find(type).then((records) => records.invoke('destroyRecord')));
+      ].forEach((type) => this.store.findAll(type).then((records) => records.invoke('destroyRecord')));
 
       [
         'click',

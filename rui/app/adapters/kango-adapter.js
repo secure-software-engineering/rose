@@ -5,6 +5,7 @@ import _filter from 'npm:lodash/filter'
 import _map from 'npm:lodash/map'
 import _without from 'npm:lodash/without'
 import uuid from 'npm:uuid'
+import Queue from 'npm:promise-queue'
 
 function getItem(key) {
     return new Ember.RSVP.Promise((resolve, reject) => {
@@ -31,6 +32,8 @@ function removeItem(key) {
 }
 
 export default DS.Adapter.extend({
+    queue: new Queue(1, Infinity),
+
     shouldReloadAll() {
         return true
     },
@@ -55,10 +58,12 @@ export default DS.Adapter.extend({
         const key = [modelName, id].join('/')
         const data = this.serialize(snapshot, { includeId: true })
 
-        return setItem(key, data)
-            .then(() => getItem(collectionName))
-            .then(collection => _concat(collection, key))
-            .then(collection => setItem(collectionName, collection))
+        return this.queue.add(() => {
+            return setItem(key, data)
+                .then(() => getItem(collectionName))
+                .then(collection => _concat(collection, key))
+                .then(collection => setItem(collectionName, collection))
+        })
     },
 
     updateRecord(store, type, snapshot) {
@@ -67,7 +72,9 @@ export default DS.Adapter.extend({
         const key = [modelName, id].join('/')
         const data = this.serialize(snapshot, { includeId: true })
 
-        return setItem(key, data)
+        return this.queue.add(() => {
+            return setItem(key, data)
+        })
     },
 
     deleteRecord(store, type, snapshot) {
@@ -76,10 +83,12 @@ export default DS.Adapter.extend({
         const id = snapshot.id
         const key = [modelName, id].join('/')
 
-        return removeItem(key)
-            .then(() => getItem(collectionName))
-            .then(collection => _without(collection, key))
-            .then(collection => setItem(collectionName, collection))
+        return this.queue.add(() => {
+            return removeItem(key)
+                .then(() => getItem(collectionName))
+                .then(collection => _without(collection, key))
+                .then(collection => setItem(collectionName, collection))
+        })
     },
 
     findAll(store, type, sinceToken, snapshotRecordArray) {

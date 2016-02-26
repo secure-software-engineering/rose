@@ -14,3 +14,7 @@ body {
 .hidden {
   display: none;
 }
+
+[data-ember-action]:not(:disabled) {
+  cursor: pointer;
+}

@@ -1,0 +1,27 @@
+<h2 class="ui dividing header">
+  <i class="settings icon"></i>
+  <div class="content">
+    {{t "observerEditor.title"}}
+    <div class="sub header">{{t "observerEditor.subtitle"}}</div>
+  </div>
+</h2>
+
+<div class="ui celled ordered list">
+    {{#each model as |observer|}}
+      <div class="item">
+        <div class="right floated content">
+          <button class="ui right mini red labeled icon button" {{action "removeObserver" observer}}>
+            <i class="remove icon"></i>
+            Remove
+          </button>
+        </div>
+        <div class="content">
+          {{#link-to 'observer' observer}}
+            {{observer.name}}
+          {{/link-to}}
+        </div>
+      </div>
+    {{/each}}
+</div>
+
+<button class="ui primary button" {{action "addObserver"}}>Add Observer</button>

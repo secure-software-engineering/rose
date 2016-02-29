@@ -82,6 +82,10 @@ function classifiy($node, pattern) {
  * @param {array} observers - A set of observers.
  */
 function handleEvent(event, observers) {
+  // Drop events created by scripts
+  // see: https://developer.mozilla.org/en-US/docs/Web/API/Event/isTrusted
+  if (!event.isTrusted) return
+
   // Wrap event target
   var $node = $(event.target);
 

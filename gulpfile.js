@@ -3,6 +3,7 @@ var changed = require('gulp-changed');
 var connect = require('gulp-connect');
 var gulpFilter = require('gulp-filter');
 var jeditor = require('gulp-json-editor');
+var notify = require("gulp-notify");
 // var uglify = require('gulp-uglify');
 
 var babelify = require('babelify');
@@ -26,7 +27,7 @@ var manifest = require(ENV.manifest);
 gulp.task('build:contentscript', function() {
   var noBowerFiles = multimatch(manifest.content_scripts, ['**', '!bower_components/{,**/}*.*', '!res/{,**/}*.*', '!ui/{,**/}*.*']);
 
-  return browserify('./app/content_app.js', { paths: [ ENV.app ], debug: true })
+  return browserify('./app/content_app.js', { paths: [ ENV.app ], debug: false })
     .transform("babelify", {
       presets: ["es2015"],
       plugins: ["transform-async-to-generator"]
@@ -57,7 +58,6 @@ gulp.task('build:backgroundscript', function() {
       console.log(err.codeFrame);
       this.emit('end');
     })
-    // .on('error', function (err) { console.log(JSON.stringify(err, null, 2)); })
     .pipe(source('backgroundscript.js'))
     .pipe(buffer())
     // .pipe(uglify())
@@ -149,7 +149,11 @@ gulp.task('watch', function() {
 
 gulp.task('reload', ['kango:chrome'], function() {
   return gulp.src(ENV.app + '/**/*')
-    .pipe(connect.reload());
+    .pipe(connect.reload())
+    .pipe(notify({
+      onLast: true,
+      message: 'Build finished'
+    }));
 });
 
 gulp.task('build', ['clean:dist', 'clean:tmp'], function() {

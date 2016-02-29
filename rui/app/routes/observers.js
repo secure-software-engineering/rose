@@ -13,13 +13,6 @@ export default Ember.Route.extend({
 
         removeObserver(observer) {
             return observer.destroyRecord()
-        },
-
-        exportObservers() {
-            this.store.findAll('observer')
-                .then(observers => observers.invoke('toJSON'))
-                .then(json => JSON.stringify(json, null, 4))
-                .then(text => window.saveAs(new Blob([text]), 'observer-list.json'))
         }
     }
 });

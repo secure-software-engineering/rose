@@ -7,7 +7,7 @@
 </h2>
 
 <div class="ui celled ordered list">
-    {{#each model as |observer|}}
+    {{#each sortedList as |observer|}}
       <div class="item">
         <div class="right floated content">
           <button class="ui right mini red labeled icon button" {{action "removeObserver" observer}}>

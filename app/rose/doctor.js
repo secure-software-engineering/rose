@@ -1,10 +1,10 @@
+import _startsWith from 'lodash/startsWith'
+
 function repairMissingInteractions() {
-  localforage.keys(function(storageKeys) {
-    var interactionKeys = storageKeys.filter(function (key) {
-      if (key.search(/^Interaction\/.+/) > -1 ) return true;
-    });
-    if (interactionKeys !== []) localforage.setItem('Interactions', interactionKeys);
-  });
+    localforage.keys()
+        .then(keys => keys.filter(key => _startsWith(key, 'Interaction/')))
+        .then(interactionKeys => localforage.setItem('Interactions', interactionKeys))
+        .catch(err => console.log(err))
 }
 
-export default {repairMissingInteractions}
+export default { repairMissingInteractions }

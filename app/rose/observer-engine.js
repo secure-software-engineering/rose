@@ -82,17 +82,19 @@ function classifiy($node, pattern) {
  * @param {array} observers - A set of observers.
  */
 function handleEvent(event, observers) {
+  // Drop events created by scripts
+  // see: https://developer.mozilla.org/en-US/docs/Web/API/Event/isTrusted
+  if (!event.isTrusted) return
+
   // Wrap event target
   var $node = $(event.target);
 
   // Apply observers
-  for (var o = 0; o < observers.length; o++) {
-    var observer = observers[o];
+  for (let observer of observers) {
     var patterns = observer.get('patterns');
 
     // Apply patterns
-    for (var p = 0; p < patterns.length; p++) {
-      var pattern = patterns[p];
+    for (let pattern of patterns) {
       var $container = classifiy($node, pattern);
       // Store interaction
       if ($container !== undefined) {

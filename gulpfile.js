@@ -3,11 +3,11 @@ var changed = require('gulp-changed');
 var connect = require('gulp-connect');
 var gulpFilter = require('gulp-filter');
 var jeditor = require('gulp-json-editor');
+var notify = require("gulp-notify");
 // var uglify = require('gulp-uglify');
 
 var babelify = require('babelify');
 var browserify = require('browserify');
-var watchify = require('watchify');
 var del = require('del');
 var exec = require('child_process').exec;
 var multimatch = require('multimatch');
@@ -27,11 +27,17 @@ var manifest = require(ENV.manifest);
 gulp.task('build:contentscript', function() {
   var noBowerFiles = multimatch(manifest.content_scripts, ['**', '!bower_components/{,**/}*.*', '!res/{,**/}*.*', '!ui/{,**/}*.*']);
 
-  return watchify(browserify(noBowerFiles, { paths: [ ENV.app ] }), watchify.args)
-    .transform(babelify.configure({
-        optional: ['es7.asyncFunctions']
-      }))
+  return browserify('./app/content_app.js', { paths: [ ENV.app ], debug: false })
+    .transform("babelify", {
+      presets: ["es2015"],
+      plugins: ["transform-async-to-generator"]
+    })
     .bundle()
+    .on('error', function (err) {
+      console.log(err.message);
+      console.log(err.codeFrame);
+      this.emit('end');
+    })
     .pipe(source('contentscript.js'))
     .pipe(buffer())
     // .pipe(uglify())
@@ -41,11 +47,17 @@ gulp.task('build:contentscript', function() {
 gulp.task('build:backgroundscript', function() {
   var noBowerFiles = multimatch(manifest.background_scripts, ['**', '!bower_components/{,**/}*.*', '!res/{,**/}*.*', '!ui/{,**/}*.*']);
 
-  return watchify(browserify(noBowerFiles, { paths: [ ENV.app ] }), watchify.args)
-    .transform(babelify.configure({
-        optional: ['es7.asyncFunctions']
-      }))
+  return browserify('./app/background_app.js', { paths: [ ENV.app ], debug: true })
+    .transform("babelify", {
+      presets: ["es2015"],
+      plugins: ["transform-async-to-generator"]
+    })
     .bundle()
+    .on('error', function (err) {
+      console.log(err.message);
+      console.log(err.codeFrame);
+      this.emit('end');
+    })
     .pipe(source('backgroundscript.js'))
     .pipe(buffer())
     // .pipe(uglify())
@@ -137,7 +149,11 @@ gulp.task('watch', function() {
 
 gulp.task('reload', ['kango:chrome'], function() {
   return gulp.src(ENV.app + '/**/*')
-    .pipe(connect.reload());
+    .pipe(connect.reload())
+    .pipe(notify({
+      onLast: true,
+      message: 'Build finished'
+    }));
 });
 
 gulp.task('build', ['clean:dist', 'clean:tmp'], function() {

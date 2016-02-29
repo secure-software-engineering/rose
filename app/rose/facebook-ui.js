@@ -75,7 +75,7 @@ export default (function () {
       options.lng = options.fallbackLng;
     }
 
-    var loadTranslation = new RSVP.Promise(function(resolve) {
+    var loadTranslation = new Promise(function(resolve) {
       var details, resource;
       resource = 'res/locales/' + options.lng +'/translation.json';
       details = {
@@ -162,7 +162,12 @@ export default (function () {
     this._getTemplate('commentLabel').then(function(source) {
       return Handlebars.compile(source);
     }).then(function(template) {
-      $('.userContentWrapper').not('.rose.comment + .userContentWrapper').not($('.userContentWrapper').has('div > .userContentWrapper')).before(template());
+      $('.userContentWrapper')
+        .not('.rose.comment + .userContentWrapper')
+        .not($('.userContentWrapper')
+          .has('div > .userContentWrapper'))
+        .has('span > a > abbr > span')
+        .before(template());
     });
   };
 
@@ -180,7 +185,7 @@ export default (function () {
   FacebookUI.prototype._getTemplate = function(template) {
     var promise;
     var cachedTemplates = this._templates;
-    promise = new RSVP.Promise(function(resolve) {
+    promise = new Promise(function(resolve) {
       if (cachedTemplates[template] !== undefined) {
         return resolve(cachedTemplates[template]);
       }

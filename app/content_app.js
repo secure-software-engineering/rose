@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'babelify/polyfill';
+import 'babel-polyfill';
 
 import ObserverEngine from 'rose/observer-engine';
 import FacebookUI from 'rose/facebook-ui';

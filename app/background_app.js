@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'babelify/polyfill';
+import 'babel-polyfill';
 
 import log from 'rose/log';
 import ExtractorEngine from 'rose/extractor-engine';
@@ -46,6 +46,11 @@ import Task from 'rose/task'
   const roseDataVersion = await localforage.getItem('rose-data-version')
   if (!roseDataVersion) {
     await localforage.setItem('rose-data-version', '2.0');
+  }
+
+  const roseVersion = await localforage.getItem('rose-version')
+  if (!roseVersion || roseVersion < '3.0.0') {
+    await localforage.setItem('rose-version', '3.0.0');
   }
 
   WindowTracker.start();
@@ -105,7 +110,8 @@ kango.addMessageListener('update-start', () => {
     .then((statistics) => {
       log('Updater', JSON.stringify(statistics))
     })
-    .then(() => kango.dispatchMessage('update-successful'));
+    .then(() => kango.dispatchMessage('update-successful'))
+    .catch(() => kango.dispatchMessage('update-successful'))
 });
 
 kango.addMessageListener('LoadNetworks', (event) => {

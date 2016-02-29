@@ -16,4 +16,6 @@ export default Router.map(function() {
   this.route('extracts', { path: '/:network_name/extracts'});
   this.route('study-creator');
   this.route('debug-log', {});
+  this.route('observers');
+  this.route('observer', { path: '/observer/:observer_id' });
 });

@@ -369,7 +369,7 @@
         "network": "facebook",
         "type": "click",
         "priority": 20,
-        "version": "0.6",
+        "version": "0.7",
         "patterns": [
             {
                 "node": "a[ajaxify*=\"/share/dialog/submit/\"] span",
@@ -382,7 +382,7 @@
                 "extractor": null
             },
             {
-                "node": "[data-reactroot] .rfloat div > button > span:contains(\"Post\")",
+                "node": "div[role=\"dialog\"] .rfloat div > button > span:contains(\"Post\")",
                 "container": "[data-reactroot]",
                 "extractor": null
             }
@@ -504,7 +504,7 @@
         "network": "facebook",
         "type": "click",
         "priority": 13,
-        "version": "0.5",
+        "version": "0.6",
         "patterns": [
             {
                 "node": "form[action*=updatestatus] button[type=\"submit\"]",
@@ -520,6 +520,11 @@
                 "node": "#pagelet_group_ [type=\"submit\"], #pagelet_group_ [type=\"submit\"] *",
                 "container": ".groupComposerCleanWrap",
                 "extractor": null
+            },
+            {
+                "node": "div#pagelet_composer button[type=\"submit\"] span",
+                "container": "div#pagelet_composer",
+                "extractor": ""
             }
         ],
         "isEnabled": true

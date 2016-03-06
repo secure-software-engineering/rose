@@ -64,7 +64,7 @@
         "network": "facebook",
         "type": "input",
         "priority": 3,
-        "version": "0.2",
+        "version": "0.3",
         "patterns": [
             {
                 "node": ".UFIAddCommentInput *",
@@ -74,12 +74,17 @@
             {
                 "node": ".UFIAddCommentInput *",
                 "container": ".fbPhotoSnowliftContainer",
-                "extractor": null
+                "extractor": ""
             },
             {
                 "node": ".UFIAddCommentInput *",
                 "container": ".fbxPhotoContentContainer",
-                "extractor": null
+                "extractor": ""
+            },
+            {
+                "node": ".commentable_item a.UFICommentActorName",
+                "container": ".userContentWrapper",
+                "extractor": "status-update"
             }
         ],
         "isEnabled": true

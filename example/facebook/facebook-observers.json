@@ -4,7 +4,7 @@
         "network": "facebook",
         "type": "click",
         "priority": 70,
-        "version": "0.3",
+        "version": "0.4",
         "patterns": [
             {
                 "node": "a[ajaxify*=\"/associate.php\"] *, a[ajaxify*=\"/associate.php\"], a[ajaxify^=\"/events/feed/watch\"], a[ajaxify^=\"/events/feed/watch\"] *, a[ajaxify^=\"/events/dashboard/watch\"], a[ajaxify^=\"/events/dashboard/watch\"] *, a[ajaxify^=\"/events/permalink/watch\"], a[ajaxify^=\"/events/permalink/watch\"] *, a[ajaxify^=\"/events/hovercard/watch\"], a[ajaxify^=\"/events/hovercard/watch\"] *",
@@ -14,6 +14,11 @@
             {
                 "node": ".fbEventsSuggestionItem a.fbEventClassicButton:first-child[href=\"#\"]",
                 "container": ".fbEventsSuggestionItem",
+                "extractor": null
+            },
+            {
+                "node": "#event_button_bar a.fbEventClassicButton:first-of-type",
+                "container": "#event_header",
                 "extractor": null
             }
         ],
@@ -244,7 +249,7 @@
         "network": "facebook",
         "type": "click",
         "priority": 72,
-        "version": "0.3",
+        "version": "0.4",
         "patterns": [
             {
                 "node": "a[ajaxify*=\"/join.php\"] *, a[ajaxify*=\"/join.php\"], a[ajaxify*=\"response=join\"], a[ajaxify^=\"/events/feed/going\"], a[ajaxify^=\"/events/feed/going\"] *, a[ajaxify^=\"/events/dashboard/going\"], a[ajaxify^=\"/events/dashboard/going\"] *, a[ajaxify^=\"/events/permalink/going\"], a[ajaxify^=\"/events/permalink/going\"] *, a[ajaxify^=\"/events/hovercard/going\"], a[ajaxify^=\"/events/hovercard/going\"] *",
@@ -254,6 +259,11 @@
             {
                 "node": ".fbEventsSuggestionItem a.fbEventClassicButton:last-child[href=\"#\"]",
                 "container": ".fbEventsSuggestionItem",
+                "extractor": null
+            },
+            {
+                "node": "#event_button_bar a.fbEventClassicButton:last-of-type",
+                "container": "#event_header",
                 "extractor": null
             }
         ],

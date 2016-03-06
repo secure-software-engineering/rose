@@ -259,10 +259,15 @@
         "network": "facebook",
         "type": "click",
         "priority": 7,
-        "version": "0.5",
+        "version": "0.6",
         "patterns": [
             {
                 "node": ".UFILikeLink, .UFILikeLink *",
+                "container": ".userContentWrapper",
+                "extractor": "status-update"
+            },
+            {
+                "node": ".uiContextualLayerParent div[role=toolbar] span[role=button] div",
                 "container": ".userContentWrapper",
                 "extractor": "status-update"
             }

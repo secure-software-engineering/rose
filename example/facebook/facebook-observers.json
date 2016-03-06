@@ -4,7 +4,7 @@
         "network": "facebook",
         "type": "click",
         "priority": 70,
-        "version": "0.4",
+        "version": "0.5",
         "patterns": [
             {
                 "node": "a[ajaxify*=\"/associate.php\"] *, a[ajaxify*=\"/associate.php\"], a[ajaxify^=\"/events/feed/watch\"], a[ajaxify^=\"/events/feed/watch\"] *, a[ajaxify^=\"/events/dashboard/watch\"], a[ajaxify^=\"/events/dashboard/watch\"] *, a[ajaxify^=\"/events/permalink/watch\"], a[ajaxify^=\"/events/permalink/watch\"] *, a[ajaxify^=\"/events/hovercard/watch\"], a[ajaxify^=\"/events/hovercard/watch\"] *",
@@ -19,6 +19,11 @@
             {
                 "node": "#event_button_bar a.fbEventClassicButton:first-of-type",
                 "container": "#event_header",
+                "extractor": null
+            },
+            {
+                "node": "#relationship_bar button[value=\"watch\"]",
+                "container": "#relationship_bar",
                 "extractor": null
             }
         ],
@@ -129,11 +134,16 @@
         "network": "facebook",
         "type": "click",
         "priority": 71,
-        "version": "0.3",
+        "version": "0.4",
         "patterns": [
             {
                 "node": "a[ajaxify*=\"/decline.php\"] *, a[ajaxify*=\"/decline.php\"], a[ajaxify^=\"/events/feed/unwatch\"], a[ajaxify^=\"/events/feed/unwatch\"] *, a[ajaxify^=\"/events/dashboard/unwatch\"], a[ajaxify^=\"/events/dashboard/unwatch\"] *, a[ajaxify^=\"/events/permalink/unwatch\"], a[ajaxify^=\"/events/permalink/unwatch\"] *, a[ajaxify^=\"/events/hovercard/unwatch\"], a[ajaxify^=\"/events/hovercard/unwatch\"] *",
                 "container": "a",
+                "extractor": null
+            },
+            {
+                "node": "#relationship_bar button[value=\"remove\"]",
+                "container": "#relationship_bar",
                 "extractor": null
             }
         ],
@@ -249,7 +259,7 @@
         "network": "facebook",
         "type": "click",
         "priority": 72,
-        "version": "0.4",
+        "version": "0.5",
         "patterns": [
             {
                 "node": "a[ajaxify*=\"/join.php\"] *, a[ajaxify*=\"/join.php\"], a[ajaxify*=\"response=join\"], a[ajaxify^=\"/events/feed/going\"], a[ajaxify^=\"/events/feed/going\"] *, a[ajaxify^=\"/events/dashboard/going\"], a[ajaxify^=\"/events/dashboard/going\"] *, a[ajaxify^=\"/events/permalink/going\"], a[ajaxify^=\"/events/permalink/going\"] *, a[ajaxify^=\"/events/hovercard/going\"], a[ajaxify^=\"/events/hovercard/going\"] *",
@@ -264,6 +274,11 @@
             {
                 "node": "#event_button_bar a.fbEventClassicButton:last-of-type",
                 "container": "#event_header",
+                "extractor": null
+            },
+            {
+                "node": "#relationship_bar button[value=\"join\"]",
+                "container": "#relationship_bar",
                 "extractor": null
             }
         ],

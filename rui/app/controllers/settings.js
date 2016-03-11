@@ -1,8 +1,6 @@
 import Ember from 'ember'
 import languages from '../locales/languages'
 
-const { Promise } = Ember.RSVP
-
 export default Ember.Controller.extend({
   updateInProgress: false,
   availableLanguages: languages,
@@ -42,17 +40,16 @@ export default Ember.Controller.extend({
     },
 
     approveModal () {
-      return Promise.all([
+      return Ember.RSVP.all([
         this.store.findAll('extractor').then((records) => records.invoke('destroyRecord')),
         this.store.findAll('network').then((records) => records.invoke('destroyRecord')),
         this.store.findAll('observer').then((records) => records.invoke('destroyRecord')),
         this.get('settings.user').destroyRecord(),
         this.get('settings.system').destroyRecord()
-      ]).then(() => {
-        return this.get('settings').setup()
-      }).then(() => {
-        return this.transitionToRoute('index')
-      })
+      ])
+      .then(() => this.get('settings').setup())
+      .then(() => this.transitionToRoute('index'))
+      .catch(err => console.log(err))
     }
   }
 })

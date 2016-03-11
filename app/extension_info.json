@@ -30,5 +30,6 @@
         "caption": "ROSE",
         "tooltipText": "ROSE Browser Plugin",
         "icon": "icons/button.png"
-    }
+    },
+    "options_page": "ui/index.html"
 }

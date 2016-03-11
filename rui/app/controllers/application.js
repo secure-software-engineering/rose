@@ -11,7 +11,7 @@ export default Ember.Controller.extend({
     },
 
     saveConfig(data) {
-      const payload = JSON.parse(data);
+      const payload = data
       payload.id = 0;
 
       this.settings.system.destroyRecord()

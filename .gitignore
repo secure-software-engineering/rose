@@ -6,3 +6,5 @@ kango-runtime/src/common
 *.sublime-*
 semantic
 .DS_Store
+coverage
+.nyc_output

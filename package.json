@@ -1,52 +1,80 @@
 {
-  "name": "ROSE",
+  "name": "rose",
   "version": "3.0.0",
-  "description": "Research tool for field studies in online social networks.",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/iamolivinius/gulpicRose"
-  },
-  "main": "Gulpfile.js",
-  "devDependencies": {
-    "babel": "^6.5.1",
-    "babel-plugin-transform-async-to-generator": "^6.5.0",
-    "babel-polyfill": "^6.5.0",
-    "babel-preset-es2015": "^6.5.0",
-    "babelify": "^7.2.0",
-    "browserify": "^13.0.0",
-    "del": "^2.2.0",
-    "denodeify": "^1.2.1",
-    "gulp": "^3.8.11",
-    "gulp-changed": "^1.1.1",
-    "gulp-connect": "^2.2.0",
-    "gulp-filter": "^3.0.1",
-    "gulp-json-editor": "^2.2.1",
-    "gulp-notify": "^2.2.0",
-    "gulp-uglify": "^1.1.0",
-    "kbpgp": "^2.0.46",
-    "lodash": "^4.5.1",
-    "multimatch": "^2.0.0",
-    "semantic-ui": "^2.1.5",
-    "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.0.0"
+  "description": "",
+  "directories": {
+    "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "install": "bower install"
+    "test": "nyc ava"
   },
-  "author": "Fraunhofer SIT",
-  "contributors": [
-    {
-      "name": "Felix Epp",
-      "email": "work@felixepp.de"
-    },
-    {
-      "name": "Oliver Hoffmann",
-      "email": "oliverh855@gmail.com"
-    }
-  ],
-  "license": "ISC",
-  "dependencies": {
-    "jssha": "^2.0.1"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/secure-software-engineering/rose.git"
+  },
+  "author": "Oliver Hoffmann",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/secure-software-engineering/rose/issues"
+  },
+  "homepage": "https://github.com/secure-software-engineering/rose#readme",
+  "devDependencies": {
+    "ava": "^0.13.0",
+    "babel-core": "^6.7.2",
+    "babel-eslint": "^6.0.0-beta.6",
+    "babel-loader": "^6.2.4",
+    "babel-plugin-transform-async-to-generator": "^6.7.0",
+    "babel-plugin-transform-runtime": "^6.6.0",
+    "babel-preset-es2015": "^6.6.0",
+    "del": "^2.2.0",
+    "denodeify": "^1.2.1",
+    "eslint": "^2.4.0",
+    "eslint-config-standard": "^5.1.0",
+    "eslint-plugin-babel": "^3.1.0",
+    "eslint-plugin-promise": "^1.1.0",
+    "eslint-plugin-standard": "^1.3.2",
+    "gulp": "^3.9.1",
+    "gulp-ava": "^0.10.0",
+    "gulp-eslint": "^2.0.0",
+    "gulp-livereload": "^3.8.1",
+    "gulp-plumber": "^1.1.0",
+    "gulp-util": "^3.0.7",
+    "handlebars": "^4.0.5",
+    "i18next": "^2.3.4",
+    "isomorphic-fetch": "^2.2.1",
+    "jquery": "^2.2.1",
+    "js-data": "^2.9.0",
+    "js-data-localforage": "^2.1.1",
+    "jsdom": "^8.1.0",
+    "json-loader": "^0.5.4",
+    "jssha": "^2.0.2",
+    "kbpgp": "^2.0.52",
+    "localforage": "^1.4.0",
+    "lodash": "^4.6.1",
+    "node-notifier": "^4.5.0",
+    "run-sequence": "^1.1.5",
+    "uuid": "^2.0.1",
+    "vinyl-named": "^1.1.0",
+    "webpack": "^1.12.14",
+    "webpack-stream": "^3.1.0"
+  },
+  "babel": {
+    "plugins": [
+      "transform-runtime",
+      "transform-async-to-generator"
+    ],
+    "presets": [
+      "es2015"
+    ],
+    "sourceMaps": "inline"
+  },
+  "ava": {
+    "files": [
+      "tests/**/*"
+    ],
+    "require": [
+      "babel-register",
+      "./tests/helpers/setup-browser-env.js"
+    ]
   }
 }

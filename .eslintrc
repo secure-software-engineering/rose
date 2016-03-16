@@ -1,0 +1,19 @@
+{
+  "parser": "babel-eslint",
+  "extends": "standard",
+  "env": {
+    "amd": true,
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "rules": {
+    "no-console": 0,
+    "indent": [2, 4, {"SwitchCase": 1}],
+    "arrow-parens": 0
+  },
+  "globals": {
+    "chrome": true,
+    "kango": true
+  }
+}

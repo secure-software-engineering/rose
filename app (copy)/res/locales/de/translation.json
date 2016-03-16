@@ -1,0 +1,19 @@
+{
+  "comment": "Kommentar",
+  "done": "Fertig",
+
+  "reminder": {
+    "prompt": "Vergiss nicht zu kommentieren"
+  },
+
+  "sidebar": {
+    "infoText": "Erzählen Sie uns, was Sie kommentieren (Bild, Link, Status,...), wer es gepostet/geshared hat (Sie selbst, ein Freund, ein anderer Nutzer, eine Seite, ...), warum Sie sich entschieden haben einen Post, ein Bild etc. nur mit bestimmten \"Freunden\" zu teilen.",
+    "ratingEntertain": "Wie unterhaltsam ist dieser Inhalt für Sie",
+    "ratingAppropriate": "Für wie angemessen halten Sie es diesen Inhalt auf Facebook zu zeigen",
+    "ratingConcentration": "How well were you concentrating",
+    "ratingInteresting": "Did you find the content you were just reading interesting",
+    "ratingEnjoy": "Did you enjoy what you were just reading",
+    "questionNotice": "Why did you notice this post?",
+    "questionQuality": "Did you examine the quality of the information? If so, how?"
+  }
+}

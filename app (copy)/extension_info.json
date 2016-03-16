@@ -8,6 +8,7 @@
         "background_app.js"
     ],
     "content_scripts": [
+        "res/semantic/semantic.js",
         "content_app.js"
     ],
     "browser_button": {

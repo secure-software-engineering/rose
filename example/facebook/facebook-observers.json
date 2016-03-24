@@ -304,7 +304,7 @@
         "network": "facebook",
         "type": "click",
         "priority": 7,
-        "version": "0.6",
+        "version": "0.7",
         "patterns": [
             {
                 "node": ".UFILikeLink, .UFILikeLink *",
@@ -312,8 +312,8 @@
                 "extractor": "status-update"
             },
             {
-                "node": ".uiContextualLayerParent div[role=\"toolbar\"] span[role=\"button\"] div",
-                "container": ".userContentWrapper",
+                "node": "div[role=\"toolbar\"] span[role=\"button\"] div",
+                "container": ".uiLayer",
                 "extractor": "status-update"
             }
         ],

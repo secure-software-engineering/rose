@@ -397,7 +397,7 @@
                 "extractor": null
             },
             {
-                "node": "div[role=\"dialog\"] .rfloat div > button > span:contains(\"Post\")",
+                "node": "div[role=\"dialog\"] .rfloat div > button:contains(\"Post\")",
                 "container": "[data-reactroot]",
                 "extractor": null
             }

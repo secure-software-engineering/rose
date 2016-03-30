@@ -1,29 +1,20 @@
-import Ember from 'ember';
-import { request } from 'ic-ajax';
+import Ember from 'ember'
 
 export default Ember.Component.extend({
+  ajax: Ember.inject.service(),
+
   actions: {
-    cancel() {
-      this.sendAction('cancel');
-    },
-
-    saveConfig(data) {
-      this.sendAction('onsuccess', data);
-    },
-
-    openFileChooser() {
-      this.$('input.hidden').click();
-    },
-
-    onread(data) {
-      this.sendAction('onsuccess', data);
-    },
-
     selectDefaultConfig() {
-      const src = kango.io.getResourceUrl('res/defaults/rose-configuration.json');
-      request(src).then((json) => {
-        this.sendAction('onsuccess', json);
-      });
+      const ajax = this.get('ajax')
+      const src = kango.io.getResourceUrl('res/defaults/rose-configuration.json')
+
+      ajax.request(src, { dataType: 'json' })
+        .then((json) => this.sendAction('onsuccess', json))
+    },
+
+    fileLoaded(file) {
+      const json = JSON.parse(file.data)
+      this.sendAction('onsuccess', json)
     }
   }
-});
+})

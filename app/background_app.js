@@ -38,7 +38,7 @@ import Task from 'rose/task'
   const installDate = await localforage.getItem('install-date')
   if (!installDate) {
     await localforage.setItem('install-date', new Date().toJSON());
-    kango.browser.tabs.create({url: kango.io.getResourceUrl('ui/index.html')});
+    kango.ui.optionsPage.open();
   }
 
   const roseDataVersion = await localforage.getItem('rose-data-version')
@@ -99,7 +99,7 @@ executionService.schedule(Task({
 ///////////////
 
 kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, function(event) {
-    kango.browser.tabs.create({url: kango.io.getResourceUrl('ui/index.html')});
+    kango.ui.optionsPage.open();
 });
 
 

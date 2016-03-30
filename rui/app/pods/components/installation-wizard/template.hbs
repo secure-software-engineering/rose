@@ -29,12 +29,14 @@
               {{t "wizard.fileConfigDescription"}}
             </div>
           </div>
-          <button class="ui primary bottom attached button"
-                  {{action 'openFileChooser'}}>
+          {{#file-picker  fileLoaded="fileLoaded"
+                          dropzone=false
+                          preview=false
+                          readAs="readAsText"
+                          class="ui bottom attached primary button"}}
             <i class="add icon"></i>
             {{t "wizard.fileConfigBtn"}}
-          </button>
-          {{file-input class="hidden" onread='onread'}}
+          {{/file-picker}}
         </div>
       </div>
     </div>

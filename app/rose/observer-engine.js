@@ -19,6 +19,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+import $ from 'jquery'
+
 import log from 'rose/log';
 import ObserversCollection from 'rose/collections/observers';
 import InteractionsCollection from 'rose/collections/interactions';
@@ -42,7 +45,7 @@ function storeInteraction(observer, extracts = {}) {
   data.origin = {
     observer: observer.get('name'),
     network: observer.get('network'),
-    version:  observer.get('version')
+    version: observer.get('version')
   };
 
   if (extracts !== {}) {

@@ -17,6 +17,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+import $ from 'jquery'
+
 import log from 'rose/log';
 import ExtractorCollection from 'rose/collections/extractors';
 import ExtractsCollection from 'rose/collections/extracts';

@@ -25,6 +25,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+@import url('node_modules/semantic-ui-button/button.css');
+@import url('node_modules/semantic-ui-checkbox/checkbox.css');
+@import url('node_modules/semantic-ui-form/form.css');
+@import url('node_modules/semantic-ui-icon/icon.css');
+@import url('node_modules/semantic-ui-item/item.css');
+@import url('node_modules/semantic-ui-label/label.css');
+@import url('node_modules/semantic-ui-list/list.css');
+@import url('node_modules/semantic-ui-menu/menu.css');
+@import url('node_modules/semantic-ui-nag/nag.css');
+@import url('node_modules/semantic-ui-rating/rating.css');
+@import url('node_modules/semantic-ui-sidebar/sidebar.css');
 
 @font-face {
     font-family: 'Basic Icons';
@@ -32,7 +43,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
          url('basic.icons-webfont.svg#iconsmedium') format('svg');
     font-weight: normal;
     font-style: normal;
-
 }
 
 @font-face {
@@ -41,7 +51,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
          url('icons-webfont.svg#fontawesomeregular') format('svg');
     font-weight: normal;
     font-style: normal;
-
 }
 
 /* resets for facebook */
@@ -51,16 +60,16 @@ body.pushable {
 }
 
 body.pushable>.pusher {
-   background: #e9eaed;
-   overflow: visible;
+    background: #e9eaed;
+    overflow: visible;
 }
 
 .ui.sidebar *, .ui.sidebar :after, .ui.sidebar :before {
-  box-sizing: inherit;
+    box-sizing: inherit;
 }
 
 .ui.sidebar {
-  font-size: 120% !important;
+    font-size: 120% !important;
 }
 
 .ui label {
@@ -70,7 +79,7 @@ body.pushable>.pusher {
 }
 
 .ui.form .grouped.fields>label, .ui.checkbox label, .ui.checkbox .box, .ui.checkbox label {
-     font-size: 90%;
+    font-size: 90%;
 }
 
 /* custom styles */

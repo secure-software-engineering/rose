@@ -6,24 +6,17 @@
     "homepage_url": "https://dipo.sit.fraunhofer.de/",
     "background_scripts": [
         "scripts/chromereload.js",
-        "bower_components/jquery/dist/jquery.js",
         "bower_components/underscore/underscore.js",
         "bower_components/backbone/backbone.js",
         "bower_components/localforage/dist/localforage.js",
         "bower_components/kango-localforage-backbone/dist/localforage.backbone.js",
-        "bower_components/fetch/fetch.js",
         "background_app.js"
     ],
     "content_scripts": [
-        "bower_components/jquery/dist/jquery.js",
-        "bower_components/jquery-cookie/jquery.cookie.js",
         "bower_components/underscore/underscore.js",
         "bower_components/backbone/backbone.js",
         "bower_components/localforage/dist/localforage.js",
         "bower_components/kango-localforage-backbone/dist/localforage.backbone.js",
-        "res/semantic/semantic.js",
-        "bower_components/handlebars/handlebars.js",
-        "bower_components/i18next/i18next.js",
         "content_app.js"
     ],
     "browser_button": {

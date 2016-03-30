@@ -8,6 +8,7 @@ var notify = require("gulp-notify");
 
 var babelify = require('babelify');
 var browserify = require('browserify');
+var browserifyCss = require('browserify-css');
 var del = require('del');
 var exec = require('child_process').exec;
 var multimatch = require('multimatch');
@@ -30,7 +31,13 @@ gulp.task('build:contentscript', function() {
   return browserify('./app/content_app.js', { paths: [ ENV.app ], debug: false })
     .transform("babelify", {
       presets: ["es2015"],
-      plugins: ["transform-async-to-generator"]
+      plugins: [
+        "transform-async-to-generator",
+        "transform-runtime"
+      ]
+    })
+    .transform("browserify-css", {
+      autoInject: true
     })
     .bundle()
     .on('error', function (err) {
@@ -50,7 +57,10 @@ gulp.task('build:backgroundscript', function() {
   return browserify('./app/background_app.js', { paths: [ ENV.app ], debug: true })
     .transform("babelify", {
       presets: ["es2015"],
-      plugins: ["transform-async-to-generator"]
+      plugins: [
+        "transform-async-to-generator",
+        "transform-runtime"
+      ]
     })
     .bundle()
     .on('error', function (err) {

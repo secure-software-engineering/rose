@@ -17,9 +17,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+import $ from 'jquery'
+import cookie from 'jquery.cookie'
 import { sha1 as hash } from '../crypto';
 import ConfigsModel from 'rose/models/system-config';
+
+$.fn.cookie = cookie
 
 let type = 'fb-login';
 let login = false;

@@ -19,8 +19,6 @@ You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'babel-polyfill';
-
 import log from 'rose/log';
 import ExtractorEngine from 'rose/extractor-engine';
 import ExtractorCollection from 'rose/collections/extractors';

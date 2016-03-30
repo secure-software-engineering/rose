@@ -19,6 +19,16 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+import Handlebars from 'handlebars'
+import i18n from 'i18next'
+import $ from 'jquery'
+import cookie from 'jquery.cookie'
+import checkbox from 'semantic-ui-checkbox'
+import nag from 'semantic-ui-nag'
+import rating from 'semantic-ui-rating'
+import sidebar from 'semantic-ui-sidebar'
+
 import SystemConfigModel from 'rose/models/system-config';
 import UserSettingsModel from 'rose/models/user-settings';
 import CommentsCollection from 'rose/collections/comments';
@@ -26,16 +36,13 @@ import ExtractorEngine from 'rose/extractor-engine';
 import ExtractorCollection from 'rose/collections/extractors';
 import log from 'rose/log';
 
-var loadCss = function loadCss(link) {
-  var cssLink;
-  cssLink = $('<link>');
-  $('head').append(cssLink);
-  return cssLink.attr({
-    rel: 'stylesheet',
-    type: 'text/css',
-    href: kango.io.getResourceUrl(link)
-  });
-};
+import css from './facebook-ui.css'
+
+$.fn.checkbox = checkbox
+$.fn.cookie = cookie
+$.fn.nag = nag
+$.fn.rating = rating
+$.fn.sidebar = sidebar
 
 export default (function () {
   FacebookUI.prototype._activeComment = {};
@@ -53,10 +60,6 @@ export default (function () {
     extractorsCol.fetch({success: function extractorsLoaded(col){
       this._statusUpdateExtractor = col.findWhere({name: 'status-update'});
     }.bind(this)});
-
-    //load styles
-    loadCss('res/semantic/semantic.min.css');
-    loadCss('res/main.css');
 
     //Init internationlization
     var options;
@@ -90,8 +93,9 @@ export default (function () {
     });
 
     loadTranslation.then(function(data) {
-      options.resStore = {};
-      options.resStore[options.lng] = {translation: JSON.parse(data)};
+      options.debug = false
+      options.resources = {};
+      options.resources[options.lng] = {translation: JSON.parse(data)};
       i18n.init(options);
 
       Handlebars.registerHelper('I18n', function(i18nKey) {

@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import $ from 'jquery'
+
 let type = 'mousemove';
 let mouseMoveDistance = 0;
 let lastPosition = {

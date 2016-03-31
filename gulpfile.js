@@ -4,11 +4,13 @@ var connect = require('gulp-connect');
 var gulpFilter = require('gulp-filter');
 var jeditor = require('gulp-json-editor');
 var notify = require("gulp-notify");
-// var uglify = require('gulp-uglify');
+var gulpif = require("gulp-if");
+var uglify = require("gulp-uglify");
 
 var babelify = require('babelify');
 var browserify = require('browserify');
 var browserifyCss = require('browserify-css');
+var hbsfy = require('hbsfy');
 var del = require('del');
 var exec = require('child_process').exec;
 var multimatch = require('multimatch');
@@ -22,6 +24,10 @@ var ENV = {
   kangocli: './kango/kango.py',
   manifest: './app/extension_info.json'
 };
+
+var options = {
+  dist: false
+}
 
 var manifest = require(ENV.manifest);
 
@@ -39,6 +45,7 @@ gulp.task('build:contentscript', function() {
     .transform("browserify-css", {
       autoInject: true
     })
+    .transform("hbsfy")
     .bundle()
     .on('error', function (err) {
       console.log(err.message);
@@ -47,7 +54,7 @@ gulp.task('build:contentscript', function() {
     })
     .pipe(source('contentscript.js'))
     .pipe(buffer())
-    // .pipe(uglify())
+    .pipe(gulpif(options.dist, uglify()))
     .pipe(gulp.dest(ENV.tmp));
 });
 
@@ -70,7 +77,7 @@ gulp.task('build:backgroundscript', function() {
     })
     .pipe(source('backgroundscript.js'))
     .pipe(buffer())
-    // .pipe(uglify())
+    .pipe(gulpif(options.dist, uglify()))
     .pipe(gulp.dest(ENV.tmp));
 });
 
@@ -93,7 +100,7 @@ gulp.task('build:manifest', function() {
 gulp.task('copy:staticFiles', function() {
   return gulp.src([
       './icons/**/*',
-      './res/**/*',
+      './res/defaults/*',
       './ui/**/*'
     ], { cwd: ENV.app, base: ENV.app})
     .pipe(changed(ENV.tmp))
@@ -167,6 +174,7 @@ gulp.task('reload', ['kango:chrome'], function() {
 });
 
 gulp.task('build', ['clean:dist', 'clean:tmp'], function() {
+  options.dist = true
   gulp.start('kango:build');
 });
 

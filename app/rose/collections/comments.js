@@ -18,11 +18,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
-import Comment from '../models/comment';
+import Comment from '../models/comment'
 
 var collection = Backbone.Collection.extend({
-  model: Comment,
-  sync: Backbone.kangoforage.sync('Comments'),
-});
+    model: Comment,
+    sync: Backbone.kangoforage.sync('Comments')
+})
 
-export default collection;
+export default collection

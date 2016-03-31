@@ -18,11 +18,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
-import Interaction from '../models/interaction';
+import Interaction from '../models/interaction'
 
 var collection = Backbone.Collection.extend({
-  model: Interaction,
-  sync: Backbone.kangoforage.sync('Interactions'),
-});
+    model: Interaction,
+    sync: Backbone.kangoforage.sync('Interactions')
+})
 
-export default collection;
+export default collection

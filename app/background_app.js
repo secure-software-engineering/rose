@@ -19,109 +19,105 @@ You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import log from 'rose/log';
-import ExtractorEngine from 'rose/extractor-engine';
-import ExtractorCollection from 'rose/collections/extractors';
-import SystemConfig from 'rose/models/system-config';
-import Updater from 'rose/updater';
-import Doctor from 'rose/doctor';
+import localforage from 'localforage'
 
-import WindowTracker from 'rose/activity-trackers/window';
+import log from 'rose/log'
+import ExtractorEngine from 'rose/extractor-engine'
+import ExtractorCollection from 'rose/collections/extractors'
+import SystemConfig from 'rose/models/system-config'
+import Updater from 'rose/updater'
+import Doctor from 'rose/doctor'
+
+import WindowTracker from 'rose/activity-trackers/window'
 
 import ExecutionService from 'rose/execution-service'
 import Task from 'rose/task'
 
-
 /* Background Script */
-(async function() {
+(async function () {
+    const installDate = await localforage.getItem('install-date')
+    if (!installDate) {
+        await localforage.setItem('install-date', new Date().toJSON())
+        kango.ui.optionsPage.open()
+    }
 
-  const installDate = await localforage.getItem('install-date')
-  if (!installDate) {
-    await localforage.setItem('install-date', new Date().toJSON());
-    kango.ui.optionsPage.open();
-  }
+    const roseDataVersion = await localforage.getItem('rose-data-version')
+    if (!roseDataVersion) {
+        await localforage.setItem('rose-data-version', '2.0')
+    }
 
-  const roseDataVersion = await localforage.getItem('rose-data-version')
-  if (!roseDataVersion) {
-    await localforage.setItem('rose-data-version', '2.0');
-  }
+    const roseVersion = await localforage.getItem('rose-version')
+    if (!roseVersion || roseVersion < '3.0.0') {
+        await localforage.setItem('rose-version', '3.0.0')
+    }
 
-  const roseVersion = await localforage.getItem('rose-version')
-  if (!roseVersion || roseVersion < '3.0.0') {
-    await localforage.setItem('rose-version', '3.0.0');
-  }
+    WindowTracker.start()
+    startExtractorEngine()
+})()
 
-  WindowTracker.start();
-  startExtractorEngine();
-
-})();
-
-
-////////////////
+// //////////////
 // Scheduling //
-////////////////
+// //////////////
 
 const executionService = ExecutionService();
 (new SystemConfig()).fetch({
-  success: (config) => {
-    executionService.schedule(Task({
-      name: 'updater',
-      rate: config.get('updateInterval'),
-      job: Updater.update
-    }))
-  }
-});
+    success: (config) => {
+        executionService.schedule(Task({
+            name: 'updater',
+            rate: config.get('updateInterval'),
+            job: Updater.update
+        }))
+    }
+})
 
 function startExtractorEngine () {
-  (new ExtractorCollection()).fetch({success: (extractorCol) => {
-    if (extractorCol.length) {
-      (new ExtractorEngine(extractorCol)).register(function (extractor, interval, job) {
-        executionService.schedule(Task({
-          name: extractor,
-          rate: interval,
-          job: job
-        }))
-      });
-    }
-  }});
+    (new ExtractorCollection()).fetch({success: (extractorCol) => {
+        if (extractorCol.length) {
+            (new ExtractorEngine(extractorCol)).register(function (extractor, interval, job) {
+                executionService.schedule(Task({
+                    name: extractor,
+                    rate: interval,
+                    job: job
+                }))
+            })
+        }
+    }})
 }
 
-Doctor.repairMissingInteractions();
+Doctor.repairMissingInteractions()
 executionService.schedule(Task({
-  name: 'repairInteractions',
-  rate: 3600000,
-  job: Doctor.repairMissingInteractions
+    name: 'repairInteractions',
+    rate: 3600000,
+    job: Doctor.repairMissingInteractions
 }))
 
-
-///////////////
+// /////////////
 // Messaging //
-///////////////
+// /////////////
 
-kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, function(event) {
-    kango.ui.optionsPage.open();
-});
-
+kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, function (event) {
+    kango.ui.optionsPage.open()
+})
 
 kango.addMessageListener('update-start', () => {
-  Updater.update()
+    Updater.update()
     .then((statistics) => {
-      log('Updater', JSON.stringify(statistics))
+        log('Updater', JSON.stringify(statistics))
     })
     .then(() => kango.dispatchMessage('update-successful'))
     .catch(() => kango.dispatchMessage('update-successful'))
-});
+})
 
 kango.addMessageListener('LoadNetworks', (event) => {
-  Updater.load(event.data).then(() => {
-    startExtractorEngine();
-  })
-});
+    Updater.load(event.data).then(() => {
+        startExtractorEngine()
+    })
+})
 
 kango.addMessageListener('application-log', async (event) => {
-  const applicationLog = await localforage.getItem('application-log') || []
-  const log = { date: new Date().getTime() }
+    const applicationLog = await localforage.getItem('application-log') || []
+    const log = { date: new Date().getTime() }
 
-  applicationLog.push(Object.assign(log, event.data))
-  await localforage.setItem('application-log', applicationLog)
+    applicationLog.push(Object.assign(log, event.data))
+    await localforage.setItem('application-log', applicationLog)
 })

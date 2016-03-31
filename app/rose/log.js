@@ -28,34 +28,34 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 * @param {String} message Message to be logged
 */
 export default function (module, message) {
-    var time = (function() {
-        var now = new Date();
+    var time = (function () {
+        var now = new Date()
 
         // Adds a preceding "0" to a number if it's below 10
-        var format = function format(number) {
-            return number < 10 ? '0' + number : number;
-        };
+        var format = function format (number) {
+            return number < 10 ? '0' + number : number
+        }
 
         // Construct date string
         var date = [
             format(now.getDate()),
-            format(1+now.getMonth()),
+            format(1 + now.getMonth()),
             now.getFullYear()
-        ].join('.');
+        ].join('.')
 
         // Construct time string
         var time = [
             format(now.getHours()),
             format(now.getMinutes()),
             format(now.getSeconds())
-        ].join(':');
+        ].join(':')
 
-        return date + ' ' + time;
-    })();
+        return date + ' ' + time
+    })()
 
-    console.log('[ROSE, module: %s, time: %s] %s', module, time, message);
+    console.log('[ROSE, module: %s, time: %s] %s', module, time, message)
     kango.dispatchMessage('application-log', {
-        module, 
+        module,
         message
     })
 }

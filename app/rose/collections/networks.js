@@ -18,11 +18,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
-import Network from '../models/network';
+import Network from '../models/network'
 
 var collection = Backbone.Collection.extend({
-  model: Network,
-  sync: Backbone.kangoforage.sync('Networks')
-});
+    model: Network,
+    sync: Backbone.kangoforage.sync('Networks')
+})
 
-export default collection;
+export default collection

@@ -20,52 +20,52 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 
 import $ from 'jquery'
 
-let type = 'mousemove';
-let mouseMoveDistance = 0;
+let type = 'mousemove'
+let mouseMoveDistance = 0
 let lastPosition = {
-  x: undefined,
-  y: undefined
-};
+    x: undefined,
+    y: undefined
+}
 
-let store = function() {
-  if (mouseMoveDistance > 0) {
-    kango.invokeAsyncCallback('localforage.getItem', type + '-activity-records', (records) => {
-      records = records || [];
-      records.push({
-        type: type,
-        date: Date.now(),
-        value: Math.round(mouseMoveDistance)
-      });
-      kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', records, () => {
-        mouseMoveDistance = 0;
-      });
-    });
-  }
-};
-
-let start = function() {
-  $(document).on('mousemove', (e) => {
-    const currentPosition = {
-      x: e.pageX,
-      y: e.pageY
-    };
-
-    if (lastPosition.x && lastPosition.y) {
-      const xDifference = currentPosition.x - lastPosition.x;
-      const yDifference = currentPosition.y - lastPosition.y;
-
-      const distance = Math.sqrt((xDifference * xDifference) +
-        (yDifference * yDifference));
-
-      mouseMoveDistance += distance;
+let store = function () {
+    if (mouseMoveDistance > 0) {
+        kango.invokeAsyncCallback('localforage.getItem', type + '-activity-records', (records) => {
+            records = records || []
+            records.push({
+                type: type,
+                date: Date.now(),
+                value: Math.round(mouseMoveDistance)
+            })
+            kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', records, () => {
+                mouseMoveDistance = 0
+            })
+        })
     }
+}
 
-    lastPosition = currentPosition;
-  });
+let start = function () {
+    $(document).on('mousemove', (e) => {
+        const currentPosition = {
+            x: e.pageX,
+            y: e.pageY
+        }
 
-  setInterval(store, 60000);
-};
+        if (lastPosition.x && lastPosition.y) {
+            const xDifference = currentPosition.x - lastPosition.x
+            const yDifference = currentPosition.y - lastPosition.y
+
+            const distance = Math.sqrt((xDifference * xDifference) +
+        (yDifference * yDifference))
+
+            mouseMoveDistance += distance
+        }
+
+        lastPosition = currentPosition
+    })
+
+    setInterval(store, 60000)
+}
 
 export default {
-  start
-};
+    start
+}

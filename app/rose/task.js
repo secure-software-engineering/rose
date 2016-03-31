@@ -17,36 +17,39 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
-function Task(spec) {
-  let { name, job, rate } = spec;
 
-  async function lastRun() {
-    let lastR = JSON.parse(await localforage.getItem(name + '-last-run'));
-    if (lastR === null) {
-      return setLastRun();
+import localforage from 'localforage'
+
+function Task (spec) {
+    let { name, job, rate } = spec
+
+    async function lastRun () {
+        let lastR = JSON.parse(await localforage.getItem(name + '-last-run'))
+        if (lastR === null) {
+            return setLastRun()
+        }
+        return lastR
     }
-    return lastR;
-  }
 
-  async function setLastRun() {
-    return (await localforage.setItem(name + '-last-run', JSON.stringify(Date.now())));
-  }
+    async function setLastRun () {
+        return (await localforage.setItem(name + '-last-run', JSON.stringify(Date.now())))
+    }
 
-  async function nextRun() {
-    return (await lastRun()) + rate;
-  }
+    async function nextRun () {
+        return (await lastRun()) + rate
+    }
 
-  async function run() {
-    job();
-    setLastRun();
-  }
+    async function run () {
+        job()
+        setLastRun()
+    }
 
-  return Object.freeze({
-    lastRun,
-    nextRun,
-    run,
-    name
-  });
+    return Object.freeze({
+        lastRun,
+        nextRun,
+        run,
+        name
+    })
 }
 
-export default Task;
+export default Task

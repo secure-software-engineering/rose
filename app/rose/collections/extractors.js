@@ -18,11 +18,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
-import Extractor from '../models/extractor';
+import Extractor from '../models/extractor'
 
 var collection = Backbone.Collection.extend({
-  model: Extractor,
-  sync: Backbone.kangoforage.sync('Extractors')
-});
+    model: Extractor,
+    sync: Backbone.kangoforage.sync('Extractors')
+})
 
-export default collection;
+export default collection

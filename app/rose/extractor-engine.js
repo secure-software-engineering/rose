@@ -20,137 +20,127 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 
 import $ from 'jquery'
 
-import log from 'rose/log';
-import ExtractorCollection from 'rose/collections/extractors';
-import ExtractsCollection from 'rose/collections/extracts';
-import {sha1 as hash} from 'rose/crypto';
-import ConfigsModel from 'rose/models/system-config';
+import log from 'rose/log'
+import ExtractorCollection from 'rose/collections/extractors'
+import ExtractsCollection from 'rose/collections/extracts'
+import {sha1 as hash} from 'rose/crypto'
+import ConfigsModel from 'rose/models/system-config'
 
 class ExtractorEngine {
-  constructor(extractorCollection) {
-    if (extractorCollection !== undefined) {
-      this.extractors = extractorCollection;
-    }
-    else {
-      this.extractors = new ExtractorCollection();
-      this.extractors.fetch();
-    }
-    this.extracts = new ExtractsCollection();
-    this.extracts.fetch();
-    this.configs = new ConfigsModel();
-    this.configs.fetch();
-  }
-
-  storeExtract(extractor, extracts = {}) {
-
-    var data = {};
-
-    // Time
-    data.createdAt = (new Date()).toJSON();
-
-    // Save extractor name and version
-    data.origin = {
-      extractor: extractor.get('name'),
-      network: extractor.get('network'),
-      version:  extractor.get('version')
-    };
-    data.fields = extracts;
-
-    // Logging interaction
-    this.extracts.create(data);
-    log('ExtractorEngine', 'New extract stored: ' + JSON.stringify(data));
-  }
-
-  static extractFieldsFromContainer($container, extractor, configs) {
-    var fields = extractor.get('fields');
-    var data = {};
-
-    for (var i = 0; i < fields.length; i++) {
-      var field = fields[i];
-      var $elem;
-      if (field.selector !== undefined) {
-        $elem = $container.find(field.selector);
-      }
-      else {
-        $elem = $container;
-      }
-      if ($elem.length) {
-        var datum;
-        if (field.attr === 'content') {
-          datum = $elem.html();
+    constructor (extractorCollection) {
+        if (extractorCollection !== undefined) {
+            this.extractors = extractorCollection
+        } else {
+            this.extractors = new ExtractorCollection()
+            this.extractors.fetch()
         }
-        else {
-          datum = $elem.attr(field.attr);
-        }
-        //something found?
-        if (datum !== '') {
+        this.extracts = new ExtractsCollection()
+        this.extracts.fetch()
+        this.configs = new ConfigsModel()
+        this.configs.fetch()
+    }
 
-          //extract detailed info with match
-          if (field.match !== undefined) {
-            var matches = datum.match(new RegExp(field.match, 'g'));
-            if (matches !== null) {
-              datum = matches[0];
+    storeExtract (extractor, extracts = {}) {
+        var data = {}
+
+        // Time
+        data.createdAt = (new Date()).toJSON()
+
+        // Save extractor name and version
+        data.origin = {
+            extractor: extractor.get('name'),
+            network: extractor.get('network'),
+            version: extractor.get('version')
+        }
+        data.fields = extracts
+
+        // Logging interaction
+        this.extracts.create(data)
+        log('ExtractorEngine', 'New extract stored: ' + JSON.stringify(data))
+    }
+
+    static extractFieldsFromContainer ($container, extractor, configs) {
+        var fields = extractor.get('fields')
+        var data = {}
+
+        for (var i = 0; i < fields.length; i++) {
+            var field = fields[i]
+            var $elem
+            if (field.selector !== undefined) {
+                $elem = $container.find(field.selector)
+            } else {
+                $elem = $container
             }
-            else {
-              log('ExtractorEngine', 'RegEx ' + field.match + ' for field ' + field.name + ' failed on ' + datum)
-              continue;
+            if ($elem.length) {
+                var datum
+                if (field.attr === 'content') {
+                    datum = $elem.html()
+                } else {
+                    datum = $elem.attr(field.attr)
+                }
+                // something found?
+                if (datum !== '') {
+                    // extract detailed info with match
+                    if (field.match !== undefined) {
+                        var matches = datum.match(new RegExp(field.match, 'g'))
+                        if (matches !== null) {
+                            datum = matches[0]
+                        } else {
+                            log('ExtractorEngine', 'RegEx ' + field.match + ' for field ' + field.name + ' failed on ' + datum)
+                            continue
+                        }
+                    }
+
+                    if (field.hash) {
+                        datum = hash(datum, configs.get('salt'), configs.get('hashLength'))
+                    }
+
+                    data[field.name] = datum
+                }
             }
-          }
-
-          if (field.hash) {
-            datum = hash(datum, configs.get('salt'), configs.get('hashLength'));
-          }
-
-          data[field.name] = datum;
         }
-      }
+
+        return data
     }
 
-    return data;
-
-  }
-
-  extractFieldsFromContainerByName($container, extractorName) {
-    var extractor = this.extractors.findWhere({name: extractorName});
-    return ExtractorEngine.extractFieldsFromContainer($container, extractor, this.configs);
-  }
-
-  handleURL(extractor) {
-    $.get(extractor.get('informationUrl'), function handleExtratorResponse(htmlContent) {
-
-      log('ExtractorEngine','processing: ' + extractor.get('name'));
-
-      var $container = $(htmlContent);
-      var entry = {};
-
-      if (extractor.get('container')) {
-        $container = $container.find(extractor.get('container'));
-      }
-
-      entry = ExtractorEngine.extractFieldsFromContainer($container, extractor);
-
-      if (entry !== undefined && entry !== {}) {
-        this.storeExtract(extractor, entry);
-      }
-      else {
-        log('ExtractorEngine',extractor.get('name') + ' returned no results!');
-      }
-    }.bind(this));
-  }
-
-  register(scheduler) {
-    log('ExtractorEngine', 'Register to Execution Service');
-    let periodicExtractors = this.extractors.where({type: 'url'});
-
-    for (var i = 0; i < periodicExtractors.length; i++) {
-      scheduler(periodicExtractors[i].get('name'), periodicExtractors[i].get('interval'), this.handleURL.bind(this, periodicExtractors[i]));
+    extractFieldsFromContainerByName ($container, extractorName) {
+        var extractor = this.extractors.findWhere({name: extractorName})
+        return ExtractorEngine.extractFieldsFromContainer($container, extractor, this.configs)
     }
 
-  }
+    handleURL (extractor) {
+        $.get(extractor.get('informationUrl'), function handleExtratorResponse (htmlContent) {
+            log('ExtractorEngine', 'processing: ' + extractor.get('name'))
+
+            var $container = $(htmlContent)
+            var entry = {}
+
+            if (extractor.get('container')) {
+                $container = $container.find(extractor.get('container'))
+            }
+
+            entry = ExtractorEngine.extractFieldsFromContainer($container, extractor)
+
+            if (entry !== undefined && entry !== {}) {
+                this.storeExtract(extractor, entry)
+            } else {
+                log('ExtractorEngine', extractor.get('name') + ' returned no results!')
+            }
+        }.bind(this))
+    }
+
+    register (scheduler) {
+        log('ExtractorEngine', 'Register to Execution Service')
+        let periodicExtractors = this.extractors.where({type: 'url'})
+
+        for (var i = 0; i < periodicExtractors.length; i++) {
+            scheduler(periodicExtractors[i].get('name'), periodicExtractors[i].get('interval'), this.handleURL.bind(this, periodicExtractors[i]))
+        }
+    }
 }
 
 /**
  * @module Core
  * @submodule Extractor Engine
  */
-export default ExtractorEngine;
+export default ExtractorEngine

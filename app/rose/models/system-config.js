@@ -19,19 +19,19 @@ You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 let model = Backbone.Model.extend({
-  sync: Backbone.kangoforage.sync('systemConfig'),
-  id: '0',
-  defaults: {
-    autoUpdateIsEnabled: true,
-    timestamp: 0,
-    fileName: 'base.json',
-    roseCommentsIsEnabled: true,
-    roseCommentsRatingIsEnabled: true,
-    salt: 'ROSE',
-    hashLength: 5,
-    repositoryURL: 'https://secure-software-engineering.github.io/rose/example/',
-    fingerprint: '25E769C697EC2C20DA3BDDE9F188CF170FA234E8'
-  }
-});
+    sync: Backbone.kangoforage.sync('systemConfig'),
+    id: '0',
+    defaults: {
+        autoUpdateIsEnabled: true,
+        timestamp: 0,
+        fileName: 'base.json',
+        roseCommentsIsEnabled: true,
+        roseCommentsRatingIsEnabled: true,
+        salt: 'ROSE',
+        hashLength: 5,
+        repositoryURL: 'https://secure-software-engineering.github.io/rose/example/',
+        fingerprint: '25E769C697EC2C20DA3BDDE9F188CF170FA234E8'
+    }
+})
 
-export default model;
+export default model

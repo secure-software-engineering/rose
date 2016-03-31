@@ -20,33 +20,33 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 
 import $ from 'jquery'
 
-let type = 'click';
-let clickCount = 0;
+let type = 'click'
+let clickCount = 0
 
-let store = function() {
-  if (clickCount > 0) {
-    kango.invokeAsyncCallback('localforage.getItem', type + '-activity-records', (records) => {
-      records = records || [];
-      records.push({
-        type: type,
-        date: Date.now(),
-        value: clickCount
-      });
-      kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', records, () => {
-        clickCount = 0;
-      });
-    });
-  }
-};
+let store = function () {
+    if (clickCount > 0) {
+        kango.invokeAsyncCallback('localforage.getItem', type + '-activity-records', (records) => {
+            records = records || []
+            records.push({
+                type: type,
+                date: Date.now(),
+                value: clickCount
+            })
+            kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', records, () => {
+                clickCount = 0
+            })
+        })
+    }
+}
 
-let start = function() {
-  $(document).on('click', () => {
-    clickCount++;
-  });
+let start = function () {
+    $(document).on('click', () => {
+        clickCount++
+    })
 
-  setInterval(store, 60000);
-};
+    setInterval(store, 60000)
+}
 
 export default {
-  start
-};
+    start
+}

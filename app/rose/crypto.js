@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import jsSHA from 'jssha'
+import JSsha from 'jssha'
 
 /**
  * Generates the SHA1 hash of a message.
@@ -26,12 +26,12 @@ import jsSHA from 'jssha'
  * @returns {String}
  */
 function sha1 (message, salt, hashLength) {
-  const shaObj = new jsSHA('SHA-1', 'TEXT')
-  shaObj.update(salt + message)
-  const hash = shaObj.getHash('HEX')
-  return hash.slice(0, hashLength)
+    const shaObj = new JSsha('SHA-1', 'TEXT')
+    shaObj.update(salt + message)
+    const hash = shaObj.getHash('HEX')
+    return hash.slice(0, hashLength)
 }
 
 export {
-  sha1
+    sha1
 }

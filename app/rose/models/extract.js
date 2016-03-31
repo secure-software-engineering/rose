@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 var model = Backbone.Model.extend({
-  sync: Backbone.kangoforage.sync('Extract')
-});
+    sync: Backbone.kangoforage.sync('Extract')
+})
 
-export default model;
+export default model

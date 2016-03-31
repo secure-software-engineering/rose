@@ -19,13 +19,13 @@ You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 let model = Backbone.Model.extend({
-  sync: Backbone.kangoforage.sync('userSetting'),
-  id: '0',
-  defaults: {
-    commentReminderIsEnabled: true,
-    currentLanguage: 'auto',
-    developerModeIsEnabled: false,
-  }
-});
+    sync: Backbone.kangoforage.sync('userSetting'),
+    id: '0',
+    defaults: {
+        commentReminderIsEnabled: true,
+        currentLanguage: 'auto',
+        developerModeIsEnabled: false
+    }
+})
 
-export default model;
+export default model

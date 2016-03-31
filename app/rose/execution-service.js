@@ -17,39 +17,39 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
-function ExecutionService(){
-  let tasks = [];
+function ExecutionService () {
+    let tasks = []
 
-  function schedule(task) {
-    for (let t of tasks) {
-      if (t.name === task.name) {
-        console.error('Unable to add task. Task names must be unique.');
-        return;
-      }
+    function schedule (task) {
+        for (let t of tasks) {
+            if (t.name === task.name) {
+                console.error('Unable to add task. Task names must be unique.')
+                return
+            }
+        }
+
+        tasks.push(task)
     }
 
-    tasks.push(task);
-  }
+    async function runTasks () {
+        for (let task of tasks) {
+            if ((await task.nextRun()) < Date.now()) {
+                await task.run()
+            }
+        }
 
-  async function runTasks() {
-    for (let task of tasks) {
-      if ((await task.nextRun()) < Date.now()) {
-        await task.run();
-      }
+        setTimeout(runTasks, 500)
     }
 
-    setTimeout(runTasks, 500);
-  }
+    function startService () {
+        runTasks()
+    }
 
-  function startService() {
-    runTasks();
-  }
+    startService()
 
-  startService();
-
-  return Object.freeze({
-    schedule
-  });
+    return Object.freeze({
+        schedule
+    })
 }
 
-export default ExecutionService;
+export default ExecutionService

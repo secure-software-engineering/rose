@@ -19,67 +19,67 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 import $ from 'jquery'
 import cookie from 'jquery.cookie'
-import { sha1 as hash } from '../crypto';
-import ConfigsModel from 'rose/models/system-config';
+import { sha1 as hash } from '../crypto'
+import ConfigsModel from 'rose/models/system-config'
 
 $.fn.cookie = cookie
 
-let type = 'fb-login';
-let login = false;
-let configs = new ConfigsModel();
+let type = 'fb-login'
+let login = false
+let configs = new ConfigsModel()
 
-let getLatestStatus = function() {
-  return new Promise((resolve) => {
-    kango.invokeAsyncCallback('localforage.getItem', type + '-activity-records', (records) => {
-      records = records || [];
-      let latest = records.pop();
+let getLatestStatus = function () {
+    return new Promise((resolve) => {
+        kango.invokeAsyncCallback('localforage.getItem', type + '-activity-records', (records) => {
+            records = records || []
+            let latest = records.pop()
 
-      resolve((latest) ? latest.value : false);
-    });
-  });
-};
+            resolve((latest) ? latest.value : false)
+        })
+    })
+}
 
-let store = function() {
-  return new Promise((resolve) => {
-    kango.invokeAsyncCallback('localforage.getItem', type + '-activity-records', (records) => {
-      records = records || [];
-      records.push({
-        type: type,
-        date: Date.now(),
-        value: login
-      });
+let store = function () {
+    return new Promise((resolve) => {
+        kango.invokeAsyncCallback('localforage.getItem', type + '-activity-records', (records) => {
+            records = records || []
+            records.push({
+                type: type,
+                date: Date.now(),
+                value: login
+            })
 
-      kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', records, () => {
-        resolve();
-      });
-    });
-  });
-};
+            kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', records, () => {
+                resolve()
+            })
+        })
+    })
+}
 
-let checkStatus = async function() {
-  let id = $.cookie('c_user');
-  let loginTmp = (id) ? hash(id, configs.get('salt'), configs.get('hashLength')) : false;
+let checkStatus = async function () {
+    let id = $.cookie('c_user')
+    let loginTmp = (id) ? hash(id, configs.get('salt'), configs.get('hashLength')) : false
 
-  if (login !== loginTmp) {
-    login = loginTmp;
+    if (login !== loginTmp) {
+        login = loginTmp
 
-    await store();
-  }
+        await store()
+    }
 
-  setTimeout(checkStatus, 1000);
-};
+    setTimeout(checkStatus, 1000)
+}
 
-let start = async function() {
-  let networkDomain = 'facebook.com';
+let start = async function () {
+    let networkDomain = 'facebook.com'
 
-  if ((new RegExp('^https:\/\/[\w\.\-]*(' + networkDomain.replace(/\./g, '\\$&') + ')$')).test(window.location.origin)) {
-    login = await getLatestStatus();
-    configs.fetch({success: () => {
-      checkStatus();
-    }})
-  }
-};
+    if ((new RegExp('^https:\/\/[\w\.\-]*(' + networkDomain.replace(/\./g, '\\$&') + ')$')).test(window.location.origin)) {
+        login = await getLatestStatus()
+        configs.fetch({success: () => {
+            checkStatus()
+        }})
+    }
+}
 
 export default {
-  start
-};
+    start
+}

@@ -18,12 +18,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
-import Observer from '../models/observer';
+import Observer from '../models/observer'
 
 var collection = Backbone.Collection.extend({
-  comparator: 'priority',
-  model: Observer,
-  sync: Backbone.kangoforage.sync('Observers')
-});
+    comparator: 'priority',
+    model: Observer,
+    sync: Backbone.kangoforage.sync('Observers')
+})
 
-export default collection;
+export default collection

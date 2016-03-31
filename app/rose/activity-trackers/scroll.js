@@ -20,38 +20,38 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 
 import $ from 'jquery'
 
-let type = 'scroll';
-let lastPosition = 0;
-let scrollDistance = 0;
+let type = 'scroll'
+let lastPosition = 0
+let scrollDistance = 0
 
-let store = function() {
-  if (scrollDistance > 0) {
-    kango.invokeAsyncCallback('localforage.getItem', type + '-activity-records', (records) => {
-      records = records || [];
-      records.push({
-        type: type,
-        date: Date.now(),
-        value: scrollDistance
-      });
-      kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', records, () => {
-        scrollDistance = 0;
-      });
-    });
-  }
-};
+let store = function () {
+    if (scrollDistance > 0) {
+        kango.invokeAsyncCallback('localforage.getItem', type + '-activity-records', (records) => {
+            records = records || []
+            records.push({
+                type: type,
+                date: Date.now(),
+                value: scrollDistance
+            })
+            kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', records, () => {
+                scrollDistance = 0
+            })
+        })
+    }
+}
 
-let start = function() {
-  $(document).on('scroll', () => {
-    const currentPosition = $(document).scrollTop();
-    const difference = Math.abs(lastPosition - currentPosition);
+let start = function () {
+    $(document).on('scroll', () => {
+        const currentPosition = $(document).scrollTop()
+        const difference = Math.abs(lastPosition - currentPosition)
 
-    scrollDistance += difference;
-    lastPosition = currentPosition;
-  });
+        scrollDistance += difference
+        lastPosition = currentPosition
+    })
 
-  setInterval(store, 60000);
-};
+    setInterval(store, 60000)
+}
 
 export default {
-  start
-};
+    start
+}

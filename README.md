@@ -40,15 +40,7 @@ To build ROSE you need `node, npm, bower, ember-cli and gulp` installed. You can
     ```
     During install you may get asked a few questions. Just choose the defaults. If progress is halted just press return once.
 
-2. Build custom Semantic UI for facebook overlay:
-    ```
-    git checkout -- semantic.json
-    cd semamtic/
-    gulp build
-    cd ..
-    ```
-
-3. Build ROSE UI based on Ember (You can skip this step. A precompiled version is in the repository)
+2. Build ROSE UI based on Ember (You can skip this step. A precompiled version is in the repository)
     ```
     cd rui/
     npm install
@@ -57,7 +49,7 @@ To build ROSE you need `node, npm, bower, ember-cli and gulp` installed. You can
     cd ..
     ```
 
-4. Build packages for Chrome, Firefox and Safari with Kango
+3. Build packages for Chrome, Firefox and Safari with Kango
     ```
     gulp build
     ```
@@ -79,10 +71,10 @@ About
 
 ROSE is developed by:
 
-> Fraunhofer Institute for Secure Information Technology SIT  
-> Rheinstrasse 75  
-> 64295 Darmstadt  
-> Germany  
+> Fraunhofer Institute for Secure Information Technology SIT
+> Rheinstrasse 75
+> 64295 Darmstadt
+> Germany
 
 For questions about ROSE feel free to contact Andreas Poller, andreas.poller@sit.fraunhofer.de
 

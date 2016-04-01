@@ -22,10 +22,10 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 
 import $ from 'jquery'
 
-import log from 'rose/log'
-import ObserversCollection from 'rose/collections/observers'
-import InteractionsCollection from 'rose/collections/interactions'
-import ExtractorEngine from 'rose/extractor-engine'
+import log from './log'
+import ObserversCollection from './collections/observers'
+import InteractionsCollection from './collections/interactions'
+import ExtractorEngine from './extractor-engine'
 var interactions
 var extractorEngine
 

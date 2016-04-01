@@ -1,10 +1,10 @@
 import fetch from 'isomorphic-fetch'
 
-import ConfigModel from 'rose/models/system-config'
-import ObserverCollection from 'rose/collections/observers'
-import ExtractorCollection from 'rose/collections/extractors'
-import NetworkCollection from 'rose/collections/networks'
-import verify from 'rose/verify.js'
+import ConfigModel from './models/system-config'
+import ObserverCollection from './collections/observers'
+import ExtractorCollection from './collections/extractors'
+import NetworkCollection from './collections/networks'
+import verify from './verify.js'
 
 function removeFileName (str) {
     return str.substring(0, str.lastIndexOf('/'))

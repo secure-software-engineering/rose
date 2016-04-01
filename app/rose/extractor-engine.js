@@ -20,11 +20,11 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 
 import $ from 'jquery'
 
-import log from 'rose/log'
-import ExtractorCollection from 'rose/collections/extractors'
-import ExtractsCollection from 'rose/collections/extracts'
-import {sha1 as hash} from 'rose/crypto'
-import ConfigsModel from 'rose/models/system-config'
+import log from './log'
+import ExtractorCollection from './collections/extractors'
+import ExtractsCollection from './collections/extracts'
+import {sha1 as hash} from './crypto'
+import ConfigsModel from './models/system-config'
 
 class ExtractorEngine {
     constructor (extractorCollection) {

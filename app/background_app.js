@@ -21,17 +21,17 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 
 import localforage from 'localforage'
 
-import log from 'rose/log'
-import ExtractorEngine from 'rose/extractor-engine'
-import ExtractorCollection from 'rose/collections/extractors'
-import SystemConfig from 'rose/models/system-config'
-import Updater from 'rose/updater'
-import Doctor from 'rose/doctor'
+import log from './rose/log'
+import ExtractorEngine from './rose/extractor-engine'
+import ExtractorCollection from './rose/collections/extractors'
+import SystemConfig from './rose/models/system-config'
+import Updater from './rose/updater'
+import Doctor from './rose/doctor'
 
-import WindowTracker from 'rose/activity-trackers/window'
+import WindowTracker from './rose/activity-trackers/window'
 
-import ExecutionService from 'rose/execution-service'
-import Task from 'rose/task'
+import ExecutionService from './rose/execution-service'
+import Task from './rose/task'
 
 /* Background Script */
 (async function () {

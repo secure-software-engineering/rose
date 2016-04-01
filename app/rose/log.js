@@ -27,6 +27,7 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 * @param {String} module Name of the module
 * @param {String} message Message to be logged
 */
+
 export default function (module, message) {
     var time = (function () {
         var now = new Date()

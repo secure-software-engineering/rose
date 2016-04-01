@@ -19,15 +19,15 @@ You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import ObserverEngine from 'rose/observer-engine'
-import FacebookUI from 'rose/facebook-ui'
-import SystemConfigModel from 'rose/models/system-config'
-import NetworkCollection from 'rose/collections/networks'
+import ObserverEngine from './rose/observer-engine'
+import FacebookUI from './rose/facebook-ui'
+import SystemConfigModel from './rose/models/system-config'
+import NetworkCollection from './rose/collections/networks'
 
-import ClickTracker from 'rose/activity-trackers/click'
-import MouseMoveTracker from 'rose/activity-trackers/mousemove'
-import ScrollTracker from 'rose/activity-trackers/scroll'
-import FBLoginTracker from 'rose/activity-trackers/facebook-login';
+import ClickTracker from './rose/activity-trackers/click'
+import MouseMoveTracker from './rose/activity-trackers/mousemove'
+import ScrollTracker from './rose/activity-trackers/scroll'
+import FBLoginTracker from './rose/activity-trackers/facebook-login';
 
 /* Content Script */
 (function () {

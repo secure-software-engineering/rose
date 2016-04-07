@@ -90,12 +90,12 @@ export default {
     extraFeaturesLabel: "ROSE has additional features for field researchers and ROSE developers. These features are not visible unless activated here.",
     resetRose: "Reset ROSE configuration",
     resetRoseLabel: "If you reset the configuration of ROSE, the initialization wizard will appear again. You can choose to either use the default configuration or load a specific study configuration file.",
-    manualUpdate: "Manual configuration update",
+    manualUpdate: "Update tracking package",
     manualUpdateLabel: "Social media sites change their webpage design from time to time. ROSE requires an update to work properly when these changes occur. To trigger an update manually, press the “update” button.",
-    autoUpdate: "Automatic configuration update",
+    autoUpdate: "Automatic tracking package update",
     autoUpdateLabel: "For automatic updates to recent changes in social media sites, switch on the automatic update function.",
     autoUpdateInterval: "Automatic update interval",
-    autoUpdateIntervalLabel: "ROSE checks for automatic configuration updates in the specified time interval."
+    autoUpdateIntervalLabel: "ROSE checks automatically for tracking package updates in the specified time interval."
   },
 
   resetConfigModal: {

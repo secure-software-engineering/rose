@@ -21,6 +21,7 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 import $ from 'jquery'
 
 let type = 'scroll'
+let network = ''
 let lastPosition = 0
 let scrollDistance = 0
 
@@ -31,7 +32,8 @@ let store = function () {
             records.push({
                 type: type,
                 date: Date.now(),
-                value: scrollDistance
+                value: scrollDistance,
+                network: network
             })
             kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', records, () => {
                 scrollDistance = 0
@@ -40,7 +42,9 @@ let store = function () {
     }
 }
 
-let start = function () {
+let start = function (nw) {
+    network = nw
+
     $(document).on('scroll', () => {
         const currentPosition = $(document).scrollTop()
         const difference = Math.abs(lastPosition - currentPosition)

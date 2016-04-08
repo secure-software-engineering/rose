@@ -25,6 +25,7 @@ import ConfigsModel from '../models/system-config'
 $.fn.cookie = cookie
 
 let type = 'fb-login'
+let network = ''
 let login = false
 let configs = new ConfigsModel()
 
@@ -46,7 +47,8 @@ let store = function () {
             records.push({
                 type: type,
                 date: Date.now(),
-                value: login
+                value: login,
+                network: network
             })
 
             kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', records, () => {
@@ -69,7 +71,9 @@ let checkStatus = async function () {
     setTimeout(checkStatus, 1000)
 }
 
-let start = async function () {
+let start = async function (nw) {
+    network = nw
+
     let networkDomain = 'facebook.com'
 
     if ((new RegExp('^https:\/\/[\w\.\-]*(' + networkDomain.replace(/\./g, '\\$&') + ')$')).test(window.location.origin)) {

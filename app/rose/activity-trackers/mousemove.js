@@ -21,6 +21,7 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 import $ from 'jquery'
 
 let type = 'mousemove'
+let network = ''
 let mouseMoveDistance = 0
 let lastPosition = {
     x: undefined,
@@ -34,7 +35,8 @@ let store = function () {
             records.push({
                 type: type,
                 date: Date.now(),
-                value: Math.round(mouseMoveDistance)
+                value: Math.round(mouseMoveDistance),
+                network: network
             })
             kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', records, () => {
                 mouseMoveDistance = 0
@@ -43,7 +45,9 @@ let store = function () {
     }
 }
 
-let start = function () {
+let start = function (nw) {
+    network = nw
+
     $(document).on('mousemove', (e) => {
         const currentPosition = {
             x: e.pageX,

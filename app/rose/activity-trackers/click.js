@@ -22,6 +22,7 @@ import $ from 'jquery'
 
 let type = 'click'
 let clickCount = 0
+let network = ''
 
 let store = function () {
     if (clickCount > 0) {
@@ -30,7 +31,8 @@ let store = function () {
             records.push({
                 type: type,
                 date: Date.now(),
-                value: clickCount
+                value: clickCount,
+                network: network
             })
             kango.invokeAsyncCallback('localforage.setItem', type + '-activity-records', records, () => {
                 clickCount = 0
@@ -39,7 +41,9 @@ let store = function () {
     }
 }
 
-let start = function () {
+let start = function (nw) {
+    network = nw
+
     $(document).on('click', () => {
         clickCount++
     })

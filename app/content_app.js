@@ -46,15 +46,18 @@ import FBLoginTracker from './rose/activity-trackers/facebook-login';
                     */
                     ObserverEngine.register(networkName)
 
-                    if (networkName === 'facebook' && configs.get('roseCommentsIsEnabled')) {
-                        var facebookUI = new FacebookUI()
-                        facebookUI.redrawUI()
+                    if (networkName === 'facebook')
+                    {
+                        FBLoginTracker.start()
+                        if (configs.get('roseCommentsIsEnabled')) {
+                            var facebookUI = new FacebookUI()
+                            facebookUI.redrawUI()
+                        }
                     }
 
                     ClickTracker.start()
                     MouseMoveTracker.start()
                     ScrollTracker.start()
-                    FBLoginTracker.start()
 
                     return true
                 }

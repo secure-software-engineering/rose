@@ -33,7 +33,8 @@ import WindowTracker from './rose/activity-trackers/window'
 import ExecutionService from './rose/execution-service'
 import Task from './rose/task'
 
-/* Background Script */
+/* Initialization */
+
 (async function () {
     const installDate = await localforage.getItem('install-date')
     if (!installDate) {
@@ -55,23 +56,24 @@ import Task from './rose/task'
     startExtractorEngine()
 })()
 
-// //////////////
-// Scheduling //
-// //////////////
+/* Scheduling */
 
-const executionService = ExecutionService();
-(new SystemConfig()).fetch({
-    success: (config) => {
-        executionService.schedule(Task({
-            name: 'updater',
-            rate: config.get('updateInterval'),
-            job: Updater.update
-        }))
-    }
-})
+const executionService = ExecutionService()
 
 function startExtractorEngine () {
-    (new ExtractorCollection()).fetch({success: (extractorCol) => {
+    new SystemConfig().fetch({
+        success: (config) => {
+            if (config.get('repositoryURL') && config.get('autoUpdateIsEnabled')) {
+                executionService.schedule(Task({
+                    name: 'updater',
+                    rate: config.get('updateInterval'),
+                    job: Updater.update
+                }))
+            }
+        }
+    })
+
+    new ExtractorCollection().fetch({success: (extractorCol) => {
         if (extractorCol.length) {
             (new ExtractorEngine(extractorCol)).register(function (extractor, interval, job) {
                 executionService.schedule(Task({
@@ -91,9 +93,7 @@ executionService.schedule(Task({
     job: Doctor.repairMissingInteractions
 }))
 
-// /////////////
-// Messaging //
-// /////////////
+/* Messaging */
 
 kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, function (event) {
     kango.ui.optionsPage.open()

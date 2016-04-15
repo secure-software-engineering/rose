@@ -25,6 +25,7 @@ import log from './rose/log'
 import ExtractorEngine from './rose/extractor-engine'
 import ExtractorCollection from './rose/collections/extractors'
 import SystemConfig from './rose/models/system-config'
+import NetworkCollection from './rose/collections/networks'
 import Updater from './rose/updater'
 import Doctor from './rose/doctor'
 
@@ -52,13 +53,13 @@ import Task from './rose/task'
         await localforage.setItem('rose-version', '3.0.0')
     }
 
-    WindowTracker.start()
     startExtraction()
 })()
 
 /* Scheduling */
 
 const executionService = ExecutionService()
+let windowTrackers = []
 
 function startExtraction () {
     // Start AutoUpdate
@@ -82,6 +83,13 @@ function startExtraction () {
                 }))
             })
         }
+    }})
+    // Start WindowTracker
+    new NetworkCollection().fetch({success: (networks) => {
+        networks.forEach((network) => {
+            windowTrackers.push(new WindowTracker(network))
+            windowTrackers[windowTrackers.length-1].start()
+        })
     }})
 }
 

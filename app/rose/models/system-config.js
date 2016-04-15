@@ -22,7 +22,7 @@ let model = Backbone.Model.extend({
     sync: Backbone.kangoforage.sync('systemConfig'),
     id: '0',
     defaults: {
-        autoUpdateIsEnabled: true,
+        autoUpdateIsEnabled: false,
         timestamp: 0,
         fileName: 'base.json',
         roseCommentsIsEnabled: true,

@@ -53,26 +53,25 @@ import Task from './rose/task'
     }
 
     WindowTracker.start()
-    startExtractorEngine()
+    startExtraction()
 })()
 
 /* Scheduling */
 
 const executionService = ExecutionService()
 
-function startExtractorEngine () {
-    new SystemConfig().fetch({
-        success: (config) => {
-            if (config.get('repositoryURL') && config.get('autoUpdateIsEnabled')) {
-                executionService.schedule(Task({
-                    name: 'updater',
-                    rate: config.get('updateInterval'),
-                    job: Updater.update
-                }))
-            }
+function startExtraction () {
+    // Start AutoUpdate
+    new SystemConfig().fetch({ success: (config) => {
+        if (config.get('repositoryURL') && config.get('autoUpdateIsEnabled')) {
+            executionService.schedule(Task({
+                name: 'updater',
+                rate: config.get('updateInterval'),
+                job: Updater.update
+            }))
         }
-    })
-
+    }})
+    // Start extractor engine
     new ExtractorCollection().fetch({success: (extractorCol) => {
         if (extractorCol.length) {
             (new ExtractorEngine(extractorCol)).register(function (extractor, interval, job) {
@@ -110,7 +109,7 @@ kango.addMessageListener('update-start', () => {
 
 kango.addMessageListener('LoadNetworks', (event) => {
     Updater.load(event.data).then(() => {
-        startExtractorEngine()
+        startExtraction()
     })
 })
 

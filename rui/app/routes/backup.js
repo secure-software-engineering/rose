@@ -24,6 +24,7 @@ export default Ember.Route.extend({
       getItem('window-activity-records'),
       getItem('scroll-activity-records'),
       getItem('fb-login-activity-records'),
+      getItem('engage-activity-records'),
       getItem('install-date'),
       getItem('rose-data-version')
     ];

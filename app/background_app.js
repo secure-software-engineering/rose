@@ -87,8 +87,9 @@ function startExtraction () {
     // Start WindowTracker
     new NetworkCollection().fetch({success: (networks) => {
         networks.forEach((network) => {
-            windowTrackers.push(new WindowTracker(network))
-            windowTrackers[windowTrackers.length-1].start()
+            let windowTracker = new WindowTracker(network)
+            windowTrackers.push(windowTracker)
+            windowTracker.start()
         })
     }})
 }

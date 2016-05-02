@@ -13,7 +13,7 @@
 
     {{#ui-dropdown  class="selection"
                     selected=settings.user.currentLanguage
-                    onChange=(action 'changeI18nLanguage')}}
+                    onChange=(action "changeI18nLanguage")}}
       <div class="default text">{{t "settings.language"}}</div>
       <input type="hidden" name="interval" value={{settings.user.currentLanguage}} />
       <i class="dropdown icon"></i>
@@ -73,7 +73,7 @@
     {{ui-checkbox class="toggle"
                   checked=settings.system.autoUpdateIsEnabled
                   label=(boolean-to-yesno settings.system.autoUpdateIsEnabled)
-                  onChange=(action "saveSettings")}}
+                  onChange=(action "changeAutoUpdate")}}
   </div>
 
   {{#if settings.system.autoUpdateIsEnabled}}
@@ -83,7 +83,7 @@
 
     {{#ui-dropdown  class="selection"
                     selected=settings.system.updateInterval
-                    onChange=(action 'saveSettings')}}
+                    onChange=(action "changeAutoUpdate")}}
       <div class="default text">Select an interval</div>
       <input type="hidden" name="interval" value={{settings.system.updateInterval}} />
       <i class="dropdown icon"></i>

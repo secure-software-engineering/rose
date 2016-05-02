@@ -1,0 +1,17 @@
+{
+    "extends": "standard",
+    "parser": "babel-eslint",
+    "rules": {
+        "arrow-parens": 0,
+        "no-console": 0,
+        "indent": ["error", 2, {"SwitchCase": 1}],
+        "babel/arrow-parens": 2
+    },
+    "globals": {
+        "Backbone": true,
+        "kango": true
+    },
+    "plugins": [
+        "babel"
+    ]
+}

@@ -112,6 +112,11 @@ kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, fu
     kango.ui.optionsPage.open()
 })
 
+kango.addMessageListener('reschedule-auto-update', () => {
+    executionService.cancel('updater')
+    scheduleAutoUpdate()
+})
+
 kango.addMessageListener('update-start', () => {
     Updater.update()
     .then(async (statistics) => {

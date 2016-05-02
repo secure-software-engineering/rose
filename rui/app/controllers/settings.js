@@ -35,6 +35,10 @@ export default Ember.Controller.extend({
       })
     },
 
+    changeAutoUpdate () {
+      this.get('settings.system').save().then(() => kango.dispatchMessage('reschedule-auto-update'))
+    },
+
     openModal: function (name) {
       Ember.$('.ui.' + name + '.modal').modal('show')
     },

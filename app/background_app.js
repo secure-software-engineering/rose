@@ -53,7 +53,9 @@ import Task from './rose/task'
         await localforage.setItem('rose-version', '3.0.0')
     }
 
-    startExtraction()
+    scheduleExtractors()
+    scheduleAutoUpdate()
+    scheduleActivityTrackers()
 })()
 
 /* Scheduling */
@@ -61,8 +63,7 @@ import Task from './rose/task'
 const executionService = ExecutionService()
 let windowTrackers = []
 
-function startExtraction () {
-    // Start AutoUpdate
+function scheduleAutoUpdate () {
     new SystemConfig().fetch({ success: (config) => {
         if (config.get('repositoryURL') && config.get('autoUpdateIsEnabled')) {
             executionService.schedule(Task({
@@ -72,7 +73,9 @@ function startExtraction () {
             }))
         }
     }})
-    // Start extractor engine
+}
+
+function scheduleExtractors () {
     new ExtractorCollection().fetch({success: (extractorCol) => {
         if (extractorCol.length) {
             (new ExtractorEngine(extractorCol)).register(function (extractor, interval, job) {
@@ -84,7 +87,9 @@ function startExtraction () {
             })
         }
     }})
-    // Start WindowTracker
+}
+
+function scheduleActivityTrackers () {
     new NetworkCollection().fetch({success: (networks) => {
         networks.forEach((network) => {
             let windowTracker = new WindowTracker(network)
@@ -109,8 +114,11 @@ kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, fu
 
 kango.addMessageListener('update-start', () => {
     Updater.update()
-    .then((statistics) => {
+    .then(async (statistics) => {
         log('Updater', JSON.stringify(statistics))
+        // FIXME: should not tamper in localstorage manage by execution service from here
+        await localforage.setItem('updater-last-run', JSON.stringify(Date.now()))
+        scheduleExtractors() // reschedule Extractors, for eventual interval changes
     })
     .then(() => kango.dispatchMessage('update-successful'))
     .catch(() => kango.dispatchMessage('update-successful'))
@@ -118,7 +126,9 @@ kango.addMessageListener('update-start', () => {
 
 kango.addMessageListener('LoadNetworks', (event) => {
     Updater.load(event.data).then(() => {
-        startExtraction()
+        scheduleExtractors()
+        scheduleAutoUpdate()
+        scheduleActivityTrackers()
     })
 })
 

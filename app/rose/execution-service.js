@@ -22,14 +22,26 @@ function ExecutionService () {
     let tasks = []
 
     function schedule (task) {
-        for (let t of tasks) {
-            if (t.name === task.name) {
-                console.error('Unable to add task. Task names must be unique.')
-                return
+        for (var i = tasks.length - 1; i >= 0; i--) {
+            if (tasks[i].name === task.name) {
+                console.info('Task exists. Reschedule.')
+                tasks.splice(i, 1)
+                break
             }
         }
 
         tasks.push(task)
+    }
+
+    function cancel (taskname) {
+        for (var i = tasks.length - 1; i >= 0; i--) {
+            if (tasks[i].name === taskname) {
+                tasks.splice(i, 1)
+                return
+            }
+        }
+
+        console.warn('Failed to cancel Task. No such Task as ' + taskname)
     }
 
     async function runTasks () {
@@ -49,7 +61,8 @@ function ExecutionService () {
     startService()
 
     return Object.freeze({
-        schedule
+        schedule,
+        cancel
     })
 }
 

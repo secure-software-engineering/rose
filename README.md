@@ -11,7 +11,7 @@ ROSE is a browser extension for researchers to capture in situ data on how users
 
 Features
 ----
-* Currently supported social network sites: facebook.com
+* Currently supported social network sites: facebook.com, (experimental: reddit.com)
 * Capturing user interactions such as likes, unlikes, comments, sending chat messages or sharing content.
 * Capturing addtional information about the content users interacting with (e.g. posts, sharer, etc.)
 * Capturing user activity by mouse move distance, scroll distance, OSN tab focus time, click amount and login status

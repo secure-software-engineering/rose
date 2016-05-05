@@ -56,7 +56,7 @@ function updateObserver (observer) {
     })
 }
 
-export async function update () {
+async function update () {
     const config = new ConfigModel()
 
     return new Promise((resolve) => {
@@ -160,9 +160,9 @@ async function validate (data, sig, key, fp) {
 
 let load = (networks) => {
     return new Promise((resolve) => {
-        (new NetworkCollection()).fetch({success: (networkCol) => {
-            (new ObserverCollection()).fetch({success: (observerCol) => {
-                (new ExtractorCollection()).fetch({success: (extractorCol) => {
+        new NetworkCollection().fetch({success: (networkCol) => {
+            new ObserverCollection().fetch({success: (observerCol) => {
+                new ExtractorCollection().fetch({success: (extractorCol) => {
                     for (var i = 0; i < networks.length; i++) {
                         if (networks[i].observers !== undefined) {
                             for (var j = 0; j < networks[i].observers.length; j++) {

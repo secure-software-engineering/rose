@@ -52,6 +52,12 @@ $.fn.nag = nag
 $.fn.rating = rating
 $.fn.sidebar = sidebar
 
+$.extend($.easing, {
+    easeOutQuad: function (x, t, b, c, d) {
+        return -c * (t /= d) * (t - 2) + b
+    }
+})
+
 Handlebars.registerHelper('I18n', function (key) {
     var translation = i18n.t(key)
     return new Handlebars.SafeString(translation)

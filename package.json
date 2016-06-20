@@ -40,7 +40,7 @@
     "jquery.cookie": "^1.4.1",
     "jssha": "^2.0.1",
     "kbpgp": "^2.0.46",
-    "localforage": "^1.4.0",
+    "localforage": "~1.2.0",
     "lodash": "^4.5.1",
     "semantic-ui-button": "^2.1.7",
     "semantic-ui-checkbox": "^2.1.7",

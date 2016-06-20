@@ -39,7 +39,7 @@ import Task from './rose/task'
 (async function () {
     const installDate = await localforage.getItem('install-date')
     if (!installDate) {
-        await localforage.setItem('install-date', new Date().toJSON())
+        await localforage.setItem('install-date', Date.now())
         kango.ui.optionsPage.open()
     }
 
@@ -139,7 +139,7 @@ kango.addMessageListener('LoadNetworks', (event) => {
 
 kango.addMessageListener('application-log', async (event) => {
     const applicationLog = await localforage.getItem('application-log') || []
-    const log = { date: new Date().getTime() }
+    const log = { date: Date.now() }
 
     applicationLog.push(Object.assign(log, event.data))
     await localforage.setItem('application-log', applicationLog)

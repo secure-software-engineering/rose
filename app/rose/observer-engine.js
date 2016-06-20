@@ -38,7 +38,7 @@ function storeInteraction (observer, extracts = {}) {
     var data = {}
 
     // Time
-    data.createdAt = (new Date()).toJSON()
+    data.createdAt = Date.now()
 
     // Save observer name and version
     data.origin = {

@@ -19,7 +19,7 @@ export default Ember.Component.extend({
       this.set('isEditable', true);
     },
     save: function() {
-      this.set('model.updatedAt', (new Date()).toJSON());
+      this.set('model.updatedAt', Date.now());
       this.get('model').save();
       this.set('isEditable', false);
     },

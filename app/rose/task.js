@@ -32,7 +32,7 @@ function Task (spec) {
     }
 
     async function setLastRun () {
-        return (await localforage.setItem(name + '-last-run', JSON.stringify(Date.now())))
+        return (await localforage.setItem(name + '-last-run', Date.now()))
     }
 
     async function nextRun () {

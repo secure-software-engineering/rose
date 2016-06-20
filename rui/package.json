@@ -45,7 +45,7 @@
     "ember-highcharts": "0.4.0",
     "ember-i18n": "4.2.0",
     "ember-i18n-inject": "0.0.2",
-    "ember-localforage-adapter": "2.2.1",
+    "ember-localforage-adapter": "2.1.x",
     "ember-moment": "4.1.0",
     "highcharts": "4.2.3",
     "liquid-fire": "^0.23.0",

@@ -214,7 +214,7 @@ export default (function () {
                     }
                 } else {
                     let comment = {
-                        createdAt: (new Date()).toJSON(),
+                        createdAt: Date.now(),
                         type: 'post',
                         network: 'facebook'
                     }
@@ -243,7 +243,7 @@ export default (function () {
                 comment.rating = $('.ui.rating').rating('get rating') || []
             }
             comment.checkbox = $('.ui.checkbox').checkbox('is checked')
-            comment.updatedAt = (new Date()).toJSON()
+            comment.updatedAt = Date.now()
             this._activeComment.set(comment)
             this._activeComment.save()
             $('.ui.sidebar').sidebar('hide')

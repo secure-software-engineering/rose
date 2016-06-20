@@ -1,5 +1,6 @@
 import Ember from 'ember'
 import DS from 'ember-data'
+import _compact from 'npm:lodash/compact'
 import _concat from 'npm:lodash/concat'
 import _filter from 'npm:lodash/filter'
 import _map from 'npm:lodash/map'
@@ -61,7 +62,7 @@ export default DS.Adapter.extend({
         return this.queue.add(() => {
             return setItem(key, data)
                 .then(() => getItem(collectionName))
-                .then(collection => _concat(collection, key))
+                .then(collection => _compact(_concat(collection, key)))
                 .then(collection => setItem(collectionName, collection))
         })
     },

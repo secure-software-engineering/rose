@@ -129,9 +129,9 @@ async function update () {
                     }
                 }
 
-                config.set('lastChecked', new Date().getTime()).save()
+                config.set('lastChecked', Date.now()).save()
                 if (updated) {
-                    config.set('lastUpdated', new Date().getTime()).save()
+                    config.set('lastUpdated', Date.now()).save()
                 }
 
                 resolve(stats)

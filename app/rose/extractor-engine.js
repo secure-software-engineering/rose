@@ -44,7 +44,7 @@ class ExtractorEngine {
         var data = {}
 
         // Time
-        data.createdAt = (new Date()).toJSON()
+        data.createdAt = Date.now()
 
         // Save extractor name and version
         data.origin = {

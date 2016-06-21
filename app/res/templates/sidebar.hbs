@@ -1,5 +1,11 @@
 <div class="ui wide vertical sidebar menu left">
     <div class="ui form item">
+        <div class="field">
+            <label>{{I18n 'sidebar.infoText'}}</label>
+            <textarea></textarea>
+        </div>
+    </div>
+    <div class="ui form item">
       <div class="grouped fields">
         <label for="context">{{I18n 'sidebar.questionContext'}}</label>
         <div class="field">
@@ -25,59 +31,22 @@
     <div class="ui item">
         <div class="ui list">
             <div class="item">
-                <div class="content">{{I18n 'sidebar.infoText'}}</div>
-            </div>
-            <div class="item">
                 <div class="content">
                     <div class="description">
-                        {{I18n 'sidebar.ratingConcentration'}}
+                        {{I18n 'sidebar.ratingEntertain'}}
                     </div>
-                    <div class="ui star rating" data-max-rating="9"></div>
+                    <div class="ui star rating" data-max-rating="5"></div>
                 </div>
             </div>
             <div class="item">
                 <div class="content">
                     <div class="description">
-                        {{I18n 'sidebar.ratingInteresting'}}
+                        {{I18n 'sidebar.ratingAppropriate'}}
                     </div>
-                    <div class="ui star rating" data-max-rating="9"></div>
-                </div>
-            </div>
-            <div class="item">
-                <div class="content">
-                    <div class="description">
-                        {{I18n 'sidebar.ratingEnjoy'}}
-                    </div>
-                    <div class="ui star rating" data-max-rating="9"></div>
+                    <div class="ui star rating" data-max-rating="5"></div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="ui form item">
-      <div class="inline fields">
-        <label for="known">{{I18n 'sidebar.questionKnown'}}</label>
-        <div class="field">
-          <div class="ui radio checkbox">
-            <input type="radio" name="known"  tabindex="0" class="hidden">
-            <label>Yes</label>
-          </div>
-        </div>
-        <div class="field">
-          <div class="ui radio checkbox">
-            <input type="radio" name="known" tabindex="0" class="hidden">
-            <label>No</label>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="ui form item">
-        <div class="field">
-            <label>{{I18n 'sidebar.questionNotice'}}</label>
-            <textarea></textarea>
-        </div>
-    </div>
-    <div class="ui form item">
-        <p>{{I18n 'sidebar.remark'}}</p>
     </div>
     <div class="item">
         <div class="ui positive fluid save button">{{I18n 'done'}}</div>

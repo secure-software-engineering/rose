@@ -1,23 +1,19 @@
 import Ember from 'ember';
 
-let getItem = (key) => {
-  return new Ember.RSVP.Promise((resolve) => {
-    kango.invokeAsyncCallback('localforage.getItem', key, (data) => {
-      resolve(data);
-    });
-  });
-};
-
 export default Ember.Route.extend({
   model () {
-    let promises = [
-      getItem('click-activity-records'),
-      getItem('mousemove-activity-records'),
-      getItem('scroll-activity-records'),
-      getItem('window-activity-records'),
-      getItem('fb-login-activity-records')
-    ];
+      return Ember.RSVP.hash({
+        comments: this.store.findAll('comment'),
+        interactions: this.store.findAll('interaction'),
+        extracts: this.store.findAll('extract')
+      })
+  },
 
-    return Ember.RSVP.all(promises);
+  setupController(controller, model) {
+    this._super(controller, model)
+
+    return this.store.findAll('network').then((networks) => {
+      controller.set('networks', networks);
+    })
   }
 });

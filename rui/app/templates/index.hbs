@@ -1,5 +1,23 @@
-{{high-charts mode="StockChart" content=clickChartData chartOptions=clickChartOptions}}
-{{high-charts mode="StockChart" content=mouseMoveChartData chartOptions=mouseMoveChartOptions}}
-{{high-charts mode="StockChart" content=scrollChartData chartOptions=scrollChartOptions}}
-{{high-charts mode="StockChart" content=windowChartData chartOptions=windowChartOptions}}
-{{high-charts mode="StockChart" content=loginChartData chartOptions=loginChartOptions}}
+<h1 class="ui dividing header">
+    <i class="dashboard icon"></i>
+    <div class="content">
+        {{t "index.title"}}
+        <div class="sub header">{{t "index.subtitle"}}</div>
+    </div>
+</h1>
+
+{{#each networks as |network|}}
+<div class="ui four statistics" style="margin-top:2em; margin-bottom: -1em;">
+    <div class="statistic">
+        <div class="value">
+            <i class="{{network.name}} icon"></i>
+        </div>
+        <div class="label">
+            {{network.descriptiveName}}
+        </div>
+    </div>
+    {{statistic-item label="Comments" network=network.name data=model.comments}}
+    {{statistic-item label="Interactions" network=network.name data=model.interactions}}
+    {{statistic-item label="Extracts" network=network.name data=model.extracts}}
+</div>
+{{/each}}

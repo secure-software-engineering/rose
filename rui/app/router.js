@@ -18,4 +18,5 @@ export default Router.map(function() {
   this.route('debug-log', {});
   this.route('observers');
   this.route('observer', { path: '/observer/:observer_id' });
+  this.route('data-converter');
 });

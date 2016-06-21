@@ -47,10 +47,12 @@
     "ember-i18n-inject": "0.0.2",
     "ember-localforage-adapter": "2.1.x",
     "ember-moment": "4.1.0",
+    "flat": "^2.0.0",
     "highcharts": "4.2.3",
     "liquid-fire": "^0.23.0",
     "lodash": "^4.5.1",
     "normalize-url": "^1.4.0",
+    "papaparse": "^4.1.2",
     "promise-queue": "^2.2.3",
     "semantic-ui-ember": "1.0.x",
     "uuid": "^2.0.1"

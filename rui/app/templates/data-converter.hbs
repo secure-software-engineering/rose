@@ -1,0 +1,45 @@
+<h2 class="ui dividing header">
+  <i class="file excel outline icon"></i>
+  <div class="content">
+    {{t "dataConverter.title"}}
+    <div class="sub header">{{t "dataConverter.subtitle"}}</div>
+  </div>
+</h2>
+
+<div class="ui form">
+    <div class="field">
+        {{#file-picker  fileLoaded="fileLoaded"
+                        preview=false
+                        dropzone=false
+                        readAs="readAsText"
+                        class="ui primary button"}}
+            Select file...
+        {{/file-picker}}
+    </div>
+
+    <div class="field">
+        <label>Table</label>
+        {{#ui-dropdown class="selection" onChange=(action 'updateSelected')}}
+        <div class="default text">Select an item</div>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+            {{#each tables as |table|}}
+            <div class="item" data-id="{{table}}">
+                {{table}}
+            </div>
+            {{/each}}
+        </div>
+        {{/ui-dropdown}}
+    </div>
+
+    <div class="field">
+        <label>CSV</label>
+        {{textarea value=csvtext}}
+    </div>
+
+    <div class="field">
+        <button class="ui primary button" {{action "download"}}>
+            Download as CSV
+        </button>
+    </div>
+</div>

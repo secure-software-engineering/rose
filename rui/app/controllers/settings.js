@@ -44,7 +44,8 @@ export default Ember.Controller.extend({
     },
 
     approveModal () {
-      return Ember.RSVP.all([
+      kango.dispatchMessage('reset-configuration')
+      Ember.RSVP.all([
         this.store.findAll('extractor').then((records) => records.invoke('destroyRecord')),
         this.store.findAll('network').then((records) => records.invoke('destroyRecord')),
         this.store.findAll('observer').then((records) => records.invoke('destroyRecord')),
@@ -53,7 +54,7 @@ export default Ember.Controller.extend({
       ])
       .then(() => this.get('settings').setup())
       .then(() => this.transitionToRoute('index'))
-      .catch(err => console.log(err))
+      .catch((err) => console.log(err))
     }
   }
 })

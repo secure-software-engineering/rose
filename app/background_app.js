@@ -62,6 +62,7 @@ import Task from './rose/task'
 
 const executionService = ExecutionService()
 let windowTrackers = []
+let extractorEngine
 
 function scheduleAutoUpdate () {
     new SystemConfig().fetch({ success: (config) => {
@@ -78,7 +79,8 @@ function scheduleAutoUpdate () {
 function scheduleExtractors () {
     new ExtractorCollection().fetch({success: (extractorCol) => {
         if (extractorCol.length) {
-            (new ExtractorEngine(extractorCol)).register(function (extractor, interval, job) {
+            extractorEngine = new ExtractorEngine(extractorCol)
+            extractorEngine.register(function (extractor, interval, job) {
                 executionService.schedule(Task({
                     name: extractor,
                     rate: interval,
@@ -144,3 +146,11 @@ kango.addMessageListener('application-log', async (event) => {
     applicationLog.push(Object.assign(log, event.data))
     await localforage.setItem('application-log', applicationLog)
 })
+
+kango.addMessageListener('reset-configuration', () => {
+    executionService.cancel('updater')
+    while (extractorEngine.scheduled.length) {
+        executionService.cancel(extractorEngine.scheduled.pop())
+    }
+})
+

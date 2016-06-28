@@ -38,6 +38,7 @@ class ExtractorEngine {
         this.extracts.fetch()
         this.configs = new ConfigsModel()
         this.configs.fetch()
+        this.scheduled = []
     }
 
     storeExtract (extractor, extracts = {}) {
@@ -134,6 +135,7 @@ class ExtractorEngine {
         let periodicExtractors = this.extractors.where({type: 'url'})
 
         for (var i = 0; i < periodicExtractors.length; i++) {
+            this.scheduled.push(periodicExtractors[i].get('name'))
             scheduler(periodicExtractors[i].get('name'), periodicExtractors[i].get('interval'), this.handleURL.bind(this, periodicExtractors[i]))
         }
     }

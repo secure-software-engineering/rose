@@ -6,6 +6,7 @@ export default Ember.Component.extend({
     count: Ember.computed('data', function () {
         const data = this.get('data')
         const filtered = data.filterBy('network', this.get('network'))
-        return filtered.length
+        const filteredOrigin = data.filterBy('origin.network', this.get('network'))
+        return filtered.length || filteredOrigin.length
     })
 });

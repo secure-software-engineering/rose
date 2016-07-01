@@ -182,14 +182,11 @@ export default (function () {
             // Check if comment for this content exists and set form
             this._activeComment = undefined
             this._comments.fetch({success: function onCommentsFetched () {
-                // console.log(extractorResult)
                 this._activeComment = this._comments.findWhere({contentId: extractorResult.contentId})
                 if (this._activeComment !== undefined) {
                     var activeComment = this._activeComment.toJSON()
                     if (activeComment.text !== undefined) {
-                        _forEach(activeComment.text, (text, i) => {
-                            $('.sidebar textarea:eq(' + i + ')').val(text)
-                        })
+                        $('.sidebar textarea').val(activeComment.text)
                     } else {
                         $('.sidebar textarea').val('')
                     }
@@ -235,9 +232,9 @@ export default (function () {
         // Save a comment
         $('body').on('click', '.sidebar .save.button', function () {
             var comment = {}
-            comment.text = []
+            comment.text = ""
             $('.sidebar textarea').each(function getVals (i) {
-                comment.text[i] = $(this).val()
+                comment.text += $(this).val()
             })
             if (this._configs.get('roseCommentsRatingIsEnabled')) {
                 comment.rating = $('.ui.rating').rating('get rating') || []

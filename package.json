@@ -4,7 +4,7 @@
   "description": "Research tool for field studies in online social networks.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/iamolivinius/gulpicRose"
+    "url": "https://github.com/secure-software-engineering/rose"
   },
   "main": "Gulpfile.js",
   "devDependencies": {
@@ -71,5 +71,5 @@
       "email": "oliverh855@gmail.com"
     }
   ],
-  "license": "ISC"
+  "license": "GPL-3.0"
 }

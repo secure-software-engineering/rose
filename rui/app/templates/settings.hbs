@@ -49,7 +49,14 @@
   <div class="field">
     <label>{{t "settings.manualUpdate"}}</label>
     <p>{{t "settings.manualUpdateLabel"}}</p>
-    <button class="ui {{if updateInProgress "loading"}} button" {{action "manualUpdate"}}>{{t "action.update"}}</button>
+    {{#if navigator.onLine}}
+      <button class="ui {{if updateInProgress "loading"}} button" {{action "manualUpdate"}}>{{t "action.update"}}</button>
+    {{else}}
+    <div class="ui disabled labeled button" tabindex="0">
+      <div class="ui button">{{t "action.update"}}</div>
+      <a class="ui basic label">{{t "noInternetConnection"}}</a>
+    </div>
+    {{/if}}
     <p></p>
     <p>
       {{#if settings.system.lastChecked}}
@@ -61,6 +68,7 @@
     <p>
       {{#if settings.system.lastUpdated}}
         Last Update: {{moment-format settings.system.lastUpdated}}
+        {{navigator.onLine}}
       {{else}}
         Last Update: never
       {{/if}}

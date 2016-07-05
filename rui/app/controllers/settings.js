@@ -2,6 +2,7 @@ import Ember from 'ember'
 import languages from '../locales/languages'
 
 export default Ember.Controller.extend({
+  navigator: Ember.inject.service(),
   updateInProgress: false,
   availableLanguages: languages,
   updateIntervals: [

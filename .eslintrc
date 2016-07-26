@@ -5,7 +5,9 @@
         "arrow-parens": 0,
         "no-console": 0,
         "indent": [2, 4, {"SwitchCase": 1}],
-        "babel/arrow-parens": 2
+        "babel/arrow-parens": 2,
+        "generator-star-spacing": 0,
+        "babel/generator-star-spacing": 1
     },
     "globals": {
         "Backbone": true,

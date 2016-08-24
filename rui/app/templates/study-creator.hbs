@@ -91,7 +91,7 @@
     {{ui-checkbox checked=model.secureUpdateIsEnabled
                   class="toggle"
                   label=(boolean-to-yesno model.secureUpdateIsEnabled)
-                  onChange=(action "saveSettings")}}
+                  onChange=(action "toggleEnableSecureUpdate")}}
   </div>
 
   <h3 class="ui dividing header">{{t "studyCreator.configurationHeader"}}</h3>
@@ -204,10 +204,10 @@
     <label>{{t "studyCreator.forceSecureUpdate"}}</label>
     <p>{{t "studyCreator.forceSecureUpdateDesc"}}</p>
 
-    {{ui-checkbox checked=model.secureUpdateIsEnabled
+    {{ui-checkbox checked=model.forceSecureUpdate
                   class="toggle"
-                  label=(boolean-to-yesno model.secureUpdateIsEnabled)
-                  onChange=(action "saveSettings")}}
+                  label=(boolean-to-yesno model.forceSecureUpdate)
+                  onChange=(action "toggleForceSecureUpdate")}}
   </div>
 
   <div class="field">

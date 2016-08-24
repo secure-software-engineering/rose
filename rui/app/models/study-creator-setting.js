@@ -8,6 +8,7 @@ export default DS.Model.extend({
   repositoryURL: DS.attr('string'),
   autoUpdateIsEnabled: DS.attr('boolean'),
   secureUpdateIsEnabled: DS.attr('boolean'),
+  forceSecureUpdate: DS.attr('boolean'),
   fileName: DS.attr('string', { defaultValue: 'rose-study-configuration.txt' }),
   networks: DS.hasMany('network', { async: true }),
   fingerprint: DS.attr('string'),

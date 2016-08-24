@@ -56,7 +56,7 @@ function updateObserver (observer) {
     })
 }
 
-async function update () {
+function update () {
     const config = new ConfigModel()
 
     return new Promise((resolve) => {

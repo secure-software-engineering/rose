@@ -1,6 +1,6 @@
 {
-  "name": "rose-demo-repository",
-  "url": "https://secure-software-engineering.github.io/rose/example/",
+  "name": "rose-testing-repository",
+  "url": "https://secure-software-engineering.github.io/rose/testing/",
   "timestamp": 1453224819853,
   "networks": [{
     "id": 1,

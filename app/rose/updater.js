@@ -177,9 +177,7 @@ let load = (networks) => {
 
                         delete networks[i].observers
                         delete networks[i].extractors
-                        networkCol.create(networks[i], {success: () => {
-                            resolve()
-                        }})
+                        networkCol.create(networks[i], {success: resolve})
                     }
                 }})
             }})

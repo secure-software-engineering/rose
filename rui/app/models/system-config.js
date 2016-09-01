@@ -12,7 +12,6 @@ export default DS.Model.extend({
   updateInterval: DS.attr('number'),
   fingerprint: DS.attr('string'),
   fileName: DS.attr('string'),
-  timestamp: DS.attr('number'),
   lastChecked: DS.attr('number'),
   lastUpdated: DS.attr('number')
 });

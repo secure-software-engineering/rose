@@ -1,1 +1,20 @@
-body{padding-top:15px}.ui.comments .comment.diary-entry .metadata{margin-left:0}.ui.comments .comment pre{font-family:inherit;margin:0}.hidden{display:none}[data-ember-action]:not(:disabled){cursor:pointer}
+body {
+  padding-top: 15px;
+}
+
+.ui.comments .comment.diary-entry .metadata {
+  margin-left: 0;
+}
+
+.ui.comments .comment pre {
+  font-family: inherit;
+  margin: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+[data-ember-action]:not(:disabled) {
+  cursor: pointer;
+}

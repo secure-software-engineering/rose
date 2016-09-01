@@ -26,8 +26,7 @@
                 "container": "#relationship_bar",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "chat",
@@ -51,8 +50,7 @@
                 "container": ".fbNubFlyoutInner",
                 "extractor": "chat-user-link"
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "chat-reply",
@@ -66,8 +64,7 @@
                 "container": "#pagelet_web_messenger div[role=\"main\"]",
                 "extractor": "chat-user-link"
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "comment-content",
@@ -96,8 +93,7 @@
                 "container": ".userContentWrapper",
                 "extractor": "status-update"
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "comment-reply",
@@ -111,8 +107,7 @@
                 "container": ".userContentWrapper",
                 "extractor": "status-update"
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "create-event",
@@ -126,8 +121,7 @@
                 "container": "form[action*=\"plans/create\"]",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "decline-event",
@@ -146,8 +140,7 @@
                 "container": "#relationship_bar",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "delete-status-update",
@@ -166,8 +159,7 @@
                 "container": "form",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "event-invite",
@@ -181,8 +173,7 @@
                 "container": "form[action*=\"invite.php\"]",
                 "extractor": null
             }
-        ],
-        "isEnabled": false
+        ]
     },
     {
         "name": "friend-request-add",
@@ -211,8 +202,7 @@
                 "container": ".clearfix",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "friend-request-confirm",
@@ -231,8 +221,7 @@
                 "container": "#globalContainer",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "friend-request-reject",
@@ -251,8 +240,7 @@
                 "container": "#globalContainer",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "join-event",
@@ -281,8 +269,7 @@
                 "container": "#relationship_bar",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "like-comment",
@@ -296,8 +283,7 @@
                 "container": ".userContentWrapper",
                 "extractor": "status-update"
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "like-content",
@@ -316,8 +302,7 @@
                 "container": ".uiLayer",
                 "extractor": "status-update"
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "like-page",
@@ -351,8 +336,7 @@
                 "container": "a",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "like-photo",
@@ -376,8 +360,7 @@
                 "container": ".fbPhotoSnowliftPopup",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "share-status",
@@ -401,8 +384,7 @@
                 "container": "[data-reactroot]",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "share-status-chat",
@@ -416,8 +398,7 @@
                 "container": "[data-reactroot]",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "unfriend",
@@ -436,8 +417,7 @@
                 "container": "will never be reached",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "unlike-comment",
@@ -451,8 +431,7 @@
                 "container": ".userContentWrapper",
                 "extractor": "status-update"
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "unlike-content",
@@ -466,8 +445,7 @@
                 "container": ".userContentWrapper",
                 "extractor": "status-update"
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "unlike-page",
@@ -486,8 +464,7 @@
                 "container": ".uiContextualLayer",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "unlike-photo",
@@ -511,8 +488,7 @@
                 "container": ".fbPhotoSnowliftPopup",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "update-status",
@@ -541,8 +517,7 @@
                 "container": "div#pagelet_composer",
                 "extractor": ""
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "upload-photo",
@@ -556,8 +531,7 @@
                 "container": "form",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "upload-video",
@@ -576,8 +550,7 @@
                 "container": "div[role=\"dialog\"]",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "view-profile",
@@ -591,7 +564,6 @@
                 "container": "a",
                 "extractor": "user-link"
             }
-        ],
-        "isEnabled": true
+        ]
     }
 ]

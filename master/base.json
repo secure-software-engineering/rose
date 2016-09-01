@@ -1,7 +1,6 @@
 {
   "name": "rose-repository",
   "url": "https://secure-software-engineering.github.io/rose/master/",
-  "timestamp": 1453224819853,
   "networks": [{
     "id": 1,
     "name": "facebook",

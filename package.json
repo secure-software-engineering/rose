@@ -19,7 +19,7 @@
     "browserify-css": "^0.9.1",
     "del": "^2.2.0",
     "denodeify": "^1.2.1",
-    "download": "^5.0.2",
+    "download-cli": "^1.0.1",
     "eslint": "^2.5.3",
     "eslint-config-standard": "^5.1.0",
     "eslint-plugin-babel": "^3.1.0",
@@ -59,7 +59,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "install": "node download-kango.js && bower install"
+    "postinstall": "bower install && npm run download-kango",
+    "download-kango": "download --extract --out kango http://kangoextensions.com/kango/kango-framework-latest.zip"
   },
   "author": "Fraunhofer SIT",
   "contributors": [

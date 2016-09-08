@@ -32,7 +32,7 @@ In the following paper we describe how we use ROSE in our empirical field studie
 Build
 -----
 
-To build ROSE you need `node, npm, bower, ember-cli and gulp` installed. You can build your own copy of ROSE with the folowing steps
+To build ROSE you need `node, npm, bower, ember-cli and gulp` installed. You can build your own copy of ROSE with the following steps
 
 1. Install dependencies with `npm`
     ```
@@ -71,10 +71,10 @@ About
 
 ROSE is developed by:
 
-> Fraunhofer Institute for Secure Information Technology SIT
-> Rheinstrasse 75
-> 64295 Darmstadt
-> Germany
+> Fraunhofer Institute for Secure Information Technology SIT  
+> Rheinstrasse 75  
+> 64295 Darmstadt  
+> Germany  
 
 For questions about ROSE feel free to contact Andreas Poller, andreas.poller@sit.fraunhofer.de
 

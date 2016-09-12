@@ -28,6 +28,15 @@
   </div>
 
   <div class="field">
+    <label>{{t "settings.trackingEnabled"}}</label>
+    <p>{{t "settings.trackingEnabledLabel"}}</p>
+    {{ui-checkbox class="toggle"
+                  checked=settings.system.trackingEnabled
+                  label=(boolean-to-yesno settings.system.trackingEnabled)
+                  onChange=(action "toggleTracking")}}
+  </div>
+
+  <div class="field">
     <label>{{t "settings.commentReminder"}}</label>
     <p>{{t "settings.commentReminderLabel"}}</p>
     {{ui-checkbox class="toggle"

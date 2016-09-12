@@ -34,6 +34,7 @@ import FBLoginTracker from './rose/activity-trackers/facebook-login';
     var configs = new SystemConfigModel()
     var networks = new NetworkCollection()
     configs.fetch({success: () => {
+        if (configs.get('trackingEnabled') !== true) return
         networks.fetch({success: () => {
             networks.find((network) => {
                 // Detect network by its domain in the current origin of this page

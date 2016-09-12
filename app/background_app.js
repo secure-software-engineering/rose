@@ -53,9 +53,14 @@ import Task from './rose/task'
         await localforage.setItem('rose-version', '3.0.0')
     }
 
-    scheduleExtractors()
     scheduleAutoUpdate()
-    scheduleActivityTrackers()
+
+    new SystemConfig().fetch({ success: (config) => {
+        if (config.get('trackingEnabled')) {
+            scheduleExtractors()
+            scheduleActivityTrackers()
+        }
+    }})
 })()
 
 /* Scheduling */
@@ -154,3 +159,18 @@ kango.addMessageListener('reset-configuration', () => {
     }
 })
 
+kango.addMessageListener('toggle-tracking', () => {
+    new SystemConfig().fetch({ success: (config) => {
+        if (config.get('trackingEnabled')) {
+            scheduleExtractors()
+            scheduleActivityTrackers()
+            // FIXME: load content scripts
+        } else {
+            while (extractorEngine.scheduled.length) {
+                executionService.cancel(extractorEngine.scheduled.pop())
+            }
+            windowTrackers = []
+            // FIXME: unload content scripts
+        }
+    }})
+})

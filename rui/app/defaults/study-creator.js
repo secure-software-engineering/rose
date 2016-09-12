@@ -3,7 +3,7 @@ export default {
   roseCommentsRatingIsEnabled: true,
   salt: 'ROSE',
   hashLength: 8,
-  repositoryURL: 'https://secure-software-engineering.github.io/rose/example/',
+  repositoryURL: 'https://secure-software-engineering.github.io/rose/master/base.json',
   fingerprint: '25E769C697EC2C20DA3BDDE9F188CF170FA234E8',
   autoUpdateIsEnabled: true,
   updateInterval: 86400000,

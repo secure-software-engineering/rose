@@ -41,7 +41,8 @@ export default {
     about: "About",
     extraFeatures: "Researcher Features",
     studyCreator: "Study Creator",
-    debugLog: "Application Log"
+    debugLog: "Application Log",
+    observerEditor: "Observer Editor"
   },
 
   wizard: {
@@ -235,5 +236,10 @@ export default {
     date: "Timestamp",
     message: "Log message",
     module: "Module name"
+  },
+  
+  observerEditor: {
+    title: "Editor for Observer Patterns",
+    subtitle: "This editor allows you to change observer patterns for testing reasons, or to create new ones. This function is for expert use only."
   }
 };

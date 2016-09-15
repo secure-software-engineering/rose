@@ -219,6 +219,7 @@ export default {
     forceSecureUpdateDesc: "If turned on, update of the tracking package is only allowed from a trustworthy source. You need to provide the correct fingerprint for the signing key above.",
     updateInterval: "Interval to check for an updated tracking package",
     updateIntervalLabel: "Choose a time interval to check for tracking package updates",
+    baseFileNotFound: "Invalid repository base file URL.",
     
     table: {
       enabled: "Status (on/off)",

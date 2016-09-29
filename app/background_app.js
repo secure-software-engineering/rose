@@ -115,6 +115,29 @@ executionService.schedule(Task({
 
 /* Messaging */
 
+let activeTabIds = []
+
+kango.addMessageListener('registerTab', (evt) => {
+    activeTabIds.push(evt.source._tab.id)
+})
+
+kango.browser.addEventListener(kango.browser.event.TAB_REMOVED, function (event) {
+    for (var i = 0; i < activeTabIds.length; i++) {
+        if (activeTabIds[i] === event.tabId) {
+            activeTabIds.splice(i, 1)
+            break
+        }
+    }
+})
+
+function sendToActiveTabs (event, msg) {
+    kango.browser.tabs.getAll(function (tabs) {
+        for (var i = 0; i < tabs.length; i++) {
+            if (activeTabIds.some((id) => id === tabs[i].getId())) tabs[i].dispatchMessage(event, msg)
+        }
+    })
+}
+
 kango.ui.browserButton.addEventListener(kango.ui.browserButton.event.COMMAND, function (event) {
     kango.ui.optionsPage.open()
 })

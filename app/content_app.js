@@ -31,38 +31,38 @@ import FBLoginTracker from './rose/activity-trackers/facebook-login';
 
 /* Content Script */
 (function () {
-    var configs = new SystemConfigModel()
-    var networks = new NetworkCollection()
+    let configs = new SystemConfigModel()
+    let networks = new NetworkCollection()
+    let networkName, facebookUI
     configs.fetch({success: () => {
         if (configs.get('trackingEnabled') !== true) return
         networks.fetch({success: () => {
             networks.find((network) => {
                 // Detect network by its domain in the current origin of this page
                 if ((new RegExp('^https:\/\/[\w\.\-]*(' + network.get('identifier').replace(/\./g, '\\$&') + ')$')).test(window.location.origin)) {
-                    let networkName = network.get('name')
+                    networkName = network.get('name')
 
-                    /* Observer Engine
-                    * ----------------
-                    * Start observer engine.
-                    */
-                    ObserverEngine.register(networkName)
-
-                    if (networkName === 'facebook') {
-                        FBLoginTracker.start(networkName)
-
-                        if (configs.get('roseCommentsIsEnabled')) {
-                            var facebookUI = new FacebookUI()
-                            facebookUI.redrawUI()
-                        }
-                    }
-
-                    ClickTracker.start(networkName)
-                    MouseMoveTracker.start(networkName)
-                    ScrollTracker.start(networkName)
-
-                    return true
+                    kango.dispatchMessage('registerTab')
+                    return startTracking()
                 }
             })
         }})
-    }}) // wait for success
+    }})
+    function startTracking () {
+        ObserverEngine.register(networkName)
+
+        ClickTracker.start(networkName)
+        MouseMoveTracker.start(networkName)
+        ScrollTracker.start(networkName)
+
+        if (networkName === 'facebook') {
+            FBLoginTracker.start(networkName)
+
+            if (configs.get('roseCommentsIsEnabled')) {
+                if (!facebookUI) facebookUI = new FacebookUI()
+                else facebookUI.injectUI()
+                facebookUI.redrawUI()
+            }
+        }
+    }
 })()

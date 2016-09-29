@@ -101,18 +101,7 @@ export default (function () {
 
         i18n.init(options)
 
-        // Search for the container which is streamed with content
-        // than attach ui and event + MutationObserver
         this.injectUI()
-        var globalContainer = $('#globalContainer')[0]
-
-        // create MutationObserver to inject elements when new content is loaded into DOM
-        var MutationObserver = window.MutationObserver || window.WebKitMutationObserver
-        var observer = new MutationObserver(this.redrawUI.bind(this))
-        observer.observe(globalContainer, {
-            childList: true,
-            subtree: true
-        })
     }
 
     FacebookUI.prototype.injectUI = function () {
@@ -120,6 +109,15 @@ export default (function () {
         this._injectCommentRibbon()
         this._injectReminder()
         this._injectSidebar()
+
+        // create MutationObserver to inject elements when new content is loaded into DOM
+        var globalContainer = $('#globalContainer')[0]
+        var MutationObserver = window.MutationObserver || window.WebKitMutationObserver
+        var observer = new MutationObserver(this.redrawUI.bind(this))
+        observer.observe(globalContainer, {
+            childList: true,
+            subtree: true
+        })
     }
 
     FacebookUI.prototype.redrawUI = function () {
@@ -232,7 +230,7 @@ export default (function () {
         // Save a comment
         $('body').on('click', '.sidebar .save.button', function () {
             var comment = {}
-            comment.text = ""
+            comment.text = ''
             $('.sidebar textarea').each(function getVals (i) {
                 comment.text += $(this).val()
             })

@@ -28,6 +28,7 @@ let type = 'fb-login'
 let network = ''
 let login = false
 let configs = new ConfigsModel()
+let running = false
 
 let getLatestStatus = function () {
     return new Promise((resolve) => {
@@ -68,22 +69,24 @@ let checkStatus = async function () {
         await store()
     }
 
-    setTimeout(checkStatus, 1000)
+    if (running) setTimeout(checkStatus, 1000)
 }
 
 let start = async function (nw) {
     network = nw
+    running = true
 
-    let networkDomain = 'facebook.com'
+    login = await getLatestStatus()
+    configs.fetch({success: () => {
+        checkStatus()
+    }})
+}
 
-    if ((new RegExp('^https:\/\/[\w\.\-]*(' + networkDomain.replace(/\./g, '\\$&') + ')$')).test(window.location.origin)) {
-        login = await getLatestStatus()
-        configs.fetch({success: () => {
-            checkStatus()
-        }})
-    }
+let stop = function () {
+    running = false
 }
 
 export default {
-    start
+    start,
+    stop
 }

@@ -43,6 +43,23 @@ import FBLoginTracker from './rose/activity-trackers/facebook-login';
                     networkName = network.get('name')
 
                     kango.dispatchMessage('registerTab')
+                    kango.addMessageListener('toggle-tracking', function (event) {
+                        if (event.data) {
+                            startTracking()
+                        } else {
+                            ObserverEngine.unregister()
+
+                            ClickTracker.stop()
+                            MouseMoveTracker.stop()
+                            ScrollTracker.stop()
+
+                            if (networkName === 'facebook') {
+                                if (facebookUI) facebookUI.removeUI()
+                                FBLoginTracker.stop()
+                            }
+                        }
+                    })
+
                     return startTracking()
                 }
             })

@@ -23,6 +23,7 @@ import $ from 'jquery'
 let type = 'click'
 let clickCount = 0
 let network = ''
+let interval
 
 let store = function () {
     if (clickCount > 0) {
@@ -48,9 +49,16 @@ let start = function (nw) {
         clickCount++
     })
 
-    setInterval(store, 60000)
+    interval = setInterval(store, 60000)
+}
+
+let stop = function () {
+    $(document).off('click')
+    clearInterval(interval)
+    store()
 }
 
 export default {
-    start
+    start,
+    stop
 }

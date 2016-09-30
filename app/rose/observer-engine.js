@@ -26,8 +26,9 @@ import log from './log'
 import ObserversCollection from './collections/observers'
 import InteractionsCollection from './collections/interactions'
 import ExtractorEngine from './extractor-engine'
-var interactions
-var extractorEngine
+let interactions
+let extractorEngine
+let listener = []
 
 /**
  * Stores an interaction in storage.
@@ -83,7 +84,7 @@ function classifiy ($node, pattern) {
 function handleEvent (event, observers) {
     // Drop events created by scripts
     // see: https://developer.mozilla.org/en-US/docs/Web/API/Event/isTrusted
-    if (!event.isTrusted) return
+    if (!event.isTrusted || (event.type === 'keyup' && event.keyCode !== 13)) return
 
     // Wrap event target
     var $node = $(event.target)
@@ -110,6 +111,14 @@ function handleEvent (event, observers) {
     }
 }
 
+function generateHandler (type, observers) {
+    var handler = function (event) {
+        handleEvent(event, observers)
+    }
+    listener.push({type, handler})
+    return handler
+}
+
 /**
  * Integrates a set of observers into the DOM of the page.
  * @param {array} observers - A set of observers.
@@ -120,25 +129,14 @@ function integrate (observers) {
         interactions = new InteractionsCollection()
         interactions.fetch({success: function () {
             // Filter anbd prioritize observers for correct event type and defer event handling
-            var clickObservers = observers.filter(function (observer) {
-                return observer.get('type') === 'click'
-            })
+            var clickObservers = observers.filter((observer) => observer.get('type') === 'click')
             if (clickObservers.length) {
-                document.addEventListener('click', function (event) {
-                    handleEvent(event, clickObservers)
-                }, true)
+                document.addEventListener('click', generateHandler('click', clickObservers), true)
             }
 
-            var inputObservers = observers.filter(function (observer) {
-                return observer.get('type') === 'input'
-            })
+            var inputObservers = observers.filter((observer) => observer.get('type') === 'input')
             if (inputObservers.length) {
-                document.addEventListener('keyup', function (event) {
-                    // check for enter keyup
-                    if (event.keyCode === 13) {
-                        handleEvent(event, inputObservers)
-                    }
-                }, true)
+                document.addEventListener('keyup', generateHandler('keyup', inputObservers), true)
             }
         }})
     }
@@ -155,5 +153,11 @@ export default {
             console.log('ROSE ObserverEngine: Integrated ' + obs.length + ' observers')
         }})
         extractorEngine = new ExtractorEngine()
+    },
+    unregister: function () {
+        while (listener.length) {
+            var evtlis = listener.pop()
+            document.removeEventListener(evtlis.type, evtlis.handler, true)
+        }
     }
 }

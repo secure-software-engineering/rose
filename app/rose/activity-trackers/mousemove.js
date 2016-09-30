@@ -27,6 +27,7 @@ let lastPosition = {
     x: undefined,
     y: undefined
 }
+let interval
 
 let store = function () {
     if (mouseMoveDistance > 0) {
@@ -67,9 +68,16 @@ let start = function (nw) {
         lastPosition = currentPosition
     })
 
-    setInterval(store, 60000)
+    interval = setInterval(store, 60000)
+}
+
+let stop = function () {
+    $(document).off('mousemove')
+    clearInterval(interval)
+    store()
 }
 
 export default {
-    start
+    start,
+    stop
 }

@@ -70,6 +70,7 @@ export default (function () {
     FacebookUI.prototype._settings = new UserSettingsModel()
     FacebookUI.prototype._statusUpdateExtractor = {}
     FacebookUI.prototype._templates = []
+    FacebookUI.prototype._observer
 
     function FacebookUI () {
         this._configs.fetch()
@@ -101,6 +102,9 @@ export default (function () {
 
         i18n.init(options)
 
+        var MutationObserver = window.MutationObserver || window.WebKitMutationObserver
+        this._observer = new MutationObserver(this.redrawUI.bind(this))
+
         this.injectUI()
     }
 
@@ -111,10 +115,7 @@ export default (function () {
         this._injectSidebar()
 
         // create MutationObserver to inject elements when new content is loaded into DOM
-        var globalContainer = $('#globalContainer')[0]
-        var MutationObserver = window.MutationObserver || window.WebKitMutationObserver
-        var observer = new MutationObserver(this.redrawUI.bind(this))
-        observer.observe(globalContainer, {
+        this._observer.observe($('#globalContainer')[0], {
             childList: true,
             subtree: true
         })
@@ -128,11 +129,18 @@ export default (function () {
         }
     }
 
+    FacebookUI.prototype.removeUI = function () {
+        this._observer.disconnect()
+        $('.ui.sidebar, .rose.comment, .ui.nag').remove()
+    }
+
     FacebookUI.prototype._injectSidebar = function () {
         if ($('.ui.sidebar').length > 0) {
             return
         }
-        $('body > div').wrapAll('<div class="pusher" />')
+        if ($('.pusher').length < 1) {
+            $('body > div').wrapAll('<div class="pusher" />')
+        }
 
         $('body').prepend(templateSidebar())
         $('.ui.sidebar').sidebar()
@@ -149,7 +157,7 @@ export default (function () {
         $('.userContentWrapper')
             .not('.rose.comment + .userContentWrapper')
             .not($('.userContentWrapper')
-                .has('div > .userContentWrapper'))
+            .has('div > .userContentWrapper'))
             .has('span > a > abbr > span')
             .before(templateCommentLabel())
     }

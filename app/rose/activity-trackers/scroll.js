@@ -24,6 +24,7 @@ let type = 'scroll'
 let network = ''
 let lastPosition = 0
 let scrollDistance = 0
+let interval
 
 let store = function () {
     if (scrollDistance > 0) {
@@ -53,9 +54,16 @@ let start = function (nw) {
         lastPosition = currentPosition
     })
 
-    setInterval(store, 60000)
+    interval = setInterval(store, 60000)
+}
+
+let stop = function () {
+    $(document).off('scroll')
+    clearInterval(interval)
+    store()
 }
 
 export default {
-    start
+    start,
+    stop
 }

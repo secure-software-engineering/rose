@@ -187,13 +187,13 @@ kango.addMessageListener('toggle-tracking', () => {
         if (config.get('trackingEnabled')) {
             scheduleExtractors()
             scheduleActivityTrackers()
-            // FIXME: load content scripts
+            sendToActiveTabs('toggle-tracking', true)
         } else {
             while (extractorEngine.scheduled.length) {
                 executionService.cancel(extractorEngine.scheduled.pop())
             }
             windowTrackers = []
-            // FIXME: unload content scripts
+            sendToActiveTabs('toggle-tracking', false)
         }
     }})
 })

@@ -1,11 +1,12 @@
 {
-  "name": "ROSE",
+  "name": "rose",
   "version": "3.0.0",
   "description": "Research tool for field studies in online social networks.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/secure-software-engineering/rose"
+    "url": "https://github.com/secure-software-engineering/rose.git"
   },
+  "homepage": "http://secure-software-engineering.github.io/rose/",
   "main": "Gulpfile.js",
   "devDependencies": {
     "babel": "^6.5.1",

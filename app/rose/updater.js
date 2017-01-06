@@ -6,9 +6,11 @@ import ExtractorCollection from './collections/extractors'
 import NetworkCollection from './collections/networks'
 import verify from './verify.js'
 
-function removeFileName (str) {
-    return str.substring(0, str.lastIndexOf('/'))
-}
+/**
+ * TODO:
+ * * Rework the await fetch() expression, because 404 are not caught
+ * * Rewrite updateExtractor and UpdateObserver so they don't fetch the storage every f***kin item in the repo.
+ */
 
 function updateExtractor (extractor) {
     return new Promise((resolve, reject) => {
@@ -22,8 +24,8 @@ function updateExtractor (extractor) {
                 if (!model) return resolve()
                 if (extractor.version > model.get('version')) {
                     model.save(extractor, {
-                        success: (model, response, options) => resolve(response),
-                        error: (model, response, options) => reject(response)
+                        success: (model, response) => resolve(response),
+                        error: (model, response) => reject(response)
                     })
                 } else {
                     resolve()
@@ -45,8 +47,8 @@ function updateObserver (observer) {
                 if (!model) return resolve()
                 if (observer.version > model.get('version')) {
                     model.save(observer, {
-                        success: (model, response, options) => resolve(response),
-                        error: (model, response, options) => reject(response)
+                        success: (model, response) => resolve(response),
+                        error: (model, response) => reject(response)
                     })
                 } else {
                     resolve()
@@ -56,81 +58,148 @@ function updateObserver (observer) {
     })
 }
 
+function VerificationException (message) {
+    this.message = message
+    this.name = 'VerificationException'
+}
+
+function validator (key, fp) {
+    fp = fp.toLowerCase()
+    return async function (data, sig) {
+        let fingerprint
+
+        try {
+            fingerprint = await verify(data, sig, key)
+        } catch (e) {
+            throw new VerificationException('Data could not be verified!')
+        }
+
+        return (fingerprint.toLowerCase() === fp)
+    }
+}
+
+function SigningException (message) {
+    this.message = message
+    this.name = 'SigningException'
+}
+
+function signedFetch (key, fp) {
+    let validate = validator(key, fp)
+
+    return async function (fileURL) {
+        let fileText = await fetch(fileURL).then((res) => res.text())
+        let sigText = await fetch(`${fileURL}.asc`).then((res) => res.text())
+
+        if (await !validate(fileText, sigText)) {
+            throw new SigningException('Fingerprint Missmatch')
+        }
+        let jsonFile = JSON.parse(fileText)
+        return jsonFile
+    }
+}
+
+function unsignedFetch (reject) {
+    return async function (fileURL) {
+        let fileText = await fetch(fileURL).then((res) => res.text())
+        let jsonFile = JSON.parse(fileText)
+        return jsonFile
+    }
+}
+
+async function fetchRepository (config, reject) {
+    const baseFileUrl = config.get('repositoryURL')
+    const repositoryUrl = baseFileUrl.substring(0, baseFileUrl.lastIndexOf('/'))
+
+    // Generate a fetch function to reuse
+    // Either with validation or without
+    let fetchJSONFile
+    if (config.get('forceSecureUpdate') && config.get('secureUpdateIsEnabled')) {
+        let publicKeyText = await fetch(`${repositoryUrl}/public.key`).then((res) => res.text())
+        let fingerprint = config.get('fingerprint').toLowerCase()
+        fetchJSONFile = signedFetch(publicKeyText, fingerprint)
+    } else {
+        fetchJSONFile = unsignedFetch()
+    }
+
+    //  basefile download
+    let baseFile
+    try {
+        baseFile = await fetchJSONFile(baseFileUrl)
+    } catch (e) {
+        reject(e)
+        return
+    }
+    let repository = []
+
+    new NetworkCollection().fetch({success: async (localNetworks) => {
+        await localNetworks.each(async (localNetwork) => {
+            let network = baseFile.networks.find((nw) => nw.name === localNetwork.get('name'))
+            let networkIndex = repository.push({name: network.name, extractors: [], observers: []}) - 1
+
+            if (network.extractors) {
+                try {
+                    repository[networkIndex].extractors = await fetchJSONFile(`${repositoryUrl}/${network.extractors}`)
+                } catch (e) {
+                    reject(e)
+                    return
+                }
+            }
+
+            if (network.observers) {
+                try {
+                    repository[networkIndex].observers = await fetchJSONFile(`${repositoryUrl}/${network.observers}`)
+                } catch (e) {
+                    reject(e)
+                    return
+                }
+            }
+        })
+
+        return repository
+    }})
+}
+
+async function updateChanges (config, networks) {
+    const stats = []
+
+    for (let network of networks) {
+        let networkStats = {
+            name: network.name,
+            updatedExtractors: [],
+            updatedObservers: []
+        }
+
+        for (let extractor of network.extractors) {
+            let updatedExtractor = await updateExtractor(extractor)
+            if (updatedExtractor) networkStats.updatedExtractors.push(extractor.name)
+        }
+
+        for (let observer of network.observers) {
+            let updatedObserver = await updateObserver(observer)
+            if (updatedObserver) networkStats.updatedObservers.push(observer.name)
+        }
+
+        stats.push(networkStats)
+    }
+
+    return stats
+}
+
 function update () {
     const config = new ConfigModel()
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         config.fetch({
-            success: async (model, response, options) => {
-                const baseFileUrl = model.get('repositoryURL')
-                const baseFileSigUrl = `${baseFileUrl}.asc`
-                const fingerprint = model.get('fingerprint').toLowerCase()
-                const repositoryUrl = removeFileName(baseFileUrl)
-                const publicKeyUrl = `${repositoryUrl}/public.key`
+            success: async (config, response, options) => {
+                // fetch repository
+                let repository = await fetchRepository(config, reject)
 
-                const baseFileText = await fetch(baseFileUrl).then((res) => res.text())
-                const baseFileSigText = await fetch(baseFileSigUrl).then((res) => res.text())
-                const publicKeyText = await fetch(publicKeyUrl).then((res) => res.text())
-
-                const signer = await verify(baseFileText, baseFileSigText, publicKeyText)
-
-                if (fingerprint !== signer) {
-                    throw new Error('Fingerprint Missmatch')
-                }
-
-                const baseFile = JSON.parse(baseFileText)
-
-                const stats = []
-                let updated = false
-
-                if (baseFile.networks) {
-                    let networks = baseFile.networks.filter((network) => {
-                        return network.observers || network.extractors
-                    })
-
-                    for (let network of networks) {
-                        let networkStats = {
-                            name: network.name,
-                            updatedExtractors: [],
-                            updatedObservers: []
-                        }
-
-                        if (network.extractors) {
-                            const extractorsText = await fetch(`${repositoryUrl}/${network.extractors}`).then((res) => res.text())
-                            const extractorsSigText = await fetch(`${repositoryUrl}/${network.extractors}.asc`).then((res) => res.text())
-
-                            if (await validate(extractorsText, extractorsSigText, publicKeyText, fingerprint)) {
-                                const extractors = JSON.parse(extractorsText)
-                                for (let extractor of extractors) {
-                                    let updatedExtractor = await updateExtractor(extractor)
-                                    if (updatedExtractor) networkStats.updatedExtractors.push(extractor.name)
-                                }
-                            }
-                        }
-
-                        if (network.observers) {
-                            const observersText = await fetch(`${repositoryUrl}/${network.observers}`).then((res) => res.text())
-                            const observersSigText = await fetch(`${repositoryUrl}/${network.observers}.asc`).then((res) => res.text())
-
-                            if (await validate(observersText, observersSigText, publicKeyText, fingerprint)) {
-                                const observers = JSON.parse(observersText)
-                                for (let observer of observers) {
-                                    let updatedObserver = await updateObserver(observer)
-                                    if (updatedObserver) networkStats.updatedObservers.push(observer.name)
-                                }
-                            }
-                        }
-
-                        stats.push(networkStats)
-
-                        if (networkStats.updatedExtractors.length > 0 || networkStats.updatedObservers.length > 0) {
-                            updated = true
-                        }
-                    }
-                }
+                // update contents in storage
+                let stats = await updateChanges(config, repository)
 
                 config.set('lastChecked', Date.now()).save()
-                if (updated) {
+
+                if (stats.some((network) => network.updatedExtractors.length + network.updatedObservers.length > 0)) {
                     config.set('lastUpdated', Date.now()).save()
                 }
 
@@ -138,24 +207,6 @@ function update () {
             }
         })
     })
-}
-
-async function validate (data, sig, key, fp) {
-    let fingerprint
-
-    try {
-        fingerprint = await verify(data, sig, key)
-    } catch (e) {
-        console.log(e)
-        return false
-    }
-
-    if (fingerprint.toLowerCase() === fp.toLowerCase()) {
-        return true
-    } else {
-        console.log('Fingerprint Missmatch')
-        return false
-    }
 }
 
 let load = (networks) => {

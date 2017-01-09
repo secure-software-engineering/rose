@@ -1,11 +1,11 @@
 import denodeify from 'denodeify'
 import kbpgp from 'kbpgp'
 
-const import_from_armored_pgp = denodeify(kbpgp.KeyManager.import_from_armored_pgp)
+const importFromArmoredPGP = denodeify(kbpgp.KeyManager.import_from_armored_pgp)
 const unbox = denodeify(kbpgp.unbox)
 
 function verify (data, sig, key) {
-    return import_from_armored_pgp({armored: key}).then((kms) => {
+    return importFromArmoredPGP({armored: key}).then((kms) => {
         const ring = new kbpgp.keyring.KeyRing()
         ring.add_key_manager(kms)
         return unbox({

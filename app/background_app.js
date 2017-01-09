@@ -151,7 +151,7 @@ kango.addMessageListener('update-start', () => {
         scheduleExtractors() // reschedule Extractors, for eventual interval changes
     })
     .then(() => kango.dispatchMessage('update-successful'))
-    .catch(() => kango.dispatchMessage('update-successful'))
+    .catch((err) => kango.dispatchMessage('update-unsuccessful', err))
 })
 
 kango.addMessageListener('LoadNetworks', (event) => {

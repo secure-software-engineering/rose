@@ -8,8 +8,8 @@ import verify from './verify.js'
 
 /**
  * TODO:
- * * Rework the await fetch() expression, because 404 are not caught
- * * Rewrite updateExtractor and UpdateObserver so they don't fetch the storage every f***kin item in the repo.
+ * - fix execution order, so data is fetch properly
+ * - Rewrite updateExtractor and UpdateObserver so they don't fetch the storage every f***kin item in the repo.
  */
 
 function updateExtractor (extractor) {
@@ -63,50 +63,39 @@ function VerificationException (message) {
     this.name = 'VerificationException'
 }
 
-function validator (key, fp) {
-    fp = fp.toLowerCase()
-    return async function (data, sig) {
-        let fingerprint
-
-        try {
-            fingerprint = await verify(data, sig, key)
-        } catch (e) {
-            throw new VerificationException('Data could not be verified!')
-        }
-
-        return (fingerprint.toLowerCase() === fp)
+function checkStatus (res) {
+    if (res.status >= 200 && res.status < 300) {
+        return res.text()
+    } else {
+        throw new Error(res.statusText)
     }
-}
-
-function SigningException (message) {
-    this.message = message
-    this.name = 'SigningException'
 }
 
 function signedFetch (key, fp) {
-    let validate = validator(key, fp)
+    fp = fp.toLowerCase()
 
     return async function (fileURL) {
-        let fileText = await fetch(fileURL).then((res) => res.text())
-        let sigText = await fetch(`${fileURL}.asc`).then((res) => res.text())
+        let fileText = await fetch(fileURL).then(checkStatus)
+        let sigText = await fetch(`${fileURL}.asc`).then(checkStatus)
 
-        if (await !validate(fileText, sigText)) {
-            throw new SigningException('Fingerprint Missmatch')
+        let fingerprint = await verify(fileText, sigText, key)
+
+        if (fingerprint.toLowerCase() !== fp) {
+            throw new VerificationException('Fingerprint Missmatch')
         }
         let jsonFile = JSON.parse(fileText)
         return jsonFile
     }
 }
 
-function unsignedFetch (reject) {
+function unsignedFetch () {
     return async function (fileURL) {
-        let fileText = await fetch(fileURL).then((res) => res.text())
-        let jsonFile = JSON.parse(fileText)
-        return jsonFile
+        let fileData = await fetch(fileURL).then(checkStatus).then((txt) => JSON.parse(txt))
+        return fileData
     }
 }
 
-async function fetchRepository (config, reject) {
+async function fetchRepository (config) {
     const baseFileUrl = config.get('repositoryURL')
     const repositoryUrl = baseFileUrl.substring(0, baseFileUrl.lastIndexOf('/'))
 
@@ -114,7 +103,7 @@ async function fetchRepository (config, reject) {
     // Either with validation or without
     let fetchJSONFile
     if (config.get('forceSecureUpdate') && config.get('secureUpdateIsEnabled')) {
-        let publicKeyText = await fetch(`${repositoryUrl}/public.key`).then((res) => res.text())
+        let publicKeyText = await fetch(`${repositoryUrl}/public.key`).then(checkStatus)
         let fingerprint = config.get('fingerprint').toLowerCase()
         fetchJSONFile = signedFetch(publicKeyText, fingerprint)
     } else {
@@ -122,41 +111,29 @@ async function fetchRepository (config, reject) {
     }
 
     //  basefile download
-    let baseFile
-    try {
-        baseFile = await fetchJSONFile(baseFileUrl)
-    } catch (e) {
-        reject(e)
-        return
-    }
+    let baseFile = await fetchJSONFile(baseFileUrl)
     let repository = []
 
-    new NetworkCollection().fetch({success: async (localNetworks) => {
+    await new NetworkCollection().fetch({success: async (localNetworks) => {
         await localNetworks.each(async (localNetwork) => {
             let network = baseFile.networks.find((nw) => nw.name === localNetwork.get('name'))
             let networkIndex = repository.push({name: network.name, extractors: [], observers: []}) - 1
 
+            console.log('Fetch Network...' + network.name)
             if (network.extractors) {
-                try {
-                    repository[networkIndex].extractors = await fetchJSONFile(`${repositoryUrl}/${network.extractors}`)
-                } catch (e) {
-                    reject(e)
-                    return
-                }
+                repository[networkIndex].extractors = await fetchJSONFile(`${repositoryUrl}/${network.extractors}`)
+                console.log('Fetched ' + network.name + ' Extractors!')
             }
 
             if (network.observers) {
-                try {
-                    repository[networkIndex].observers = await fetchJSONFile(`${repositoryUrl}/${network.observers}`)
-                } catch (e) {
-                    reject(e)
-                    return
-                }
+                repository[networkIndex].observers = await fetchJSONFile(`${repositoryUrl}/${network.observers}`)
+                console.log('Fetched ' + network.name + ' Observers!')
             }
         })
-
-        return repository
     }})
+
+    console.log('Return Repository!')
+    return repository
 }
 
 async function updateChanges (config, networks) {
@@ -192,15 +169,20 @@ function update () {
         config.fetch({
             success: async (config, response, options) => {
                 // fetch repository
-                let repository = await fetchRepository(config, reject)
+
+                try {
+                    var repository = await fetchRepository(config, reject)
+                } catch (e) {
+                    return reject(e)
+                }
 
                 // update contents in storage
                 let stats = await updateChanges(config, repository)
 
-                config.set('lastChecked', Date.now()).save()
+                await config.set('lastChecked', Date.now()).save()
 
                 if (stats.some((network) => network.updatedExtractors.length + network.updatedObservers.length > 0)) {
-                    config.set('lastUpdated', Date.now()).save()
+                    await config.set('lastUpdated', Date.now()).save()
                 }
 
                 resolve(stats)

@@ -8,7 +8,6 @@ import verify from './verify.js'
 
 /**
  * TODO:
- * - fix execution order, so data is fetch properly
  * - Rewrite updateExtractor and UpdateObserver so they don't fetch the storage every f***kin item in the repo.
  */
 
@@ -75,8 +74,7 @@ function signedFetch (key, fp) {
     fp = fp.toLowerCase()
 
     return async function (fileURL) {
-        let fileText = await fetch(fileURL).then(checkStatus)
-        let sigText = await fetch(`${fileURL}.asc`).then(checkStatus)
+        let [fileText, sigText] = await Promise.all([fetch(fileURL).then(checkStatus), fetch(`${fileURL}.asc`).then(checkStatus)])
 
         let fingerprint = await verify(fileText, sigText, key)
 
@@ -110,30 +108,27 @@ async function fetchRepository (config) {
         fetchJSONFile = unsignedFetch()
     }
 
-    //  basefile download
+    // basefile download
     let baseFile = await fetchJSONFile(baseFileUrl)
-    let repository = []
 
-    await new NetworkCollection().fetch({success: async (localNetworks) => {
-        await localNetworks.each(async (localNetwork) => {
-            let network = baseFile.networks.find((nw) => nw.name === localNetwork.get('name'))
-            let networkIndex = repository.push({name: network.name, extractors: [], observers: []}) - 1
+    return new Promise((resolve) => {
+        new NetworkCollection().fetch({success: async (localNetworks) => {
+            let repository = []
+            for (let localNetwork of localNetworks.models) {
+                let network = baseFile.networks.find((nw) => nw.name === localNetwork.get('name'))
+                let networkIndex = repository.push({name: network.name, extractors: [], observers: []}) - 1
 
-            console.log('Fetch Network...' + network.name)
-            if (network.extractors) {
-                repository[networkIndex].extractors = await fetchJSONFile(`${repositoryUrl}/${network.extractors}`)
-                console.log('Fetched ' + network.name + ' Extractors!')
+                if (network.extractors) {
+                    repository[networkIndex].extractors = await fetchJSONFile(`${repositoryUrl}/${network.extractors}`)
+                }
+
+                if (network.observers) {
+                    repository[networkIndex].observers = await fetchJSONFile(`${repositoryUrl}/${network.observers}`)
+                }
             }
-
-            if (network.observers) {
-                repository[networkIndex].observers = await fetchJSONFile(`${repositoryUrl}/${network.observers}`)
-                console.log('Fetched ' + network.name + ' Observers!')
-            }
-        })
-    }})
-
-    console.log('Return Repository!')
-    return repository
+            resolve(repository)
+        }})
+    })
 }
 
 async function updateChanges (config, networks) {
@@ -169,9 +164,8 @@ function update () {
         config.fetch({
             success: async (config, response, options) => {
                 // fetch repository
-
                 try {
-                    var repository = await fetchRepository(config, reject)
+                    var repository = await fetchRepository(config)
                 } catch (e) {
                     return reject(e)
                 }

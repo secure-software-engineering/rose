@@ -6,57 +6,6 @@ import ExtractorCollection from './collections/extractors'
 import NetworkCollection from './collections/networks'
 import verify from './verify.js'
 
-/**
- * TODO:
- * - Rewrite updateExtractor and UpdateObserver so they don't fetch the storage every f***kin item in the repo.
- */
-
-function updateExtractor (extractor) {
-    return new Promise((resolve, reject) => {
-        const extractors = new ExtractorCollection()
-        extractors.fetch({
-            success: (col, response, options) => {
-                const model = col.findWhere({
-                    name: extractor.name,
-                    network: extractor.network
-                })
-                if (!model) return resolve()
-                if (extractor.version > model.get('version')) {
-                    model.save(extractor, {
-                        success: (model, response) => resolve(response),
-                        error: (model, response) => reject(response)
-                    })
-                } else {
-                    resolve()
-                }
-            }
-        })
-    })
-}
-
-function updateObserver (observer) {
-    return new Promise((resolve, reject) => {
-        const observers = new ObserverCollection()
-        observers.fetch({
-            success: (col, response, options) => {
-                const model = col.findWhere({
-                    name: observer.name,
-                    network: observer.network
-                })
-                if (!model) return resolve()
-                if (observer.version > model.get('version')) {
-                    model.save(observer, {
-                        success: (model, response) => resolve(response),
-                        error: (model, response) => reject(response)
-                    })
-                } else {
-                    resolve()
-                }
-            }
-        })
-    })
-}
-
 function VerificationException (message) {
     this.message = message
     this.name = 'VerificationException'
@@ -131,8 +80,33 @@ async function fetchRepository (config) {
     })
 }
 
+function updateTracker (tracker, collection) {
+    return new Promise((resolve, reject) => {
+        const model = collection.findWhere({
+            name: tracker.name,
+            network: tracker.network
+        })
+        if (!model) return resolve()
+        if (tracker.version > model.get('version')) {
+            model.save(tracker, {
+                success: (model, response) => resolve(response),
+                error: (model, response) => reject(response)
+            })
+        } else {
+            resolve()
+        }
+    })
+}
+
+function fetchCol (Collection) {
+    return new Promise((resolve) => {
+        new Collection().fetch({success: (col) => resolve(col)})
+    })
+}
+
 async function updateChanges (config, networks) {
     const stats = []
+    const [observerCol, extractorCol] = await Promise.all([fetchCol(ObserverCollection), fetchCol(ExtractorCollection)])
 
     for (let network of networks) {
         let networkStats = {
@@ -142,12 +116,12 @@ async function updateChanges (config, networks) {
         }
 
         for (let extractor of network.extractors) {
-            let updatedExtractor = await updateExtractor(extractor)
+            let updatedExtractor = await updateTracker(extractor, extractorCol)
             if (updatedExtractor) networkStats.updatedExtractors.push(extractor.name)
         }
 
         for (let observer of network.observers) {
-            let updatedObserver = await updateObserver(observer)
+            let updatedObserver = await updateTracker(observer, observerCol)
             if (updatedObserver) networkStats.updatedObservers.push(observer.name)
         }
 
@@ -175,7 +149,7 @@ function update () {
 
                 await config.set('lastChecked', Date.now()).save()
 
-                if (stats.some((network) => network.updatedExtractors.length + network.updatedObservers.length > 0)) {
+                if (stats.some((network) => (network.updatedExtractors.length + network.updatedObservers.length) > 0)) {
                     await config.set('lastUpdated', Date.now()).save()
                 }
 

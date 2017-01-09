@@ -59,29 +59,37 @@
     <label>{{t "settings.manualUpdate"}}</label>
     <p>{{t "settings.manualUpdateLabel"}}</p>
     {{#if navigator.onLine}}
-      <button class="ui {{if updateInProgress "loading"}} button" {{action "manualUpdate"}}>{{t "action.update"}}</button>
+    <button class="ui {{if updateInProgress "loading"}} button" {{action "manualUpdate"}}>{{t "action.update"}}</button>
     {{else}}
     <div class="ui disabled labeled button" tabindex="0">
       <div class="ui button">{{t "action.update"}}</div>
       <a class="ui basic label">{{t "noInternetConnection"}}</a>
     </div>
     {{/if}}
-    <p></p>
-    <p>
-      {{#if settings.system.lastChecked}}
-        Last Checked: {{moment-format settings.system.lastChecked}}
-      {{else}}
-        Last Checked: never
-      {{/if}}
-    </p>
-    <p>
-      {{#if settings.system.lastUpdated}}
-        Last Update: {{moment-format settings.system.lastUpdated}}
-        {{navigator.onLine}}
-      {{else}}
-        Last Update: never
-      {{/if}}
-    </p>
+
+    {{#if settings.system.lastChecked}}
+    <a class="ui label">
+      {{t "settings.lastChecked"}} <div class="detail">{{moment-format settings.system.lastChecked 'YY-MM-DD HH:mm'}}</div>
+    </a>
+    {{else}}
+    <a class="ui red label">
+      {{t "settings.lastChecked"}} <div class="detail">{{t "settings.never"}}</div>
+    </a>
+    {{/if}}
+
+    {{#if settings.system.lastUpdated}}
+    <a class="ui label">
+      {{t "settings.lastUpdated"}} <div class="detail">{{moment-format settings.system.lastUpdated 'YY-MM-DD HH:mm'}}</div>
+    </a>
+    {{else}}
+    <a class="ui label">
+      {{t "settings.lastUpdated"}} <div class="detail">{{t "settings.never"}}</div>
+    </a>
+    {{/if}}
+
+    <a class="ui green label">
+      <i class="lock icon"></i> {{t "settings.signedUpdate"}}
+    </a>
   </div>
 
   <div class="field">

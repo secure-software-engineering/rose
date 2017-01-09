@@ -20,7 +20,7 @@ export default Ember.Controller.extend({
           delete payload.networks
         })
         .then(() => this.store.createRecord('system-config', payload).save())
-        .then(settings => this.set('settings.system', settings))
+        .then((settings) => this.set('settings.system', settings))
         .then(() => this.send('cancelWizard'))
     }
   }

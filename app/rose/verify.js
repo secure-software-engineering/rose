@@ -16,7 +16,7 @@ function verify (data, sig, key) {
     }).then((literals) => {
         const ds = literals[0].get_data_signer()
         const km = ds.get_key_manager()
-        return km.get_pgp_fingerprint().toString('hex')
+        return km.get_pgp_fingerprint().toString('hex').toLowerCase()
     })
 }
 

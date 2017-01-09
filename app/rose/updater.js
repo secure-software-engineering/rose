@@ -1,4 +1,4 @@
-import fetch from 'isomorphic-fetch'
+import isofetch from 'isomorphic-fetch'
 
 import ConfigModel from './models/system-config'
 import ObserverCollection from './collections/observers'
@@ -6,39 +6,31 @@ import ExtractorCollection from './collections/extractors'
 import NetworkCollection from './collections/networks'
 import verify from './verify.js'
 
-function VerificationException (message) {
-    this.message = message
-    this.name = 'VerificationException'
+function fetch (url, raw = false) {
+    return isofetch(url).then((res) => {
+        if (res.status >= 200 && res.status < 300) {
+            return (raw ? res.text() : res.json())
+        } else {
+            throw new Error(res.statusText)
+        }
+    })
 }
 
-function checkStatus (res) {
-    if (res.status >= 200 && res.status < 300) {
-        return res.text()
-    } else {
-        throw new Error(res.statusText)
-    }
-}
+function signedFetchGenerator (key, fp) {
+    return async function signedFetch (fileURL) {
+        let [fileText, sigText] = await Promise.all([fetch(fileURL, true), fetch(`${fileURL}.asc`, true)])
 
-function signedFetch (key, fp) {
-    fp = fp.toLowerCase()
+        try {
+            var fingerprint = await verify(fileText, sigText, key)
+        } catch (e) {
+            throw e
+        }
 
-    return async function (fileURL) {
-        let [fileText, sigText] = await Promise.all([fetch(fileURL).then(checkStatus), fetch(`${fileURL}.asc`).then(checkStatus)])
-
-        let fingerprint = await verify(fileText, sigText, key)
-
-        if (fingerprint.toLowerCase() !== fp) {
-            throw new VerificationException('Fingerprint Missmatch')
+        if (fingerprint !== fp) {
+            throw new Error('Fingerprint Missmatch: ' + fingerprint + ' ≠ ' + fp)
         }
         let jsonFile = JSON.parse(fileText)
         return jsonFile
-    }
-}
-
-function unsignedFetch () {
-    return async function (fileURL) {
-        let fileData = await fetch(fileURL).then(checkStatus).then((txt) => JSON.parse(txt))
-        return fileData
     }
 }
 
@@ -50,11 +42,11 @@ async function fetchRepository (config) {
     // Either with validation or without
     let fetchJSONFile
     if (config.get('forceSecureUpdate') && config.get('secureUpdateIsEnabled')) {
-        let publicKeyText = await fetch(`${repositoryUrl}/public.key`).then(checkStatus)
+        let publicKeyText = await fetch(`${repositoryUrl}/public.key`, true)
         let fingerprint = config.get('fingerprint').toLowerCase()
-        fetchJSONFile = signedFetch(publicKeyText, fingerprint)
+        fetchJSONFile = signedFetchGenerator(publicKeyText, fingerprint)
     } else {
-        fetchJSONFile = unsignedFetch()
+        fetchJSONFile = fetch
     }
 
     // basefile download
@@ -65,6 +57,9 @@ async function fetchRepository (config) {
             let repository = []
             for (let localNetwork of localNetworks.models) {
                 let network = baseFile.networks.find((nw) => nw.name === localNetwork.get('name'))
+                if (!network) {
+                    continue
+                }
                 let networkIndex = repository.push({name: network.name, extractors: [], observers: []}) - 1
 
                 if (network.extractors) {
@@ -141,6 +136,7 @@ function update () {
                 try {
                     var repository = await fetchRepository(config)
                 } catch (e) {
+                    console.error(e)
                     return reject(e)
                 }
 

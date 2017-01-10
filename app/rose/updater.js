@@ -52,23 +52,27 @@ async function fetchRepository (config) {
     // basefile download
     let baseFile = await fetchJSONFile(baseFileUrl)
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         new NetworkCollection().fetch({success: async (localNetworks) => {
             let repository = []
-            for (let localNetwork of localNetworks.models) {
-                let network = baseFile.networks.find((nw) => nw.name === localNetwork.get('name'))
-                if (!network) {
-                    continue
-                }
-                let networkIndex = repository.push({name: network.name, extractors: [], observers: []}) - 1
+            try {
+                for (let localNetwork of localNetworks.models) {
+                    let network = baseFile.networks.find((nw) => nw.name === localNetwork.get('name'))
+                    if (!network) {
+                        continue
+                    }
+                    let networkIndex = repository.push({name: network.name, extractors: [], observers: []}) - 1
 
-                if (network.extractors) {
-                    repository[networkIndex].extractors = await fetchJSONFile(`${repositoryUrl}/${network.extractors}`)
-                }
+                    if (network.extractors) {
+                        repository[networkIndex].extractors = await fetchJSONFile(`${repositoryUrl}/${network.extractors}`)
+                    }
 
-                if (network.observers) {
-                    repository[networkIndex].observers = await fetchJSONFile(`${repositoryUrl}/${network.observers}`)
+                    if (network.observers) {
+                        repository[networkIndex].observers = await fetchJSONFile(`${repositoryUrl}/${network.observers}`)
+                    }
                 }
+            } catch (e) {
+                return reject(e)
             }
             resolve(repository)
         }})

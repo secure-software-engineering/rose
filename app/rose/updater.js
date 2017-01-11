@@ -1,38 +1,8 @@
-import isofetch from 'isomorphic-fetch'
-
 import ConfigModel from './models/system-config'
 import ObserverCollection from './collections/observers'
 import ExtractorCollection from './collections/extractors'
 import NetworkCollection from './collections/networks'
-import verify from './verify.js'
-
-function fetch (url, raw = false) {
-    return isofetch(url).then((res) => {
-        if (res.status >= 200 && res.status < 300) {
-            return (raw ? res.text() : res.json())
-        } else {
-            throw new Error(res.statusText)
-        }
-    })
-}
-
-function signedFetchGenerator (key, fp) {
-    return async function signedFetch (fileURL) {
-        let [fileText, sigText] = await Promise.all([fetch(fileURL, true), fetch(`${fileURL}.asc`, true)])
-
-        try {
-            var fingerprint = await verify(fileText, sigText, key)
-        } catch (e) {
-            throw e
-        }
-
-        if (fingerprint !== fp) {
-            throw new Error('Fingerprint Missmatch: ' + fingerprint + ' ≠ ' + fp)
-        }
-        let jsonFile = JSON.parse(fileText)
-        return jsonFile
-    }
-}
+import {fetch, signedFetchGenerator} from './fetcher'
 
 async function fetchRepository (config) {
     const baseFileUrl = config.get('repositoryURL')

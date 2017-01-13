@@ -11,7 +11,7 @@ async function fetchRepository (config) {
     // Generate a fetch function to reuse
     // Either with validation or without
     let fetchJSONFile
-    if (config.get('forceSecureUpdate') && config.get('secureUpdateIsEnabled')) {
+    if (config.get('forceSecureUpdate') || config.get('secureUpdateIsEnabled')) {
         let publicKeyText = await fetch(`${repositoryUrl}/public.key`, true)
         let fingerprint = config.get('fingerprint').toLowerCase()
         fetchJSONFile = signedFetchGenerator(publicKeyText, fingerprint)
@@ -26,9 +26,8 @@ async function fetchRepository (config) {
         new NetworkCollection().fetch({success: async (localNetworks) => {
             let repository = []
             try {
-                for (let localNetwork of localNetworks.models) {
-                    let network = baseFile.networks.find((nw) => nw.name === localNetwork.get('name'))
-                    if (!network) {
+                for (let network of baseFile.networks) {
+                    if (!localNetworks.models.some((nwmodel) => nwmodel.get('name') === network.name)) {
                         continue
                     }
                     let networkIndex = repository.push({name: network.name, extractors: [], observers: []}) - 1

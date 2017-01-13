@@ -120,6 +120,8 @@ function update () {
 
                 if (stats.some((network) => (network.updatedExtractors.length + network.updatedObservers.length) > 0)) {
                     await config.set('lastUpdated', Date.now()).save()
+                } else {
+                    stats = ''
                 }
 
                 resolve(stats)

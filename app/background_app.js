@@ -145,12 +145,20 @@ kango.addMessageListener('reschedule-auto-update', () => {
 kango.addMessageListener('update-start', () => {
     Updater.update()
     .then(async (statistics) => {
-        log('Updater', JSON.stringify(statistics))
         // FIXME: should not tamper in localstorage manage by execution service from here
         await localforage.setItem('updater-last-run', JSON.stringify(Date.now()))
-        scheduleExtractors() // reschedule Extractors, for eventual interval changes
+        if (statistics !== '') {
+            statistics = statistics.reduce((msg, network) => {
+                return msg + network.name + ': ' + network.updatedObservers.concat(network.updatedExtractors).join(', ')
+            }, '')
+            scheduleExtractors() // reschedule Extractors, for eventual interval changes
+        } else {
+            statistics = 'uptodate'
+        }
+        log('Updater', JSON.stringify(statistics))
+        return statistics
     })
-    .then(() => kango.dispatchMessage('update-successful'))
+    .then((status) => kango.dispatchMessage('update-successful', status))
     .catch((err) => kango.dispatchMessage('update-unsuccessful', err))
 })
 

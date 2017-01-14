@@ -6,7 +6,7 @@
   </div>
 </h2>
 
-<div class="ui form">
+<div class="ui form {{updateResult}}">
   <div class="field">
     <label>{{t "settings.language"}}</label>
     <p>{{t "settings.languageLabel"}}</p>
@@ -55,7 +55,7 @@
                   onChange=(action "saveSettings")}}
   </div>
 
-  <div class="field">
+  <div class="field manualUpdate">
     <label>{{t "settings.manualUpdate"}}</label>
     <p>{{t "settings.manualUpdateLabel"}}</p>
     {{#if navigator.onLine}}
@@ -67,29 +67,39 @@
     </div>
     {{/if}}
 
-    {{#if settings.system.lastChecked}}
     <a class="ui label">
-      {{t "settings.lastChecked"}} <div class="detail">{{moment-format settings.system.lastChecked 'YY-MM-DD HH:mm'}}</div>
+      {{t "settings.lastChecked"}}
+      <div class="detail">
+        {{#if settings.system.lastChecked}}
+          {{moment-format settings.system.lastChecked 'YYYY-MM-DD HH:mm'}}
+        {{else}}
+          {{t "settings.never"}}
+        {{/if}}
+      </div>
     </a>
-    {{else}}
-    <a class="ui red label">
-      {{t "settings.lastChecked"}} <div class="detail">{{t "settings.never"}}</div>
-    </a>
-    {{/if}}
 
-    {{#if settings.system.lastUpdated}}
     <a class="ui label">
-      {{t "settings.lastUpdated"}} <div class="detail">{{moment-format settings.system.lastUpdated 'YY-MM-DD HH:mm'}}</div>
+      {{t "settings.lastUpdated"}}
+      <div class="detail">
+        {{#if settings.system.lastUpdated}}
+          {{moment-format settings.system.lastUpdated 'YYYY-MM-DD HH:mm'}}
+        {{else}}
+          {{t "settings.never"}}
+        {{/if}}
+      </div>
     </a>
-    {{else}}
-    <a class="ui label">
-      {{t "settings.lastUpdated"}} <div class="detail">{{t "settings.never"}}</div>
-    </a>
-    {{/if}}
 
-    <a class="ui green label">
-      <i class="lock icon"></i> {{t "settings.signedUpdate"}}
+    <a class="ui {{if updateSigned "green"}} label">
+      <i class="{{if updateSigned "lock" "unlock alternate"}} icon"></i> {{t "settings.signedUpdate"}}
     </a>
+
+    {{#if updateResult}}
+    <div class="ui {{updateResult}} message hidden">
+      <i class="close icon" onclick={{action "closeMessage"}}></i>
+      <div class="header">{{t updateResulti18n}}</div>
+      <p>{{updateMessage}}</p>
+    </div>
+    {{/if}}
   </div>
 
   <div class="field">

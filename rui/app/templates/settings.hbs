@@ -90,7 +90,12 @@
     </a>
 
     <a class="ui {{if updateSigned "green"}} label">
-      <i class="{{if updateSigned "lock" "unlock alternate"}} icon"></i> {{t "settings.signedUpdate"}}
+      <i class="{{if updateSigned "lock" "unlock alternate"}} icon"></i>
+        {{#if updateSigned}}
+          {{t "settings.signedUpdate"}}
+        {{else}}
+          {{t "settings.unsignedUpdate"}}
+        {{/if}}
     </a>
 
     {{#if updateResult}}

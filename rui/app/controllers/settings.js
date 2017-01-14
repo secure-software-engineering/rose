@@ -3,6 +3,9 @@ import languages from '../locales/languages'
 
 export default Ember.Controller.extend({
   navigator: Ember.inject.service(),
+  updateSigned: function () {
+    return !this.get('settings.system.lastUpdated') || this.get('settings.system.secureUpdateIsEnabled') || this.get('settings.system.forceSecureUpdate')
+  }.property('settings.system.lastUpdated'),
   updateInProgress: false,
   updateResult: '',
   updateResulti18n: function () {

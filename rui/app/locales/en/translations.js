@@ -24,7 +24,13 @@ export default {
     update: "Update",
     confirm: "Confirm",
   },
-
+  
+  //Dashboard
+  index: {
+    title: "ROSE Control Center",
+    subtitle: "Overall number of items collected in your local installation of ROSE."
+  },
+  
   // Sidebar Menu
   sidebarMenu: {
     data: "Data",
@@ -42,9 +48,11 @@ export default {
     extraFeatures: "Researcher Features",
     studyCreator: "Study Creator",
     debugLog: "Application Log",
-    observerEditor: "Observer Editor"
+    observerEditor: "Observer Editor",
+    dataConverter: "Data Converter"
   },
-
+  
+  // ROSE Initialization Wizard
   wizard: {
     header: "Welcome to ROSE",
     description: "In this step we first need to configure ROSE to work properly.",
@@ -96,7 +104,9 @@ export default {
     autoUpdate: "Automatic tracking package update",
     autoUpdateLabel: "For automatic updates to recent changes in social media sites, switch on the automatic update function.",
     autoUpdateInterval: "Automatic update interval",
-    autoUpdateIntervalLabel: "ROSE checks automatically for tracking package updates in the specified time interval."
+    autoUpdateIntervalLabel: "ROSE checks automatically for tracking package updates in the specified time interval.",
+    trackingEnabled: "Tracking On/Off",
+    trackingEnabledLabel: "Turns all tracking functions on or off globally."
   },
 
   resetConfigModal: {
@@ -242,5 +252,10 @@ export default {
   observerEditor: {
     title: "Editor for Observer Patterns",
     subtitle: "This editor allows you to change observer patterns for testing reasons, or to create new ones. This function is for expert use only."
+  },
+  
+  dataConverter: {
+    title: "Data Converter",
+    subtitle: "Tool to convert XML data exports from ROSE into more convenient CSV files. Just load the XML file and select the data set you want to convert into a CSV file."  
   }
 };

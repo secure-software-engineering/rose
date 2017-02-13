@@ -63,7 +63,9 @@ export default {
     fileConfigHeader: "Use a configuration file",
     fileConfigDescription: "I have a customized configuration file for initializing ROSE.",
     fileConfigBtn: "Load the configuration file",
-    urlConfig: "Specifiy a URL to an ROSE repository..."
+    urlConfig: "Specifiy a URL to an ROSE repository...",
+    privacyNoteTitle: "Privacy Note",
+    privacyNote: "<p>ROSE collects data about your interactions with online social media for the purpose of participating in an empirical study, or for personal purposes. All data collected is stored only locally in your web browser. The software does not transmit any tracking data over the Internet to other servers, and also locally stored data is anonymized. To disable the tracking functions of ROSE go to the settings menu and use the 'tracking on/off' switch. If you have any further question see the <a href=\"https://secure-software-engineering.github.io/rose/index.html\">Github pages of ROSE</a>.</p>"
   },
 
   // Diary Page

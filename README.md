@@ -7,7 +7,7 @@ Synopsis
 ----
 ROSE is a browser extension for researchers to capture in situ data on how users actually use online social networks.
 
-[Please see the project wiki for more detailed information. (partially outdated)](https://github.com/secure-software-engineering/rose/wiki)
+[Please see the project page for more detailed information.](https://secure-software-engineering.github.io/rose/index.html)
 
 Features
 ----

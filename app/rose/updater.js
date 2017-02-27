@@ -11,7 +11,7 @@ async function fetchRepository (config) {
     // Generate a fetch function to reuse
     // Either with validation or without
     let fetchJSONFile
-    if (config.get('forceSecureUpdate') || config.get('secureUpdateIsEnabled')) {
+    if (config.get('forceSecureUpdate')) {
         let publicKeyText = await fetch(`${repositoryUrl}/public.key`, true)
         let fingerprint = config.get('fingerprint').toLowerCase()
         fetchJSONFile = signedFetchGenerator(publicKeyText, fingerprint)

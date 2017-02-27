@@ -100,7 +100,6 @@
         <div class="ui field" style="padding-top: 15px;">
           <label>
             {{t "studyCreator.extractors"}}
-            <div class="ui green small horizontal label" style="margin-left: 20px;">{{t "studyCreator.secure"}}</div>
           </label>
           <table class="ui small compact table">
             <thead class="full-width">
@@ -134,11 +133,6 @@
         <div class="ui field">
           <label>
             {{t "studyCreator.observers"}}
-            {{#if model.fingerprint}}
-            <div class="ui green small horizontal label" style="margin-left: 20px;">{{t "studyCreator.secure"}}</div>
-            {{else}}
-            <div class="ui small horizontal label" style="margin-left: 20px;">{{t "studyCreator.unknown"}}</div>
-            {{/if}}
           </label>
           <table class="ui small compact table">
             <thead class="full-width">

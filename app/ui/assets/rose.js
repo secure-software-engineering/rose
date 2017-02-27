@@ -13024,11 +13024,11 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
               "loc": {
                 "source": null,
                 "start": {
-                  "line": 114,
+                  "line": 113,
                   "column": 12
                 },
                 "end": {
-                  "line": 122,
+                  "line": 121,
                   "column": 12
                 }
               },
@@ -13083,7 +13083,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
               morphs[2] = dom.createMorphAt(dom.childAt(element3, [5]), 0, 0);
               return morphs;
             },
-            statements: [["inline", "ui-checkbox", [], ["class", "fitted toggle", "checked", ["subexpr", "@mut", [["get", "extractor.isEnabled", ["loc", [null, [117, 62], [117, 81]]]]], [], []]], ["loc", [null, [117, 18], [117, 83]]]], ["content", "extractor.name", ["loc", [null, [119, 28], [119, 46]]]], ["content", "extractor.version", ["loc", [null, [120, 20], [120, 41]]]]],
+            statements: [["inline", "ui-checkbox", [], ["class", "fitted toggle", "checked", ["subexpr", "@mut", [["get", "extractor.isEnabled", ["loc", [null, [116, 62], [116, 81]]]]], [], []]], ["loc", [null, [116, 18], [116, 83]]]], ["content", "extractor.name", ["loc", [null, [118, 28], [118, 46]]]], ["content", "extractor.version", ["loc", [null, [119, 20], [119, 41]]]]],
             locals: ["extractor"],
             templates: []
           };
@@ -13096,103 +13096,11 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
               "loc": {
                 "source": null,
                 "start": {
-                  "line": 137,
+                  "line": 148,
                   "column": 12
                 },
                 "end": {
-                  "line": 139,
-                  "column": 12
-                }
-              },
-              "moduleName": "rose/templates/study-creator.hbs"
-            },
-            isEmpty: false,
-            arity: 0,
-            cachedFragment: null,
-            hasRendered: false,
-            buildFragment: function buildFragment(dom) {
-              var el0 = dom.createDocumentFragment();
-              var el1 = dom.createTextNode("            ");
-              dom.appendChild(el0, el1);
-              var el1 = dom.createElement("div");
-              dom.setAttribute(el1, "class", "ui green small horizontal label");
-              dom.setAttribute(el1, "style", "margin-left: 20px;");
-              var el2 = dom.createComment("");
-              dom.appendChild(el1, el2);
-              dom.appendChild(el0, el1);
-              var el1 = dom.createTextNode("\n");
-              dom.appendChild(el0, el1);
-              return el0;
-            },
-            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-              var morphs = new Array(1);
-              morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
-              return morphs;
-            },
-            statements: [["inline", "t", ["studyCreator.secure"], [], ["loc", [null, [138, 84], [138, 111]]]]],
-            locals: [],
-            templates: []
-          };
-        })();
-        var child2 = (function () {
-          return {
-            meta: {
-              "fragmentReason": false,
-              "revision": "Ember@2.2.2",
-              "loc": {
-                "source": null,
-                "start": {
-                  "line": 139,
-                  "column": 12
-                },
-                "end": {
-                  "line": 141,
-                  "column": 12
-                }
-              },
-              "moduleName": "rose/templates/study-creator.hbs"
-            },
-            isEmpty: false,
-            arity: 0,
-            cachedFragment: null,
-            hasRendered: false,
-            buildFragment: function buildFragment(dom) {
-              var el0 = dom.createDocumentFragment();
-              var el1 = dom.createTextNode("            ");
-              dom.appendChild(el0, el1);
-              var el1 = dom.createElement("div");
-              dom.setAttribute(el1, "class", "ui small horizontal label");
-              dom.setAttribute(el1, "style", "margin-left: 20px;");
-              var el2 = dom.createComment("");
-              dom.appendChild(el1, el2);
-              dom.appendChild(el0, el1);
-              var el1 = dom.createTextNode("\n");
-              dom.appendChild(el0, el1);
-              return el0;
-            },
-            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-              var morphs = new Array(1);
-              morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
-              return morphs;
-            },
-            statements: [["inline", "t", ["studyCreator.unknown"], [], ["loc", [null, [140, 78], [140, 106]]]]],
-            locals: [],
-            templates: []
-          };
-        })();
-        var child3 = (function () {
-          return {
-            meta: {
-              "fragmentReason": false,
-              "revision": "Ember@2.2.2",
-              "loc": {
-                "source": null,
-                "start": {
-                  "line": 154,
-                  "column": 12
-                },
-                "end": {
-                  "line": 164,
+                  "line": 158,
                   "column": 12
                 }
               },
@@ -13261,7 +13169,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
               morphs[4] = dom.createMorphAt(dom.childAt(element2, [9]), 0, 0);
               return morphs;
             },
-            statements: [["inline", "ui-checkbox", [], ["class", "fitted toggle", "checked", ["subexpr", "@mut", [["get", "observer.isEnabled", ["loc", [null, [157, 62], [157, 80]]]]], [], []]], ["loc", [null, [157, 18], [157, 82]]]], ["content", "observer.name", ["loc", [null, [159, 28], [159, 45]]]], ["content", "observer.description", ["loc", [null, [160, 20], [160, 44]]]], ["content", "observer.type", ["loc", [null, [161, 20], [161, 37]]]], ["content", "observer.version", ["loc", [null, [162, 20], [162, 40]]]]],
+            statements: [["inline", "ui-checkbox", [], ["class", "fitted toggle", "checked", ["subexpr", "@mut", [["get", "observer.isEnabled", ["loc", [null, [151, 62], [151, 80]]]]], [], []]], ["loc", [null, [151, 18], [151, 82]]]], ["content", "observer.name", ["loc", [null, [153, 28], [153, 45]]]], ["content", "observer.description", ["loc", [null, [154, 20], [154, 44]]]], ["content", "observer.type", ["loc", [null, [155, 20], [155, 37]]]], ["content", "observer.version", ["loc", [null, [156, 20], [156, 40]]]]],
             locals: ["observer"],
             templates: []
           };
@@ -13277,7 +13185,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
                 "column": 8
               },
               "end": {
-                "line": 176,
+                "line": 170,
                 "column": 6
               }
             },
@@ -13300,14 +13208,6 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             var el3 = dom.createTextNode("\n            ");
             dom.appendChild(el2, el3);
             var el3 = dom.createComment("");
-            dom.appendChild(el2, el3);
-            var el3 = dom.createTextNode("\n            ");
-            dom.appendChild(el2, el3);
-            var el3 = dom.createElement("div");
-            dom.setAttribute(el3, "class", "ui green small horizontal label");
-            dom.setAttribute(el3, "style", "margin-left: 20px;");
-            var el4 = dom.createComment("");
-            dom.appendChild(el3, el4);
             dom.appendChild(el2, el3);
             var el3 = dom.createTextNode("\n          ");
             dom.appendChild(el2, el3);
@@ -13408,11 +13308,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             dom.appendChild(el2, el3);
             var el3 = dom.createComment("");
             dom.appendChild(el2, el3);
-            var el3 = dom.createTextNode("\n");
-            dom.appendChild(el2, el3);
-            var el3 = dom.createComment("");
-            dom.appendChild(el2, el3);
-            var el3 = dom.createTextNode("          ");
+            var el3 = dom.createTextNode("\n          ");
             dom.appendChild(el2, el3);
             dom.appendChild(el1, el2);
             var el2 = dom.createTextNode("\n          ");
@@ -13518,47 +13414,43 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
           },
           buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
             var element4 = dom.childAt(fragment, [1]);
-            var element5 = dom.childAt(element4, [1]);
-            var element6 = dom.childAt(element4, [3]);
-            var element7 = dom.childAt(element6, [1, 1]);
-            var element8 = dom.childAt(element6, [5, 1, 1]);
-            var element9 = dom.childAt(element8, [1]);
-            var element10 = dom.childAt(element8, [3]);
-            var element11 = dom.childAt(fragment, [3]);
-            var element12 = dom.childAt(element11, [1]);
-            var element13 = dom.childAt(element11, [3]);
-            var element14 = dom.childAt(element13, [1, 1]);
-            var element15 = dom.childAt(element13, [5, 1, 1]);
-            var element16 = dom.childAt(element15, [1]);
-            var element17 = dom.childAt(element15, [3]);
-            var morphs = new Array(22);
-            morphs[0] = dom.createMorphAt(element5, 1, 1);
-            morphs[1] = dom.createMorphAt(dom.childAt(element5, [3]), 0, 0);
-            morphs[2] = dom.createMorphAt(dom.childAt(element7, [1]), 0, 0);
-            morphs[3] = dom.createMorphAt(dom.childAt(element7, [3]), 0, 0);
-            morphs[4] = dom.createMorphAt(dom.childAt(element7, [5]), 0, 0);
-            morphs[5] = dom.createMorphAt(dom.childAt(element6, [3]), 1, 1);
-            morphs[6] = dom.createElementMorph(element9);
-            morphs[7] = dom.createMorphAt(element9, 0, 0);
-            morphs[8] = dom.createElementMorph(element10);
-            morphs[9] = dom.createMorphAt(element10, 0, 0);
-            morphs[10] = dom.createMorphAt(element12, 1, 1);
-            morphs[11] = dom.createMorphAt(element12, 3, 3);
-            morphs[12] = dom.createMorphAt(dom.childAt(element14, [1]), 0, 0);
-            morphs[13] = dom.createMorphAt(dom.childAt(element14, [3]), 0, 0);
-            morphs[14] = dom.createMorphAt(dom.childAt(element14, [5]), 0, 0);
-            morphs[15] = dom.createMorphAt(dom.childAt(element14, [7]), 0, 0);
-            morphs[16] = dom.createMorphAt(dom.childAt(element14, [9]), 0, 0);
-            morphs[17] = dom.createMorphAt(dom.childAt(element13, [3]), 1, 1);
-            morphs[18] = dom.createElementMorph(element16);
-            morphs[19] = dom.createMorphAt(element16, 0, 0);
-            morphs[20] = dom.createElementMorph(element17);
-            morphs[21] = dom.createMorphAt(element17, 0, 0);
+            var element5 = dom.childAt(element4, [3]);
+            var element6 = dom.childAt(element5, [1, 1]);
+            var element7 = dom.childAt(element5, [5, 1, 1]);
+            var element8 = dom.childAt(element7, [1]);
+            var element9 = dom.childAt(element7, [3]);
+            var element10 = dom.childAt(fragment, [3]);
+            var element11 = dom.childAt(element10, [3]);
+            var element12 = dom.childAt(element11, [1, 1]);
+            var element13 = dom.childAt(element11, [5, 1, 1]);
+            var element14 = dom.childAt(element13, [1]);
+            var element15 = dom.childAt(element13, [3]);
+            var morphs = new Array(20);
+            morphs[0] = dom.createMorphAt(dom.childAt(element4, [1]), 1, 1);
+            morphs[1] = dom.createMorphAt(dom.childAt(element6, [1]), 0, 0);
+            morphs[2] = dom.createMorphAt(dom.childAt(element6, [3]), 0, 0);
+            morphs[3] = dom.createMorphAt(dom.childAt(element6, [5]), 0, 0);
+            morphs[4] = dom.createMorphAt(dom.childAt(element5, [3]), 1, 1);
+            morphs[5] = dom.createElementMorph(element8);
+            morphs[6] = dom.createMorphAt(element8, 0, 0);
+            morphs[7] = dom.createElementMorph(element9);
+            morphs[8] = dom.createMorphAt(element9, 0, 0);
+            morphs[9] = dom.createMorphAt(dom.childAt(element10, [1]), 1, 1);
+            morphs[10] = dom.createMorphAt(dom.childAt(element12, [1]), 0, 0);
+            morphs[11] = dom.createMorphAt(dom.childAt(element12, [3]), 0, 0);
+            morphs[12] = dom.createMorphAt(dom.childAt(element12, [5]), 0, 0);
+            morphs[13] = dom.createMorphAt(dom.childAt(element12, [7]), 0, 0);
+            morphs[14] = dom.createMorphAt(dom.childAt(element12, [9]), 0, 0);
+            morphs[15] = dom.createMorphAt(dom.childAt(element11, [3]), 1, 1);
+            morphs[16] = dom.createElementMorph(element14);
+            morphs[17] = dom.createMorphAt(element14, 0, 0);
+            morphs[18] = dom.createElementMorph(element15);
+            morphs[19] = dom.createMorphAt(element15, 0, 0);
             return morphs;
           },
-          statements: [["inline", "t", ["studyCreator.extractors"], [], ["loc", [null, [102, 12], [102, 43]]]], ["inline", "t", ["studyCreator.secure"], [], ["loc", [null, [103, 84], [103, 111]]]], ["inline", "t", ["studyCreator.table.enabled"], [], ["loc", [null, [108, 20], [108, 54]]]], ["inline", "t", ["studyCreator.table.name"], [], ["loc", [null, [109, 20], [109, 51]]]], ["inline", "t", ["studyCreator.table.version"], [], ["loc", [null, [110, 20], [110, 54]]]], ["block", "each", [["get", "network.extractors", ["loc", [null, [114, 20], [114, 38]]]]], [], 0, null, ["loc", [null, [114, 12], [122, 21]]]], ["element", "action", ["enableAll", ["get", "network.extractors", ["loc", [null, [127, 77], [127, 95]]]]], [], ["loc", [null, [127, 56], [127, 97]]]], ["inline", "t", ["studyCreator.enableAll"], [], ["loc", [null, [127, 98], [127, 128]]]], ["element", "action", ["disableAll", ["get", "network.extractors", ["loc", [null, [128, 78], [128, 96]]]]], [], ["loc", [null, [128, 56], [128, 98]]]], ["inline", "t", ["studyCreator.disableAll"], [], ["loc", [null, [128, 99], [128, 130]]]], ["inline", "t", ["studyCreator.observers"], [], ["loc", [null, [136, 12], [136, 42]]]], ["block", "if", [["get", "model.fingerprint", ["loc", [null, [137, 18], [137, 35]]]]], [], 1, 2, ["loc", [null, [137, 12], [141, 19]]]], ["inline", "t", ["studyCreator.table.enabled"], [], ["loc", [null, [146, 20], [146, 54]]]], ["inline", "t", ["studyCreator.table.name"], [], ["loc", [null, [147, 20], [147, 51]]]], ["inline", "t", ["studyCreator.table.description"], [], ["loc", [null, [148, 20], [148, 58]]]], ["inline", "t", ["studyCreator.table.type"], [], ["loc", [null, [149, 20], [149, 51]]]], ["inline", "t", ["studyCreator.table.version"], [], ["loc", [null, [150, 20], [150, 54]]]], ["block", "each", [["get", "network.observers", ["loc", [null, [154, 20], [154, 37]]]]], [], 3, null, ["loc", [null, [154, 12], [164, 21]]]], ["element", "action", ["enableAll", ["get", "network.observers", ["loc", [null, [169, 77], [169, 94]]]]], [], ["loc", [null, [169, 56], [169, 96]]]], ["inline", "t", ["studyCreator.enableAll"], [], ["loc", [null, [169, 97], [169, 127]]]], ["element", "action", ["disableAll", ["get", "network.observers", ["loc", [null, [170, 78], [170, 95]]]]], [], ["loc", [null, [170, 56], [170, 97]]]], ["inline", "t", ["studyCreator.disableAll"], [], ["loc", [null, [170, 98], [170, 129]]]]],
+          statements: [["inline", "t", ["studyCreator.extractors"], [], ["loc", [null, [102, 12], [102, 43]]]], ["inline", "t", ["studyCreator.table.enabled"], [], ["loc", [null, [107, 20], [107, 54]]]], ["inline", "t", ["studyCreator.table.name"], [], ["loc", [null, [108, 20], [108, 51]]]], ["inline", "t", ["studyCreator.table.version"], [], ["loc", [null, [109, 20], [109, 54]]]], ["block", "each", [["get", "network.extractors", ["loc", [null, [113, 20], [113, 38]]]]], [], 0, null, ["loc", [null, [113, 12], [121, 21]]]], ["element", "action", ["enableAll", ["get", "network.extractors", ["loc", [null, [126, 77], [126, 95]]]]], [], ["loc", [null, [126, 56], [126, 97]]]], ["inline", "t", ["studyCreator.enableAll"], [], ["loc", [null, [126, 98], [126, 128]]]], ["element", "action", ["disableAll", ["get", "network.extractors", ["loc", [null, [127, 78], [127, 96]]]]], [], ["loc", [null, [127, 56], [127, 98]]]], ["inline", "t", ["studyCreator.disableAll"], [], ["loc", [null, [127, 99], [127, 130]]]], ["inline", "t", ["studyCreator.observers"], [], ["loc", [null, [135, 12], [135, 42]]]], ["inline", "t", ["studyCreator.table.enabled"], [], ["loc", [null, [140, 20], [140, 54]]]], ["inline", "t", ["studyCreator.table.name"], [], ["loc", [null, [141, 20], [141, 51]]]], ["inline", "t", ["studyCreator.table.description"], [], ["loc", [null, [142, 20], [142, 58]]]], ["inline", "t", ["studyCreator.table.type"], [], ["loc", [null, [143, 20], [143, 51]]]], ["inline", "t", ["studyCreator.table.version"], [], ["loc", [null, [144, 20], [144, 54]]]], ["block", "each", [["get", "network.observers", ["loc", [null, [148, 20], [148, 37]]]]], [], 1, null, ["loc", [null, [148, 12], [158, 21]]]], ["element", "action", ["enableAll", ["get", "network.observers", ["loc", [null, [163, 77], [163, 94]]]]], [], ["loc", [null, [163, 56], [163, 96]]]], ["inline", "t", ["studyCreator.enableAll"], [], ["loc", [null, [163, 97], [163, 127]]]], ["element", "action", ["disableAll", ["get", "network.observers", ["loc", [null, [164, 78], [164, 95]]]]], [], ["loc", [null, [164, 56], [164, 97]]]], ["inline", "t", ["studyCreator.disableAll"], [], ["loc", [null, [164, 98], [164, 129]]]]],
           locals: [],
-          templates: [child0, child1, child2, child3]
+          templates: [child0, child1]
         };
       })();
       return {
@@ -13572,7 +13464,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
               "column": 4
             },
             "end": {
-              "line": 178,
+              "line": 172,
               "column": 4
             }
           },
@@ -13604,13 +13496,13 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element18 = dom.childAt(fragment, [1]);
+          var element16 = dom.childAt(fragment, [1]);
           var morphs = new Array(2);
-          morphs[0] = dom.createMorphAt(element18, 1, 1);
-          morphs[1] = dom.createMorphAt(element18, 3, 3);
+          morphs[0] = dom.createMorphAt(element16, 1, 1);
+          morphs[1] = dom.createMorphAt(element16, 3, 3);
           return morphs;
         },
-        statements: [["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "network.isEnabled", ["loc", [null, [95, 30], [95, 47]]]]], [], []], "class", "toggle", "label", ["subexpr", "@mut", [["get", "network.descriptiveName", ["loc", [null, [97, 28], [97, 51]]]]], [], []], "value", ["subexpr", "@mut", [["get", "network", ["loc", [null, [98, 28], [98, 35]]]]], [], []]], ["loc", [null, [95, 8], [98, 37]]]], ["block", "if", [["get", "network.isEnabled", ["loc", [null, [99, 14], [99, 31]]]]], [], 0, null, ["loc", [null, [99, 8], [176, 13]]]]],
+        statements: [["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "network.isEnabled", ["loc", [null, [95, 30], [95, 47]]]]], [], []], "class", "toggle", "label", ["subexpr", "@mut", [["get", "network.descriptiveName", ["loc", [null, [97, 28], [97, 51]]]]], [], []], "value", ["subexpr", "@mut", [["get", "network", ["loc", [null, [98, 28], [98, 35]]]]], [], []]], ["loc", [null, [95, 8], [98, 37]]]], ["block", "if", [["get", "network.isEnabled", ["loc", [null, [99, 14], [99, 31]]]]], [], 0, null, ["loc", [null, [99, 8], [170, 13]]]]],
         locals: ["network"],
         templates: [child0]
       };
@@ -13624,11 +13516,11 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             "loc": {
               "source": null,
               "start": {
-                "line": 214,
+                "line": 208,
                 "column": 8
               },
               "end": {
-                "line": 218,
+                "line": 212,
                 "column": 8
               }
             },
@@ -13662,7 +13554,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             morphs[1] = dom.createMorphAt(element0, 1, 1);
             return morphs;
           },
-          statements: [["attribute", "data-value", ["get", "interval.value", ["loc", [null, [215, 41], [215, 55]]]]], ["inline", "t", [["get", "interval.label", ["loc", [null, [216, 16], [216, 30]]]]], [], ["loc", [null, [216, 12], [216, 32]]]]],
+          statements: [["attribute", "data-value", ["get", "interval.value", ["loc", [null, [209, 41], [209, 55]]]]], ["inline", "t", [["get", "interval.label", ["loc", [null, [210, 16], [210, 30]]]]], [], ["loc", [null, [210, 12], [210, 32]]]]],
           locals: ["interval"],
           templates: []
         };
@@ -13674,11 +13566,11 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 207,
+              "line": 201,
               "column": 4
             },
             "end": {
-              "line": 220,
+              "line": 214,
               "column": 4
             }
           },
@@ -13730,7 +13622,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
           morphs[1] = dom.createMorphAt(dom.childAt(fragment, [7]), 1, 1);
           return morphs;
         },
-        statements: [["attribute", "value", ["get", "model.updateInterval", ["loc", [null, [211, 51], [211, 71]]]]], ["block", "each", [["get", "updateIntervals", ["loc", [null, [214, 16], [214, 31]]]]], [], 0, null, ["loc", [null, [214, 8], [218, 17]]]]],
+        statements: [["attribute", "value", ["get", "model.updateInterval", ["loc", [null, [205, 51], [205, 71]]]]], ["block", "each", [["get", "updateIntervals", ["loc", [null, [208, 16], [208, 31]]]]], [], 0, null, ["loc", [null, [208, 8], [212, 17]]]]],
         locals: [],
         templates: [child0]
       };
@@ -13749,7 +13641,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 236,
+            "line": 230,
             "column": 0
           }
         },
@@ -14129,71 +14021,71 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element19 = dom.childAt(fragment, [0, 3]);
-        var element20 = dom.childAt(fragment, [2]);
-        var element21 = dom.childAt(element20, [3]);
-        var element22 = dom.childAt(element20, [5]);
-        var element23 = dom.childAt(element20, [9]);
-        var element24 = dom.childAt(element20, [11]);
-        var element25 = dom.childAt(element20, [15]);
-        var element26 = dom.childAt(element25, [5]);
-        var element27 = dom.childAt(element26, [3]);
-        var element28 = dom.childAt(element20, [17]);
-        var element29 = dom.childAt(element20, [21]);
-        var element30 = dom.childAt(element20, [25]);
-        var element31 = dom.childAt(element20, [27]);
-        var element32 = dom.childAt(element20, [29]);
-        var element33 = dom.childAt(element20, [31]);
-        var element34 = dom.childAt(element20, [33]);
+        var element17 = dom.childAt(fragment, [0, 3]);
+        var element18 = dom.childAt(fragment, [2]);
+        var element19 = dom.childAt(element18, [3]);
+        var element20 = dom.childAt(element18, [5]);
+        var element21 = dom.childAt(element18, [9]);
+        var element22 = dom.childAt(element18, [11]);
+        var element23 = dom.childAt(element18, [15]);
+        var element24 = dom.childAt(element23, [5]);
+        var element25 = dom.childAt(element24, [3]);
+        var element26 = dom.childAt(element18, [17]);
+        var element27 = dom.childAt(element18, [21]);
+        var element28 = dom.childAt(element18, [25]);
+        var element29 = dom.childAt(element18, [27]);
+        var element30 = dom.childAt(element18, [29]);
+        var element31 = dom.childAt(element18, [31]);
+        var element32 = dom.childAt(element18, [33]);
         var morphs = new Array(45);
-        morphs[0] = dom.createMorphAt(element19, 1, 1);
-        morphs[1] = dom.createMorphAt(dom.childAt(element19, [3]), 0, 0);
-        morphs[2] = dom.createMorphAt(dom.childAt(element20, [1]), 0, 0);
-        morphs[3] = dom.createMorphAt(dom.childAt(element21, [1]), 0, 0);
-        morphs[4] = dom.createMorphAt(dom.childAt(element21, [3]), 0, 0);
-        morphs[5] = dom.createMorphAt(element21, 5, 5);
-        morphs[6] = dom.createMorphAt(dom.childAt(element22, [1]), 0, 0);
-        morphs[7] = dom.createMorphAt(dom.childAt(element22, [3]), 0, 0);
-        morphs[8] = dom.createMorphAt(element22, 5, 5);
-        morphs[9] = dom.createMorphAt(dom.childAt(element20, [7]), 0, 0);
-        morphs[10] = dom.createMorphAt(dom.childAt(element23, [1]), 0, 0);
-        morphs[11] = dom.createMorphAt(dom.childAt(element23, [3]), 0, 0);
-        morphs[12] = dom.createMorphAt(element23, 5, 5);
-        morphs[13] = dom.createMorphAt(dom.childAt(element24, [1]), 0, 0);
-        morphs[14] = dom.createMorphAt(dom.childAt(element24, [3]), 0, 0);
-        morphs[15] = dom.createMorphAt(element24, 5, 5);
-        morphs[16] = dom.createMorphAt(dom.childAt(element20, [13]), 0, 0);
-        morphs[17] = dom.createMorphAt(dom.childAt(element25, [1]), 0, 0);
-        morphs[18] = dom.createMorphAt(dom.childAt(element25, [3]), 0, 0);
-        morphs[19] = dom.createMorphAt(element26, 1, 1);
-        morphs[20] = dom.createAttrMorph(element27, 'class');
-        morphs[21] = dom.createElementMorph(element27);
-        morphs[22] = dom.createMorphAt(element25, 7, 7);
-        morphs[23] = dom.createMorphAt(dom.childAt(element28, [1]), 0, 0);
-        morphs[24] = dom.createMorphAt(dom.childAt(element28, [3]), 0, 0);
-        morphs[25] = dom.createMorphAt(dom.childAt(element28, [5]), 1, 1);
-        morphs[26] = dom.createMorphAt(dom.childAt(element20, [19]), 0, 0);
-        morphs[27] = dom.createMorphAt(dom.childAt(element29, [1]), 0, 0);
-        morphs[28] = dom.createMorphAt(dom.childAt(element29, [3]), 0, 0);
-        morphs[29] = dom.createMorphAt(element29, 5, 5);
-        morphs[30] = dom.createMorphAt(dom.childAt(element20, [23]), 0, 0);
-        morphs[31] = dom.createMorphAt(dom.childAt(element30, [1]), 0, 0);
-        morphs[32] = dom.createMorphAt(dom.childAt(element30, [3]), 0, 0);
-        morphs[33] = dom.createMorphAt(element30, 5, 5);
-        morphs[34] = dom.createMorphAt(dom.childAt(element31, [1]), 0, 0);
-        morphs[35] = dom.createMorphAt(dom.childAt(element31, [3]), 0, 0);
-        morphs[36] = dom.createMorphAt(element31, 5, 5);
-        morphs[37] = dom.createMorphAt(dom.childAt(element32, [1]), 0, 0);
-        morphs[38] = dom.createMorphAt(dom.childAt(element32, [3]), 0, 0);
-        morphs[39] = dom.createMorphAt(element32, 5, 5);
-        morphs[40] = dom.createMorphAt(dom.childAt(element33, [1]), 0, 0);
-        morphs[41] = dom.createMorphAt(dom.childAt(element33, [3]), 0, 0);
-        morphs[42] = dom.createMorphAt(element33, 5, 5);
-        morphs[43] = dom.createElementMorph(element34);
-        morphs[44] = dom.createMorphAt(element34, 1, 1);
+        morphs[0] = dom.createMorphAt(element17, 1, 1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element17, [3]), 0, 0);
+        morphs[2] = dom.createMorphAt(dom.childAt(element18, [1]), 0, 0);
+        morphs[3] = dom.createMorphAt(dom.childAt(element19, [1]), 0, 0);
+        morphs[4] = dom.createMorphAt(dom.childAt(element19, [3]), 0, 0);
+        morphs[5] = dom.createMorphAt(element19, 5, 5);
+        morphs[6] = dom.createMorphAt(dom.childAt(element20, [1]), 0, 0);
+        morphs[7] = dom.createMorphAt(dom.childAt(element20, [3]), 0, 0);
+        morphs[8] = dom.createMorphAt(element20, 5, 5);
+        morphs[9] = dom.createMorphAt(dom.childAt(element18, [7]), 0, 0);
+        morphs[10] = dom.createMorphAt(dom.childAt(element21, [1]), 0, 0);
+        morphs[11] = dom.createMorphAt(dom.childAt(element21, [3]), 0, 0);
+        morphs[12] = dom.createMorphAt(element21, 5, 5);
+        morphs[13] = dom.createMorphAt(dom.childAt(element22, [1]), 0, 0);
+        morphs[14] = dom.createMorphAt(dom.childAt(element22, [3]), 0, 0);
+        morphs[15] = dom.createMorphAt(element22, 5, 5);
+        morphs[16] = dom.createMorphAt(dom.childAt(element18, [13]), 0, 0);
+        morphs[17] = dom.createMorphAt(dom.childAt(element23, [1]), 0, 0);
+        morphs[18] = dom.createMorphAt(dom.childAt(element23, [3]), 0, 0);
+        morphs[19] = dom.createMorphAt(element24, 1, 1);
+        morphs[20] = dom.createAttrMorph(element25, 'class');
+        morphs[21] = dom.createElementMorph(element25);
+        morphs[22] = dom.createMorphAt(element23, 7, 7);
+        morphs[23] = dom.createMorphAt(dom.childAt(element26, [1]), 0, 0);
+        morphs[24] = dom.createMorphAt(dom.childAt(element26, [3]), 0, 0);
+        morphs[25] = dom.createMorphAt(dom.childAt(element26, [5]), 1, 1);
+        morphs[26] = dom.createMorphAt(dom.childAt(element18, [19]), 0, 0);
+        morphs[27] = dom.createMorphAt(dom.childAt(element27, [1]), 0, 0);
+        morphs[28] = dom.createMorphAt(dom.childAt(element27, [3]), 0, 0);
+        morphs[29] = dom.createMorphAt(element27, 5, 5);
+        morphs[30] = dom.createMorphAt(dom.childAt(element18, [23]), 0, 0);
+        morphs[31] = dom.createMorphAt(dom.childAt(element28, [1]), 0, 0);
+        morphs[32] = dom.createMorphAt(dom.childAt(element28, [3]), 0, 0);
+        morphs[33] = dom.createMorphAt(element28, 5, 5);
+        morphs[34] = dom.createMorphAt(dom.childAt(element29, [1]), 0, 0);
+        morphs[35] = dom.createMorphAt(dom.childAt(element29, [3]), 0, 0);
+        morphs[36] = dom.createMorphAt(element29, 5, 5);
+        morphs[37] = dom.createMorphAt(dom.childAt(element30, [1]), 0, 0);
+        morphs[38] = dom.createMorphAt(dom.childAt(element30, [3]), 0, 0);
+        morphs[39] = dom.createMorphAt(element30, 5, 5);
+        morphs[40] = dom.createMorphAt(dom.childAt(element31, [1]), 0, 0);
+        morphs[41] = dom.createMorphAt(dom.childAt(element31, [3]), 0, 0);
+        morphs[42] = dom.createMorphAt(element31, 5, 5);
+        morphs[43] = dom.createElementMorph(element32);
+        morphs[44] = dom.createMorphAt(element32, 1, 1);
         return morphs;
       },
-      statements: [["inline", "t", ["studyCreator.title"], [], ["loc", [null, [4, 4], [4, 30]]]], ["inline", "t", ["studyCreator.subtitle"], [], ["loc", [null, [5, 28], [5, 57]]]], ["inline", "t", ["studyCreator.optionalFeaturesHeader"], [], ["loc", [null, [10, 33], [10, 76]]]], ["inline", "t", ["studyCreator.roseComments"], [], ["loc", [null, [12, 11], [12, 44]]]], ["inline", "t", ["studyCreator.roseCommentsDesc"], [], ["loc", [null, [13, 7], [13, 44]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [15, 26], [15, 53]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [17, 42], [17, 69]]]]], [], ["loc", [null, [17, 24], [17, 70]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [18, 27], [18, 50]]]]], ["loc", [null, [15, 4], [18, 52]]]], ["inline", "t", ["studyCreator.roseCommentsRating"], [], ["loc", [null, [22, 11], [22, 50]]]], ["inline", "t", ["studyCreator.roseCommentsRatingDesc"], [], ["loc", [null, [23, 7], [23, 50]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [25, 26], [25, 59]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [27, 42], [27, 75]]]]], [], ["loc", [null, [27, 24], [27, 76]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [28, 27], [28, 50]]]]], ["loc", [null, [25, 4], [28, 52]]]], ["inline", "t", ["studyCreator.privacyHeader"], [], ["loc", [null, [31, 33], [31, 67]]]], ["inline", "t", ["studyCreator.salt"], [], ["loc", [null, [34, 11], [34, 36]]]], ["inline", "t", ["studyCreator.saltDesc"], [], ["loc", [null, [35, 7], [35, 36]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.salt", ["loc", [null, [38, 18], [38, 28]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [37, 4], [40, 38]]]], ["inline", "t", ["studyCreator.hashLength"], [], ["loc", [null, [44, 11], [44, 42]]]], ["inline", "t", ["studyCreator.hashLengthDesc"], [], ["loc", [null, [45, 7], [45, 42]]]], ["inline", "input", [], ["type", "number", "value", ["subexpr", "@mut", [["get", "model.hashLength", ["loc", [null, [48, 18], [48, 34]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [47, 4], [50, 38]]]], ["inline", "t", ["studyCreator.repositoryHeader"], [], ["loc", [null, [53, 33], [53, 70]]]], ["inline", "t", ["studyCreator.repositoryUrl"], [], ["loc", [null, [56, 11], [56, 45]]]], ["inline", "t", ["studyCreator.repositoryUrlDesc"], [], ["loc", [null, [57, 7], [57, 45]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.repositoryURL", ["loc", [null, [61, 20], [61, 39]]]]], [], []], "insert-newline", "fetchBaseFile"], ["loc", [null, [60, 6], [62, 46]]]], ["attribute", "class", ["concat", ["ui icon button ", ["subexpr", "if", [["get", "baseFileIsLoading", ["loc", [null, [64, 41], [64, 58]]]], "loading"], [], ["loc", [null, [64, 36], [64, 70]]]]]]], ["element", "action", ["fetchBaseFile"], [], ["loc", [null, [64, 72], [64, 98]]]], ["block", "if", [["get", "baseFileNotFound", ["loc", [null, [68, 10], [68, 26]]]]], [], 0, null, ["loc", [null, [68, 4], [72, 11]]]], ["inline", "t", ["studyCreator.fingerprint"], [], ["loc", [null, [76, 11], [76, 43]]]], ["inline", "t", ["studyCreator.fingerprintDesc"], [], ["loc", [null, [77, 7], [77, 43]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.fingerprint", ["loc", [null, [81, 20], [81, 37]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [80, 6], [83, 40]]]], ["inline", "t", ["studyCreator.configurationHeader"], [], ["loc", [null, [87, 33], [87, 73]]]], ["inline", "t", ["studyCreator.networks"], [], ["loc", [null, [90, 11], [90, 40]]]], ["inline", "t", ["studyCreator.networksDesc"], [], ["loc", [null, [91, 7], [91, 40]]]], ["block", "each", [["get", "networks", ["loc", [null, [93, 12], [93, 20]]]]], [], 1, null, ["loc", [null, [93, 4], [178, 13]]]], ["inline", "t", ["studyCreator.autoUpdateHeader"], [], ["loc", [null, [181, 33], [181, 70]]]], ["inline", "t", ["studyCreator.autoUpdate"], [], ["loc", [null, [184, 11], [184, 42]]]], ["inline", "t", ["studyCreator.autoUpdateDesc"], [], ["loc", [null, [185, 7], [185, 42]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [187, 26], [187, 51]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [189, 42], [189, 67]]]]], [], ["loc", [null, [189, 24], [189, 68]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [190, 27], [190, 50]]]]], ["loc", [null, [187, 4], [190, 52]]]], ["inline", "t", ["studyCreator.forceSecureUpdate"], [], ["loc", [null, [194, 11], [194, 49]]]], ["inline", "t", ["studyCreator.forceSecureUpdateDesc"], [], ["loc", [null, [195, 7], [195, 49]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.forceSecureUpdate", ["loc", [null, [197, 26], [197, 49]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.forceSecureUpdate", ["loc", [null, [199, 42], [199, 65]]]]], [], ["loc", [null, [199, 24], [199, 66]]]], "onChange", ["subexpr", "action", ["toggleForceSecureUpdate"], [], ["loc", [null, [200, 27], [200, 61]]]]], ["loc", [null, [197, 4], [200, 63]]]], ["inline", "t", ["studyCreator.updateInterval"], [], ["loc", [null, [204, 11], [204, 46]]]], ["inline", "t", ["studyCreator.updateIntervalLabel"], [], ["loc", [null, [205, 7], [205, 47]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "model.updateInterval", ["loc", [null, [208, 29], [208, 49]]]]], [], []], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [209, 29], [209, 52]]]]], 2, null, ["loc", [null, [207, 4], [220, 20]]]], ["inline", "t", ["studyCreator.exportConfig"], [], ["loc", [null, [224, 11], [224, 44]]]], ["inline", "t", ["studyCreator.exportConfigDesc"], [], ["loc", [null, [225, 7], [225, 44]]]], ["inline", "input", [], ["value", ["subexpr", "@mut", [["get", "model.fileName", ["loc", [null, [227, 18], [227, 32]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [227, 4], [229, 38]]]], ["element", "action", ["download"], [], ["loc", [null, [232, 36], [232, 57]]]], ["inline", "t", ["action.download"], [], ["loc", [null, [233, 4], [233, 27]]]]],
+      statements: [["inline", "t", ["studyCreator.title"], [], ["loc", [null, [4, 4], [4, 30]]]], ["inline", "t", ["studyCreator.subtitle"], [], ["loc", [null, [5, 28], [5, 57]]]], ["inline", "t", ["studyCreator.optionalFeaturesHeader"], [], ["loc", [null, [10, 33], [10, 76]]]], ["inline", "t", ["studyCreator.roseComments"], [], ["loc", [null, [12, 11], [12, 44]]]], ["inline", "t", ["studyCreator.roseCommentsDesc"], [], ["loc", [null, [13, 7], [13, 44]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [15, 26], [15, 53]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [17, 42], [17, 69]]]]], [], ["loc", [null, [17, 24], [17, 70]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [18, 27], [18, 50]]]]], ["loc", [null, [15, 4], [18, 52]]]], ["inline", "t", ["studyCreator.roseCommentsRating"], [], ["loc", [null, [22, 11], [22, 50]]]], ["inline", "t", ["studyCreator.roseCommentsRatingDesc"], [], ["loc", [null, [23, 7], [23, 50]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [25, 26], [25, 59]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [27, 42], [27, 75]]]]], [], ["loc", [null, [27, 24], [27, 76]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [28, 27], [28, 50]]]]], ["loc", [null, [25, 4], [28, 52]]]], ["inline", "t", ["studyCreator.privacyHeader"], [], ["loc", [null, [31, 33], [31, 67]]]], ["inline", "t", ["studyCreator.salt"], [], ["loc", [null, [34, 11], [34, 36]]]], ["inline", "t", ["studyCreator.saltDesc"], [], ["loc", [null, [35, 7], [35, 36]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.salt", ["loc", [null, [38, 18], [38, 28]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [37, 4], [40, 38]]]], ["inline", "t", ["studyCreator.hashLength"], [], ["loc", [null, [44, 11], [44, 42]]]], ["inline", "t", ["studyCreator.hashLengthDesc"], [], ["loc", [null, [45, 7], [45, 42]]]], ["inline", "input", [], ["type", "number", "value", ["subexpr", "@mut", [["get", "model.hashLength", ["loc", [null, [48, 18], [48, 34]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [47, 4], [50, 38]]]], ["inline", "t", ["studyCreator.repositoryHeader"], [], ["loc", [null, [53, 33], [53, 70]]]], ["inline", "t", ["studyCreator.repositoryUrl"], [], ["loc", [null, [56, 11], [56, 45]]]], ["inline", "t", ["studyCreator.repositoryUrlDesc"], [], ["loc", [null, [57, 7], [57, 45]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.repositoryURL", ["loc", [null, [61, 20], [61, 39]]]]], [], []], "insert-newline", "fetchBaseFile"], ["loc", [null, [60, 6], [62, 46]]]], ["attribute", "class", ["concat", ["ui icon button ", ["subexpr", "if", [["get", "baseFileIsLoading", ["loc", [null, [64, 41], [64, 58]]]], "loading"], [], ["loc", [null, [64, 36], [64, 70]]]]]]], ["element", "action", ["fetchBaseFile"], [], ["loc", [null, [64, 72], [64, 98]]]], ["block", "if", [["get", "baseFileNotFound", ["loc", [null, [68, 10], [68, 26]]]]], [], 0, null, ["loc", [null, [68, 4], [72, 11]]]], ["inline", "t", ["studyCreator.fingerprint"], [], ["loc", [null, [76, 11], [76, 43]]]], ["inline", "t", ["studyCreator.fingerprintDesc"], [], ["loc", [null, [77, 7], [77, 43]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.fingerprint", ["loc", [null, [81, 20], [81, 37]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [80, 6], [83, 40]]]], ["inline", "t", ["studyCreator.configurationHeader"], [], ["loc", [null, [87, 33], [87, 73]]]], ["inline", "t", ["studyCreator.networks"], [], ["loc", [null, [90, 11], [90, 40]]]], ["inline", "t", ["studyCreator.networksDesc"], [], ["loc", [null, [91, 7], [91, 40]]]], ["block", "each", [["get", "networks", ["loc", [null, [93, 12], [93, 20]]]]], [], 1, null, ["loc", [null, [93, 4], [172, 13]]]], ["inline", "t", ["studyCreator.autoUpdateHeader"], [], ["loc", [null, [175, 33], [175, 70]]]], ["inline", "t", ["studyCreator.autoUpdate"], [], ["loc", [null, [178, 11], [178, 42]]]], ["inline", "t", ["studyCreator.autoUpdateDesc"], [], ["loc", [null, [179, 7], [179, 42]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [181, 26], [181, 51]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [183, 42], [183, 67]]]]], [], ["loc", [null, [183, 24], [183, 68]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [184, 27], [184, 50]]]]], ["loc", [null, [181, 4], [184, 52]]]], ["inline", "t", ["studyCreator.forceSecureUpdate"], [], ["loc", [null, [188, 11], [188, 49]]]], ["inline", "t", ["studyCreator.forceSecureUpdateDesc"], [], ["loc", [null, [189, 7], [189, 49]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.forceSecureUpdate", ["loc", [null, [191, 26], [191, 49]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.forceSecureUpdate", ["loc", [null, [193, 42], [193, 65]]]]], [], ["loc", [null, [193, 24], [193, 66]]]], "onChange", ["subexpr", "action", ["toggleForceSecureUpdate"], [], ["loc", [null, [194, 27], [194, 61]]]]], ["loc", [null, [191, 4], [194, 63]]]], ["inline", "t", ["studyCreator.updateInterval"], [], ["loc", [null, [198, 11], [198, 46]]]], ["inline", "t", ["studyCreator.updateIntervalLabel"], [], ["loc", [null, [199, 7], [199, 47]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "model.updateInterval", ["loc", [null, [202, 29], [202, 49]]]]], [], []], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [203, 29], [203, 52]]]]], 2, null, ["loc", [null, [201, 4], [214, 20]]]], ["inline", "t", ["studyCreator.exportConfig"], [], ["loc", [null, [218, 11], [218, 44]]]], ["inline", "t", ["studyCreator.exportConfigDesc"], [], ["loc", [null, [219, 7], [219, 44]]]], ["inline", "input", [], ["value", ["subexpr", "@mut", [["get", "model.fileName", ["loc", [null, [221, 18], [221, 32]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [221, 4], [223, 38]]]], ["element", "action", ["download"], [], ["loc", [null, [226, 36], [226, 57]]]], ["inline", "t", ["action.download"], [], ["loc", [null, [227, 4], [227, 27]]]]],
       locals: [],
       templates: [child0, child1, child2]
     };

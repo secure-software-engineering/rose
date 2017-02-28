@@ -2051,7 +2051,8 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
       unsignedUpdate: "Unsigned",
       uptodate: "Everything is already up-to-date.",
       error: "Update failed.",
-      success: "Update was successful."
+      success: "Update was successful.",
+      noInternetConnection: "No internet connection"
     },
 
     resetConfigModal: {
@@ -11286,7 +11287,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
           morphs[1] = dom.createMorphAt(dom.childAt(element5, [3]), 0, 0);
           return morphs;
         },
-        statements: [["inline", "t", ["action.update"], [], ["loc", [null, [65, 29], [65, 50]]]], ["inline", "t", ["noInternetConnection"], [], ["loc", [null, [66, 32], [66, 60]]]]],
+        statements: [["inline", "t", ["action.update"], [], ["loc", [null, [65, 29], [65, 50]]]], ["inline", "t", ["settings.noInternetConnection"], [], ["loc", [null, [66, 32], [66, 69]]]]],
         locals: [],
         templates: []
       };
@@ -14615,7 +14616,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+80fe4450"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+2526636e"});
 }
 
 /* jshint ignore:end */

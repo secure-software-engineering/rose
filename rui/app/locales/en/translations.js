@@ -116,7 +116,8 @@ export default {
     unsignedUpdate: "Unsigned",
     uptodate: "Everything is already up-to-date.",
     error: "Update failed.",
-    success: "Update was successful."
+    success: "Update was successful.",
+    noInternetConnection: "No internet connection"
   },
 
   resetConfigModal: {

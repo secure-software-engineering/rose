@@ -96,19 +96,8 @@ export default Ember.Controller.extend({
       itemList.forEach(item => item.set('isEnabled', false))
     },
 
-    toggleEnableSecureUpdate() {
-      const state = this.get('model.secureUpdateIsEnabled')
-      if (state === false) {
-        this.set('model.forceSecureUpdate', false)
-      }
-      this.get('model').save()
-    },
-
     toggleForceSecureUpdate() {
       const state = this.get('model.forceSecureUpdate')
-      if (state === true) {
-        this.set('model.secureUpdateIsEnabled', true)
-      }
       this.get('model').save()
     }
   }

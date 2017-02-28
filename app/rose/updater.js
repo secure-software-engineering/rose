@@ -1,161 +1,137 @@
-import fetch from 'isomorphic-fetch'
-
 import ConfigModel from './models/system-config'
 import ObserverCollection from './collections/observers'
 import ExtractorCollection from './collections/extractors'
 import NetworkCollection from './collections/networks'
-import verify from './verify.js'
+import {fetch, signedFetchGenerator} from './fetcher'
 
-function removeFileName (str) {
-    return str.substring(0, str.lastIndexOf('/'))
-}
+async function fetchRepository (config) {
+    const baseFileUrl = config.get('repositoryURL')
+    const repositoryUrl = baseFileUrl.substring(0, baseFileUrl.lastIndexOf('/'))
 
-function updateExtractor (extractor) {
+    // Generate a fetch function to reuse
+    // Either with validation or without
+    let fetchJSONFile
+    if (config.get('forceSecureUpdate')) {
+        try {
+            var publicKeyText = await fetch(`${repositoryUrl}/public.key`, true)
+        } catch (e) {
+            throw new Error('No public key')
+        }
+        let fingerprint = config.get('fingerprint').toLowerCase()
+        fetchJSONFile = signedFetchGenerator(publicKeyText, fingerprint)
+    } else {
+        fetchJSONFile = fetch
+    }
+
+    // basefile download
+    let baseFile = await fetchJSONFile(baseFileUrl)
+
     return new Promise((resolve, reject) => {
-        const extractors = new ExtractorCollection()
-        extractors.fetch({
-            success: (col, response, options) => {
-                const model = col.findWhere({
-                    name: extractor.name,
-                    network: extractor.network
-                })
-                if (!model) return resolve()
-                if (extractor.version > model.get('version')) {
-                    model.save(extractor, {
-                        success: (model, response, options) => resolve(response),
-                        error: (model, response, options) => reject(response)
-                    })
-                } else {
-                    resolve()
+        new NetworkCollection().fetch({success: async (localNetworks) => {
+            let repository = []
+            try {
+                for (let network of baseFile.networks) {
+                    if (!localNetworks.models.some((nwmodel) => nwmodel.get('name') === network.name)) {
+                        continue
+                    }
+                    let networkIndex = repository.push({name: network.name, extractors: [], observers: []}) - 1
+
+                    if (network.extractors) {
+                        repository[networkIndex].extractors = await fetchJSONFile(`${repositoryUrl}/${network.extractors}`)
+                    }
+
+                    if (network.observers) {
+                        repository[networkIndex].observers = await fetchJSONFile(`${repositoryUrl}/${network.observers}`)
+                    }
                 }
+            } catch (e) {
+                return reject(e)
             }
-        })
+            resolve(repository)
+        }})
     })
 }
 
-function updateObserver (observer) {
+function updateTracker (tracker, collection) {
     return new Promise((resolve, reject) => {
-        const observers = new ObserverCollection()
-        observers.fetch({
-            success: (col, response, options) => {
-                const model = col.findWhere({
-                    name: observer.name,
-                    network: observer.network
-                })
-                if (!model) return resolve()
-                if (observer.version > model.get('version')) {
-                    model.save(observer, {
-                        success: (model, response, options) => resolve(response),
-                        error: (model, response, options) => reject(response)
-                    })
-                } else {
-                    resolve()
-                }
-            }
+        const model = collection.findWhere({
+            name: tracker.name,
+            network: tracker.network
         })
+        if (!model) return resolve()
+        if (tracker.version > model.get('version')) {
+            model.save(tracker, {
+                success: (model, response) => resolve(response),
+                error: (model, response) => reject(response)
+            })
+        } else {
+            resolve()
+        }
     })
+}
+
+function fetchCol (Collection) {
+    return new Promise((resolve) => {
+        new Collection().fetch({success: (col) => resolve(col)})
+    })
+}
+
+async function updateChanges (config, networks) {
+    const stats = []
+    const [observerCol, extractorCol] = await Promise.all([fetchCol(ObserverCollection), fetchCol(ExtractorCollection)])
+
+    for (let network of networks) {
+        let networkStats = {
+            name: network.name,
+            updatedExtractors: [],
+            updatedObservers: []
+        }
+
+        for (let extractor of network.extractors) {
+            let updatedExtractor = await updateTracker(extractor, extractorCol)
+            if (updatedExtractor) networkStats.updatedExtractors.push(extractor.name)
+        }
+
+        for (let observer of network.observers) {
+            let updatedObserver = await updateTracker(observer, observerCol)
+            if (updatedObserver) networkStats.updatedObservers.push(observer.name)
+        }
+
+        stats.push(networkStats)
+    }
+
+    return stats
 }
 
 function update () {
     const config = new ConfigModel()
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         config.fetch({
-            success: async (model, response, options) => {
-                const baseFileUrl = model.get('repositoryURL')
-                const baseFileSigUrl = `${baseFileUrl}.asc`
-                const fingerprint = model.get('fingerprint').toLowerCase()
-                const repositoryUrl = removeFileName(baseFileUrl)
-                const publicKeyUrl = `${repositoryUrl}/public.key`
-
-                const baseFileText = await fetch(baseFileUrl).then((res) => res.text())
-                const baseFileSigText = await fetch(baseFileSigUrl).then((res) => res.text())
-                const publicKeyText = await fetch(publicKeyUrl).then((res) => res.text())
-
-                const signer = await verify(baseFileText, baseFileSigText, publicKeyText)
-
-                if (fingerprint !== signer) {
-                    throw new Error('Fingerprint Missmatch')
+            success: async (config, response, options) => {
+                // fetch repository
+                try {
+                    var repository = await fetchRepository(config)
+                } catch (e) {
+                    console.error(e)
+                    return reject(e)
                 }
 
-                const baseFile = JSON.parse(baseFileText)
+                // update contents in storage
+                let stats = await updateChanges(config, repository)
 
-                const stats = []
-                let updated = false
+                await config.set('lastChecked', Date.now()).save()
 
-                if (baseFile.networks) {
-                    let networks = baseFile.networks.filter((network) => {
-                        return network.observers || network.extractors
-                    })
-
-                    for (let network of networks) {
-                        let networkStats = {
-                            name: network.name,
-                            updatedExtractors: [],
-                            updatedObservers: []
-                        }
-
-                        if (network.extractors) {
-                            const extractorsText = await fetch(`${repositoryUrl}/${network.extractors}`).then((res) => res.text())
-                            const extractorsSigText = await fetch(`${repositoryUrl}/${network.extractors}.asc`).then((res) => res.text())
-
-                            if (await validate(extractorsText, extractorsSigText, publicKeyText, fingerprint)) {
-                                const extractors = JSON.parse(extractorsText)
-                                for (let extractor of extractors) {
-                                    let updatedExtractor = await updateExtractor(extractor)
-                                    if (updatedExtractor) networkStats.updatedExtractors.push(extractor.name)
-                                }
-                            }
-                        }
-
-                        if (network.observers) {
-                            const observersText = await fetch(`${repositoryUrl}/${network.observers}`).then((res) => res.text())
-                            const observersSigText = await fetch(`${repositoryUrl}/${network.observers}.asc`).then((res) => res.text())
-
-                            if (await validate(observersText, observersSigText, publicKeyText, fingerprint)) {
-                                const observers = JSON.parse(observersText)
-                                for (let observer of observers) {
-                                    let updatedObserver = await updateObserver(observer)
-                                    if (updatedObserver) networkStats.updatedObservers.push(observer.name)
-                                }
-                            }
-                        }
-
-                        stats.push(networkStats)
-
-                        if (networkStats.updatedExtractors.length > 0 || networkStats.updatedObservers.length > 0) {
-                            updated = true
-                        }
-                    }
-                }
-
-                config.set('lastChecked', Date.now()).save()
-                if (updated) {
-                    config.set('lastUpdated', Date.now()).save()
+                if (stats.some((network) => (network.updatedExtractors.length + network.updatedObservers.length) > 0)) {
+                    await config.set('lastUpdated', Date.now()).save()
+                } else {
+                    stats = ''
                 }
 
                 resolve(stats)
             }
         })
     })
-}
-
-async function validate (data, sig, key, fp) {
-    let fingerprint
-
-    try {
-        fingerprint = await verify(data, sig, key)
-    } catch (e) {
-        console.log(e)
-        return false
-    }
-
-    if (fingerprint.toLowerCase() === fp.toLowerCase()) {
-        return true
-    } else {
-        console.log('Fingerprint Missmatch')
-        return false
-    }
 }
 
 let load = (networks) => {

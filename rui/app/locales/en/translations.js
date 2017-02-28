@@ -6,8 +6,8 @@ export default {
   on: "On",
   off: "Off",
   hourly: "Hourly",
-  daily: "Daily",    
-  weekly: "Weekly",       
+  daily: "Daily",
+  weekly: "Weekly",
   monthly: "Monthly",
   yearly: "Yearly",
 
@@ -24,13 +24,13 @@ export default {
     update: "Update",
     confirm: "Confirm",
   },
-  
+
   //Dashboard
   index: {
     title: "ROSE Control Center",
     subtitle: "Overall number of items collected in your local installation of ROSE."
   },
-  
+
   // Sidebar Menu
   sidebarMenu: {
     data: "Data",
@@ -51,7 +51,7 @@ export default {
     observerEditor: "Observer Editor",
     dataConverter: "Data Converter"
   },
-  
+
   // ROSE Initialization Wizard
   wizard: {
     header: "Welcome to ROSE",
@@ -108,7 +108,16 @@ export default {
     autoUpdateInterval: "Automatic update interval",
     autoUpdateIntervalLabel: "ROSE checks automatically for tracking package updates in the specified time interval.",
     trackingEnabled: "Tracking On/Off",
-    trackingEnabledLabel: "Turns all tracking functions on or off globally."
+    trackingEnabledLabel: "Turns all tracking functions on or off globally.",
+    lastChecked: "Last check",
+    never: "never",
+    lastUpdated: "Last update",
+    signedUpdate: "Signed",
+    unsignedUpdate: "Unsigned",
+    uptodate: "Everything is already up-to-date.",
+    error: "Update failed.",
+    success: "Update was successful.",
+    noInternetConnection: "No internet connection"
   },
 
   resetConfigModal: {
@@ -232,7 +241,7 @@ export default {
     updateInterval: "Interval to check for an updated tracking package",
     updateIntervalLabel: "Choose a time interval to check for tracking package updates",
     baseFileNotFound: "Invalid repository base file URL.",
-    
+
     table: {
       enabled: "Status (on/off)",
       name: "Pattern name",
@@ -250,14 +259,14 @@ export default {
     message: "Log message",
     module: "Module name"
   },
-  
+
   observerEditor: {
     title: "Editor for Observer Patterns",
     subtitle: "This editor allows you to change observer patterns for testing reasons, or to create new ones. This function is for expert use only."
   },
-  
+
   dataConverter: {
     title: "Data Converter",
-    subtitle: "Tool to convert XML data exports from ROSE into more convenient CSV files. Just load the XML file and select the data set you want to convert into a CSV file."  
+    subtitle: "Tool to convert XML data exports from ROSE into more convenient CSV files. Just load the XML file and select the data set you want to convert into a CSV file."
   }
 };

@@ -3,14 +3,20 @@ import languages from '../locales/languages'
 
 export default Ember.Controller.extend({
   navigator: Ember.inject.service(),
+  updateSigned: function () {
+    return this.get('settings.system.lastUpdated') === null || this.get('settings.system.forceSecureUpdate')
+  }.property('settings.system.lastUpdated'),
   updateInProgress: false,
+  updateResult: '',
+  updateResulti18n: function () {
+    return 'settings.' + this.get('updateResult')
+  }.property('updateResult'),
   availableLanguages: languages,
   updateIntervals: [
     { label: 'hourly', value: 3600000 },
     { label: 'daily', value: 86400000 },
     { label: 'weekly', value: 604800000 },
-    { label: 'monthly', value: 2629743830 },
-    { label: 'yearly', value: 31556926000 }
+    { label: 'monthly', value: 2629743830 }
   ],
 
   actions: {
@@ -30,14 +36,42 @@ export default Ember.Controller.extend({
 
     manualUpdate () {
       this.set('updateInProgress', true)
-      kango.dispatchMessage('update-start')
 
-      kango.addMessageListener('update-successful', () => {
+      Ember.$('.manualUpdate .message:not(.hidden)').transition('slide down')
+
+      var showResult = (status) => {
         this.set('updateInProgress', false)
+        this.set('updateResult', status)
+
         this.get('settings.system').reload().then(() => {
-          kango.removeMessageListener('update-successful')
+          kango.removeMessageListener('update-successful', successfulUpdate)
+          kango.removeMessageListener('update-unsuccessful', unsuccessfulUpdate)
+          Ember.$('.manualUpdate .message').transition('slide down')
         })
-      })
+      }
+      var successfulUpdate = (evt) => {
+        let status = evt.data
+        if (status === 'uptodate') {
+          status = this.get('i18n').t('settings.uptodate').toString()
+        }
+        this.set('updateMessage', status)
+        showResult('success')
+      }
+      kango.addMessageListener('update-successful', successfulUpdate)
+
+      var unsuccessfulUpdate = (evt) => {
+        let err = evt.data
+        console.log(err)
+        this.set('updateMessage', err.message)
+        showResult('error')
+      }
+      kango.addMessageListener('update-unsuccessful', unsuccessfulUpdate)
+
+      kango.dispatchMessage('update-start')
+    },
+
+    closeMessage () {
+      Ember.$('.manualUpdate .message').transition('slide down')
     },
 
     changeAutoUpdate () {
@@ -59,7 +93,7 @@ export default Ember.Controller.extend({
       ])
       .then(() => this.get('settings').setup())
       .then(() => this.transitionToRoute('index'))
-      .catch((err) => console.log(err))
+      .catch((err) => console.error(err))
     }
   }
 })

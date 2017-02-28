@@ -6,7 +6,7 @@
   </div>
 </h2>
 
-<div class="ui form">
+<div class="ui form {{updateResult}}">
   <div class="field">
     <label>{{t "settings.language"}}</label>
     <p>{{t "settings.languageLabel"}}</p>
@@ -55,33 +55,56 @@
                   onChange=(action "saveSettings")}}
   </div>
 
-  <div class="field">
+  <div class="field manualUpdate">
     <label>{{t "settings.manualUpdate"}}</label>
     <p>{{t "settings.manualUpdateLabel"}}</p>
     {{#if navigator.onLine}}
-      <button class="ui {{if updateInProgress "loading"}} button" {{action "manualUpdate"}}>{{t "action.update"}}</button>
+    <button class="ui {{if updateInProgress "loading"}} button" {{action "manualUpdate"}}>{{t "action.update"}}</button>
     {{else}}
     <div class="ui disabled labeled button" tabindex="0">
       <div class="ui button">{{t "action.update"}}</div>
-      <a class="ui basic label">{{t "noInternetConnection"}}</a>
+      <a class="ui basic label">{{t "settings.noInternetConnection"}}</a>
     </div>
     {{/if}}
-    <p></p>
-    <p>
-      {{#if settings.system.lastChecked}}
-        Last Checked: {{moment-format settings.system.lastChecked}}
-      {{else}}
-        Last Checked: never
-      {{/if}}
-    </p>
-    <p>
-      {{#if settings.system.lastUpdated}}
-        Last Update: {{moment-format settings.system.lastUpdated}}
-        {{navigator.onLine}}
-      {{else}}
-        Last Update: never
-      {{/if}}
-    </p>
+
+    <a class="ui label">
+      {{t "settings.lastChecked"}}
+      <div class="detail">
+        {{#if settings.system.lastChecked}}
+          {{moment-format settings.system.lastChecked 'YYYY-MM-DD HH:mm'}}
+        {{else}}
+          {{t "settings.never"}}
+        {{/if}}
+      </div>
+    </a>
+
+    <a class="ui label">
+      {{t "settings.lastUpdated"}}
+      <div class="detail">
+        {{#if settings.system.lastUpdated}}
+          {{moment-format settings.system.lastUpdated 'YYYY-MM-DD HH:mm'}}
+        {{else}}
+          {{t "settings.never"}}
+        {{/if}}
+      </div>
+    </a>
+
+    <a class="ui {{if updateSigned "green"}} label">
+      <i class="{{if updateSigned "lock" "unlock alternate"}} icon"></i>
+        {{#if updateSigned}}
+          {{t "settings.signedUpdate"}}
+        {{else}}
+          {{t "settings.unsignedUpdate"}}
+        {{/if}}
+    </a>
+
+    {{#if updateResult}}
+    <div class="ui {{updateResult}} message hidden">
+      <i class="close icon" onclick={{action "closeMessage"}}></i>
+      <div class="header">{{t updateResulti18n}}</div>
+      <p>{{updateMessage}}</p>
+    </div>
+    {{/if}}
   </div>
 
   <div class="field">

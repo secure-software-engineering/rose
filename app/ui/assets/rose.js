@@ -1312,9 +1312,16 @@ define('rose/controllers/observers', ['exports', 'ember'], function (exports, _e
 define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages'], function (exports, _ember, _roseLocalesLanguages) {
   exports['default'] = _ember['default'].Controller.extend({
     navigator: _ember['default'].inject.service(),
+    updateSigned: (function () {
+      return this.get('settings.system.lastUpdated') === null || this.get('settings.system.forceSecureUpdate');
+    }).property('settings.system.lastUpdated'),
     updateInProgress: false,
+    updateResult: '',
+    updateResulti18n: (function () {
+      return 'settings.' + this.get('updateResult');
+    }).property('updateResult'),
     availableLanguages: _roseLocalesLanguages['default'],
-    updateIntervals: [{ label: 'hourly', value: 3600000 }, { label: 'daily', value: 86400000 }, { label: 'weekly', value: 604800000 }, { label: 'monthly', value: 2629743830 }, { label: 'yearly', value: 31556926000 }],
+    updateIntervals: [{ label: 'hourly', value: 3600000 }, { label: 'daily', value: 86400000 }, { label: 'weekly', value: 604800000 }, { label: 'monthly', value: 2629743830 }],
 
     actions: {
       saveSettings: function saveSettings() {
@@ -1337,14 +1344,42 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
         var _this = this;
 
         this.set('updateInProgress', true);
-        kango.dispatchMessage('update-start');
 
-        kango.addMessageListener('update-successful', function () {
+        _ember['default'].$('.manualUpdate .message:not(.hidden)').transition('slide down');
+
+        var showResult = function showResult(status) {
           _this.set('updateInProgress', false);
+          _this.set('updateResult', status);
+
           _this.get('settings.system').reload().then(function () {
-            kango.removeMessageListener('update-successful');
+            kango.removeMessageListener('update-successful', successfulUpdate);
+            kango.removeMessageListener('update-unsuccessful', unsuccessfulUpdate);
+            _ember['default'].$('.manualUpdate .message').transition('slide down');
           });
-        });
+        };
+        var successfulUpdate = function successfulUpdate(evt) {
+          var status = evt.data;
+          if (status === 'uptodate') {
+            status = _this.get('i18n').t('settings.uptodate').toString();
+          }
+          _this.set('updateMessage', status);
+          showResult('success');
+        };
+        kango.addMessageListener('update-successful', successfulUpdate);
+
+        var unsuccessfulUpdate = function unsuccessfulUpdate(evt) {
+          var err = evt.data;
+          console.log(err);
+          _this.set('updateMessage', err.message);
+          showResult('error');
+        };
+        kango.addMessageListener('update-unsuccessful', unsuccessfulUpdate);
+
+        kango.dispatchMessage('update-start');
+      },
+
+      closeMessage: function closeMessage() {
+        _ember['default'].$('.manualUpdate .message').transition('slide down');
       },
 
       changeAutoUpdate: function changeAutoUpdate() {
@@ -1372,7 +1407,7 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
         }).then(function () {
           return _this2.transitionToRoute('index');
         })['catch'](function (err) {
-          return console.log(err);
+          return console.error(err);
         });
       }
     }
@@ -1482,19 +1517,8 @@ define('rose/controllers/study-creator', ['exports', 'ember', 'npm:normalize-url
         });
       },
 
-      toggleEnableSecureUpdate: function toggleEnableSecureUpdate() {
-        var state = this.get('model.secureUpdateIsEnabled');
-        if (state === false) {
-          this.set('model.forceSecureUpdate', false);
-        }
-        this.get('model').save();
-      },
-
       toggleForceSecureUpdate: function toggleForceSecureUpdate() {
         var state = this.get('model.forceSecureUpdate');
-        if (state === true) {
-          this.set('model.secureUpdateIsEnabled', true);
-        }
         this.get('model').save();
       }
     }
@@ -1580,6 +1604,18 @@ define('rose/initializers/export-application-global', ['exports', 'ember', 'rose
   function initialize() {
     var application = arguments[1] || arguments[0];
     if (_roseConfigEnvironment['default'].exportApplicationGlobal !== false) {
+      var theGlobal;
+      if (typeof window !== 'undefined') {
+        theGlobal = window;
+      } else if (typeof global !== 'undefined') {
+        theGlobal = global;
+      } else if (typeof self !== 'undefined') {
+        theGlobal = self;
+      } else {
+        // no reasonable global, just bail
+        return;
+      }
+
       var value = _roseConfigEnvironment['default'].exportApplicationGlobal;
       var globalName;
 
@@ -1589,13 +1625,13 @@ define('rose/initializers/export-application-global', ['exports', 'ember', 'rose
         globalName = _ember['default'].String.classify(_roseConfigEnvironment['default'].modulePrefix);
       }
 
-      if (!window[globalName]) {
-        window[globalName] = application;
+      if (!theGlobal[globalName]) {
+        theGlobal[globalName] = application;
 
         application.reopen({
           willDestroy: function willDestroy() {
             this._super.apply(this, arguments);
-            delete window[globalName];
+            delete theGlobal[globalName];
           }
         });
       }
@@ -1924,6 +1960,12 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
       confirm: "Confirm"
     },
 
+    //Dashboard
+    index: {
+      title: "ROSE Control Center",
+      subtitle: "Overall number of items collected in your local installation of ROSE."
+    },
+
     // Sidebar Menu
     sidebarMenu: {
       data: "Data",
@@ -1941,9 +1983,11 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
       extraFeatures: "Researcher Features",
       studyCreator: "Study Creator",
       debugLog: "Application Log",
-      observerEditor: "Observer Editor"
+      observerEditor: "Observer Editor",
+      dataConverter: "Data Converter"
     },
 
+    // ROSE Initialization Wizard
     wizard: {
       header: "Welcome to ROSE",
       description: "In this step we first need to configure ROSE to work properly.",
@@ -1954,7 +1998,9 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
       fileConfigHeader: "Use a configuration file",
       fileConfigDescription: "I have a customized configuration file for initializing ROSE.",
       fileConfigBtn: "Load the configuration file",
-      urlConfig: "Specifiy a URL to an ROSE repository..."
+      urlConfig: "Specifiy a URL to an ROSE repository...",
+      privacyNoteTitle: "Privacy Note",
+      privacyNote: "<p>ROSE collects data about your interactions with online social media for the purpose of participating in an empirical study, or for personal purposes. All data collected is stored only locally in your web browser. The software does not transmit any tracking data over the Internet to other servers, and also locally stored data is anonymized. To disable the tracking functions of ROSE go to the settings menu and use the 'tracking on/off' switch. If you have any further question see the <a href=\"https://secure-software-engineering.github.io/rose/index.html\">Github pages of ROSE</a>.</p>"
     },
 
     // Diary Page
@@ -1995,7 +2041,18 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
       autoUpdate: "Automatic tracking package update",
       autoUpdateLabel: "For automatic updates to recent changes in social media sites, switch on the automatic update function.",
       autoUpdateInterval: "Automatic update interval",
-      autoUpdateIntervalLabel: "ROSE checks automatically for tracking package updates in the specified time interval."
+      autoUpdateIntervalLabel: "ROSE checks automatically for tracking package updates in the specified time interval.",
+      trackingEnabled: "Tracking On/Off",
+      trackingEnabledLabel: "Turns all tracking functions on or off globally.",
+      lastChecked: "Last check",
+      never: "never",
+      lastUpdated: "Last update",
+      signedUpdate: "Signed",
+      unsignedUpdate: "Unsigned",
+      uptodate: "Everything is already up-to-date.",
+      error: "Update failed.",
+      success: "Update was successful.",
+      noInternetConnection: "No internet connection"
     },
 
     resetConfigModal: {
@@ -2141,6 +2198,11 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
     observerEditor: {
       title: "Editor for Observer Patterns",
       subtitle: "This editor allows you to change observer patterns for testing reasons, or to create new ones. This function is for expert use only."
+    },
+
+    dataConverter: {
+      title: "Data Converter",
+      subtitle: "Tool to convert XML data exports from ROSE into more convenient CSV files. Just load the XML file and select the data set you want to convert into a CSV file."
     }
   };
 });
@@ -2231,7 +2293,6 @@ define('rose/models/study-creator-setting', ['exports', 'ember-data'], function 
     hashLength: _emberData['default'].attr('number', { defaultValue: 8 }),
     repositoryURL: _emberData['default'].attr('string'),
     autoUpdateIsEnabled: _emberData['default'].attr('boolean'),
-    secureUpdateIsEnabled: _emberData['default'].attr('boolean'),
     forceSecureUpdate: _emberData['default'].attr('boolean'),
     fileName: _emberData['default'].attr('string', { defaultValue: 'rose-study-configuration.txt' }),
     networks: _emberData['default'].hasMany('network', { async: true }),
@@ -2243,7 +2304,6 @@ define('rose/models/system-config', ['exports', 'ember-data'], function (exports
   exports['default'] = _emberData['default'].Model.extend({
     trackingEnabled: _emberData['default'].attr('boolean'),
     autoUpdateIsEnabled: _emberData['default'].attr('boolean'),
-    secureUpdateIsEnabled: _emberData['default'].attr('boolean'),
     forceSecureUpdate: _emberData['default'].attr('boolean'),
     roseCommentsIsEnabled: _emberData['default'].attr('boolean'),
     roseCommentsRatingIsEnabled: _emberData['default'].attr('boolean'),
@@ -11043,10 +11103,10 @@ define("rose/templates/settings", ["exports"], function (exports) {
             return el0;
           },
           buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-            var element5 = dom.childAt(fragment, [1]);
+            var element7 = dom.childAt(fragment, [1]);
             var morphs = new Array(2);
-            morphs[0] = dom.createAttrMorph(element5, 'data-value');
-            morphs[1] = dom.createMorphAt(element5, 1, 1);
+            morphs[0] = dom.createAttrMorph(element7, 'data-value');
+            morphs[1] = dom.createMorphAt(element7, 1, 1);
             return morphs;
           },
           statements: [["attribute", "data-value", ["get", "language.code", ["loc", [null, [22, 41], [22, 54]]]]], ["content", "language.name", ["loc", [null, [23, 12], [23, 29]]]]],
@@ -11111,10 +11171,10 @@ define("rose/templates/settings", ["exports"], function (exports) {
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element6 = dom.childAt(fragment, [3]);
+          var element8 = dom.childAt(fragment, [3]);
           var morphs = new Array(3);
           morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
-          morphs[1] = dom.createAttrMorph(element6, 'value');
+          morphs[1] = dom.createAttrMorph(element8, 'value');
           morphs[2] = dom.createMorphAt(dom.childAt(fragment, [7]), 1, 1);
           return morphs;
         },
@@ -11147,7 +11207,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("      ");
+          var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
           var el1 = dom.createElement("button");
           var el2 = dom.createComment("");
@@ -11158,14 +11218,14 @@ define("rose/templates/settings", ["exports"], function (exports) {
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element4 = dom.childAt(fragment, [1]);
+          var element6 = dom.childAt(fragment, [1]);
           var morphs = new Array(3);
-          morphs[0] = dom.createAttrMorph(element4, 'class');
-          morphs[1] = dom.createElementMorph(element4);
-          morphs[2] = dom.createMorphAt(element4, 0, 0);
+          morphs[0] = dom.createAttrMorph(element6, 'class');
+          morphs[1] = dom.createElementMorph(element6);
+          morphs[2] = dom.createMorphAt(element6, 0, 0);
           return morphs;
         },
-        statements: [["attribute", "class", ["concat", ["ui ", ["subexpr", "if", [["get", "updateInProgress", ["loc", [null, [62, 29], [62, 45]]]], "loading"], [], ["loc", [null, [62, 24], [62, 57]]]], " button"]]], ["element", "action", ["manualUpdate"], [], ["loc", [null, [62, 66], [62, 91]]]], ["inline", "t", ["action.update"], [], ["loc", [null, [62, 92], [62, 113]]]]],
+        statements: [["attribute", "class", ["concat", ["ui ", ["subexpr", "if", [["get", "updateInProgress", ["loc", [null, [62, 27], [62, 43]]]], "loading"], [], ["loc", [null, [62, 22], [62, 55]]]], " button"]]], ["element", "action", ["manualUpdate"], [], ["loc", [null, [62, 64], [62, 89]]]], ["inline", "t", ["action.update"], [], ["loc", [null, [62, 90], [62, 111]]]]],
         locals: [],
         templates: []
       };
@@ -11221,13 +11281,13 @@ define("rose/templates/settings", ["exports"], function (exports) {
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element3 = dom.childAt(fragment, [1]);
+          var element5 = dom.childAt(fragment, [1]);
           var morphs = new Array(2);
-          morphs[0] = dom.createMorphAt(dom.childAt(element3, [1]), 0, 0);
-          morphs[1] = dom.createMorphAt(dom.childAt(element3, [3]), 0, 0);
+          morphs[0] = dom.createMorphAt(dom.childAt(element5, [1]), 0, 0);
+          morphs[1] = dom.createMorphAt(dom.childAt(element5, [3]), 0, 0);
           return morphs;
         },
-        statements: [["inline", "t", ["action.update"], [], ["loc", [null, [65, 29], [65, 50]]]], ["inline", "t", ["noInternetConnection"], [], ["loc", [null, [66, 32], [66, 60]]]]],
+        statements: [["inline", "t", ["action.update"], [], ["loc", [null, [65, 29], [65, 50]]]], ["inline", "t", ["settings.noInternetConnection"], [], ["loc", [null, [66, 32], [66, 69]]]]],
         locals: [],
         templates: []
       };
@@ -11240,12 +11300,12 @@ define("rose/templates/settings", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 71,
-              "column": 6
+              "line": 73,
+              "column": 8
             },
             "end": {
-              "line": 73,
-              "column": 6
+              "line": 75,
+              "column": 8
             }
           },
           "moduleName": "rose/templates/settings.hbs"
@@ -11256,7 +11316,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        Last Checked: ");
+          var el1 = dom.createTextNode("          ");
           dom.appendChild(el0, el1);
           var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
@@ -11269,7 +11329,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
           morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
           return morphs;
         },
-        statements: [["inline", "moment-format", [["get", "settings.system.lastChecked", ["loc", [null, [72, 38], [72, 65]]]]], [], ["loc", [null, [72, 22], [72, 67]]]]],
+        statements: [["inline", "moment-format", [["get", "settings.system.lastChecked", ["loc", [null, [74, 26], [74, 53]]]], "YYYY-MM-DD HH:mm"], [], ["loc", [null, [74, 10], [74, 74]]]]],
         locals: [],
         templates: []
       };
@@ -11282,12 +11342,12 @@ define("rose/templates/settings", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 73,
-              "column": 6
+              "line": 75,
+              "column": 8
             },
             "end": {
-              "line": 75,
-              "column": 6
+              "line": 77,
+              "column": 8
             }
           },
           "moduleName": "rose/templates/settings.hbs"
@@ -11298,14 +11358,20 @@ define("rose/templates/settings", ["exports"], function (exports) {
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        Last Checked: never\n");
+          var el1 = dom.createTextNode("          ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
           dom.appendChild(el0, el1);
           return el0;
         },
-        buildRenderNodes: function buildRenderNodes() {
-          return [];
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
         },
-        statements: [],
+        statements: [["inline", "t", ["settings.never"], [], ["loc", [null, [76, 10], [76, 32]]]]],
         locals: [],
         templates: []
       };
@@ -11318,12 +11384,12 @@ define("rose/templates/settings", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 78,
-              "column": 6
+              "line": 84,
+              "column": 8
             },
             "end": {
-              "line": 81,
-              "column": 6
+              "line": 86,
+              "column": 8
             }
           },
           "moduleName": "rose/templates/settings.hbs"
@@ -11334,11 +11400,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        Last Update: ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n        ");
+          var el1 = dom.createTextNode("          ");
           dom.appendChild(el0, el1);
           var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
@@ -11347,12 +11409,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(2);
+          var morphs = new Array(1);
           morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
-          morphs[1] = dom.createMorphAt(fragment, 3, 3, contextualElement);
           return morphs;
         },
-        statements: [["inline", "moment-format", [["get", "settings.system.lastUpdated", ["loc", [null, [79, 37], [79, 64]]]]], [], ["loc", [null, [79, 21], [79, 66]]]], ["content", "navigator.onLine", ["loc", [null, [80, 8], [80, 28]]]]],
+        statements: [["inline", "moment-format", [["get", "settings.system.lastUpdated", ["loc", [null, [85, 26], [85, 53]]]], "YYYY-MM-DD HH:mm"], [], ["loc", [null, [85, 10], [85, 74]]]]],
         locals: [],
         templates: []
       };
@@ -11365,12 +11426,12 @@ define("rose/templates/settings", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 81,
-              "column": 6
+              "line": 86,
+              "column": 8
             },
             "end": {
-              "line": 83,
-              "column": 6
+              "line": 88,
+              "column": 8
             }
           },
           "moduleName": "rose/templates/settings.hbs"
@@ -11381,19 +11442,176 @@ define("rose/templates/settings", ["exports"], function (exports) {
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        Last Update: never\n");
+          var el1 = dom.createTextNode("          ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
           dom.appendChild(el0, el1);
           return el0;
         },
-        buildRenderNodes: function buildRenderNodes() {
-          return [];
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
         },
-        statements: [],
+        statements: [["inline", "t", ["settings.never"], [], ["loc", [null, [87, 10], [87, 32]]]]],
         locals: [],
         templates: []
       };
     })();
     var child7 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 94,
+              "column": 8
+            },
+            "end": {
+              "line": 96,
+              "column": 8
+            }
+          },
+          "moduleName": "rose/templates/settings.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("          ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "t", ["settings.signedUpdate"], [], ["loc", [null, [95, 10], [95, 39]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child8 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 96,
+              "column": 8
+            },
+            "end": {
+              "line": 98,
+              "column": 8
+            }
+          },
+          "moduleName": "rose/templates/settings.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("          ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "t", ["settings.unsignedUpdate"], [], ["loc", [null, [97, 10], [97, 41]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child9 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 101,
+              "column": 4
+            },
+            "end": {
+              "line": 107,
+              "column": 4
+            }
+          },
+          "moduleName": "rose/templates/settings.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("i");
+          dom.setAttribute(el2, "class", "close icon");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("div");
+          dom.setAttribute(el2, "class", "header");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element3 = dom.childAt(fragment, [1]);
+          var element4 = dom.childAt(element3, [1]);
+          var morphs = new Array(4);
+          morphs[0] = dom.createAttrMorph(element3, 'class');
+          morphs[1] = dom.createAttrMorph(element4, 'onclick');
+          morphs[2] = dom.createMorphAt(dom.childAt(element3, [3]), 0, 0);
+          morphs[3] = dom.createMorphAt(dom.childAt(element3, [5]), 0, 0);
+          return morphs;
+        },
+        statements: [["attribute", "class", ["concat", ["ui ", ["get", "updateResult", ["loc", [null, [102, 21], [102, 33]]]], " message hidden"]]], ["attribute", "onclick", ["subexpr", "action", ["closeMessage"], [], ["loc", [null, [103, 36], [103, 61]]]]], ["inline", "t", [["get", "updateResulti18n", ["loc", [null, [104, 30], [104, 46]]]]], [], ["loc", [null, [104, 26], [104, 48]]]], ["content", "updateMessage", ["loc", [null, [105, 9], [105, 26]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child10 = (function () {
       var child0 = (function () {
         var child0 = (function () {
           return {
@@ -11403,11 +11621,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
               "loc": {
                 "source": null,
                 "start": {
-                  "line": 108,
+                  "line": 131,
                   "column": 8
                 },
                 "end": {
-                  "line": 112,
+                  "line": 135,
                   "column": 8
                 }
               },
@@ -11441,7 +11659,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
               morphs[1] = dom.createMorphAt(element0, 1, 1);
               return morphs;
             },
-            statements: [["attribute", "data-value", ["get", "interval.value", ["loc", [null, [109, 41], [109, 55]]]]], ["inline", "t", [["get", "interval.label", ["loc", [null, [110, 16], [110, 30]]]]], [], ["loc", [null, [110, 12], [110, 32]]]]],
+            statements: [["attribute", "data-value", ["get", "interval.value", ["loc", [null, [132, 41], [132, 55]]]]], ["inline", "t", [["get", "interval.label", ["loc", [null, [133, 16], [133, 30]]]]], [], ["loc", [null, [133, 12], [133, 32]]]]],
             locals: ["interval"],
             templates: []
           };
@@ -11453,11 +11671,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
             "loc": {
               "source": null,
               "start": {
-                "line": 101,
+                "line": 124,
                 "column": 4
               },
               "end": {
-                "line": 114,
+                "line": 137,
                 "column": 4
               }
             },
@@ -11509,7 +11727,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
             morphs[1] = dom.createMorphAt(dom.childAt(fragment, [7]), 1, 1);
             return morphs;
           },
-          statements: [["attribute", "value", ["get", "settings.system.updateInterval", ["loc", [null, [105, 51], [105, 81]]]]], ["block", "each", [["get", "updateIntervals", ["loc", [null, [108, 16], [108, 31]]]]], [], 0, null, ["loc", [null, [108, 8], [112, 17]]]]],
+          statements: [["attribute", "value", ["get", "settings.system.updateInterval", ["loc", [null, [128, 51], [128, 81]]]]], ["block", "each", [["get", "updateIntervals", ["loc", [null, [131, 16], [131, 31]]]]], [], 0, null, ["loc", [null, [131, 8], [135, 17]]]]],
           locals: [],
           templates: [child0]
         };
@@ -11521,11 +11739,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 96,
+              "line": 119,
               "column": 2
             },
             "end": {
-              "line": 116,
+              "line": 139,
               "column": 2
             }
           },
@@ -11572,7 +11790,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
           morphs[2] = dom.createMorphAt(element2, 5, 5);
           return morphs;
         },
-        statements: [["inline", "t", ["settings.autoUpdateInterval"], [], ["loc", [null, [98, 11], [98, 46]]]], ["inline", "t", ["settings.autoUpdateIntervalLabel"], [], ["loc", [null, [99, 7], [99, 47]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "settings.system.updateInterval", ["loc", [null, [102, 29], [102, 59]]]]], [], []], "onChange", ["subexpr", "action", ["changeAutoUpdate"], [], ["loc", [null, [103, 29], [103, 56]]]]], 0, null, ["loc", [null, [101, 4], [114, 20]]]]],
+        statements: [["inline", "t", ["settings.autoUpdateInterval"], [], ["loc", [null, [121, 11], [121, 46]]]], ["inline", "t", ["settings.autoUpdateIntervalLabel"], [], ["loc", [null, [122, 7], [122, 47]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "settings.system.updateInterval", ["loc", [null, [125, 29], [125, 59]]]]], [], []], "onChange", ["subexpr", "action", ["changeAutoUpdate"], [], ["loc", [null, [126, 29], [126, 56]]]]], 0, null, ["loc", [null, [124, 4], [137, 20]]]]],
         locals: [],
         templates: [child0]
       };
@@ -11591,7 +11809,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 128,
+            "line": 151,
             "column": 0
           }
         },
@@ -11634,7 +11852,6 @@ define("rose/templates/settings", ["exports"], function (exports) {
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("div");
-        dom.setAttribute(el1, "class", "ui form");
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
@@ -11730,7 +11947,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
+        dom.setAttribute(el2, "class", "field manualUpdate");
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("label");
@@ -11747,13 +11964,57 @@ define("rose/templates/settings", ["exports"], function (exports) {
         dom.appendChild(el2, el3);
         var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
+        var el3 = dom.createElement("a");
+        dom.setAttribute(el3, "class", "ui label");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("div");
+        dom.setAttribute(el4, "class", "detail");
+        var el5 = dom.createTextNode("\n");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("      ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("a");
+        dom.setAttribute(el3, "class", "ui label");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("div");
+        dom.setAttribute(el4, "class", "detail");
+        var el5 = dom.createTextNode("\n");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("      ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("a");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("i");
+        dom.appendChild(el3, el4);
         var el4 = dom.createTextNode("\n");
         dom.appendChild(el3, el4);
         var el4 = dom.createComment("");
@@ -11761,17 +12022,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
         var el4 = dom.createTextNode("    ");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
+        var el3 = dom.createTextNode("\n\n");
         dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createTextNode("\n");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("    ");
-        dom.appendChild(el3, el4);
+        var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
+        var el3 = dom.createTextNode("  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n\n  ");
@@ -11843,50 +12098,61 @@ define("rose/templates/settings", ["exports"], function (exports) {
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element7 = dom.childAt(fragment, [0, 3]);
-        var element8 = dom.childAt(fragment, [2]);
-        var element9 = dom.childAt(element8, [1]);
-        var element10 = dom.childAt(element8, [3]);
-        var element11 = dom.childAt(element8, [5]);
-        var element12 = dom.childAt(element8, [7]);
-        var element13 = dom.childAt(element8, [9]);
-        var element14 = dom.childAt(element8, [11]);
-        var element15 = dom.childAt(element8, [15]);
-        var element16 = dom.childAt(element15, [5]);
-        var morphs = new Array(28);
-        morphs[0] = dom.createMorphAt(element7, 1, 1);
-        morphs[1] = dom.createMorphAt(dom.childAt(element7, [3]), 0, 0);
-        morphs[2] = dom.createMorphAt(dom.childAt(element9, [1]), 0, 0);
-        morphs[3] = dom.createMorphAt(dom.childAt(element9, [3]), 0, 0);
-        morphs[4] = dom.createMorphAt(element9, 5, 5);
-        morphs[5] = dom.createMorphAt(dom.childAt(element10, [1]), 0, 0);
-        morphs[6] = dom.createMorphAt(dom.childAt(element10, [3]), 0, 0);
-        morphs[7] = dom.createMorphAt(element10, 5, 5);
-        morphs[8] = dom.createMorphAt(dom.childAt(element11, [1]), 0, 0);
-        morphs[9] = dom.createMorphAt(dom.childAt(element11, [3]), 0, 0);
-        morphs[10] = dom.createMorphAt(element11, 5, 5);
-        morphs[11] = dom.createMorphAt(dom.childAt(element12, [1]), 0, 0);
-        morphs[12] = dom.createMorphAt(dom.childAt(element12, [3]), 0, 0);
-        morphs[13] = dom.createMorphAt(element12, 5, 5);
-        morphs[14] = dom.createMorphAt(dom.childAt(element13, [1]), 0, 0);
-        morphs[15] = dom.createMorphAt(dom.childAt(element13, [3]), 0, 0);
-        morphs[16] = dom.createMorphAt(element13, 5, 5);
-        morphs[17] = dom.createMorphAt(dom.childAt(element13, [9]), 1, 1);
-        morphs[18] = dom.createMorphAt(dom.childAt(element13, [11]), 1, 1);
-        morphs[19] = dom.createMorphAt(dom.childAt(element14, [1]), 0, 0);
-        morphs[20] = dom.createMorphAt(dom.childAt(element14, [3]), 0, 0);
-        morphs[21] = dom.createMorphAt(element14, 5, 5);
-        morphs[22] = dom.createMorphAt(element8, 13, 13);
-        morphs[23] = dom.createMorphAt(dom.childAt(element15, [1]), 0, 0);
-        morphs[24] = dom.createMorphAt(dom.childAt(element15, [3]), 0, 0);
-        morphs[25] = dom.createElementMorph(element16);
-        morphs[26] = dom.createMorphAt(element16, 1, 1);
-        morphs[27] = dom.createMorphAt(fragment, 4, 4, contextualElement);
+        var element9 = dom.childAt(fragment, [0, 3]);
+        var element10 = dom.childAt(fragment, [2]);
+        var element11 = dom.childAt(element10, [1]);
+        var element12 = dom.childAt(element10, [3]);
+        var element13 = dom.childAt(element10, [5]);
+        var element14 = dom.childAt(element10, [7]);
+        var element15 = dom.childAt(element10, [9]);
+        var element16 = dom.childAt(element15, [7]);
+        var element17 = dom.childAt(element15, [9]);
+        var element18 = dom.childAt(element15, [11]);
+        var element19 = dom.childAt(element18, [1]);
+        var element20 = dom.childAt(element10, [11]);
+        var element21 = dom.childAt(element10, [15]);
+        var element22 = dom.childAt(element21, [5]);
+        var morphs = new Array(35);
+        morphs[0] = dom.createMorphAt(element9, 1, 1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element9, [3]), 0, 0);
+        morphs[2] = dom.createAttrMorph(element10, 'class');
+        morphs[3] = dom.createMorphAt(dom.childAt(element11, [1]), 0, 0);
+        morphs[4] = dom.createMorphAt(dom.childAt(element11, [3]), 0, 0);
+        morphs[5] = dom.createMorphAt(element11, 5, 5);
+        morphs[6] = dom.createMorphAt(dom.childAt(element12, [1]), 0, 0);
+        morphs[7] = dom.createMorphAt(dom.childAt(element12, [3]), 0, 0);
+        morphs[8] = dom.createMorphAt(element12, 5, 5);
+        morphs[9] = dom.createMorphAt(dom.childAt(element13, [1]), 0, 0);
+        morphs[10] = dom.createMorphAt(dom.childAt(element13, [3]), 0, 0);
+        morphs[11] = dom.createMorphAt(element13, 5, 5);
+        morphs[12] = dom.createMorphAt(dom.childAt(element14, [1]), 0, 0);
+        morphs[13] = dom.createMorphAt(dom.childAt(element14, [3]), 0, 0);
+        morphs[14] = dom.createMorphAt(element14, 5, 5);
+        morphs[15] = dom.createMorphAt(dom.childAt(element15, [1]), 0, 0);
+        morphs[16] = dom.createMorphAt(dom.childAt(element15, [3]), 0, 0);
+        morphs[17] = dom.createMorphAt(element15, 5, 5);
+        morphs[18] = dom.createMorphAt(element16, 1, 1);
+        morphs[19] = dom.createMorphAt(dom.childAt(element16, [3]), 1, 1);
+        morphs[20] = dom.createMorphAt(element17, 1, 1);
+        morphs[21] = dom.createMorphAt(dom.childAt(element17, [3]), 1, 1);
+        morphs[22] = dom.createAttrMorph(element18, 'class');
+        morphs[23] = dom.createAttrMorph(element19, 'class');
+        morphs[24] = dom.createMorphAt(element18, 3, 3);
+        morphs[25] = dom.createMorphAt(element15, 13, 13);
+        morphs[26] = dom.createMorphAt(dom.childAt(element20, [1]), 0, 0);
+        morphs[27] = dom.createMorphAt(dom.childAt(element20, [3]), 0, 0);
+        morphs[28] = dom.createMorphAt(element20, 5, 5);
+        morphs[29] = dom.createMorphAt(element10, 13, 13);
+        morphs[30] = dom.createMorphAt(dom.childAt(element21, [1]), 0, 0);
+        morphs[31] = dom.createMorphAt(dom.childAt(element21, [3]), 0, 0);
+        morphs[32] = dom.createElementMorph(element22);
+        morphs[33] = dom.createMorphAt(element22, 1, 1);
+        morphs[34] = dom.createMorphAt(fragment, 4, 4, contextualElement);
         return morphs;
       },
-      statements: [["inline", "t", ["settings.title"], [], ["loc", [null, [4, 4], [4, 26]]]], ["inline", "t", ["settings.subtitle"], [], ["loc", [null, [5, 28], [5, 53]]]], ["inline", "t", ["settings.language"], [], ["loc", [null, [11, 11], [11, 36]]]], ["inline", "t", ["settings.languageLabel"], [], ["loc", [null, [12, 7], [12, 37]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "settings.user.currentLanguage", ["loc", [null, [15, 29], [15, 58]]]]], [], []], "onChange", ["subexpr", "action", ["changeI18nLanguage"], [], ["loc", [null, [16, 29], [16, 58]]]]], 0, null, ["loc", [null, [14, 4], [27, 20]]]], ["inline", "t", ["settings.trackingEnabled"], [], ["loc", [null, [31, 11], [31, 43]]]], ["inline", "t", ["settings.trackingEnabledLabel"], [], ["loc", [null, [32, 7], [32, 44]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.system.trackingEnabled", ["loc", [null, [34, 26], [34, 57]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.system.trackingEnabled", ["loc", [null, [35, 42], [35, 73]]]]], [], ["loc", [null, [35, 24], [35, 74]]]], "onChange", ["subexpr", "action", ["toggleTracking"], [], ["loc", [null, [36, 27], [36, 52]]]]], ["loc", [null, [33, 4], [36, 54]]]], ["inline", "t", ["settings.commentReminder"], [], ["loc", [null, [40, 11], [40, 43]]]], ["inline", "t", ["settings.commentReminderLabel"], [], ["loc", [null, [41, 7], [41, 44]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.commentReminderIsEnabled", ["loc", [null, [43, 26], [43, 64]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.user.commentReminderIsEnabled", ["loc", [null, [44, 42], [44, 80]]]]], [], ["loc", [null, [44, 24], [44, 81]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [45, 27], [45, 50]]]]], ["loc", [null, [42, 4], [45, 52]]]], ["inline", "t", ["settings.extraFeatures"], [], ["loc", [null, [50, 11], [50, 41]]]], ["inline", "t", ["settings.extraFeaturesLabel"], [], ["loc", [null, [51, 7], [51, 42]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.developerModeIsEnabled", ["loc", [null, [53, 26], [53, 62]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.user.developerModeIsEnabled", ["loc", [null, [54, 42], [54, 78]]]]], [], ["loc", [null, [54, 24], [54, 79]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [55, 27], [55, 50]]]]], ["loc", [null, [52, 4], [55, 52]]]], ["inline", "t", ["settings.manualUpdate"], [], ["loc", [null, [59, 11], [59, 40]]]], ["inline", "t", ["settings.manualUpdateLabel"], [], ["loc", [null, [60, 7], [60, 41]]]], ["block", "if", [["get", "navigator.onLine", ["loc", [null, [61, 10], [61, 26]]]]], [], 1, 2, ["loc", [null, [61, 4], [68, 11]]]], ["block", "if", [["get", "settings.system.lastChecked", ["loc", [null, [71, 12], [71, 39]]]]], [], 3, 4, ["loc", [null, [71, 6], [75, 13]]]], ["block", "if", [["get", "settings.system.lastUpdated", ["loc", [null, [78, 12], [78, 39]]]]], [], 5, 6, ["loc", [null, [78, 6], [83, 13]]]], ["inline", "t", ["settings.autoUpdate"], [], ["loc", [null, [88, 11], [88, 38]]]], ["inline", "t", ["settings.autoUpdateLabel"], [], ["loc", [null, [89, 7], [89, 39]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [91, 26], [91, 61]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [92, 42], [92, 77]]]]], [], ["loc", [null, [92, 24], [92, 78]]]], "onChange", ["subexpr", "action", ["changeAutoUpdate"], [], ["loc", [null, [93, 27], [93, 54]]]]], ["loc", [null, [90, 4], [93, 56]]]], ["block", "if", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [96, 8], [96, 43]]]]], [], 7, null, ["loc", [null, [96, 2], [116, 9]]]], ["inline", "t", ["settings.resetRose"], [], ["loc", [null, [119, 11], [119, 37]]]], ["inline", "t", ["settings.resetRoseLabel"], [], ["loc", [null, [120, 7], [120, 38]]]], ["element", "action", ["openModal", "reset-config"], [], ["loc", [null, [121, 34], [121, 71]]]], ["inline", "t", ["action.reset"], [], ["loc", [null, [122, 6], [122, 26]]]], ["inline", "partial", ["modal/reset-config"], [], ["loc", [null, [127, 0], [127, 32]]]]],
+      statements: [["inline", "t", ["settings.title"], [], ["loc", [null, [4, 4], [4, 26]]]], ["inline", "t", ["settings.subtitle"], [], ["loc", [null, [5, 28], [5, 53]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [9, 22], [9, 34]]]]]]], ["inline", "t", ["settings.language"], [], ["loc", [null, [11, 11], [11, 36]]]], ["inline", "t", ["settings.languageLabel"], [], ["loc", [null, [12, 7], [12, 37]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "settings.user.currentLanguage", ["loc", [null, [15, 29], [15, 58]]]]], [], []], "onChange", ["subexpr", "action", ["changeI18nLanguage"], [], ["loc", [null, [16, 29], [16, 58]]]]], 0, null, ["loc", [null, [14, 4], [27, 20]]]], ["inline", "t", ["settings.trackingEnabled"], [], ["loc", [null, [31, 11], [31, 43]]]], ["inline", "t", ["settings.trackingEnabledLabel"], [], ["loc", [null, [32, 7], [32, 44]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.system.trackingEnabled", ["loc", [null, [34, 26], [34, 57]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.system.trackingEnabled", ["loc", [null, [35, 42], [35, 73]]]]], [], ["loc", [null, [35, 24], [35, 74]]]], "onChange", ["subexpr", "action", ["toggleTracking"], [], ["loc", [null, [36, 27], [36, 52]]]]], ["loc", [null, [33, 4], [36, 54]]]], ["inline", "t", ["settings.commentReminder"], [], ["loc", [null, [40, 11], [40, 43]]]], ["inline", "t", ["settings.commentReminderLabel"], [], ["loc", [null, [41, 7], [41, 44]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.commentReminderIsEnabled", ["loc", [null, [43, 26], [43, 64]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.user.commentReminderIsEnabled", ["loc", [null, [44, 42], [44, 80]]]]], [], ["loc", [null, [44, 24], [44, 81]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [45, 27], [45, 50]]]]], ["loc", [null, [42, 4], [45, 52]]]], ["inline", "t", ["settings.extraFeatures"], [], ["loc", [null, [50, 11], [50, 41]]]], ["inline", "t", ["settings.extraFeaturesLabel"], [], ["loc", [null, [51, 7], [51, 42]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.developerModeIsEnabled", ["loc", [null, [53, 26], [53, 62]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.user.developerModeIsEnabled", ["loc", [null, [54, 42], [54, 78]]]]], [], ["loc", [null, [54, 24], [54, 79]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [55, 27], [55, 50]]]]], ["loc", [null, [52, 4], [55, 52]]]], ["inline", "t", ["settings.manualUpdate"], [], ["loc", [null, [59, 11], [59, 40]]]], ["inline", "t", ["settings.manualUpdateLabel"], [], ["loc", [null, [60, 7], [60, 41]]]], ["block", "if", [["get", "navigator.onLine", ["loc", [null, [61, 10], [61, 26]]]]], [], 1, 2, ["loc", [null, [61, 4], [68, 11]]]], ["inline", "t", ["settings.lastChecked"], [], ["loc", [null, [71, 6], [71, 34]]]], ["block", "if", [["get", "settings.system.lastChecked", ["loc", [null, [73, 14], [73, 41]]]]], [], 3, 4, ["loc", [null, [73, 8], [77, 15]]]], ["inline", "t", ["settings.lastUpdated"], [], ["loc", [null, [82, 6], [82, 34]]]], ["block", "if", [["get", "settings.system.lastUpdated", ["loc", [null, [84, 14], [84, 41]]]]], [], 5, 6, ["loc", [null, [84, 8], [88, 15]]]], ["attribute", "class", ["concat", ["ui ", ["subexpr", "if", [["get", "updateSigned", ["loc", [null, [92, 22], [92, 34]]]], "green"], [], ["loc", [null, [92, 17], [92, 44]]]], " label"]]], ["attribute", "class", ["concat", [["subexpr", "if", [["get", "updateSigned", ["loc", [null, [93, 21], [93, 33]]]], "lock", "unlock alternate"], [], ["loc", [null, [93, 16], [93, 61]]]], " icon"]]], ["block", "if", [["get", "updateSigned", ["loc", [null, [94, 14], [94, 26]]]]], [], 7, 8, ["loc", [null, [94, 8], [98, 15]]]], ["block", "if", [["get", "updateResult", ["loc", [null, [101, 10], [101, 22]]]]], [], 9, null, ["loc", [null, [101, 4], [107, 11]]]], ["inline", "t", ["settings.autoUpdate"], [], ["loc", [null, [111, 11], [111, 38]]]], ["inline", "t", ["settings.autoUpdateLabel"], [], ["loc", [null, [112, 7], [112, 39]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [114, 26], [114, 61]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [115, 42], [115, 77]]]]], [], ["loc", [null, [115, 24], [115, 78]]]], "onChange", ["subexpr", "action", ["changeAutoUpdate"], [], ["loc", [null, [116, 27], [116, 54]]]]], ["loc", [null, [113, 4], [116, 56]]]], ["block", "if", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [119, 8], [119, 43]]]]], [], 10, null, ["loc", [null, [119, 2], [139, 9]]]], ["inline", "t", ["settings.resetRose"], [], ["loc", [null, [142, 11], [142, 37]]]], ["inline", "t", ["settings.resetRoseLabel"], [], ["loc", [null, [143, 7], [143, 38]]]], ["element", "action", ["openModal", "reset-config"], [], ["loc", [null, [144, 34], [144, 71]]]], ["inline", "t", ["action.reset"], [], ["loc", [null, [145, 6], [145, 26]]]], ["inline", "partial", ["modal/reset-config"], [], ["loc", [null, [150, 0], [150, 32]]]]],
       locals: [],
-      templates: [child0, child1, child2, child3, child4, child5, child6, child7]
+      templates: [child0, child1, child2, child3, child4, child5, child6, child7, child8, child9, child10]
     };
   })());
 });
@@ -12759,11 +13025,11 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
               "loc": {
                 "source": null,
                 "start": {
-                  "line": 124,
+                  "line": 113,
                   "column": 12
                 },
                 "end": {
-                  "line": 132,
+                  "line": 121,
                   "column": 12
                 }
               },
@@ -12818,7 +13084,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
               morphs[2] = dom.createMorphAt(dom.childAt(element3, [5]), 0, 0);
               return morphs;
             },
-            statements: [["inline", "ui-checkbox", [], ["class", "fitted toggle", "checked", ["subexpr", "@mut", [["get", "extractor.isEnabled", ["loc", [null, [127, 62], [127, 81]]]]], [], []]], ["loc", [null, [127, 18], [127, 83]]]], ["content", "extractor.name", ["loc", [null, [129, 28], [129, 46]]]], ["content", "extractor.version", ["loc", [null, [130, 20], [130, 41]]]]],
+            statements: [["inline", "ui-checkbox", [], ["class", "fitted toggle", "checked", ["subexpr", "@mut", [["get", "extractor.isEnabled", ["loc", [null, [116, 62], [116, 81]]]]], [], []]], ["loc", [null, [116, 18], [116, 83]]]], ["content", "extractor.name", ["loc", [null, [118, 28], [118, 46]]]], ["content", "extractor.version", ["loc", [null, [119, 20], [119, 41]]]]],
             locals: ["extractor"],
             templates: []
           };
@@ -12831,103 +13097,11 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
               "loc": {
                 "source": null,
                 "start": {
-                  "line": 147,
+                  "line": 148,
                   "column": 12
                 },
                 "end": {
-                  "line": 149,
-                  "column": 12
-                }
-              },
-              "moduleName": "rose/templates/study-creator.hbs"
-            },
-            isEmpty: false,
-            arity: 0,
-            cachedFragment: null,
-            hasRendered: false,
-            buildFragment: function buildFragment(dom) {
-              var el0 = dom.createDocumentFragment();
-              var el1 = dom.createTextNode("            ");
-              dom.appendChild(el0, el1);
-              var el1 = dom.createElement("div");
-              dom.setAttribute(el1, "class", "ui green small horizontal label");
-              dom.setAttribute(el1, "style", "margin-left: 20px;");
-              var el2 = dom.createComment("");
-              dom.appendChild(el1, el2);
-              dom.appendChild(el0, el1);
-              var el1 = dom.createTextNode("\n");
-              dom.appendChild(el0, el1);
-              return el0;
-            },
-            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-              var morphs = new Array(1);
-              morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
-              return morphs;
-            },
-            statements: [["inline", "t", ["studyCreator.secure"], [], ["loc", [null, [148, 84], [148, 111]]]]],
-            locals: [],
-            templates: []
-          };
-        })();
-        var child2 = (function () {
-          return {
-            meta: {
-              "fragmentReason": false,
-              "revision": "Ember@2.2.2",
-              "loc": {
-                "source": null,
-                "start": {
-                  "line": 149,
-                  "column": 12
-                },
-                "end": {
-                  "line": 151,
-                  "column": 12
-                }
-              },
-              "moduleName": "rose/templates/study-creator.hbs"
-            },
-            isEmpty: false,
-            arity: 0,
-            cachedFragment: null,
-            hasRendered: false,
-            buildFragment: function buildFragment(dom) {
-              var el0 = dom.createDocumentFragment();
-              var el1 = dom.createTextNode("            ");
-              dom.appendChild(el0, el1);
-              var el1 = dom.createElement("div");
-              dom.setAttribute(el1, "class", "ui small horizontal label");
-              dom.setAttribute(el1, "style", "margin-left: 20px;");
-              var el2 = dom.createComment("");
-              dom.appendChild(el1, el2);
-              dom.appendChild(el0, el1);
-              var el1 = dom.createTextNode("\n");
-              dom.appendChild(el0, el1);
-              return el0;
-            },
-            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-              var morphs = new Array(1);
-              morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
-              return morphs;
-            },
-            statements: [["inline", "t", ["studyCreator.unknown"], [], ["loc", [null, [150, 78], [150, 106]]]]],
-            locals: [],
-            templates: []
-          };
-        })();
-        var child3 = (function () {
-          return {
-            meta: {
-              "fragmentReason": false,
-              "revision": "Ember@2.2.2",
-              "loc": {
-                "source": null,
-                "start": {
-                  "line": 164,
-                  "column": 12
-                },
-                "end": {
-                  "line": 174,
+                  "line": 158,
                   "column": 12
                 }
               },
@@ -12996,7 +13170,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
               morphs[4] = dom.createMorphAt(dom.childAt(element2, [9]), 0, 0);
               return morphs;
             },
-            statements: [["inline", "ui-checkbox", [], ["class", "fitted toggle", "checked", ["subexpr", "@mut", [["get", "observer.isEnabled", ["loc", [null, [167, 62], [167, 80]]]]], [], []]], ["loc", [null, [167, 18], [167, 82]]]], ["content", "observer.name", ["loc", [null, [169, 28], [169, 45]]]], ["content", "observer.description", ["loc", [null, [170, 20], [170, 44]]]], ["content", "observer.type", ["loc", [null, [171, 20], [171, 37]]]], ["content", "observer.version", ["loc", [null, [172, 20], [172, 40]]]]],
+            statements: [["inline", "ui-checkbox", [], ["class", "fitted toggle", "checked", ["subexpr", "@mut", [["get", "observer.isEnabled", ["loc", [null, [151, 62], [151, 80]]]]], [], []]], ["loc", [null, [151, 18], [151, 82]]]], ["content", "observer.name", ["loc", [null, [153, 28], [153, 45]]]], ["content", "observer.description", ["loc", [null, [154, 20], [154, 44]]]], ["content", "observer.type", ["loc", [null, [155, 20], [155, 37]]]], ["content", "observer.version", ["loc", [null, [156, 20], [156, 40]]]]],
             locals: ["observer"],
             templates: []
           };
@@ -13008,11 +13182,11 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             "loc": {
               "source": null,
               "start": {
-                "line": 109,
+                "line": 99,
                 "column": 8
               },
               "end": {
-                "line": 186,
+                "line": 170,
                 "column": 6
               }
             },
@@ -13035,14 +13209,6 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             var el3 = dom.createTextNode("\n            ");
             dom.appendChild(el2, el3);
             var el3 = dom.createComment("");
-            dom.appendChild(el2, el3);
-            var el3 = dom.createTextNode("\n            ");
-            dom.appendChild(el2, el3);
-            var el3 = dom.createElement("div");
-            dom.setAttribute(el3, "class", "ui green small horizontal label");
-            dom.setAttribute(el3, "style", "margin-left: 20px;");
-            var el4 = dom.createComment("");
-            dom.appendChild(el3, el4);
             dom.appendChild(el2, el3);
             var el3 = dom.createTextNode("\n          ");
             dom.appendChild(el2, el3);
@@ -13143,11 +13309,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             dom.appendChild(el2, el3);
             var el3 = dom.createComment("");
             dom.appendChild(el2, el3);
-            var el3 = dom.createTextNode("\n");
-            dom.appendChild(el2, el3);
-            var el3 = dom.createComment("");
-            dom.appendChild(el2, el3);
-            var el3 = dom.createTextNode("          ");
+            var el3 = dom.createTextNode("\n          ");
             dom.appendChild(el2, el3);
             dom.appendChild(el1, el2);
             var el2 = dom.createTextNode("\n          ");
@@ -13253,47 +13415,43 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
           },
           buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
             var element4 = dom.childAt(fragment, [1]);
-            var element5 = dom.childAt(element4, [1]);
-            var element6 = dom.childAt(element4, [3]);
-            var element7 = dom.childAt(element6, [1, 1]);
-            var element8 = dom.childAt(element6, [5, 1, 1]);
-            var element9 = dom.childAt(element8, [1]);
-            var element10 = dom.childAt(element8, [3]);
-            var element11 = dom.childAt(fragment, [3]);
-            var element12 = dom.childAt(element11, [1]);
-            var element13 = dom.childAt(element11, [3]);
-            var element14 = dom.childAt(element13, [1, 1]);
-            var element15 = dom.childAt(element13, [5, 1, 1]);
-            var element16 = dom.childAt(element15, [1]);
-            var element17 = dom.childAt(element15, [3]);
-            var morphs = new Array(22);
-            morphs[0] = dom.createMorphAt(element5, 1, 1);
-            morphs[1] = dom.createMorphAt(dom.childAt(element5, [3]), 0, 0);
-            morphs[2] = dom.createMorphAt(dom.childAt(element7, [1]), 0, 0);
-            morphs[3] = dom.createMorphAt(dom.childAt(element7, [3]), 0, 0);
-            morphs[4] = dom.createMorphAt(dom.childAt(element7, [5]), 0, 0);
-            morphs[5] = dom.createMorphAt(dom.childAt(element6, [3]), 1, 1);
-            morphs[6] = dom.createElementMorph(element9);
-            morphs[7] = dom.createMorphAt(element9, 0, 0);
-            morphs[8] = dom.createElementMorph(element10);
-            morphs[9] = dom.createMorphAt(element10, 0, 0);
-            morphs[10] = dom.createMorphAt(element12, 1, 1);
-            morphs[11] = dom.createMorphAt(element12, 3, 3);
-            morphs[12] = dom.createMorphAt(dom.childAt(element14, [1]), 0, 0);
-            morphs[13] = dom.createMorphAt(dom.childAt(element14, [3]), 0, 0);
-            morphs[14] = dom.createMorphAt(dom.childAt(element14, [5]), 0, 0);
-            morphs[15] = dom.createMorphAt(dom.childAt(element14, [7]), 0, 0);
-            morphs[16] = dom.createMorphAt(dom.childAt(element14, [9]), 0, 0);
-            morphs[17] = dom.createMorphAt(dom.childAt(element13, [3]), 1, 1);
-            morphs[18] = dom.createElementMorph(element16);
-            morphs[19] = dom.createMorphAt(element16, 0, 0);
-            morphs[20] = dom.createElementMorph(element17);
-            morphs[21] = dom.createMorphAt(element17, 0, 0);
+            var element5 = dom.childAt(element4, [3]);
+            var element6 = dom.childAt(element5, [1, 1]);
+            var element7 = dom.childAt(element5, [5, 1, 1]);
+            var element8 = dom.childAt(element7, [1]);
+            var element9 = dom.childAt(element7, [3]);
+            var element10 = dom.childAt(fragment, [3]);
+            var element11 = dom.childAt(element10, [3]);
+            var element12 = dom.childAt(element11, [1, 1]);
+            var element13 = dom.childAt(element11, [5, 1, 1]);
+            var element14 = dom.childAt(element13, [1]);
+            var element15 = dom.childAt(element13, [3]);
+            var morphs = new Array(20);
+            morphs[0] = dom.createMorphAt(dom.childAt(element4, [1]), 1, 1);
+            morphs[1] = dom.createMorphAt(dom.childAt(element6, [1]), 0, 0);
+            morphs[2] = dom.createMorphAt(dom.childAt(element6, [3]), 0, 0);
+            morphs[3] = dom.createMorphAt(dom.childAt(element6, [5]), 0, 0);
+            morphs[4] = dom.createMorphAt(dom.childAt(element5, [3]), 1, 1);
+            morphs[5] = dom.createElementMorph(element8);
+            morphs[6] = dom.createMorphAt(element8, 0, 0);
+            morphs[7] = dom.createElementMorph(element9);
+            morphs[8] = dom.createMorphAt(element9, 0, 0);
+            morphs[9] = dom.createMorphAt(dom.childAt(element10, [1]), 1, 1);
+            morphs[10] = dom.createMorphAt(dom.childAt(element12, [1]), 0, 0);
+            morphs[11] = dom.createMorphAt(dom.childAt(element12, [3]), 0, 0);
+            morphs[12] = dom.createMorphAt(dom.childAt(element12, [5]), 0, 0);
+            morphs[13] = dom.createMorphAt(dom.childAt(element12, [7]), 0, 0);
+            morphs[14] = dom.createMorphAt(dom.childAt(element12, [9]), 0, 0);
+            morphs[15] = dom.createMorphAt(dom.childAt(element11, [3]), 1, 1);
+            morphs[16] = dom.createElementMorph(element14);
+            morphs[17] = dom.createMorphAt(element14, 0, 0);
+            morphs[18] = dom.createElementMorph(element15);
+            morphs[19] = dom.createMorphAt(element15, 0, 0);
             return morphs;
           },
-          statements: [["inline", "t", ["studyCreator.extractors"], [], ["loc", [null, [112, 12], [112, 43]]]], ["inline", "t", ["studyCreator.secure"], [], ["loc", [null, [113, 84], [113, 111]]]], ["inline", "t", ["studyCreator.table.enabled"], [], ["loc", [null, [118, 20], [118, 54]]]], ["inline", "t", ["studyCreator.table.name"], [], ["loc", [null, [119, 20], [119, 51]]]], ["inline", "t", ["studyCreator.table.version"], [], ["loc", [null, [120, 20], [120, 54]]]], ["block", "each", [["get", "network.extractors", ["loc", [null, [124, 20], [124, 38]]]]], [], 0, null, ["loc", [null, [124, 12], [132, 21]]]], ["element", "action", ["enableAll", ["get", "network.extractors", ["loc", [null, [137, 77], [137, 95]]]]], [], ["loc", [null, [137, 56], [137, 97]]]], ["inline", "t", ["studyCreator.enableAll"], [], ["loc", [null, [137, 98], [137, 128]]]], ["element", "action", ["disableAll", ["get", "network.extractors", ["loc", [null, [138, 78], [138, 96]]]]], [], ["loc", [null, [138, 56], [138, 98]]]], ["inline", "t", ["studyCreator.disableAll"], [], ["loc", [null, [138, 99], [138, 130]]]], ["inline", "t", ["studyCreator.observers"], [], ["loc", [null, [146, 12], [146, 42]]]], ["block", "if", [["get", "model.fingerprint", ["loc", [null, [147, 18], [147, 35]]]]], [], 1, 2, ["loc", [null, [147, 12], [151, 19]]]], ["inline", "t", ["studyCreator.table.enabled"], [], ["loc", [null, [156, 20], [156, 54]]]], ["inline", "t", ["studyCreator.table.name"], [], ["loc", [null, [157, 20], [157, 51]]]], ["inline", "t", ["studyCreator.table.description"], [], ["loc", [null, [158, 20], [158, 58]]]], ["inline", "t", ["studyCreator.table.type"], [], ["loc", [null, [159, 20], [159, 51]]]], ["inline", "t", ["studyCreator.table.version"], [], ["loc", [null, [160, 20], [160, 54]]]], ["block", "each", [["get", "network.observers", ["loc", [null, [164, 20], [164, 37]]]]], [], 3, null, ["loc", [null, [164, 12], [174, 21]]]], ["element", "action", ["enableAll", ["get", "network.observers", ["loc", [null, [179, 77], [179, 94]]]]], [], ["loc", [null, [179, 56], [179, 96]]]], ["inline", "t", ["studyCreator.enableAll"], [], ["loc", [null, [179, 97], [179, 127]]]], ["element", "action", ["disableAll", ["get", "network.observers", ["loc", [null, [180, 78], [180, 95]]]]], [], ["loc", [null, [180, 56], [180, 97]]]], ["inline", "t", ["studyCreator.disableAll"], [], ["loc", [null, [180, 98], [180, 129]]]]],
+          statements: [["inline", "t", ["studyCreator.extractors"], [], ["loc", [null, [102, 12], [102, 43]]]], ["inline", "t", ["studyCreator.table.enabled"], [], ["loc", [null, [107, 20], [107, 54]]]], ["inline", "t", ["studyCreator.table.name"], [], ["loc", [null, [108, 20], [108, 51]]]], ["inline", "t", ["studyCreator.table.version"], [], ["loc", [null, [109, 20], [109, 54]]]], ["block", "each", [["get", "network.extractors", ["loc", [null, [113, 20], [113, 38]]]]], [], 0, null, ["loc", [null, [113, 12], [121, 21]]]], ["element", "action", ["enableAll", ["get", "network.extractors", ["loc", [null, [126, 77], [126, 95]]]]], [], ["loc", [null, [126, 56], [126, 97]]]], ["inline", "t", ["studyCreator.enableAll"], [], ["loc", [null, [126, 98], [126, 128]]]], ["element", "action", ["disableAll", ["get", "network.extractors", ["loc", [null, [127, 78], [127, 96]]]]], [], ["loc", [null, [127, 56], [127, 98]]]], ["inline", "t", ["studyCreator.disableAll"], [], ["loc", [null, [127, 99], [127, 130]]]], ["inline", "t", ["studyCreator.observers"], [], ["loc", [null, [135, 12], [135, 42]]]], ["inline", "t", ["studyCreator.table.enabled"], [], ["loc", [null, [140, 20], [140, 54]]]], ["inline", "t", ["studyCreator.table.name"], [], ["loc", [null, [141, 20], [141, 51]]]], ["inline", "t", ["studyCreator.table.description"], [], ["loc", [null, [142, 20], [142, 58]]]], ["inline", "t", ["studyCreator.table.type"], [], ["loc", [null, [143, 20], [143, 51]]]], ["inline", "t", ["studyCreator.table.version"], [], ["loc", [null, [144, 20], [144, 54]]]], ["block", "each", [["get", "network.observers", ["loc", [null, [148, 20], [148, 37]]]]], [], 1, null, ["loc", [null, [148, 12], [158, 21]]]], ["element", "action", ["enableAll", ["get", "network.observers", ["loc", [null, [163, 77], [163, 94]]]]], [], ["loc", [null, [163, 56], [163, 96]]]], ["inline", "t", ["studyCreator.enableAll"], [], ["loc", [null, [163, 97], [163, 127]]]], ["element", "action", ["disableAll", ["get", "network.observers", ["loc", [null, [164, 78], [164, 95]]]]], [], ["loc", [null, [164, 56], [164, 97]]]], ["inline", "t", ["studyCreator.disableAll"], [], ["loc", [null, [164, 98], [164, 129]]]]],
           locals: [],
-          templates: [child0, child1, child2, child3]
+          templates: [child0, child1]
         };
       })();
       return {
@@ -13303,11 +13461,11 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 103,
+              "line": 93,
               "column": 4
             },
             "end": {
-              "line": 188,
+              "line": 172,
               "column": 4
             }
           },
@@ -13339,13 +13497,13 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element18 = dom.childAt(fragment, [1]);
+          var element16 = dom.childAt(fragment, [1]);
           var morphs = new Array(2);
-          morphs[0] = dom.createMorphAt(element18, 1, 1);
-          morphs[1] = dom.createMorphAt(element18, 3, 3);
+          morphs[0] = dom.createMorphAt(element16, 1, 1);
+          morphs[1] = dom.createMorphAt(element16, 3, 3);
           return morphs;
         },
-        statements: [["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "network.isEnabled", ["loc", [null, [105, 30], [105, 47]]]]], [], []], "class", "toggle", "label", ["subexpr", "@mut", [["get", "network.descriptiveName", ["loc", [null, [107, 28], [107, 51]]]]], [], []], "value", ["subexpr", "@mut", [["get", "network", ["loc", [null, [108, 28], [108, 35]]]]], [], []]], ["loc", [null, [105, 8], [108, 37]]]], ["block", "if", [["get", "network.isEnabled", ["loc", [null, [109, 14], [109, 31]]]]], [], 0, null, ["loc", [null, [109, 8], [186, 13]]]]],
+        statements: [["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "network.isEnabled", ["loc", [null, [95, 30], [95, 47]]]]], [], []], "class", "toggle", "label", ["subexpr", "@mut", [["get", "network.descriptiveName", ["loc", [null, [97, 28], [97, 51]]]]], [], []], "value", ["subexpr", "@mut", [["get", "network", ["loc", [null, [98, 28], [98, 35]]]]], [], []]], ["loc", [null, [95, 8], [98, 37]]]], ["block", "if", [["get", "network.isEnabled", ["loc", [null, [99, 14], [99, 31]]]]], [], 0, null, ["loc", [null, [99, 8], [170, 13]]]]],
         locals: ["network"],
         templates: [child0]
       };
@@ -13359,11 +13517,11 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             "loc": {
               "source": null,
               "start": {
-                "line": 224,
+                "line": 208,
                 "column": 8
               },
               "end": {
-                "line": 228,
+                "line": 212,
                 "column": 8
               }
             },
@@ -13397,7 +13555,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             morphs[1] = dom.createMorphAt(element0, 1, 1);
             return morphs;
           },
-          statements: [["attribute", "data-value", ["get", "interval.value", ["loc", [null, [225, 41], [225, 55]]]]], ["inline", "t", [["get", "interval.label", ["loc", [null, [226, 16], [226, 30]]]]], [], ["loc", [null, [226, 12], [226, 32]]]]],
+          statements: [["attribute", "data-value", ["get", "interval.value", ["loc", [null, [209, 41], [209, 55]]]]], ["inline", "t", [["get", "interval.label", ["loc", [null, [210, 16], [210, 30]]]]], [], ["loc", [null, [210, 12], [210, 32]]]]],
           locals: ["interval"],
           templates: []
         };
@@ -13409,11 +13567,11 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 217,
+              "line": 201,
               "column": 4
             },
             "end": {
-              "line": 230,
+              "line": 214,
               "column": 4
             }
           },
@@ -13465,7 +13623,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
           morphs[1] = dom.createMorphAt(dom.childAt(fragment, [7]), 1, 1);
           return morphs;
         },
-        statements: [["attribute", "value", ["get", "model.updateInterval", ["loc", [null, [221, 51], [221, 71]]]]], ["block", "each", [["get", "updateIntervals", ["loc", [null, [224, 16], [224, 31]]]]], [], 0, null, ["loc", [null, [224, 8], [228, 17]]]]],
+        statements: [["attribute", "value", ["get", "model.updateInterval", ["loc", [null, [205, 51], [205, 71]]]]], ["block", "each", [["get", "updateIntervals", ["loc", [null, [208, 16], [208, 31]]]]], [], 0, null, ["loc", [null, [208, 8], [212, 17]]]]],
         locals: [],
         templates: [child0]
       };
@@ -13484,7 +13642,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 246,
+            "line": 230,
             "column": 0
           }
         },
@@ -13718,29 +13876,6 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n\n  ");
         dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
         var el2 = dom.createElement("h3");
         dom.setAttribute(el2, "class", "ui dividing header");
         var el3 = dom.createComment("");
@@ -13887,75 +14022,71 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element19 = dom.childAt(fragment, [0, 3]);
-        var element20 = dom.childAt(fragment, [2]);
-        var element21 = dom.childAt(element20, [3]);
-        var element22 = dom.childAt(element20, [5]);
-        var element23 = dom.childAt(element20, [9]);
-        var element24 = dom.childAt(element20, [11]);
-        var element25 = dom.childAt(element20, [15]);
-        var element26 = dom.childAt(element25, [5]);
-        var element27 = dom.childAt(element26, [3]);
-        var element28 = dom.childAt(element20, [17]);
-        var element29 = dom.childAt(element20, [19]);
-        var element30 = dom.childAt(element20, [23]);
-        var element31 = dom.childAt(element20, [27]);
-        var element32 = dom.childAt(element20, [29]);
-        var element33 = dom.childAt(element20, [31]);
-        var element34 = dom.childAt(element20, [33]);
-        var element35 = dom.childAt(element20, [35]);
-        var morphs = new Array(48);
-        morphs[0] = dom.createMorphAt(element19, 1, 1);
-        morphs[1] = dom.createMorphAt(dom.childAt(element19, [3]), 0, 0);
-        morphs[2] = dom.createMorphAt(dom.childAt(element20, [1]), 0, 0);
-        morphs[3] = dom.createMorphAt(dom.childAt(element21, [1]), 0, 0);
-        morphs[4] = dom.createMorphAt(dom.childAt(element21, [3]), 0, 0);
-        morphs[5] = dom.createMorphAt(element21, 5, 5);
-        morphs[6] = dom.createMorphAt(dom.childAt(element22, [1]), 0, 0);
-        morphs[7] = dom.createMorphAt(dom.childAt(element22, [3]), 0, 0);
-        morphs[8] = dom.createMorphAt(element22, 5, 5);
-        morphs[9] = dom.createMorphAt(dom.childAt(element20, [7]), 0, 0);
-        morphs[10] = dom.createMorphAt(dom.childAt(element23, [1]), 0, 0);
-        morphs[11] = dom.createMorphAt(dom.childAt(element23, [3]), 0, 0);
-        morphs[12] = dom.createMorphAt(element23, 5, 5);
-        morphs[13] = dom.createMorphAt(dom.childAt(element24, [1]), 0, 0);
-        morphs[14] = dom.createMorphAt(dom.childAt(element24, [3]), 0, 0);
-        morphs[15] = dom.createMorphAt(element24, 5, 5);
-        morphs[16] = dom.createMorphAt(dom.childAt(element20, [13]), 0, 0);
-        morphs[17] = dom.createMorphAt(dom.childAt(element25, [1]), 0, 0);
-        morphs[18] = dom.createMorphAt(dom.childAt(element25, [3]), 0, 0);
-        morphs[19] = dom.createMorphAt(element26, 1, 1);
-        morphs[20] = dom.createAttrMorph(element27, 'class');
-        morphs[21] = dom.createElementMorph(element27);
-        morphs[22] = dom.createMorphAt(element25, 7, 7);
-        morphs[23] = dom.createMorphAt(dom.childAt(element28, [1]), 0, 0);
-        morphs[24] = dom.createMorphAt(dom.childAt(element28, [3]), 0, 0);
-        morphs[25] = dom.createMorphAt(dom.childAt(element28, [5]), 1, 1);
-        morphs[26] = dom.createMorphAt(dom.childAt(element29, [1]), 0, 0);
-        morphs[27] = dom.createMorphAt(dom.childAt(element29, [3]), 0, 0);
-        morphs[28] = dom.createMorphAt(element29, 5, 5);
-        morphs[29] = dom.createMorphAt(dom.childAt(element20, [21]), 0, 0);
-        morphs[30] = dom.createMorphAt(dom.childAt(element30, [1]), 0, 0);
-        morphs[31] = dom.createMorphAt(dom.childAt(element30, [3]), 0, 0);
-        morphs[32] = dom.createMorphAt(element30, 5, 5);
-        morphs[33] = dom.createMorphAt(dom.childAt(element20, [25]), 0, 0);
-        morphs[34] = dom.createMorphAt(dom.childAt(element31, [1]), 0, 0);
-        morphs[35] = dom.createMorphAt(dom.childAt(element31, [3]), 0, 0);
-        morphs[36] = dom.createMorphAt(element31, 5, 5);
-        morphs[37] = dom.createMorphAt(dom.childAt(element32, [1]), 0, 0);
-        morphs[38] = dom.createMorphAt(dom.childAt(element32, [3]), 0, 0);
-        morphs[39] = dom.createMorphAt(element32, 5, 5);
-        morphs[40] = dom.createMorphAt(dom.childAt(element33, [1]), 0, 0);
-        morphs[41] = dom.createMorphAt(dom.childAt(element33, [3]), 0, 0);
-        morphs[42] = dom.createMorphAt(element33, 5, 5);
-        morphs[43] = dom.createMorphAt(dom.childAt(element34, [1]), 0, 0);
-        morphs[44] = dom.createMorphAt(dom.childAt(element34, [3]), 0, 0);
-        morphs[45] = dom.createMorphAt(element34, 5, 5);
-        morphs[46] = dom.createElementMorph(element35);
-        morphs[47] = dom.createMorphAt(element35, 1, 1);
+        var element17 = dom.childAt(fragment, [0, 3]);
+        var element18 = dom.childAt(fragment, [2]);
+        var element19 = dom.childAt(element18, [3]);
+        var element20 = dom.childAt(element18, [5]);
+        var element21 = dom.childAt(element18, [9]);
+        var element22 = dom.childAt(element18, [11]);
+        var element23 = dom.childAt(element18, [15]);
+        var element24 = dom.childAt(element23, [5]);
+        var element25 = dom.childAt(element24, [3]);
+        var element26 = dom.childAt(element18, [17]);
+        var element27 = dom.childAt(element18, [21]);
+        var element28 = dom.childAt(element18, [25]);
+        var element29 = dom.childAt(element18, [27]);
+        var element30 = dom.childAt(element18, [29]);
+        var element31 = dom.childAt(element18, [31]);
+        var element32 = dom.childAt(element18, [33]);
+        var morphs = new Array(45);
+        morphs[0] = dom.createMorphAt(element17, 1, 1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element17, [3]), 0, 0);
+        morphs[2] = dom.createMorphAt(dom.childAt(element18, [1]), 0, 0);
+        morphs[3] = dom.createMorphAt(dom.childAt(element19, [1]), 0, 0);
+        morphs[4] = dom.createMorphAt(dom.childAt(element19, [3]), 0, 0);
+        morphs[5] = dom.createMorphAt(element19, 5, 5);
+        morphs[6] = dom.createMorphAt(dom.childAt(element20, [1]), 0, 0);
+        morphs[7] = dom.createMorphAt(dom.childAt(element20, [3]), 0, 0);
+        morphs[8] = dom.createMorphAt(element20, 5, 5);
+        morphs[9] = dom.createMorphAt(dom.childAt(element18, [7]), 0, 0);
+        morphs[10] = dom.createMorphAt(dom.childAt(element21, [1]), 0, 0);
+        morphs[11] = dom.createMorphAt(dom.childAt(element21, [3]), 0, 0);
+        morphs[12] = dom.createMorphAt(element21, 5, 5);
+        morphs[13] = dom.createMorphAt(dom.childAt(element22, [1]), 0, 0);
+        morphs[14] = dom.createMorphAt(dom.childAt(element22, [3]), 0, 0);
+        morphs[15] = dom.createMorphAt(element22, 5, 5);
+        morphs[16] = dom.createMorphAt(dom.childAt(element18, [13]), 0, 0);
+        morphs[17] = dom.createMorphAt(dom.childAt(element23, [1]), 0, 0);
+        morphs[18] = dom.createMorphAt(dom.childAt(element23, [3]), 0, 0);
+        morphs[19] = dom.createMorphAt(element24, 1, 1);
+        morphs[20] = dom.createAttrMorph(element25, 'class');
+        morphs[21] = dom.createElementMorph(element25);
+        morphs[22] = dom.createMorphAt(element23, 7, 7);
+        morphs[23] = dom.createMorphAt(dom.childAt(element26, [1]), 0, 0);
+        morphs[24] = dom.createMorphAt(dom.childAt(element26, [3]), 0, 0);
+        morphs[25] = dom.createMorphAt(dom.childAt(element26, [5]), 1, 1);
+        morphs[26] = dom.createMorphAt(dom.childAt(element18, [19]), 0, 0);
+        morphs[27] = dom.createMorphAt(dom.childAt(element27, [1]), 0, 0);
+        morphs[28] = dom.createMorphAt(dom.childAt(element27, [3]), 0, 0);
+        morphs[29] = dom.createMorphAt(element27, 5, 5);
+        morphs[30] = dom.createMorphAt(dom.childAt(element18, [23]), 0, 0);
+        morphs[31] = dom.createMorphAt(dom.childAt(element28, [1]), 0, 0);
+        morphs[32] = dom.createMorphAt(dom.childAt(element28, [3]), 0, 0);
+        morphs[33] = dom.createMorphAt(element28, 5, 5);
+        morphs[34] = dom.createMorphAt(dom.childAt(element29, [1]), 0, 0);
+        morphs[35] = dom.createMorphAt(dom.childAt(element29, [3]), 0, 0);
+        morphs[36] = dom.createMorphAt(element29, 5, 5);
+        morphs[37] = dom.createMorphAt(dom.childAt(element30, [1]), 0, 0);
+        morphs[38] = dom.createMorphAt(dom.childAt(element30, [3]), 0, 0);
+        morphs[39] = dom.createMorphAt(element30, 5, 5);
+        morphs[40] = dom.createMorphAt(dom.childAt(element31, [1]), 0, 0);
+        morphs[41] = dom.createMorphAt(dom.childAt(element31, [3]), 0, 0);
+        morphs[42] = dom.createMorphAt(element31, 5, 5);
+        morphs[43] = dom.createElementMorph(element32);
+        morphs[44] = dom.createMorphAt(element32, 1, 1);
         return morphs;
       },
-      statements: [["inline", "t", ["studyCreator.title"], [], ["loc", [null, [4, 4], [4, 30]]]], ["inline", "t", ["studyCreator.subtitle"], [], ["loc", [null, [5, 28], [5, 57]]]], ["inline", "t", ["studyCreator.optionalFeaturesHeader"], [], ["loc", [null, [10, 33], [10, 76]]]], ["inline", "t", ["studyCreator.roseComments"], [], ["loc", [null, [12, 11], [12, 44]]]], ["inline", "t", ["studyCreator.roseCommentsDesc"], [], ["loc", [null, [13, 7], [13, 44]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [15, 26], [15, 53]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [17, 42], [17, 69]]]]], [], ["loc", [null, [17, 24], [17, 70]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [18, 27], [18, 50]]]]], ["loc", [null, [15, 4], [18, 52]]]], ["inline", "t", ["studyCreator.roseCommentsRating"], [], ["loc", [null, [22, 11], [22, 50]]]], ["inline", "t", ["studyCreator.roseCommentsRatingDesc"], [], ["loc", [null, [23, 7], [23, 50]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [25, 26], [25, 59]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [27, 42], [27, 75]]]]], [], ["loc", [null, [27, 24], [27, 76]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [28, 27], [28, 50]]]]], ["loc", [null, [25, 4], [28, 52]]]], ["inline", "t", ["studyCreator.privacyHeader"], [], ["loc", [null, [31, 33], [31, 67]]]], ["inline", "t", ["studyCreator.salt"], [], ["loc", [null, [34, 11], [34, 36]]]], ["inline", "t", ["studyCreator.saltDesc"], [], ["loc", [null, [35, 7], [35, 36]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.salt", ["loc", [null, [38, 18], [38, 28]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [37, 4], [40, 38]]]], ["inline", "t", ["studyCreator.hashLength"], [], ["loc", [null, [44, 11], [44, 42]]]], ["inline", "t", ["studyCreator.hashLengthDesc"], [], ["loc", [null, [45, 7], [45, 42]]]], ["inline", "input", [], ["type", "number", "value", ["subexpr", "@mut", [["get", "model.hashLength", ["loc", [null, [48, 18], [48, 34]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [47, 4], [50, 38]]]], ["inline", "t", ["studyCreator.repositoryHeader"], [], ["loc", [null, [53, 33], [53, 70]]]], ["inline", "t", ["studyCreator.repositoryUrl"], [], ["loc", [null, [56, 11], [56, 45]]]], ["inline", "t", ["studyCreator.repositoryUrlDesc"], [], ["loc", [null, [57, 7], [57, 45]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.repositoryURL", ["loc", [null, [61, 20], [61, 39]]]]], [], []], "insert-newline", "fetchBaseFile"], ["loc", [null, [60, 6], [62, 46]]]], ["attribute", "class", ["concat", ["ui icon button ", ["subexpr", "if", [["get", "baseFileIsLoading", ["loc", [null, [64, 41], [64, 58]]]], "loading"], [], ["loc", [null, [64, 36], [64, 70]]]]]]], ["element", "action", ["fetchBaseFile"], [], ["loc", [null, [64, 72], [64, 98]]]], ["block", "if", [["get", "baseFileNotFound", ["loc", [null, [68, 10], [68, 26]]]]], [], 0, null, ["loc", [null, [68, 4], [72, 11]]]], ["inline", "t", ["studyCreator.fingerprint"], [], ["loc", [null, [76, 11], [76, 43]]]], ["inline", "t", ["studyCreator.fingerprintDesc"], [], ["loc", [null, [77, 7], [77, 43]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.fingerprint", ["loc", [null, [81, 20], [81, 37]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [80, 6], [83, 40]]]], ["inline", "t", ["studyCreator.enableSecureUpdate"], [], ["loc", [null, [88, 11], [88, 50]]]], ["inline", "t", ["studyCreator.enableSecureUpdateDesc"], [], ["loc", [null, [89, 7], [89, 50]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.secureUpdateIsEnabled", ["loc", [null, [91, 26], [91, 53]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.secureUpdateIsEnabled", ["loc", [null, [93, 42], [93, 69]]]]], [], ["loc", [null, [93, 24], [93, 70]]]], "onChange", ["subexpr", "action", ["toggleEnableSecureUpdate"], [], ["loc", [null, [94, 27], [94, 62]]]]], ["loc", [null, [91, 4], [94, 64]]]], ["inline", "t", ["studyCreator.configurationHeader"], [], ["loc", [null, [97, 33], [97, 73]]]], ["inline", "t", ["studyCreator.networks"], [], ["loc", [null, [100, 11], [100, 40]]]], ["inline", "t", ["studyCreator.networksDesc"], [], ["loc", [null, [101, 7], [101, 40]]]], ["block", "each", [["get", "networks", ["loc", [null, [103, 12], [103, 20]]]]], [], 1, null, ["loc", [null, [103, 4], [188, 13]]]], ["inline", "t", ["studyCreator.autoUpdateHeader"], [], ["loc", [null, [191, 33], [191, 70]]]], ["inline", "t", ["studyCreator.autoUpdate"], [], ["loc", [null, [194, 11], [194, 42]]]], ["inline", "t", ["studyCreator.autoUpdateDesc"], [], ["loc", [null, [195, 7], [195, 42]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [197, 26], [197, 51]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [199, 42], [199, 67]]]]], [], ["loc", [null, [199, 24], [199, 68]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [200, 27], [200, 50]]]]], ["loc", [null, [197, 4], [200, 52]]]], ["inline", "t", ["studyCreator.forceSecureUpdate"], [], ["loc", [null, [204, 11], [204, 49]]]], ["inline", "t", ["studyCreator.forceSecureUpdateDesc"], [], ["loc", [null, [205, 7], [205, 49]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.forceSecureUpdate", ["loc", [null, [207, 26], [207, 49]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.forceSecureUpdate", ["loc", [null, [209, 42], [209, 65]]]]], [], ["loc", [null, [209, 24], [209, 66]]]], "onChange", ["subexpr", "action", ["toggleForceSecureUpdate"], [], ["loc", [null, [210, 27], [210, 61]]]]], ["loc", [null, [207, 4], [210, 63]]]], ["inline", "t", ["studyCreator.updateInterval"], [], ["loc", [null, [214, 11], [214, 46]]]], ["inline", "t", ["studyCreator.updateIntervalLabel"], [], ["loc", [null, [215, 7], [215, 47]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "model.updateInterval", ["loc", [null, [218, 29], [218, 49]]]]], [], []], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [219, 29], [219, 52]]]]], 2, null, ["loc", [null, [217, 4], [230, 20]]]], ["inline", "t", ["studyCreator.exportConfig"], [], ["loc", [null, [234, 11], [234, 44]]]], ["inline", "t", ["studyCreator.exportConfigDesc"], [], ["loc", [null, [235, 7], [235, 44]]]], ["inline", "input", [], ["value", ["subexpr", "@mut", [["get", "model.fileName", ["loc", [null, [237, 18], [237, 32]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [237, 4], [239, 38]]]], ["element", "action", ["download"], [], ["loc", [null, [242, 36], [242, 57]]]], ["inline", "t", ["action.download"], [], ["loc", [null, [243, 4], [243, 27]]]]],
+      statements: [["inline", "t", ["studyCreator.title"], [], ["loc", [null, [4, 4], [4, 30]]]], ["inline", "t", ["studyCreator.subtitle"], [], ["loc", [null, [5, 28], [5, 57]]]], ["inline", "t", ["studyCreator.optionalFeaturesHeader"], [], ["loc", [null, [10, 33], [10, 76]]]], ["inline", "t", ["studyCreator.roseComments"], [], ["loc", [null, [12, 11], [12, 44]]]], ["inline", "t", ["studyCreator.roseCommentsDesc"], [], ["loc", [null, [13, 7], [13, 44]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [15, 26], [15, 53]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [17, 42], [17, 69]]]]], [], ["loc", [null, [17, 24], [17, 70]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [18, 27], [18, 50]]]]], ["loc", [null, [15, 4], [18, 52]]]], ["inline", "t", ["studyCreator.roseCommentsRating"], [], ["loc", [null, [22, 11], [22, 50]]]], ["inline", "t", ["studyCreator.roseCommentsRatingDesc"], [], ["loc", [null, [23, 7], [23, 50]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [25, 26], [25, 59]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [27, 42], [27, 75]]]]], [], ["loc", [null, [27, 24], [27, 76]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [28, 27], [28, 50]]]]], ["loc", [null, [25, 4], [28, 52]]]], ["inline", "t", ["studyCreator.privacyHeader"], [], ["loc", [null, [31, 33], [31, 67]]]], ["inline", "t", ["studyCreator.salt"], [], ["loc", [null, [34, 11], [34, 36]]]], ["inline", "t", ["studyCreator.saltDesc"], [], ["loc", [null, [35, 7], [35, 36]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.salt", ["loc", [null, [38, 18], [38, 28]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [37, 4], [40, 38]]]], ["inline", "t", ["studyCreator.hashLength"], [], ["loc", [null, [44, 11], [44, 42]]]], ["inline", "t", ["studyCreator.hashLengthDesc"], [], ["loc", [null, [45, 7], [45, 42]]]], ["inline", "input", [], ["type", "number", "value", ["subexpr", "@mut", [["get", "model.hashLength", ["loc", [null, [48, 18], [48, 34]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [47, 4], [50, 38]]]], ["inline", "t", ["studyCreator.repositoryHeader"], [], ["loc", [null, [53, 33], [53, 70]]]], ["inline", "t", ["studyCreator.repositoryUrl"], [], ["loc", [null, [56, 11], [56, 45]]]], ["inline", "t", ["studyCreator.repositoryUrlDesc"], [], ["loc", [null, [57, 7], [57, 45]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.repositoryURL", ["loc", [null, [61, 20], [61, 39]]]]], [], []], "insert-newline", "fetchBaseFile"], ["loc", [null, [60, 6], [62, 46]]]], ["attribute", "class", ["concat", ["ui icon button ", ["subexpr", "if", [["get", "baseFileIsLoading", ["loc", [null, [64, 41], [64, 58]]]], "loading"], [], ["loc", [null, [64, 36], [64, 70]]]]]]], ["element", "action", ["fetchBaseFile"], [], ["loc", [null, [64, 72], [64, 98]]]], ["block", "if", [["get", "baseFileNotFound", ["loc", [null, [68, 10], [68, 26]]]]], [], 0, null, ["loc", [null, [68, 4], [72, 11]]]], ["inline", "t", ["studyCreator.fingerprint"], [], ["loc", [null, [76, 11], [76, 43]]]], ["inline", "t", ["studyCreator.fingerprintDesc"], [], ["loc", [null, [77, 7], [77, 43]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.fingerprint", ["loc", [null, [81, 20], [81, 37]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [80, 6], [83, 40]]]], ["inline", "t", ["studyCreator.configurationHeader"], [], ["loc", [null, [87, 33], [87, 73]]]], ["inline", "t", ["studyCreator.networks"], [], ["loc", [null, [90, 11], [90, 40]]]], ["inline", "t", ["studyCreator.networksDesc"], [], ["loc", [null, [91, 7], [91, 40]]]], ["block", "each", [["get", "networks", ["loc", [null, [93, 12], [93, 20]]]]], [], 1, null, ["loc", [null, [93, 4], [172, 13]]]], ["inline", "t", ["studyCreator.autoUpdateHeader"], [], ["loc", [null, [175, 33], [175, 70]]]], ["inline", "t", ["studyCreator.autoUpdate"], [], ["loc", [null, [178, 11], [178, 42]]]], ["inline", "t", ["studyCreator.autoUpdateDesc"], [], ["loc", [null, [179, 7], [179, 42]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [181, 26], [181, 51]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [183, 42], [183, 67]]]]], [], ["loc", [null, [183, 24], [183, 68]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [184, 27], [184, 50]]]]], ["loc", [null, [181, 4], [184, 52]]]], ["inline", "t", ["studyCreator.forceSecureUpdate"], [], ["loc", [null, [188, 11], [188, 49]]]], ["inline", "t", ["studyCreator.forceSecureUpdateDesc"], [], ["loc", [null, [189, 7], [189, 49]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.forceSecureUpdate", ["loc", [null, [191, 26], [191, 49]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.forceSecureUpdate", ["loc", [null, [193, 42], [193, 65]]]]], [], ["loc", [null, [193, 24], [193, 66]]]], "onChange", ["subexpr", "action", ["toggleForceSecureUpdate"], [], ["loc", [null, [194, 27], [194, 61]]]]], ["loc", [null, [191, 4], [194, 63]]]], ["inline", "t", ["studyCreator.updateInterval"], [], ["loc", [null, [198, 11], [198, 46]]]], ["inline", "t", ["studyCreator.updateIntervalLabel"], [], ["loc", [null, [199, 7], [199, 47]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "model.updateInterval", ["loc", [null, [202, 29], [202, 49]]]]], [], []], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [203, 29], [203, 52]]]]], 2, null, ["loc", [null, [201, 4], [214, 20]]]], ["inline", "t", ["studyCreator.exportConfig"], [], ["loc", [null, [218, 11], [218, 44]]]], ["inline", "t", ["studyCreator.exportConfigDesc"], [], ["loc", [null, [219, 7], [219, 44]]]], ["inline", "input", [], ["value", ["subexpr", "@mut", [["get", "model.fileName", ["loc", [null, [221, 18], [221, 32]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [221, 4], [223, 38]]]], ["element", "action", ["download"], [], ["loc", [null, [226, 36], [226, 57]]]], ["inline", "t", ["action.download"], [], ["loc", [null, [227, 4], [227, 27]]]]],
       locals: [],
       templates: [child0, child1, child2]
     };
@@ -14485,7 +14616,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+7618b66a"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+2526636e"});
 }
 
 /* jshint ignore:end */

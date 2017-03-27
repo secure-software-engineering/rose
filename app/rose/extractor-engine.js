@@ -106,7 +106,9 @@ class ExtractorEngine {
 
     extractFieldsFromContainerByName ($container, extractorName) {
         var extractor = this.extractors.findWhere({name: extractorName})
-        return ExtractorEngine.extractFieldsFromContainer($container, extractor, this.configs)
+        if (extractor !== undefined) {
+            return ExtractorEngine.extractFieldsFromContainer($container, extractor, this.configs)
+        }
     }
 
     handleURL (extractor) {

@@ -1253,7 +1253,17 @@ define('rose/controllers/extracts', ['exports', 'ember', 'ember-cli-pagination/c
   });
 });
 define('rose/controllers/index', ['exports', 'ember'], function (exports, _ember) {
-  exports['default'] = _ember['default'].Controller.extend({});
+  exports['default'] = _ember['default'].Controller.extend({
+    settings: _ember['default'].inject.service('settings'),
+    actions: {
+
+      toggleTracking: function toggleTracking() {
+        this.get('settings.system').save().then(function () {
+          return kango.dispatchMessage('toggle-tracking');
+        });
+      }
+    }
+  });
 });
 define('rose/controllers/interactions', ['exports', 'ember', 'ember-cli-pagination/computed/paged-array'], function (exports, _ember, _emberCliPaginationComputedPagedArray) {
   exports['default'] = _ember['default'].Controller.extend({
@@ -1324,15 +1334,10 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
     updateIntervals: [{ label: 'hourly', value: 3600000 }, { label: 'daily', value: 86400000 }, { label: 'weekly', value: 604800000 }, { label: 'monthly', value: 2629743830 }],
 
     actions: {
+
       saveSettings: function saveSettings() {
         this.get('settings.user').save();
         this.get('settings.system').save();
-      },
-
-      toggleTracking: function toggleTracking() {
-        this.get('settings.system').save().then(function () {
-          return kango.dispatchMessage('toggle-tracking');
-        });
       },
 
       changeI18nLanguage: function changeI18nLanguage() {
@@ -9888,7 +9893,7 @@ define("rose/templates/index", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 24,
+            "line": 35,
             "column": 0
           }
         },
@@ -9932,18 +9937,54 @@ define("rose/templates/index", ["exports"], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2, "class", "field");
+        var el3 = dom.createTextNode("\n        ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n        ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n        ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element3 = dom.childAt(fragment, [0, 3]);
-        var morphs = new Array(3);
+        var element4 = dom.childAt(fragment, [4]);
+        var element5 = dom.childAt(element4, [1]);
+        var morphs = new Array(7);
         morphs[0] = dom.createMorphAt(element3, 1, 1);
         morphs[1] = dom.createMorphAt(dom.childAt(element3, [3]), 0, 0);
         morphs[2] = dom.createMorphAt(fragment, 2, 2, contextualElement);
-        dom.insertBoundary(fragment, null);
+        morphs[3] = dom.createAttrMorph(element4, 'class');
+        morphs[4] = dom.createMorphAt(dom.childAt(element5, [1]), 0, 0);
+        morphs[5] = dom.createMorphAt(dom.childAt(element5, [3]), 0, 0);
+        morphs[6] = dom.createMorphAt(element5, 5, 5);
         return morphs;
       },
-      statements: [["inline", "t", ["index.title"], [], ["loc", [null, [4, 8], [4, 27]]]], ["inline", "t", ["index.subtitle"], [], ["loc", [null, [5, 32], [5, 54]]]], ["block", "each", [["get", "networks", ["loc", [null, [9, 8], [9, 16]]]]], [], 0, null, ["loc", [null, [9, 0], [23, 9]]]]],
+      statements: [["inline", "t", ["index.title"], [], ["loc", [null, [4, 8], [4, 27]]]], ["inline", "t", ["index.subtitle"], [], ["loc", [null, [5, 32], [5, 54]]]], ["block", "each", [["get", "networks", ["loc", [null, [9, 8], [9, 16]]]]], [], 0, null, ["loc", [null, [9, 0], [23, 9]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [25, 22], [25, 34]]]]]]], ["inline", "t", ["settings.trackingEnabled"], [], ["loc", [null, [27, 15], [27, 47]]]], ["inline", "t", ["settings.trackingEnabledLabel"], [], ["loc", [null, [28, 11], [28, 48]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.system.trackingEnabled", ["loc", [null, [30, 30], [30, 61]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.system.trackingEnabled", ["loc", [null, [31, 46], [31, 77]]]]], [], ["loc", [null, [31, 28], [31, 78]]]], "onChange", ["subexpr", "action", ["toggleTracking"], [], ["loc", [null, [32, 31], [32, 56]]]]], ["loc", [null, [29, 8], [32, 58]]]]],
       locals: [],
       templates: [child0]
     };
@@ -11191,11 +11232,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 61,
+              "line": 52,
               "column": 4
             },
             "end": {
-              "line": 63,
+              "line": 54,
               "column": 4
             }
           },
@@ -11225,7 +11266,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
           morphs[2] = dom.createMorphAt(element6, 0, 0);
           return morphs;
         },
-        statements: [["attribute", "class", ["concat", ["ui ", ["subexpr", "if", [["get", "updateInProgress", ["loc", [null, [62, 27], [62, 43]]]], "loading"], [], ["loc", [null, [62, 22], [62, 55]]]], " button"]]], ["element", "action", ["manualUpdate"], [], ["loc", [null, [62, 64], [62, 89]]]], ["inline", "t", ["action.update"], [], ["loc", [null, [62, 90], [62, 111]]]]],
+        statements: [["attribute", "class", ["concat", ["ui ", ["subexpr", "if", [["get", "updateInProgress", ["loc", [null, [53, 27], [53, 43]]]], "loading"], [], ["loc", [null, [53, 22], [53, 55]]]], " button"]]], ["element", "action", ["manualUpdate"], [], ["loc", [null, [53, 64], [53, 89]]]], ["inline", "t", ["action.update"], [], ["loc", [null, [53, 90], [53, 111]]]]],
         locals: [],
         templates: []
       };
@@ -11238,11 +11279,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 63,
+              "line": 54,
               "column": 4
             },
             "end": {
-              "line": 68,
+              "line": 59,
               "column": 4
             }
           },
@@ -11287,7 +11328,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
           morphs[1] = dom.createMorphAt(dom.childAt(element5, [3]), 0, 0);
           return morphs;
         },
-        statements: [["inline", "t", ["action.update"], [], ["loc", [null, [65, 29], [65, 50]]]], ["inline", "t", ["settings.noInternetConnection"], [], ["loc", [null, [66, 32], [66, 69]]]]],
+        statements: [["inline", "t", ["action.update"], [], ["loc", [null, [56, 29], [56, 50]]]], ["inline", "t", ["settings.noInternetConnection"], [], ["loc", [null, [57, 32], [57, 69]]]]],
         locals: [],
         templates: []
       };
@@ -11300,11 +11341,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 73,
+              "line": 64,
               "column": 8
             },
             "end": {
-              "line": 75,
+              "line": 66,
               "column": 8
             }
           },
@@ -11329,12 +11370,54 @@ define("rose/templates/settings", ["exports"], function (exports) {
           morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
           return morphs;
         },
-        statements: [["inline", "moment-format", [["get", "settings.system.lastChecked", ["loc", [null, [74, 26], [74, 53]]]], "YYYY-MM-DD HH:mm"], [], ["loc", [null, [74, 10], [74, 74]]]]],
+        statements: [["inline", "moment-format", [["get", "settings.system.lastChecked", ["loc", [null, [65, 26], [65, 53]]]], "YYYY-MM-DD HH:mm"], [], ["loc", [null, [65, 10], [65, 74]]]]],
         locals: [],
         templates: []
       };
     })();
     var child4 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 66,
+              "column": 8
+            },
+            "end": {
+              "line": 68,
+              "column": 8
+            }
+          },
+          "moduleName": "rose/templates/settings.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("          ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "t", ["settings.never"], [], ["loc", [null, [67, 10], [67, 32]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child5 = (function () {
       return {
         meta: {
           "fragmentReason": false,
@@ -11371,49 +11454,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
           morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
           return morphs;
         },
-        statements: [["inline", "t", ["settings.never"], [], ["loc", [null, [76, 10], [76, 32]]]]],
-        locals: [],
-        templates: []
-      };
-    })();
-    var child5 = (function () {
-      return {
-        meta: {
-          "fragmentReason": false,
-          "revision": "Ember@2.2.2",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 84,
-              "column": 8
-            },
-            "end": {
-              "line": 86,
-              "column": 8
-            }
-          },
-          "moduleName": "rose/templates/settings.hbs"
-        },
-        isEmpty: false,
-        arity: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("          ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(1);
-          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
-          return morphs;
-        },
-        statements: [["inline", "moment-format", [["get", "settings.system.lastUpdated", ["loc", [null, [85, 26], [85, 53]]]], "YYYY-MM-DD HH:mm"], [], ["loc", [null, [85, 10], [85, 74]]]]],
+        statements: [["inline", "moment-format", [["get", "settings.system.lastUpdated", ["loc", [null, [76, 26], [76, 53]]]], "YYYY-MM-DD HH:mm"], [], ["loc", [null, [76, 10], [76, 74]]]]],
         locals: [],
         templates: []
       };
@@ -11426,11 +11467,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 86,
+              "line": 77,
               "column": 8
             },
             "end": {
-              "line": 88,
+              "line": 79,
               "column": 8
             }
           },
@@ -11455,7 +11496,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
           morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
           return morphs;
         },
-        statements: [["inline", "t", ["settings.never"], [], ["loc", [null, [87, 10], [87, 32]]]]],
+        statements: [["inline", "t", ["settings.never"], [], ["loc", [null, [78, 10], [78, 32]]]]],
         locals: [],
         templates: []
       };
@@ -11468,11 +11509,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 94,
+              "line": 85,
               "column": 8
             },
             "end": {
-              "line": 96,
+              "line": 87,
               "column": 8
             }
           },
@@ -11497,7 +11538,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
           morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
           return morphs;
         },
-        statements: [["inline", "t", ["settings.signedUpdate"], [], ["loc", [null, [95, 10], [95, 39]]]]],
+        statements: [["inline", "t", ["settings.signedUpdate"], [], ["loc", [null, [86, 10], [86, 39]]]]],
         locals: [],
         templates: []
       };
@@ -11510,11 +11551,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 96,
+              "line": 87,
               "column": 8
             },
             "end": {
-              "line": 98,
+              "line": 89,
               "column": 8
             }
           },
@@ -11539,7 +11580,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
           morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
           return morphs;
         },
-        statements: [["inline", "t", ["settings.unsignedUpdate"], [], ["loc", [null, [97, 10], [97, 41]]]]],
+        statements: [["inline", "t", ["settings.unsignedUpdate"], [], ["loc", [null, [88, 10], [88, 41]]]]],
         locals: [],
         templates: []
       };
@@ -11552,11 +11593,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 101,
+              "line": 92,
               "column": 4
             },
             "end": {
-              "line": 107,
+              "line": 98,
               "column": 4
             }
           },
@@ -11606,7 +11647,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
           morphs[3] = dom.createMorphAt(dom.childAt(element3, [5]), 0, 0);
           return morphs;
         },
-        statements: [["attribute", "class", ["concat", ["ui ", ["get", "updateResult", ["loc", [null, [102, 21], [102, 33]]]], " message hidden"]]], ["attribute", "onclick", ["subexpr", "action", ["closeMessage"], [], ["loc", [null, [103, 36], [103, 61]]]]], ["inline", "t", [["get", "updateResulti18n", ["loc", [null, [104, 30], [104, 46]]]]], [], ["loc", [null, [104, 26], [104, 48]]]], ["content", "updateMessage", ["loc", [null, [105, 9], [105, 26]]]]],
+        statements: [["attribute", "class", ["concat", ["ui ", ["get", "updateResult", ["loc", [null, [93, 21], [93, 33]]]], " message hidden"]]], ["attribute", "onclick", ["subexpr", "action", ["closeMessage"], [], ["loc", [null, [94, 36], [94, 61]]]]], ["inline", "t", [["get", "updateResulti18n", ["loc", [null, [95, 30], [95, 46]]]]], [], ["loc", [null, [95, 26], [95, 48]]]], ["content", "updateMessage", ["loc", [null, [96, 9], [96, 26]]]]],
         locals: [],
         templates: []
       };
@@ -11621,11 +11662,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
               "loc": {
                 "source": null,
                 "start": {
-                  "line": 131,
+                  "line": 122,
                   "column": 8
                 },
                 "end": {
-                  "line": 135,
+                  "line": 126,
                   "column": 8
                 }
               },
@@ -11659,7 +11700,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
               morphs[1] = dom.createMorphAt(element0, 1, 1);
               return morphs;
             },
-            statements: [["attribute", "data-value", ["get", "interval.value", ["loc", [null, [132, 41], [132, 55]]]]], ["inline", "t", [["get", "interval.label", ["loc", [null, [133, 16], [133, 30]]]]], [], ["loc", [null, [133, 12], [133, 32]]]]],
+            statements: [["attribute", "data-value", ["get", "interval.value", ["loc", [null, [123, 41], [123, 55]]]]], ["inline", "t", [["get", "interval.label", ["loc", [null, [124, 16], [124, 30]]]]], [], ["loc", [null, [124, 12], [124, 32]]]]],
             locals: ["interval"],
             templates: []
           };
@@ -11671,11 +11712,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
             "loc": {
               "source": null,
               "start": {
-                "line": 124,
+                "line": 115,
                 "column": 4
               },
               "end": {
-                "line": 137,
+                "line": 128,
                 "column": 4
               }
             },
@@ -11727,7 +11768,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
             morphs[1] = dom.createMorphAt(dom.childAt(fragment, [7]), 1, 1);
             return morphs;
           },
-          statements: [["attribute", "value", ["get", "settings.system.updateInterval", ["loc", [null, [128, 51], [128, 81]]]]], ["block", "each", [["get", "updateIntervals", ["loc", [null, [131, 16], [131, 31]]]]], [], 0, null, ["loc", [null, [131, 8], [135, 17]]]]],
+          statements: [["attribute", "value", ["get", "settings.system.updateInterval", ["loc", [null, [119, 51], [119, 81]]]]], ["block", "each", [["get", "updateIntervals", ["loc", [null, [122, 16], [122, 31]]]]], [], 0, null, ["loc", [null, [122, 8], [126, 17]]]]],
           locals: [],
           templates: [child0]
         };
@@ -11739,11 +11780,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 119,
+              "line": 110,
               "column": 2
             },
             "end": {
-              "line": 139,
+              "line": 130,
               "column": 2
             }
           },
@@ -11790,7 +11831,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
           morphs[2] = dom.createMorphAt(element2, 5, 5);
           return morphs;
         },
-        statements: [["inline", "t", ["settings.autoUpdateInterval"], [], ["loc", [null, [121, 11], [121, 46]]]], ["inline", "t", ["settings.autoUpdateIntervalLabel"], [], ["loc", [null, [122, 7], [122, 47]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "settings.system.updateInterval", ["loc", [null, [125, 29], [125, 59]]]]], [], []], "onChange", ["subexpr", "action", ["changeAutoUpdate"], [], ["loc", [null, [126, 29], [126, 56]]]]], 0, null, ["loc", [null, [124, 4], [137, 20]]]]],
+        statements: [["inline", "t", ["settings.autoUpdateInterval"], [], ["loc", [null, [112, 11], [112, 46]]]], ["inline", "t", ["settings.autoUpdateIntervalLabel"], [], ["loc", [null, [113, 7], [113, 47]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "settings.system.updateInterval", ["loc", [null, [116, 29], [116, 59]]]]], [], []], "onChange", ["subexpr", "action", ["changeAutoUpdate"], [], ["loc", [null, [117, 29], [117, 56]]]]], 0, null, ["loc", [null, [115, 4], [128, 20]]]]],
         locals: [],
         templates: [child0]
       };
@@ -11809,7 +11850,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 151,
+            "line": 142,
             "column": 0
           }
         },
@@ -11873,29 +11914,6 @@ define("rose/templates/settings", ["exports"], function (exports) {
         var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n\n  ");
@@ -12104,15 +12122,14 @@ define("rose/templates/settings", ["exports"], function (exports) {
         var element12 = dom.childAt(element10, [3]);
         var element13 = dom.childAt(element10, [5]);
         var element14 = dom.childAt(element10, [7]);
-        var element15 = dom.childAt(element10, [9]);
-        var element16 = dom.childAt(element15, [7]);
-        var element17 = dom.childAt(element15, [9]);
-        var element18 = dom.childAt(element15, [11]);
-        var element19 = dom.childAt(element18, [1]);
-        var element20 = dom.childAt(element10, [11]);
-        var element21 = dom.childAt(element10, [15]);
-        var element22 = dom.childAt(element21, [5]);
-        var morphs = new Array(35);
+        var element15 = dom.childAt(element14, [7]);
+        var element16 = dom.childAt(element14, [9]);
+        var element17 = dom.childAt(element14, [11]);
+        var element18 = dom.childAt(element17, [1]);
+        var element19 = dom.childAt(element10, [9]);
+        var element20 = dom.childAt(element10, [13]);
+        var element21 = dom.childAt(element20, [5]);
+        var morphs = new Array(32);
         morphs[0] = dom.createMorphAt(element9, 1, 1);
         morphs[1] = dom.createMorphAt(dom.childAt(element9, [3]), 0, 0);
         morphs[2] = dom.createAttrMorph(element10, 'class');
@@ -12128,29 +12145,26 @@ define("rose/templates/settings", ["exports"], function (exports) {
         morphs[12] = dom.createMorphAt(dom.childAt(element14, [1]), 0, 0);
         morphs[13] = dom.createMorphAt(dom.childAt(element14, [3]), 0, 0);
         morphs[14] = dom.createMorphAt(element14, 5, 5);
-        morphs[15] = dom.createMorphAt(dom.childAt(element15, [1]), 0, 0);
-        morphs[16] = dom.createMorphAt(dom.childAt(element15, [3]), 0, 0);
-        morphs[17] = dom.createMorphAt(element15, 5, 5);
-        morphs[18] = dom.createMorphAt(element16, 1, 1);
-        morphs[19] = dom.createMorphAt(dom.childAt(element16, [3]), 1, 1);
-        morphs[20] = dom.createMorphAt(element17, 1, 1);
-        morphs[21] = dom.createMorphAt(dom.childAt(element17, [3]), 1, 1);
-        morphs[22] = dom.createAttrMorph(element18, 'class');
-        morphs[23] = dom.createAttrMorph(element19, 'class');
-        morphs[24] = dom.createMorphAt(element18, 3, 3);
-        morphs[25] = dom.createMorphAt(element15, 13, 13);
-        morphs[26] = dom.createMorphAt(dom.childAt(element20, [1]), 0, 0);
-        morphs[27] = dom.createMorphAt(dom.childAt(element20, [3]), 0, 0);
-        morphs[28] = dom.createMorphAt(element20, 5, 5);
-        morphs[29] = dom.createMorphAt(element10, 13, 13);
-        morphs[30] = dom.createMorphAt(dom.childAt(element21, [1]), 0, 0);
-        morphs[31] = dom.createMorphAt(dom.childAt(element21, [3]), 0, 0);
-        morphs[32] = dom.createElementMorph(element22);
-        morphs[33] = dom.createMorphAt(element22, 1, 1);
-        morphs[34] = dom.createMorphAt(fragment, 4, 4, contextualElement);
+        morphs[15] = dom.createMorphAt(element15, 1, 1);
+        morphs[16] = dom.createMorphAt(dom.childAt(element15, [3]), 1, 1);
+        morphs[17] = dom.createMorphAt(element16, 1, 1);
+        morphs[18] = dom.createMorphAt(dom.childAt(element16, [3]), 1, 1);
+        morphs[19] = dom.createAttrMorph(element17, 'class');
+        morphs[20] = dom.createAttrMorph(element18, 'class');
+        morphs[21] = dom.createMorphAt(element17, 3, 3);
+        morphs[22] = dom.createMorphAt(element14, 13, 13);
+        morphs[23] = dom.createMorphAt(dom.childAt(element19, [1]), 0, 0);
+        morphs[24] = dom.createMorphAt(dom.childAt(element19, [3]), 0, 0);
+        morphs[25] = dom.createMorphAt(element19, 5, 5);
+        morphs[26] = dom.createMorphAt(element10, 11, 11);
+        morphs[27] = dom.createMorphAt(dom.childAt(element20, [1]), 0, 0);
+        morphs[28] = dom.createMorphAt(dom.childAt(element20, [3]), 0, 0);
+        morphs[29] = dom.createElementMorph(element21);
+        morphs[30] = dom.createMorphAt(element21, 1, 1);
+        morphs[31] = dom.createMorphAt(fragment, 4, 4, contextualElement);
         return morphs;
       },
-      statements: [["inline", "t", ["settings.title"], [], ["loc", [null, [4, 4], [4, 26]]]], ["inline", "t", ["settings.subtitle"], [], ["loc", [null, [5, 28], [5, 53]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [9, 22], [9, 34]]]]]]], ["inline", "t", ["settings.language"], [], ["loc", [null, [11, 11], [11, 36]]]], ["inline", "t", ["settings.languageLabel"], [], ["loc", [null, [12, 7], [12, 37]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "settings.user.currentLanguage", ["loc", [null, [15, 29], [15, 58]]]]], [], []], "onChange", ["subexpr", "action", ["changeI18nLanguage"], [], ["loc", [null, [16, 29], [16, 58]]]]], 0, null, ["loc", [null, [14, 4], [27, 20]]]], ["inline", "t", ["settings.trackingEnabled"], [], ["loc", [null, [31, 11], [31, 43]]]], ["inline", "t", ["settings.trackingEnabledLabel"], [], ["loc", [null, [32, 7], [32, 44]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.system.trackingEnabled", ["loc", [null, [34, 26], [34, 57]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.system.trackingEnabled", ["loc", [null, [35, 42], [35, 73]]]]], [], ["loc", [null, [35, 24], [35, 74]]]], "onChange", ["subexpr", "action", ["toggleTracking"], [], ["loc", [null, [36, 27], [36, 52]]]]], ["loc", [null, [33, 4], [36, 54]]]], ["inline", "t", ["settings.commentReminder"], [], ["loc", [null, [40, 11], [40, 43]]]], ["inline", "t", ["settings.commentReminderLabel"], [], ["loc", [null, [41, 7], [41, 44]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.commentReminderIsEnabled", ["loc", [null, [43, 26], [43, 64]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.user.commentReminderIsEnabled", ["loc", [null, [44, 42], [44, 80]]]]], [], ["loc", [null, [44, 24], [44, 81]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [45, 27], [45, 50]]]]], ["loc", [null, [42, 4], [45, 52]]]], ["inline", "t", ["settings.extraFeatures"], [], ["loc", [null, [50, 11], [50, 41]]]], ["inline", "t", ["settings.extraFeaturesLabel"], [], ["loc", [null, [51, 7], [51, 42]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.developerModeIsEnabled", ["loc", [null, [53, 26], [53, 62]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.user.developerModeIsEnabled", ["loc", [null, [54, 42], [54, 78]]]]], [], ["loc", [null, [54, 24], [54, 79]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [55, 27], [55, 50]]]]], ["loc", [null, [52, 4], [55, 52]]]], ["inline", "t", ["settings.manualUpdate"], [], ["loc", [null, [59, 11], [59, 40]]]], ["inline", "t", ["settings.manualUpdateLabel"], [], ["loc", [null, [60, 7], [60, 41]]]], ["block", "if", [["get", "navigator.onLine", ["loc", [null, [61, 10], [61, 26]]]]], [], 1, 2, ["loc", [null, [61, 4], [68, 11]]]], ["inline", "t", ["settings.lastChecked"], [], ["loc", [null, [71, 6], [71, 34]]]], ["block", "if", [["get", "settings.system.lastChecked", ["loc", [null, [73, 14], [73, 41]]]]], [], 3, 4, ["loc", [null, [73, 8], [77, 15]]]], ["inline", "t", ["settings.lastUpdated"], [], ["loc", [null, [82, 6], [82, 34]]]], ["block", "if", [["get", "settings.system.lastUpdated", ["loc", [null, [84, 14], [84, 41]]]]], [], 5, 6, ["loc", [null, [84, 8], [88, 15]]]], ["attribute", "class", ["concat", ["ui ", ["subexpr", "if", [["get", "updateSigned", ["loc", [null, [92, 22], [92, 34]]]], "green"], [], ["loc", [null, [92, 17], [92, 44]]]], " label"]]], ["attribute", "class", ["concat", [["subexpr", "if", [["get", "updateSigned", ["loc", [null, [93, 21], [93, 33]]]], "lock", "unlock alternate"], [], ["loc", [null, [93, 16], [93, 61]]]], " icon"]]], ["block", "if", [["get", "updateSigned", ["loc", [null, [94, 14], [94, 26]]]]], [], 7, 8, ["loc", [null, [94, 8], [98, 15]]]], ["block", "if", [["get", "updateResult", ["loc", [null, [101, 10], [101, 22]]]]], [], 9, null, ["loc", [null, [101, 4], [107, 11]]]], ["inline", "t", ["settings.autoUpdate"], [], ["loc", [null, [111, 11], [111, 38]]]], ["inline", "t", ["settings.autoUpdateLabel"], [], ["loc", [null, [112, 7], [112, 39]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [114, 26], [114, 61]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [115, 42], [115, 77]]]]], [], ["loc", [null, [115, 24], [115, 78]]]], "onChange", ["subexpr", "action", ["changeAutoUpdate"], [], ["loc", [null, [116, 27], [116, 54]]]]], ["loc", [null, [113, 4], [116, 56]]]], ["block", "if", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [119, 8], [119, 43]]]]], [], 10, null, ["loc", [null, [119, 2], [139, 9]]]], ["inline", "t", ["settings.resetRose"], [], ["loc", [null, [142, 11], [142, 37]]]], ["inline", "t", ["settings.resetRoseLabel"], [], ["loc", [null, [143, 7], [143, 38]]]], ["element", "action", ["openModal", "reset-config"], [], ["loc", [null, [144, 34], [144, 71]]]], ["inline", "t", ["action.reset"], [], ["loc", [null, [145, 6], [145, 26]]]], ["inline", "partial", ["modal/reset-config"], [], ["loc", [null, [150, 0], [150, 32]]]]],
+      statements: [["inline", "t", ["settings.title"], [], ["loc", [null, [4, 4], [4, 26]]]], ["inline", "t", ["settings.subtitle"], [], ["loc", [null, [5, 28], [5, 53]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [9, 22], [9, 34]]]]]]], ["inline", "t", ["settings.language"], [], ["loc", [null, [11, 11], [11, 36]]]], ["inline", "t", ["settings.languageLabel"], [], ["loc", [null, [12, 7], [12, 37]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "settings.user.currentLanguage", ["loc", [null, [15, 29], [15, 58]]]]], [], []], "onChange", ["subexpr", "action", ["changeI18nLanguage"], [], ["loc", [null, [16, 29], [16, 58]]]]], 0, null, ["loc", [null, [14, 4], [27, 20]]]], ["inline", "t", ["settings.commentReminder"], [], ["loc", [null, [31, 11], [31, 43]]]], ["inline", "t", ["settings.commentReminderLabel"], [], ["loc", [null, [32, 7], [32, 44]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.commentReminderIsEnabled", ["loc", [null, [34, 26], [34, 64]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.user.commentReminderIsEnabled", ["loc", [null, [35, 42], [35, 80]]]]], [], ["loc", [null, [35, 24], [35, 81]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [36, 27], [36, 50]]]]], ["loc", [null, [33, 4], [36, 52]]]], ["inline", "t", ["settings.extraFeatures"], [], ["loc", [null, [41, 11], [41, 41]]]], ["inline", "t", ["settings.extraFeaturesLabel"], [], ["loc", [null, [42, 7], [42, 42]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.developerModeIsEnabled", ["loc", [null, [44, 26], [44, 62]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.user.developerModeIsEnabled", ["loc", [null, [45, 42], [45, 78]]]]], [], ["loc", [null, [45, 24], [45, 79]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [46, 27], [46, 50]]]]], ["loc", [null, [43, 4], [46, 52]]]], ["inline", "t", ["settings.manualUpdate"], [], ["loc", [null, [50, 11], [50, 40]]]], ["inline", "t", ["settings.manualUpdateLabel"], [], ["loc", [null, [51, 7], [51, 41]]]], ["block", "if", [["get", "navigator.onLine", ["loc", [null, [52, 10], [52, 26]]]]], [], 1, 2, ["loc", [null, [52, 4], [59, 11]]]], ["inline", "t", ["settings.lastChecked"], [], ["loc", [null, [62, 6], [62, 34]]]], ["block", "if", [["get", "settings.system.lastChecked", ["loc", [null, [64, 14], [64, 41]]]]], [], 3, 4, ["loc", [null, [64, 8], [68, 15]]]], ["inline", "t", ["settings.lastUpdated"], [], ["loc", [null, [73, 6], [73, 34]]]], ["block", "if", [["get", "settings.system.lastUpdated", ["loc", [null, [75, 14], [75, 41]]]]], [], 5, 6, ["loc", [null, [75, 8], [79, 15]]]], ["attribute", "class", ["concat", ["ui ", ["subexpr", "if", [["get", "updateSigned", ["loc", [null, [83, 22], [83, 34]]]], "green"], [], ["loc", [null, [83, 17], [83, 44]]]], " label"]]], ["attribute", "class", ["concat", [["subexpr", "if", [["get", "updateSigned", ["loc", [null, [84, 21], [84, 33]]]], "lock", "unlock alternate"], [], ["loc", [null, [84, 16], [84, 61]]]], " icon"]]], ["block", "if", [["get", "updateSigned", ["loc", [null, [85, 14], [85, 26]]]]], [], 7, 8, ["loc", [null, [85, 8], [89, 15]]]], ["block", "if", [["get", "updateResult", ["loc", [null, [92, 10], [92, 22]]]]], [], 9, null, ["loc", [null, [92, 4], [98, 11]]]], ["inline", "t", ["settings.autoUpdate"], [], ["loc", [null, [102, 11], [102, 38]]]], ["inline", "t", ["settings.autoUpdateLabel"], [], ["loc", [null, [103, 7], [103, 39]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [105, 26], [105, 61]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [106, 42], [106, 77]]]]], [], ["loc", [null, [106, 24], [106, 78]]]], "onChange", ["subexpr", "action", ["changeAutoUpdate"], [], ["loc", [null, [107, 27], [107, 54]]]]], ["loc", [null, [104, 4], [107, 56]]]], ["block", "if", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [110, 8], [110, 43]]]]], [], 10, null, ["loc", [null, [110, 2], [130, 9]]]], ["inline", "t", ["settings.resetRose"], [], ["loc", [null, [133, 11], [133, 37]]]], ["inline", "t", ["settings.resetRoseLabel"], [], ["loc", [null, [134, 7], [134, 38]]]], ["element", "action", ["openModal", "reset-config"], [], ["loc", [null, [135, 34], [135, 71]]]], ["inline", "t", ["action.reset"], [], ["loc", [null, [136, 6], [136, 26]]]], ["inline", "partial", ["modal/reset-config"], [], ["loc", [null, [141, 0], [141, 32]]]]],
       locals: [],
       templates: [child0, child1, child2, child3, child4, child5, child6, child7, child8, child9, child10]
     };
@@ -14616,7 +14630,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+2526636e"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+4c2f303f"});
 }
 
 /* jshint ignore:end */

@@ -21,3 +21,14 @@
     {{statistic-item label="Extracts" network=network.name data=model.extracts}}
 </div>
 {{/each}}
+
+<div class="ui form {{updateResult}}">
+    <div class="field">
+        <label>{{t "settings.trackingEnabled"}}</label>
+        <p>{{t "settings.trackingEnabledLabel"}}</p>
+        {{ui-checkbox class="toggle"
+                      checked=settings.system.trackingEnabled
+                      label=(boolean-to-yesno settings.system.trackingEnabled)
+                      onChange=(action "toggleTracking")}}
+    </div>
+</div>

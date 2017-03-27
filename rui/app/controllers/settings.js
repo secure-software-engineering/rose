@@ -20,13 +20,10 @@ export default Ember.Controller.extend({
   ],
 
   actions: {
+
     saveSettings () {
       this.get('settings.user').save()
       this.get('settings.system').save()
-    },
-
-    toggleTracking () {
-      this.get('settings.system').save().then(() => kango.dispatchMessage('toggle-tracking'))
     },
 
     changeI18nLanguage () {

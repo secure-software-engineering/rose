@@ -2,8 +2,14 @@ import Ember from 'ember'
 
 export default Ember.Component.extend({
   ajax: Ember.inject.service(),
+  read: false,
+  unread: function () {
+    // this.$('[file-picker]').attr('disabled')
+    return !this.get('read')
+  }.property('read'),
 
   actions: {
+
     selectDefaultConfig() {
       const ajax = this.get('ajax')
       const src = kango.io.getResourceUrl('res/defaults/rose-configuration.json')

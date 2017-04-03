@@ -9,6 +9,16 @@
         </div>
       </h2>
 
+      <form class="ui form">
+        <h4>{{t "wizard.privacyNoteTitle"}}</h4>
+        <p>{{t "wizard.privacyNote"}}</p>
+        <div class="field">
+          {{ui-checkbox class="toggle" checked=read label=(t "wizard.privacyAgree") }}
+
+        </div>
+        <br>
+      </form>
+
       <div class="ui two cards">
         <div class="card">
           <div class="content">
@@ -18,7 +28,7 @@
             </div>
           </div>
           <button class="ui primary bottom attached button"
-                  {{action "selectDefaultConfig"}}>
+                  {{action "selectDefaultConfig"}} disabled={{unread}} >
             {{t "wizard.defaultBtn"}}
           </button>
         </div>
@@ -29,14 +39,15 @@
               {{t "wizard.fileConfigDescription"}}
             </div>
           </div>
-          {{#file-picker  fileLoaded="fileLoaded"
+          {{#rose-file-picker  fileLoaded="fileLoaded"
                           dropzone=false
                           preview=false
                           readAs="readAsText"
-                          class="ui bottom attached primary button"}}
+                          class="ui bottom attached primary button"
+                          isEnabled=read}}
             <i class="add icon"></i>
             {{t "wizard.fileConfigBtn"}}
-          {{/file-picker}}
+          {{/rose-file-picker}}
         </div>
       </div>
     </div>

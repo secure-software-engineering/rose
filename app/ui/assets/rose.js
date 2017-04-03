@@ -943,6 +943,13 @@ define('rose/components/page-numbers', ['exports', 'ember', 'ember-cli-paginatio
     }
   });
 });
+define('rose/components/rose-file-picker', ['exports', 'ember', 'ember-cli-file-picker/components/file-picker'], function (exports, _ember, _emberCliFilePickerComponentsFilePicker) {
+  exports['default'] = _emberCliFilePickerComponentsFilePicker['default'].extend({
+    classNameBindings: ['isEnabled:enabled:disabled'],
+    isEnabled: true,
+    layoutName: 'ember-cli-file-picker/components/file-picker'
+  });
+});
 define('rose/components/ui-accordion', ['exports', 'semantic-ui-ember/components/ui-accordion'], function (exports, _semanticUiEmberComponentsUiAccordion) {
   Object.defineProperty(exports, 'default', {
     enumerable: true,
@@ -2784,8 +2791,14 @@ define("rose/pods/components/diary-entry/template", ["exports"], function (expor
 define('rose/pods/components/installation-wizard/component', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Component.extend({
     ajax: _ember['default'].inject.service(),
+    read: false,
+    unread: (function () {
+      // this.$('[file-picker]').attr('disabled')
+      return !this.get('read');
+    }).property('read'),
 
     actions: {
+
       selectDefaultConfig: function selectDefaultConfig() {
         var _this = this;
 
@@ -2814,11 +2827,11 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
           "loc": {
             "source": null,
             "start": {
-              "line": 32,
+              "line": 42,
               "column": 10
             },
             "end": {
-              "line": 39,
+              "line": 50,
               "column": 10
             }
           },
@@ -2848,7 +2861,7 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
           morphs[0] = dom.createMorphAt(fragment, 3, 3, contextualElement);
           return morphs;
         },
-        statements: [["inline", "t", ["wizard.fileConfigBtn"], [], ["loc", [null, [38, 12], [38, 40]]]]],
+        statements: [["inline", "t", ["wizard.fileConfigBtn"], [], ["loc", [null, [49, 12], [49, 40]]]]],
         locals: [],
         templates: []
       };
@@ -2866,7 +2879,7 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
             "column": 0
           },
           "end": {
-            "line": 45,
+            "line": 56,
             "column": 0
           }
         },
@@ -2914,6 +2927,40 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
         dom.appendChild(el5, el6);
         var el6 = dom.createTextNode("\n        ");
         dom.appendChild(el5, el6);
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n      ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("form");
+        dom.setAttribute(el4, "class", "ui form");
+        var el5 = dom.createTextNode("\n        ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createElement("h4");
+        var el6 = dom.createComment("");
+        dom.appendChild(el5, el6);
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n        ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createElement("p");
+        var el6 = dom.createComment("");
+        dom.appendChild(el5, el6);
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n        ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createElement("div");
+        dom.setAttribute(el5, "class", "field");
+        var el6 = dom.createTextNode("\n          ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createComment("");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n\n        ");
+        dom.appendChild(el5, el6);
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n        ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createElement("br");
         dom.appendChild(el4, el5);
         var el5 = dom.createTextNode("\n      ");
         dom.appendChild(el4, el5);
@@ -3021,24 +3068,29 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
         var element0 = dom.childAt(fragment, [0, 1, 1]);
         var element1 = dom.childAt(element0, [1, 3]);
         var element2 = dom.childAt(element0, [3]);
-        var element3 = dom.childAt(element2, [1]);
+        var element3 = dom.childAt(element0, [5]);
         var element4 = dom.childAt(element3, [1]);
-        var element5 = dom.childAt(element3, [3]);
-        var element6 = dom.childAt(element2, [3]);
-        var element7 = dom.childAt(element6, [1]);
-        var morphs = new Array(9);
+        var element5 = dom.childAt(element4, [1]);
+        var element6 = dom.childAt(element4, [3]);
+        var element7 = dom.childAt(element3, [3]);
+        var element8 = dom.childAt(element7, [1]);
+        var morphs = new Array(13);
         morphs[0] = dom.createMorphAt(element1, 1, 1);
         morphs[1] = dom.createMorphAt(dom.childAt(element1, [3]), 0, 0);
-        morphs[2] = dom.createMorphAt(dom.childAt(element4, [1]), 0, 0);
-        morphs[3] = dom.createMorphAt(dom.childAt(element4, [3]), 1, 1);
-        morphs[4] = dom.createElementMorph(element5);
-        morphs[5] = dom.createMorphAt(element5, 1, 1);
-        morphs[6] = dom.createMorphAt(dom.childAt(element7, [1]), 0, 0);
-        morphs[7] = dom.createMorphAt(dom.childAt(element7, [3]), 1, 1);
-        morphs[8] = dom.createMorphAt(element6, 3, 3);
+        morphs[2] = dom.createMorphAt(dom.childAt(element2, [1]), 0, 0);
+        morphs[3] = dom.createMorphAt(dom.childAt(element2, [3]), 0, 0);
+        morphs[4] = dom.createMorphAt(dom.childAt(element2, [5]), 1, 1);
+        morphs[5] = dom.createMorphAt(dom.childAt(element5, [1]), 0, 0);
+        morphs[6] = dom.createMorphAt(dom.childAt(element5, [3]), 1, 1);
+        morphs[7] = dom.createAttrMorph(element6, 'disabled');
+        morphs[8] = dom.createElementMorph(element6);
+        morphs[9] = dom.createMorphAt(element6, 1, 1);
+        morphs[10] = dom.createMorphAt(dom.childAt(element8, [1]), 0, 0);
+        morphs[11] = dom.createMorphAt(dom.childAt(element8, [3]), 1, 1);
+        morphs[12] = dom.createMorphAt(element7, 3, 3);
         return morphs;
       },
-      statements: [["inline", "t", ["wizard.header"], [], ["loc", [null, [7, 10], [7, 31]]]], ["inline", "t", ["wizard.description"], [], ["loc", [null, [8, 34], [8, 60]]]], ["inline", "t", ["wizard.defaultConfigHeader"], [], ["loc", [null, [15, 32], [15, 66]]]], ["inline", "t", ["wizard.defaultConfigDescription"], [], ["loc", [null, [17, 14], [17, 53]]]], ["element", "action", ["selectDefaultConfig"], [], ["loc", [null, [21, 18], [21, 50]]]], ["inline", "t", ["wizard.defaultBtn"], [], ["loc", [null, [22, 12], [22, 37]]]], ["inline", "t", ["wizard.fileConfigHeader"], [], ["loc", [null, [27, 32], [27, 63]]]], ["inline", "t", ["wizard.fileConfigDescription"], [], ["loc", [null, [29, 14], [29, 50]]]], ["block", "file-picker", [], ["fileLoaded", "fileLoaded", "dropzone", false, "preview", false, "readAs", "readAsText", "class", "ui bottom attached primary button"], 0, null, ["loc", [null, [32, 10], [39, 26]]]]],
+      statements: [["inline", "t", ["wizard.header"], [], ["loc", [null, [7, 10], [7, 31]]]], ["inline", "t", ["wizard.description"], [], ["loc", [null, [8, 34], [8, 60]]]], ["inline", "t", ["wizard.privacyNoteTitle"], [], ["loc", [null, [13, 12], [13, 43]]]], ["inline", "t", ["wizard.privacyNote"], [], ["loc", [null, [14, 11], [14, 37]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "read", ["loc", [null, [16, 47], [16, 51]]]]], [], []], "label", ["subexpr", "t", ["wizard.privacyAgree"], [], ["loc", [null, [16, 58], [16, 83]]]]], ["loc", [null, [16, 10], [16, 86]]]], ["inline", "t", ["wizard.defaultConfigHeader"], [], ["loc", [null, [25, 32], [25, 66]]]], ["inline", "t", ["wizard.defaultConfigDescription"], [], ["loc", [null, [27, 14], [27, 53]]]], ["attribute", "disabled", ["get", "unread", ["loc", [null, [31, 62], [31, 68]]]]], ["element", "action", ["selectDefaultConfig"], [], ["loc", [null, [31, 18], [31, 50]]]], ["inline", "t", ["wizard.defaultBtn"], [], ["loc", [null, [32, 12], [32, 37]]]], ["inline", "t", ["wizard.fileConfigHeader"], [], ["loc", [null, [37, 32], [37, 63]]]], ["inline", "t", ["wizard.fileConfigDescription"], [], ["loc", [null, [39, 14], [39, 50]]]], ["block", "rose-file-picker", [], ["fileLoaded", "fileLoaded", "dropzone", false, "preview", false, "readAs", "readAsText", "class", "ui bottom attached primary button", "isEnabled", ["subexpr", "@mut", [["get", "read", ["loc", [null, [47, 36], [47, 40]]]]], [], []]], 0, null, ["loc", [null, [42, 10], [50, 31]]]]],
       locals: [],
       templates: [child0]
     };
@@ -14630,7 +14682,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+4c2f303f"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+1fb1a29e"});
 }
 
 /* jshint ignore:end */

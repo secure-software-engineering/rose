@@ -22,13 +22,21 @@
 </div>
 {{/each}}
 
+<div class="ui divider"></div>
+
 <div class="ui form {{updateResult}}">
-    <div class="field">
-        <label>{{t "settings.trackingEnabled"}}</label>
-        <p>{{t "settings.trackingEnabledLabel"}}</p>
-        {{ui-checkbox class="toggle"
-                      checked=settings.system.trackingEnabled
-                      label=(boolean-to-yesno settings.system.trackingEnabled)
-                      onChange=(action "toggleTracking")}}
+    <h3 class="ui center aligned icon header">
+      <i class="power icon"></i>
+      {{t "settings.trackingEnabled"}}
+    </h3>
+    <div class="fields">
+        <div class="five wide field"></div>
+        <div class="six wide field">
+            <p>{{t "settings.trackingEnabledLabel"}}</p>
+            {{ui-checkbox class="toggle"
+                          checked=settings.system.trackingEnabled
+                          label=(boolean-to-yesno settings.system.trackingEnabled)
+                          onChange=(action "toggleTracking")}}
+        </div>
     </div>
 </div>

@@ -154,12 +154,11 @@ export default (function () {
     }
 
     FacebookUI.prototype._injectCommentRibbon = function () {
-        $('.userContentWrapper')
-            .not('.rose.comment + .userContentWrapper')
-            .not($('.userContentWrapper')
-            .has('div > .userContentWrapper'))
-            .has('span > a > abbr > span')
-            .before(templateCommentLabel())
+        $('.mbm')
+            .not('.mbm.rosed')
+            .has('.fbUserContent')
+            .addClass('rosed')
+            .prepend(templateCommentLabel())
     }
 
     FacebookUI.prototype._injectReminder = function () {
@@ -173,7 +172,7 @@ export default (function () {
         // Start commenting
         $('body').on('click', '.rose.comment', function (evt) {
             // Receive id for content element
-            var $container = $(evt.currentTarget).siblings('.userContentWrapper')
+            var $container = $(evt.currentTarget).parent()
             var extractorResult = ExtractorEngine.extractFieldsFromContainer($container, this._statusUpdateExtractor, this._configs)
 
             if (extractorResult.contentId === undefined) {

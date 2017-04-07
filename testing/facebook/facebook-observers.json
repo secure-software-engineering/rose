@@ -26,8 +26,7 @@
                 "container": "#relationship_bar",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "chat",
@@ -51,8 +50,7 @@
                 "container": ".fbNubFlyoutInner",
                 "extractor": "chat-user-link"
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "chat-reply",
@@ -66,19 +64,18 @@
                 "container": "#pagelet_web_messenger div[role=\"main\"]",
                 "extractor": "chat-user-link"
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "comment-content",
         "network": "facebook",
         "type": "input",
         "priority": 3,
-        "version": "0.3",
+        "version": "0.4",
         "patterns": [
             {
                 "node": ".UFIAddCommentInput *",
-                "container": ".userContentWrapper",
+                "container": ".mbm",
                 "extractor": "status-update"
             },
             {
@@ -93,26 +90,24 @@
             },
             {
                 "node": ".commentable_item a.UFICommentActorName",
-                "container": ".userContentWrapper",
+                "container": ".mbm",
                 "extractor": "status-update"
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "comment-reply",
         "network": "facebook",
         "type": "input",
         "priority": 2,
-        "version": "0.2",
+        "version": "0.3",
         "patterns": [
             {
                 "node": ".UFIReplyList *",
-                "container": ".userContentWrapper",
+                "container": ".mbm",
                 "extractor": "status-update"
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "create-event",
@@ -126,8 +121,7 @@
                 "container": "form[action*=\"plans/create\"]",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "decline-event",
@@ -146,8 +140,7 @@
                 "container": "#relationship_bar",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "delete-status-update",
@@ -166,8 +159,7 @@
                 "container": "form",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "event-invite",
@@ -181,8 +173,7 @@
                 "container": "form[action*=\"invite.php\"]",
                 "extractor": null
             }
-        ],
-        "isEnabled": false
+        ]
     },
     {
         "name": "friend-request-add",
@@ -211,8 +202,7 @@
                 "container": ".clearfix",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "friend-request-confirm",
@@ -231,8 +221,7 @@
                 "container": "#globalContainer",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "friend-request-reject",
@@ -251,8 +240,7 @@
                 "container": "#globalContainer",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "join-event",
@@ -281,34 +269,32 @@
                 "container": "#relationship_bar",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "like-comment",
         "network": "facebook",
         "type": "click",
         "priority": 6,
-        "version": "0.3",
+        "version": "0.4",
         "patterns": [
             {
                 "node": ".UFICommentActions .UFILikeLink:contains(\"Like\"), .UFICommentActions .UFILikeLink:contains(\"Gefällt mir\")",
-                "container": ".userContentWrapper",
+                "container": ".mbm",
                 "extractor": "status-update"
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "like-content",
         "network": "facebook",
         "type": "click",
         "priority": 7,
-        "version": "0.7",
+        "version": "0.8",
         "patterns": [
             {
                 "node": ".UFILikeLink, .UFILikeLink *",
-                "container": ".userContentWrapper",
+                "container": ".mbm",
                 "extractor": "status-update"
             },
             {
@@ -316,15 +302,14 @@
                 "container": ".uiLayer",
                 "extractor": "status-update"
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "like-page",
         "network": "facebook",
         "type": "click",
         "priority": 20,
-        "version": "0.3",
+        "version": "0.4",
         "patterns": [
             {
                 "node": ".PageLikeButton:not(\".PageLikedButton\"), .PageLikeButton:not(\".PageLikedButton\") *",
@@ -338,7 +323,7 @@
             },
             {
                 "node": ".PageLikeButton:not(\".PageLikedButton\"), .PageLikeButton:not(\".PageLikedButton\") *",
-                "container": ".userContentWrapper",
+                "container": ".mbm",
                 "extractor": null
             },
             {
@@ -351,8 +336,7 @@
                 "container": "a",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "like-photo",
@@ -376,8 +360,7 @@
                 "container": ".fbPhotoSnowliftPopup",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "share-status",
@@ -401,8 +384,7 @@
                 "container": "[data-reactroot]",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "share-status-chat",
@@ -416,8 +398,7 @@
                 "container": "[data-reactroot]",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "unfriend",
@@ -436,38 +417,35 @@
                 "container": "will never be reached",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "unlike-comment",
         "network": "facebook",
         "type": "click",
         "priority": 2,
-        "version": "0.3",
+        "version": "0.4",
         "patterns": [
             {
                 "node": ".UFICommentActions .UFILikeLink:contains(\"Unlike\"), .UFICommentActions .UFILikeLink:contains(\"Gefällt mir nicht mehr\")",
-                "container": ".userContentWrapper",
+                "container": ".mbm",
                 "extractor": "status-update"
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "unlike-content",
         "network": "facebook",
         "type": "click",
         "priority": 3,
-        "version": "0.5",
+        "version": "0.6",
         "patterns": [
             {
                 "node": ".UFILinkBright, .UFILinkBright *",
-                "container": ".userContentWrapper",
+                "container": ".mbm",
                 "extractor": "status-update"
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "unlike-page",
@@ -486,8 +464,7 @@
                 "container": ".uiContextualLayer",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "unlike-photo",
@@ -511,8 +488,7 @@
                 "container": ".fbPhotoSnowliftPopup",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "update-status",
@@ -541,8 +517,7 @@
                 "container": "div#pagelet_composer",
                 "extractor": ""
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "upload-photo",
@@ -556,8 +531,7 @@
                 "container": "form",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "upload-video",
@@ -576,8 +550,7 @@
                 "container": "div[role=\"dialog\"]",
                 "extractor": null
             }
-        ],
-        "isEnabled": true
+        ]
     },
     {
         "name": "view-profile",
@@ -591,7 +564,6 @@
                 "container": "a",
                 "extractor": "user-link"
             }
-        ],
-        "isEnabled": true
+        ]
     }
 ]

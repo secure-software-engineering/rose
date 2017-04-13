@@ -1265,7 +1265,7 @@ define('rose/controllers/index', ['exports', 'ember'], function (exports, _ember
     actions: {
 
       toggleTracking: function toggleTracking() {
-        this.get('settings.system').save().then(function () {
+        this.get('settings.user').save().then(function () {
           return kango.dispatchMessage('toggle-tracking');
         });
       }
@@ -2317,7 +2317,6 @@ define('rose/models/study-creator-setting', ['exports', 'ember-data'], function 
 });
 define('rose/models/system-config', ['exports', 'ember-data'], function (exports, _emberData) {
   exports['default'] = _emberData['default'].Model.extend({
-    trackingEnabled: _emberData['default'].attr('boolean'),
     autoUpdateIsEnabled: _emberData['default'].attr('boolean'),
     forceSecureUpdate: _emberData['default'].attr('boolean'),
     roseCommentsIsEnabled: _emberData['default'].attr('boolean'),
@@ -2335,6 +2334,7 @@ define('rose/models/system-config', ['exports', 'ember-data'], function (exports
 define('rose/models/user-setting', ['exports', 'ember-data'], function (exports, _emberData) {
   exports['default'] = _emberData['default'].Model.extend({
     commentReminderIsEnabled: _emberData['default'].attr('boolean'),
+    trackingEnabled: _emberData['default'].attr('boolean', { defaultValue: true }),
     developerModeIsEnabled: _emberData['default'].attr('boolean'),
     currentLanguage: _emberData['default'].attr('string', { defaultValue: 'en' }),
     firstRun: _emberData['default'].attr('boolean', { defaultValue: 'true' })
@@ -10113,7 +10113,7 @@ define("rose/templates/index", ["exports"], function (exports) {
         morphs[6] = dom.createMorphAt(element5, 3, 3);
         return morphs;
       },
-      statements: [["inline", "t", ["index.title"], [], ["loc", [null, [4, 8], [4, 27]]]], ["inline", "t", ["index.subtitle"], [], ["loc", [null, [5, 32], [5, 54]]]], ["block", "each", [["get", "networks", ["loc", [null, [9, 8], [9, 16]]]]], [], 0, null, ["loc", [null, [9, 0], [23, 9]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [27, 22], [27, 34]]]]]]], ["inline", "t", ["settings.trackingEnabled"], [], ["loc", [null, [30, 6], [30, 38]]]], ["inline", "t", ["settings.trackingEnabledLabel"], [], ["loc", [null, [35, 15], [35, 52]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.system.trackingEnabled", ["loc", [null, [37, 34], [37, 65]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.system.trackingEnabled", ["loc", [null, [38, 50], [38, 81]]]]], [], ["loc", [null, [38, 32], [38, 82]]]], "onChange", ["subexpr", "action", ["toggleTracking"], [], ["loc", [null, [39, 35], [39, 60]]]]], ["loc", [null, [36, 12], [39, 62]]]]],
+      statements: [["inline", "t", ["index.title"], [], ["loc", [null, [4, 8], [4, 27]]]], ["inline", "t", ["index.subtitle"], [], ["loc", [null, [5, 32], [5, 54]]]], ["block", "each", [["get", "networks", ["loc", [null, [9, 8], [9, 16]]]]], [], 0, null, ["loc", [null, [9, 0], [23, 9]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [27, 22], [27, 34]]]]]]], ["inline", "t", ["settings.trackingEnabled"], [], ["loc", [null, [30, 6], [30, 38]]]], ["inline", "t", ["settings.trackingEnabledLabel"], [], ["loc", [null, [35, 15], [35, 52]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.trackingEnabled", ["loc", [null, [37, 34], [37, 63]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.user.trackingEnabled", ["loc", [null, [38, 50], [38, 79]]]]], [], ["loc", [null, [38, 32], [38, 80]]]], "onChange", ["subexpr", "action", ["toggleTracking"], [], ["loc", [null, [39, 35], [39, 60]]]]], ["loc", [null, [36, 12], [39, 62]]]]],
       locals: [],
       templates: [child0]
     };
@@ -14759,7 +14759,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+5f2308b5"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+7dd0f88c"});
 }
 
 /* jshint ignore:end */

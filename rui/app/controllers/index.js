@@ -5,7 +5,7 @@ export default Ember.Controller.extend({
   actions: {
 
     toggleTracking () {
-      this.get('settings.system').save().then(() => kango.dispatchMessage('toggle-tracking'))
+      this.get('settings.user').save().then(() => kango.dispatchMessage('toggle-tracking'))
     }
   }
 })

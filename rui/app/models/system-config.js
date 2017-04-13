@@ -1,7 +1,6 @@
 import DS from 'ember-data';
 
 export default DS.Model.extend({
-  trackingEnabled: DS.attr('boolean'),
   autoUpdateIsEnabled: DS.attr('boolean'),
   forceSecureUpdate: DS.attr('boolean'),
   roseCommentsIsEnabled: DS.attr('boolean'),

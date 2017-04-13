@@ -25,6 +25,7 @@ import log from './rose/log'
 import ExtractorEngine from './rose/extractor-engine'
 import ExtractorCollection from './rose/collections/extractors'
 import SystemConfig from './rose/models/system-config'
+import UserSettings from './rose/models/user-settings'
 import NetworkCollection from './rose/collections/networks'
 import Updater from './rose/updater'
 import Doctor from './rose/doctor'
@@ -55,8 +56,8 @@ import Task from './rose/task'
 
     scheduleAutoUpdate()
 
-    new SystemConfig().fetch({ success: (config) => {
-        if (config.get('trackingEnabled')) {
+    new UserSettings().fetch({ success: (settings) => {
+        if (settings.get('trackingEnabled')) {
             scheduleExtractors()
             scheduleActivityTrackers()
         }
@@ -186,8 +187,8 @@ kango.addMessageListener('reset-configuration', () => {
 })
 
 kango.addMessageListener('toggle-tracking', () => {
-    new SystemConfig().fetch({ success: (config) => {
-        if (config.get('trackingEnabled')) {
+    new UserSettings().fetch({ success: (settings) => {
+        if (settings.get('trackingEnabled')) {
             scheduleExtractors()
             scheduleActivityTrackers()
             sendToActiveTabs('toggle-tracking', true)

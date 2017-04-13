@@ -34,8 +34,8 @@
         <div class="six wide field">
             <p>{{t "settings.trackingEnabledLabel"}}</p>
             {{ui-checkbox class="toggle"
-                          checked=settings.system.trackingEnabled
-                          label=(boolean-to-yesno settings.system.trackingEnabled)
+                          checked=settings.user.trackingEnabled
+                          label=(boolean-to-yesno settings.user.trackingEnabled)
                           onChange=(action "toggleTracking")}}
         </div>
     </div>

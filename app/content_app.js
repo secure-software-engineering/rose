@@ -22,6 +22,7 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 import ObserverEngine from './rose/observer-engine'
 import FacebookUI from './rose/facebook-ui'
 import SystemConfigModel from './rose/models/system-config'
+import UserSettingsModel from './rose/models/user-settings'
 import NetworkCollection from './rose/collections/networks'
 
 import ClickTracker from './rose/activity-trackers/click'
@@ -34,8 +35,8 @@ import FBLoginTracker from './rose/activity-trackers/facebook-login';
     let configs = new SystemConfigModel()
     let networks = new NetworkCollection()
     let networkName, facebookUI
-    configs.fetch({success: () => {
-        if (configs.get('trackingEnabled') !== true) return
+    new UserSettingsModel().fetch({success: (settings) => {
+        if (settings.get('trackingEnabled') !== true) return
         networks.fetch({success: () => {
             networks.find((network) => {
                 // Detect network by its domain in the current origin of this page
@@ -65,6 +66,7 @@ import FBLoginTracker from './rose/activity-trackers/facebook-login';
             })
         }})
     }})
+
     function startTracking () {
         ObserverEngine.register(networkName)
 
@@ -75,11 +77,13 @@ import FBLoginTracker from './rose/activity-trackers/facebook-login';
         if (networkName === 'facebook') {
             FBLoginTracker.start(networkName)
 
-            if (configs.get('roseCommentsIsEnabled')) {
-                if (!facebookUI) facebookUI = new FacebookUI()
-                else facebookUI.injectUI()
-                facebookUI.redrawUI()
-            }
+            configs.fetch({success: () => {
+                if (configs.get('roseCommentsIsEnabled')) {
+                    if (!facebookUI) facebookUI = new FacebookUI()
+                    else facebookUI.injectUI()
+                    facebookUI.redrawUI()
+                }
+            }})
         }
     }
 })()

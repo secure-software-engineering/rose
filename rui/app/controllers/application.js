@@ -12,7 +12,7 @@ export default Ember.Controller.extend({
 
     saveConfig(data) {
       const payload = data
-      payload.id = 0;
+      payload.id = 1;
 
       this.settings.system.destroyRecord()
         .then(() => {

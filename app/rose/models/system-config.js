@@ -20,7 +20,7 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
  */
 let model = Backbone.Model.extend({
     sync: Backbone.kangoforage.sync('systemConfig'),
-    id: '0',
+    id: '1',
     defaults: {
         autoUpdateIsEnabled: false,
         fileName: 'base.json',

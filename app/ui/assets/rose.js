@@ -1087,7 +1087,7 @@ define('rose/controllers/application', ['exports', 'ember'], function (exports, 
         var _this = this;
 
         var payload = data;
-        payload.id = 0;
+        payload.id = 1;
 
         this.settings.system.destroyRecord().then(function () {
           kango.dispatchMessage('LoadNetworks', payload.networks);
@@ -5435,14 +5435,14 @@ define('rose/services/settings', ['exports', 'ember'], function (exports, _ember
 
             var store = this.get('store');
 
-            var userSettings = store.findRecord('user-setting', 0)['catch'](function () {
-                return store.createRecord('user-setting', { id: 0 }).save();
+            var userSettings = store.findRecord('user-setting', 1)['catch'](function () {
+                return store.createRecord('user-setting', { id: 1 }).save();
             }).then(function (settings) {
                 return _this.set('user', settings);
             });
 
-            var systemSettings = store.findRecord('system-config', 0)['catch'](function () {
-                return store.createRecord('system-config', { id: 0 }).save();
+            var systemSettings = store.findRecord('system-config', 1)['catch'](function () {
+                return store.createRecord('system-config', { id: 1 }).save();
             }).then(function (settings) {
                 return _this.set('system', settings);
             });
@@ -14759,7 +14759,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+7dd0f88c"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+004e2c64"});
 }
 
 /* jshint ignore:end */

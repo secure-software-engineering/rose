@@ -946,10 +946,10 @@ define('rose/components/page-numbers', ['exports', 'ember', 'ember-cli-paginatio
 define('rose/components/rose-file-picker', ['exports', 'ember', 'ember-cli-file-picker/components/file-picker'], function (exports, _ember, _emberCliFilePickerComponentsFilePicker) {
   exports['default'] = _emberCliFilePickerComponentsFilePicker['default'].extend({
     classNameBindings: ['isEnabled:enabled:disabled'],
-    isEnabled: true,
-    layoutName: 'ember-cli-file-picker/components/file-picker'
+    isEnabled: true
   });
 });
+// layoutName: 'ember-cli-file-picker/components/file-picker'
 define('rose/components/ui-accordion', ['exports', 'semantic-ui-ember/components/ui-accordion'], function (exports, _semanticUiEmberComponentsUiAccordion) {
   Object.defineProperty(exports, 'default', {
     enumerable: true,
@@ -1541,12 +1541,12 @@ define('rose/defaults/study-creator', ['exports'], function (exports) {
     roseCommentsIsEnabled: true,
     roseCommentsRatingIsEnabled: true,
     salt: 'ROSE',
-    hashLength: 8,
+    hashLength: 5,
     repositoryURL: 'https://secure-software-engineering.github.io/rose/master/base.json',
     fingerprint: '25E769C697EC2C20DA3BDDE9F188CF170FA234E8',
     autoUpdateIsEnabled: true,
     updateInterval: 86400000,
-    fileName: 'rose-study-configuration.txt'
+    fileName: 'rose-study-configuration.json'
   };
 });
 define('rose/helpers/boolean-to-yesno', ['exports', 'ember'], function (exports, _ember) {
@@ -2305,11 +2305,11 @@ define('rose/models/study-creator-setting', ['exports', 'ember-data'], function 
     roseCommentsIsEnabled: _emberData['default'].attr('boolean'),
     roseCommentsRatingIsEnabled: _emberData['default'].attr('boolean'),
     salt: _emberData['default'].attr('string'),
-    hashLength: _emberData['default'].attr('number', { defaultValue: 8 }),
+    hashLength: _emberData['default'].attr('number', { defaultValue: 5 }),
     repositoryURL: _emberData['default'].attr('string'),
     autoUpdateIsEnabled: _emberData['default'].attr('boolean'),
     forceSecureUpdate: _emberData['default'].attr('boolean'),
-    fileName: _emberData['default'].attr('string', { defaultValue: 'rose-study-configuration.txt' }),
+    fileName: _emberData['default'].attr('string', { defaultValue: 'rose-study-configuration.json' }),
     networks: _emberData['default'].hasMany('network', { async: true }),
     fingerprint: _emberData['default'].attr('string'),
     updateInterval: _emberData['default'].attr('number')
@@ -2326,18 +2326,17 @@ define('rose/models/system-config', ['exports', 'ember-data'], function (exports
     repositoryURL: _emberData['default'].attr('string'),
     updateInterval: _emberData['default'].attr('number'),
     fingerprint: _emberData['default'].attr('string'),
-    fileName: _emberData['default'].attr('string'),
     lastChecked: _emberData['default'].attr('number'),
     lastUpdated: _emberData['default'].attr('number')
   });
 });
 define('rose/models/user-setting', ['exports', 'ember-data'], function (exports, _emberData) {
   exports['default'] = _emberData['default'].Model.extend({
-    commentReminderIsEnabled: _emberData['default'].attr('boolean'),
     trackingEnabled: _emberData['default'].attr('boolean', { defaultValue: true }),
+    commentReminderIsEnabled: _emberData['default'].attr('boolean', { defaultValue: true }),
     developerModeIsEnabled: _emberData['default'].attr('boolean'),
     currentLanguage: _emberData['default'].attr('string', { defaultValue: 'en' }),
-    firstRun: _emberData['default'].attr('boolean', { defaultValue: 'true' })
+    firstRun: _emberData['default'].attr('boolean', { defaultValue: true })
   });
 });
 define('rose/pods/components/diary-entry/component', ['exports', 'ember'], function (exports, _ember) {
@@ -2796,7 +2795,6 @@ define('rose/pods/components/installation-wizard/component', ['exports', 'ember'
     ajax: _ember['default'].inject.service(),
     read: false,
     unread: (function () {
-      // this.$('[file-picker]').attr('disabled')
       return !this.get('read');
     }).property('read'),
 
@@ -2830,12 +2828,12 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
           "loc": {
             "source": null,
             "start": {
-              "line": 42,
-              "column": 10
+              "line": 41,
+              "column": 12
             },
             "end": {
-              "line": 50,
-              "column": 10
+              "line": 49,
+              "column": 12
             }
           },
           "moduleName": "rose/pods/components/installation-wizard/template.hbs"
@@ -2846,12 +2844,12 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("            ");
+          var el1 = dom.createTextNode("              ");
           dom.appendChild(el0, el1);
           var el1 = dom.createElement("i");
           dom.setAttribute(el1, "class", "add icon");
           dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n            ");
+          var el1 = dom.createTextNode("\n              ");
           dom.appendChild(el0, el1);
           var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
@@ -2864,7 +2862,7 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
           morphs[0] = dom.createMorphAt(fragment, 3, 3, contextualElement);
           return morphs;
         },
-        statements: [["inline", "t", ["wizard.fileConfigBtn"], [], ["loc", [null, [49, 12], [49, 40]]]]],
+        statements: [["inline", "t", ["wizard.fileConfigBtn"], [], ["loc", [null, [48, 14], [48, 42]]]]],
         locals: [],
         templates: []
       };
@@ -2965,32 +2963,43 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
         dom.appendChild(el4, el5);
         var el5 = dom.createElement("br");
         dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n      ");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("div");
-        dom.setAttribute(el4, "class", "ui two cards");
-        var el5 = dom.createTextNode("\n        ");
+        var el5 = dom.createTextNode("\n\n        ");
         dom.appendChild(el4, el5);
         var el5 = dom.createElement("div");
-        dom.setAttribute(el5, "class", "card");
+        dom.setAttribute(el5, "class", "ui two cards");
         var el6 = dom.createTextNode("\n          ");
         dom.appendChild(el5, el6);
         var el6 = dom.createElement("div");
-        dom.setAttribute(el6, "class", "content");
+        dom.setAttribute(el6, "class", "card");
         var el7 = dom.createTextNode("\n            ");
         dom.appendChild(el6, el7);
         var el7 = dom.createElement("div");
-        dom.setAttribute(el7, "class", "header");
-        var el8 = dom.createComment("");
+        dom.setAttribute(el7, "class", "content");
+        var el8 = dom.createTextNode("\n              ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createElement("div");
+        dom.setAttribute(el8, "class", "header");
+        var el9 = dom.createComment("");
+        dom.appendChild(el8, el9);
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n              ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createElement("div");
+        dom.setAttribute(el8, "class", "description");
+        var el9 = dom.createTextNode("\n                ");
+        dom.appendChild(el8, el9);
+        var el9 = dom.createComment("");
+        dom.appendChild(el8, el9);
+        var el9 = dom.createTextNode("\n              ");
+        dom.appendChild(el8, el9);
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n            ");
         dom.appendChild(el7, el8);
         dom.appendChild(el6, el7);
         var el7 = dom.createTextNode("\n            ");
         dom.appendChild(el6, el7);
-        var el7 = dom.createElement("div");
-        dom.setAttribute(el7, "class", "description");
+        var el7 = dom.createElement("button");
+        dom.setAttribute(el7, "class", "ui primary bottom attached button");
         var el8 = dom.createTextNode("\n              ");
         dom.appendChild(el7, el8);
         var el8 = dom.createComment("");
@@ -3003,14 +3012,71 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
         dom.appendChild(el5, el6);
         var el6 = dom.createTextNode("\n          ");
         dom.appendChild(el5, el6);
-        var el6 = dom.createElement("button");
-        dom.setAttribute(el6, "class", "ui primary bottom attached button");
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6, "class", "card");
         var el7 = dom.createTextNode("\n            ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7, "class", "content");
+        var el8 = dom.createTextNode("\n              ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createElement("div");
+        dom.setAttribute(el8, "class", "header");
+        var el9 = dom.createComment("");
+        dom.appendChild(el8, el9);
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n              ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createElement("div");
+        dom.setAttribute(el8, "class", "description");
+        var el9 = dom.createTextNode("\n                ");
+        dom.appendChild(el8, el9);
+        var el9 = dom.createComment("");
+        dom.appendChild(el8, el9);
+        var el9 = dom.createTextNode("\n              ");
+        dom.appendChild(el8, el9);
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n            ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n");
         dom.appendChild(el6, el7);
         var el7 = dom.createComment("");
         dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n          ");
+        var el7 = dom.createTextNode("          ");
         dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n        ");
+        dom.appendChild(el5, el6);
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n\n      ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("h4");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("p");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("div");
+        dom.setAttribute(el4, "class", "ui stackable two column grid");
+        var el5 = dom.createTextNode("\n        ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createElement("div");
+        dom.setAttribute(el5, "class", "column");
+        var el6 = dom.createTextNode("\n          ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("img");
+        dom.setAttribute(el6, "class", "ui fluid bordered image");
+        dom.setAttribute(el6, "src", "/icons/Screenshot-CommentRibbon.png");
         dom.appendChild(el5, el6);
         var el6 = dom.createTextNode("\n        ");
         dom.appendChild(el5, el6);
@@ -3018,85 +3084,17 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
         var el5 = dom.createTextNode("\n        ");
         dom.appendChild(el4, el5);
         var el5 = dom.createElement("div");
-        dom.setAttribute(el5, "class", "card");
-        var el6 = dom.createTextNode("\n          ");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createElement("div");
-        dom.setAttribute(el6, "class", "content");
-        var el7 = dom.createTextNode("\n            ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("div");
-        dom.setAttribute(el7, "class", "header");
-        var el8 = dom.createComment("");
-        dom.appendChild(el7, el8);
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n            ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("div");
-        dom.setAttribute(el7, "class", "description");
-        var el8 = dom.createTextNode("\n              ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createComment("");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n            ");
-        dom.appendChild(el7, el8);
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n          ");
-        dom.appendChild(el6, el7);
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("\n");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createComment("");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("        ");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n      ");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n\n\n        ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("h4");
-        var el5 = dom.createComment("");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n        ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("p");
-        var el5 = dom.createComment("");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n\n        ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("div");
-        dom.setAttribute(el4, "class", "ui stackable two column grid");
-        var el5 = dom.createTextNode("\n          ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("div");
         dom.setAttribute(el5, "class", "column");
-        var el6 = dom.createTextNode("\n            ");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createElement("img");
-        dom.setAttribute(el6, "class", "ui fluid bordered image");
-        dom.setAttribute(el6, "src", "/icons/Screenshot-CommentRibbon.png");
-        dom.appendChild(el5, el6);
         var el6 = dom.createTextNode("\n          ");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n          ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("div");
-        dom.setAttribute(el5, "class", "column");
-        var el6 = dom.createTextNode("\n            ");
         dom.appendChild(el5, el6);
         var el6 = dom.createElement("img");
         dom.setAttribute(el6, "class", "ui fluid bordered image");
         dom.setAttribute(el6, "src", "/icons/Screenshot-Sidebar.png");
         dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("\n          ");
+        var el6 = dom.createTextNode("\n        ");
         dom.appendChild(el5, el6);
         dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n        ");
+        var el5 = dom.createTextNode("\n      ");
         dom.appendChild(el4, el5);
         dom.appendChild(el3, el4);
         var el4 = dom.createTextNode("\n\n    ");
@@ -3116,7 +3114,7 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
         var element0 = dom.childAt(fragment, [0, 1, 1]);
         var element1 = dom.childAt(element0, [1, 3]);
         var element2 = dom.childAt(element0, [3]);
-        var element3 = dom.childAt(element0, [5]);
+        var element3 = dom.childAt(element2, [9]);
         var element4 = dom.childAt(element3, [1]);
         var element5 = dom.childAt(element4, [1]);
         var element6 = dom.childAt(element4, [3]);
@@ -3136,11 +3134,11 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
         morphs[10] = dom.createMorphAt(dom.childAt(element8, [1]), 0, 0);
         morphs[11] = dom.createMorphAt(dom.childAt(element8, [3]), 1, 1);
         morphs[12] = dom.createMorphAt(element7, 3, 3);
-        morphs[13] = dom.createMorphAt(dom.childAt(element0, [7]), 0, 0);
-        morphs[14] = dom.createMorphAt(dom.childAt(element0, [9]), 0, 0);
+        morphs[13] = dom.createMorphAt(dom.childAt(element0, [5]), 0, 0);
+        morphs[14] = dom.createMorphAt(dom.childAt(element0, [7]), 0, 0);
         return morphs;
       },
-      statements: [["inline", "t", ["wizard.header"], [], ["loc", [null, [7, 10], [7, 31]]]], ["inline", "t", ["wizard.description"], [], ["loc", [null, [8, 34], [8, 60]]]], ["inline", "t", ["wizard.privacyNoteTitle"], [], ["loc", [null, [13, 12], [13, 43]]]], ["inline", "t", ["wizard.privacyNote"], [], ["loc", [null, [14, 11], [14, 37]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "read", ["loc", [null, [16, 47], [16, 51]]]]], [], []], "label", ["subexpr", "t", ["wizard.privacyAgree"], [], ["loc", [null, [16, 58], [16, 83]]]]], ["loc", [null, [16, 10], [16, 86]]]], ["inline", "t", ["wizard.defaultConfigHeader"], [], ["loc", [null, [25, 32], [25, 66]]]], ["inline", "t", ["wizard.defaultConfigDescription"], [], ["loc", [null, [27, 14], [27, 53]]]], ["attribute", "disabled", ["get", "unread", ["loc", [null, [31, 62], [31, 68]]]]], ["element", "action", ["selectDefaultConfig"], [], ["loc", [null, [31, 18], [31, 50]]]], ["inline", "t", ["wizard.defaultBtn"], [], ["loc", [null, [32, 12], [32, 37]]]], ["inline", "t", ["wizard.fileConfigHeader"], [], ["loc", [null, [37, 32], [37, 63]]]], ["inline", "t", ["wizard.fileConfigDescription"], [], ["loc", [null, [39, 14], [39, 50]]]], ["block", "rose-file-picker", [], ["fileLoaded", "fileLoaded", "dropzone", false, "preview", false, "readAs", "readAsText", "class", "ui bottom attached primary button", "isEnabled", ["subexpr", "@mut", [["get", "read", ["loc", [null, [47, 36], [47, 40]]]]], [], []]], 0, null, ["loc", [null, [42, 10], [50, 31]]]], ["inline", "t", ["wizard.overlayNoteTitle"], [], ["loc", [null, [55, 12], [55, 43]]]], ["inline", "t", ["wizard.overlayNote"], [], ["loc", [null, [56, 11], [56, 37]]]]],
+      statements: [["inline", "t", ["wizard.header"], [], ["loc", [null, [7, 10], [7, 31]]]], ["inline", "t", ["wizard.description"], [], ["loc", [null, [8, 34], [8, 60]]]], ["inline", "t", ["wizard.privacyNoteTitle"], [], ["loc", [null, [13, 12], [13, 43]]]], ["inline", "t", ["wizard.privacyNote"], [], ["loc", [null, [14, 11], [14, 37]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "read", ["loc", [null, [16, 47], [16, 51]]]]], [], []], "label", ["subexpr", "t", ["wizard.privacyAgree"], [], ["loc", [null, [16, 58], [16, 83]]]]], ["loc", [null, [16, 10], [16, 86]]]], ["inline", "t", ["wizard.defaultConfigHeader"], [], ["loc", [null, [24, 34], [24, 68]]]], ["inline", "t", ["wizard.defaultConfigDescription"], [], ["loc", [null, [26, 16], [26, 55]]]], ["attribute", "disabled", ["get", "unread", ["loc", [null, [30, 64], [30, 70]]]]], ["element", "action", ["selectDefaultConfig"], [], ["loc", [null, [30, 20], [30, 52]]]], ["inline", "t", ["wizard.defaultBtn"], [], ["loc", [null, [31, 14], [31, 39]]]], ["inline", "t", ["wizard.fileConfigHeader"], [], ["loc", [null, [36, 34], [36, 65]]]], ["inline", "t", ["wizard.fileConfigDescription"], [], ["loc", [null, [38, 16], [38, 52]]]], ["block", "rose-file-picker", [], ["fileLoaded", "fileLoaded", "dropzone", false, "preview", false, "readAs", "readAsText", "class", "ui bottom attached primary button", "isEnabled", ["subexpr", "@mut", [["get", "read", ["loc", [null, [46, 38], [46, 42]]]]], [], []]], 0, null, ["loc", [null, [41, 12], [49, 33]]]], ["inline", "t", ["wizard.overlayNoteTitle"], [], ["loc", [null, [55, 10], [55, 41]]]], ["inline", "t", ["wizard.overlayNote"], [], ["loc", [null, [56, 9], [56, 35]]]]],
       locals: [],
       templates: [child0]
     };
@@ -14759,7 +14757,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+004e2c64"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+8ea16215"});
 }
 
 /* jshint ignore:end */

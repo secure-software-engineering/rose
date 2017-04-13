@@ -4,7 +4,7 @@ An observer and extractor repository can be published via HTTP and is identified
 
 ## Configuration File
 
-Every repository must have one configuration file named `rose3config.json`, reachable at `http://X/Y/config.json` if `http://X/Y/` is the URL of the repository. This configuration file contains a JSON object with the following fields:
+Every repository must have one configuration file. This configuration file contains a JSON object with the following fields:
 
 ### User Settings
 
@@ -22,9 +22,7 @@ Every repository must have one configuration file named `rose3config.json`, reac
 
 * `hashLength`: Number. The length of the hashes ROSE generates.
 
-* `repositoryUrl`: String. An http url to this repository folder.
-
-* `fileName`: String. The name of this configuration file.
+* `repositoryUrl`: String. An http url to this repository configuration file.
 
 * `fingerprint`: String. A fingerprint of public key, which is used to sign the files in this repository.
 
@@ -47,6 +45,9 @@ One object in the networks array has the following attributes:
 * `extractors`: String. A filepath relative to the location of this configuration file to a json file holding an array extractors for one particular network. See the extractor documentation for specifications.
 
 ## Changelog
+
+2017-04-13 Felix Epp <felix.epp@sit.fraunhofer.de>
+* Removed obsoslete fileName attribute from specification
 
 2015-09-06 Felix Epp <felix.epp@sit.fraunhofer.de>
 * All configuration fields in the repository.

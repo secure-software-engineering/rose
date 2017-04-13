@@ -91,11 +91,11 @@
                     "network": "facebook",
                     "type": "input",
                     "priority": 3,
-                    "version": "0.3",
+                    "version": "0.4",
                     "patterns": [
                         {
                             "node": ".UFIAddCommentInput *",
-                            "container": ".userContentWrapper",
+                            "container": ".mbm",
                             "extractor": "status-update"
                         },
                         {
@@ -110,7 +110,7 @@
                         },
                         {
                             "node": ".commentable_item a.UFICommentActorName",
-                            "container": ".userContentWrapper",
+                            "container": ".mbm",
                             "extractor": "status-update"
                         }
                     ],
@@ -121,11 +121,11 @@
                     "network": "facebook",
                     "type": "input",
                     "priority": 2,
-                    "version": "0.2",
+                    "version": "0.3",
                     "patterns": [
                         {
                             "node": ".UFIReplyList *",
-                            "container": ".userContentWrapper",
+                            "container": ".mbm",
                             "extractor": "status-update"
                         }
                     ],
@@ -306,11 +306,11 @@
                     "network": "facebook",
                     "type": "click",
                     "priority": 6,
-                    "version": "0.3",
+                    "version": "0.4",
                     "patterns": [
                         {
                             "node": ".UFICommentActions .UFILikeLink:contains(\"Like\"), .UFICommentActions .UFILikeLink:contains(\"Gefällt mir\")",
-                            "container": ".userContentWrapper",
+                            "container": ".mbm",
                             "extractor": "status-update"
                         }
                     ],
@@ -321,11 +321,11 @@
                     "network": "facebook",
                     "type": "click",
                     "priority": 7,
-                    "version": "0.7",
+                    "version": "0.8",
                     "patterns": [
                         {
                             "node": ".UFILikeLink, .UFILikeLink *",
-                            "container": ".userContentWrapper",
+                            "container": ".mbm",
                             "extractor": "status-update"
                         },
                         {
@@ -341,7 +341,7 @@
                     "network": "facebook",
                     "type": "click",
                     "priority": 20,
-                    "version": "0.3",
+                    "version": "0.4",
                     "patterns": [
                         {
                             "node": ".PageLikeButton:not(\".PageLikedButton\"), .PageLikeButton:not(\".PageLikedButton\") *",
@@ -355,7 +355,7 @@
                         },
                         {
                             "node": ".PageLikeButton:not(\".PageLikedButton\"), .PageLikeButton:not(\".PageLikedButton\") *",
-                            "container": ".userContentWrapper",
+                            "container": ".mbm",
                             "extractor": null
                         },
                         {
@@ -461,11 +461,11 @@
                     "network": "facebook",
                     "type": "click",
                     "priority": 2,
-                    "version": "0.3",
+                    "version": "0.4",
                     "patterns": [
                         {
                             "node": ".UFICommentActions .UFILikeLink:contains(\"Unlike\"), .UFICommentActions .UFILikeLink:contains(\"Gefällt mir nicht mehr\")",
-                            "container": ".userContentWrapper",
+                            "container": ".mbm",
                             "extractor": "status-update"
                         }
                     ],
@@ -476,11 +476,11 @@
                     "network": "facebook",
                     "type": "click",
                     "priority": 3,
-                    "version": "0.5",
+                    "version": "0.6",
                     "patterns": [
                         {
                             "node": ".UFILinkBright, .UFILinkBright *",
-                            "container": ".userContentWrapper",
+                            "container": ".mbm",
                             "extractor": "status-update"
                         }
                     ],

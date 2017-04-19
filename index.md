@@ -20,7 +20,7 @@ A second important decision was about recording the content or targets of intera
 
 ### How can I try it out?
 
-You find the latest install files for Google Chrome and Mozilla Firefox here: 
+You find the Google Chrome extension page of ROSE here: [Chrome Store](https://chrome.google.com/webstore/detail/rose/chmgghdkcookiojbnchechkhjfbadjkd)
 
 ### Where can I find more information?  
 

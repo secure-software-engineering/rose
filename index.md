@@ -2,15 +2,12 @@
 
 ### What is ROSE?
 
-<table>
+<table align="left">
   <tr>
-    <td><img src="images/rose-icon128.png" alt="ROSE logo"></td>
-    <td>ROSE is basically a web browser add-on for Google Chrome, Mac OS X Safari, and Mozilla Firefox that allows empirical researchers to collect data on how participants in user studies use websites such as Facebook, Twitter, or Google+. While this is the main purpose of ROSE, the software also implements a complete online research workflow including creating a study with ROSE, deploying a tailored ROSE configuration to participants, and analyzing collected data.</td>
+    <td valign="top"><img src="images/rose-icon128.png" alt="ROSE logo" width="300%" height="300%"></td>
+    <td valign="top">ROSE is basically a web browser add-on for Google Chrome, Mac OS X Safari, and Mozilla Firefox that allows empirical researchers to collect data on how participants in user studies use websites such as Facebook, Twitter, or Google+. While this is the main purpose of ROSE, the software also implements a complete online research workflow including creating a study with ROSE, deploying a tailored ROSE configuration to participants, and analyzing collected data.</td>
   </tr>
 </table>
-
-
-|![ROSE logo][images/rose-icon128.png]|ROSE is basically a web browser add-on for Google Chrome, Mac OS X Safari, and Mozilla Firefox that allows empirical researchers to collect data on how participants in user studies use websites such as Facebook, Twitter, or Google+. While this is the main purpose of ROSE, the software also implements a complete online research workflow including creating a study with ROSE, deploying a tailored ROSE configuration to participants, and analyzing collected data.|
 
 ### So ROSE basically counts clicks in Facebook? That's simple, isn't it?
 

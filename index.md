@@ -1,10 +1,16 @@
 ## Welcome to ROSE - The Research Tool for Online Social Environments -
 
-These pages try to answer the most common question around ROSE.
-
 ### What is ROSE?
 
-ROSE is basically a web browser add-on for Google Chrome, Mac OS X Safari, and Mozilla Firefox that allows empirical researchers to collect data on how participants in user studies use websites such as Facebook, Twitter, or Google+. While this is the main purpose of ROSE, the software also implements a complete online research workflow including creating a study with ROSE, deploying a tailored ROSE configuration to participants, and analyzing collected data.
+<table>
+  <tr>
+    <td><img src="images/rose-icon128.png" alt="ROSE logo"></td>
+    <td>ROSE is basically a web browser add-on for Google Chrome, Mac OS X Safari, and Mozilla Firefox that allows empirical researchers to collect data on how participants in user studies use websites such as Facebook, Twitter, or Google+. While this is the main purpose of ROSE, the software also implements a complete online research workflow including creating a study with ROSE, deploying a tailored ROSE configuration to participants, and analyzing collected data.</td>
+  </tr>
+</table>
+
+
+|![ROSE logo][images/rose-icon128.png]|ROSE is basically a web browser add-on for Google Chrome, Mac OS X Safari, and Mozilla Firefox that allows empirical researchers to collect data on how participants in user studies use websites such as Facebook, Twitter, or Google+. While this is the main purpose of ROSE, the software also implements a complete online research workflow including creating a study with ROSE, deploying a tailored ROSE configuration to participants, and analyzing collected data.|
 
 ### So ROSE basically counts clicks in Facebook? That's simple, isn't it?
 
@@ -24,8 +30,8 @@ You find the Google Chrome extension page of ROSE here: [Chrome Store](https://c
 
 ### Where can I find more information?  
 
+We are currently preparing a concise guide for researchers using ROSE, developers, and field study participants.
+
 ### Under which license is ROSE published?
 
 ROSE is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-### Who we are

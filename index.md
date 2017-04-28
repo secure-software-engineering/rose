@@ -2,7 +2,7 @@
 
 ### What is ROSE?
 
-![ROSE logo](images/rose-icon32.png)  ROSE is a web browser extension for Google Chrome, Mac OS X Safari, and Mozilla Firefox that allowing empirical researchers to collect detailed in-situ data on participants usage of social media websites such as Facebook, Twitter, or Google+ during the course of an empirical field study. Also the software implements a whole research workflow including creating a study with ROSE, deploying a ROSE configuration to participants' installations of ROSE tailored to specific study needs, and aids for analyzing collected data.
+ROSE is a web browser extension for Google Chrome, Mac OS X Safari, and Mozilla Firefox that allowing empirical researchers to collect detailed in-situ data on participants usage of social media websites such as Facebook, Twitter, or Google+ during the course of an empirical field study. Also the software implements a whole research workflow including creating a study with ROSE, deploying a ROSE configuration to participants' installations of ROSE tailored to specific study needs, and aids for analyzing collected data.
 
 ### So ROSE basically counts clicks in Facebook, Twitter etc.? That's simple, isn't it?
 

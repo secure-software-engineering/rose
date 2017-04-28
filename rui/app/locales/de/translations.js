@@ -27,14 +27,14 @@ export default {
 
   //Dashboard
   index: {
-    title: "ROSE Kontrollzentrum",
+    title: "ROSE Übersicht",
     subtitle: "Gesamtanzahl gesammelter Datensätze in Ihrer lokalen ROSE-Installation."
   },
 
   // Sidebar Menu
   sidebarMenu: {
     data: "Daten",
-    dashboard: "Übersichtsseite",
+    dashboard: "Übersichts",
     diary: "Tagebuch",
     backup: "Datenverwaltung",
     settings: "Einstellungen",
@@ -47,7 +47,7 @@ export default {
     about: "Über",
     extraFeatures: "Funktionen für Forscher",
     studyCreator: "Studienkonfigurator",
-    debugLog: "Anwendungslogbuch",
+    debugLog: "Anwendungsprotokoll",
     observerEditor: "Editor für Observatoren",
     dataConverter: "Datenkonverter"
   },
@@ -97,7 +97,7 @@ export default {
     title: "Einstellungen",
     subtitle: "Verwalten Sie die Konfiguration von ROSE.",
     language: "Sprache",
-    languageLabel: "Wählen Sie Ihre bevorzugte Sprache, oder nutzen Sie die Standardsprache Ihres Browsers (\"Automatische Erkennung\").",
+    languageLabel: "Wählen Sie Ihre bevorzugte Sprache, oder nutzen Sie die Standardsprache Ihres Browsers (&ldquo;Auto detect&rdquo;).",
     commentReminder: "Erinnerung für Kommentare",
     commentReminderLabel: "ROSE wird gelegentlich eine Nachricht im unteren Bereich des Bildschirms anzeigen, um Sie daran zu erinnern Ihre Aktionen zu kommentieren, falls das innerhalb einer Forschungsstudie notwendig ist. Sie können diese Funktion ausschalten, falls Sie dadurch gestört werden.",
     extraFeatures: "Funktionen für Forscher und Entwickler",
@@ -105,7 +105,7 @@ export default {
     resetRose: "ROSE-Konfiguration zurücksetzen",
     resetRoseLabel: "Wenn Sie die Konfiguration von ROSE zurücksetzen, wird der initiale Begrüßungsbildschirm wieder erscheinen. Sie können dann die Standardkonfiguration auswählen, oder eine spezielle Konfigurationsdatei für Ihre Studie laden.",
     manualUpdate: "Datensammel-Paket aktualisieren",
-    manualUpdateLabel: "Social-Media-Plattformen verändern gelegentlich die Gestaltung ihrer Webseiten. ROSE benötigt dann eine Aktualisierung der Datensammel-Pakete, um mit diesen Änderungen umgehen zu können. Um eine Aktualisierung manuell auszulösen, klicken Sie bitte den \"Update\"-Knopf.",
+    manualUpdateLabel: "Social-Media-Plattformen verändern gelegentlich die Gestaltung ihrer Webseiten. ROSE benötigt dann eine Aktualisierung der Datensammel-Pakete, um mit diesen Änderungen umgehen zu können. Um eine Aktualisierung manuell auszulösen, klicken Sie bitte den &ldquo;Update&rdquo;-Knopf.",
     autoUpdate: "Automatische Aktualisierung der Datensammel-Pakete",
     autoUpdateLabel: "Für automatische Aktualisierungen, um aktuelle Veränderungen bei Social-Media-Plattformen zu berücksichtigen, stellen Sie die automatische Aktualisierung ein.",
     autoUpdateInterval: "Intervall für automatische Aktualisierungen",
@@ -166,7 +166,7 @@ export default {
     },
     issue3: {
       question: "Welche Arten von Daten werden von ROSE gesammelt?",
-      answer: "<p>ROSE sammelt folgende Arten von Daten:</p><ul><li>Datum und Zeit von Interaktionen auf Social-Media-Plattformen, also die Zeit zu der Sie die Interaktion ausgelöst haben. </li><li>Art der Interaktion, z.B., \"liking content,\" \"viewing a profile,\" \"sharing content.\"</li><li>Eindeutige Identifikatoren aus Buchstaben und Zahlen (z.B., \"2a2d6fc3\"), welche mit dem Inhalt und den Personen in Zusammenhang stehen, mit denen Sie interagiert haben. Mit diesen Identifikatoren können Forscher erkennen, dass Sie mehrfach mit den gleichen Personen oder Inhalten interagiert haben. Die Forscher können jedoch nur Vergleiche anstellen und nicht die tatsächlichen Inhalte oder Personen in Erfahrung bringen.</li><li>Generelle und spezifische Privatssphäre-Einstellungen auf Social-Media-Plattformen, z.B., ob bei Facebook ein Eintrag nur für \"Freunde\" sichtbar oder öffentlich ist.</li><li>Studienkommentare.</li></ul>"
+      answer: "<p>ROSE sammelt folgende Arten von Daten:</p><ul><li>Datum und Zeit von Interaktionen auf Social-Media-Plattformen, also die Zeit zu der Sie die Interaktion ausgelöst haben. </li><li>Art der Interaktion, z.B., &ldquo;liking content&rdquo;, &ldquo;viewing a profile&rdquo;, &ldquo;sharing content&rdquo;.</li><li>Eindeutige Identifikatoren aus Buchstaben und Zahlen (z.B., &ldquo;2a2d6fc3&rdquo;), welche mit dem Inhalt und den Personen in Zusammenhang stehen, mit denen Sie interagiert haben. Mit diesen Identifikatoren können Forscher erkennen, dass Sie mehrfach mit den gleichen Personen oder Inhalten interagiert haben. Die Forscher können jedoch nur Vergleiche anstellen und nicht die tatsächlichen Inhalte oder Personen in Erfahrung bringen.</li><li>Generelle und spezifische Privatssphäre-Einstellungen auf Social-Media-Plattformen, z.B., ob bei Facebook ein Eintrag nur für &ldquo;Freunde&rdquo; sichtbar oder öffentlich ist.</li><li>Studienkommentare.</li></ul>"
     },
     issue4: {
       question: "Sammelt ROSE auch Inhalte, welche ich mit meinen Freunden teile?",
@@ -174,7 +174,7 @@ export default {
     },
     issue5: {
       question: "Wie kontrolliere ich, welche Arten von Interaktionen ROSE sammelt?",
-      answer: "<p>Sie können dazu einfach den Menüpunkt \"Interaktionen\" öffnen. Wenn Sie die Daten exportieren und mit den Forschern teilen möchten, dann können Sie ebenfalls alle Daten in einem kompakten text-basierten Format untersuchen. Sie werden feststellen, dass die exportierten Daten keine persönlichen Informationen von Ihnen enthalten.</p>"
+      answer: "<p>Sie können dazu einfach den Menüpunkt &ldquo;Interaktionen&rdquo; öffnen. Wenn Sie die Daten exportieren und mit den Forschern teilen möchten, dann können Sie ebenfalls alle Daten in einem kompakten text-basierten Format untersuchen. Sie werden feststellen, dass die exportierten Daten keine persönlichen Informationen von Ihnen enthalten.</p>"
     },
     issue6: {
       question: "Wie kann ich sicherstellen das ROSE meine Daten anonymisiert?",
@@ -216,7 +216,7 @@ export default {
     roseCommentsRating: "Hinzufügen der In-Situ-Bewertungsoption",
     roseCommentsRatingDesc: "Aktivieren, falls die Funktion für In-Situ-Kommentare auch nach Bewertungen von Inhalten fragen soll.",
     salt: "Kryptografischer Salt für die Inhalte-Identifikatoren",
-    saltDesc: "ROSE zeichnet pseudonyme Identifikatoren für Inhalte auf, welche die Interaktionen zu Inhalten und Personen später zueinander zuordenbar machen, ohne die eigentlichen Inhalte offenzulegen. Diese Identifikatoren werden aus dem Webseiten-Inhalt und einem kryptografischen Salt hergeleitet. Als Salt können Sie eine x-beliebige Zeichenkette verwenden, z.B. \"ROSE123\". Wenn Sie Gruppen von Teilnehmern untersuchen wollen, dann sollte der Salt jedoch bei allen Teilnehmern gleich sein, da Sie sonst nachträglich Daten über Teilnehmer hinweg nicht korrelieren können.",
+    saltDesc: "ROSE zeichnet pseudonyme Identifikatoren für Inhalte auf, welche die Interaktionen zu Inhalten und Personen später zueinander zuordenbar machen, ohne die eigentlichen Inhalte offenzulegen. Diese Identifikatoren werden aus dem Webseiten-Inhalt und einem kryptografischen Salt hergeleitet. Als Salt können Sie eine x-beliebige Zeichenkette verwenden, z.B. &ldquo;ROSE123&rdquo;. Wenn Sie Gruppen von Teilnehmern untersuchen wollen, dann sollte der Salt jedoch bei allen Teilnehmern gleich sein, da Sie sonst nachträglich Daten über Teilnehmer hinweg nicht korrelieren können.",
     hashLength: "Länge des Identifikators für Inhalte und Personen",
     hashLengthDesc: "Hier können Sie die Länge der pseudonymen Identifikatoren für ROSE festlegen. Sie müssen dabei Privatsphäre der Teilnehmer und Eindeutigkeit der Identifikatoren abwägen. Kürzere Identifikatoren sind privatsphäreschützender; längere Identifikatoren sind einzigartiger und Kollisionen sind unwahrscheinlicher. Jede zusätzliche Stelle erhöht den Raum verfügbarer Identifikatoren um den Faktor 16. Zum Beispiel, erlaubt die Länge 4 somit 16*16*16*16=65536 eindeutige Identifikatoren für Ihre Studie. Als Daumenregel ist 5 ein in der Praxis bewährter Wert.",
     repositoryUrl: "URL des Speichers für Datensammel-Pakete",
@@ -255,10 +255,10 @@ export default {
 
   // Application Log
   debugLog: {
-    title: "Anwendungslogbuch",
+    title: "Anwendungsprotokoll",
     subtitle: "Diese Seite zeigt alle Nachrichten, welche die Module von ROSE ausgegeben haben",
     date: "Zeitstempel",
-    message: "Log-Nachricht",
+    message: "Meldung",
     module: "Modulname"
   },
 

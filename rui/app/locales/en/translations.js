@@ -97,7 +97,7 @@ export default {
     title: "Settings",
     subtitle: "Manage the configuration of ROSE.",
     language: "Language",
-    languageLabel: "Choose your preferred language, or use the browser default language (\"auto detect\" option).",
+    languageLabel: "Choose your preferred language, or use the browser default language (&ldquo;auto detect&rdquo; option).",
     commentReminder: "Comment reminder",
     commentReminderLabel: "ROSE will occasionally display a message at the bottom of the screen reminding you to comment on your actions if a research study requires you to do so. You can deactivate this reminder if it disturbs you.",
     extraFeatures: "Features for researchers and developers",
@@ -161,11 +161,11 @@ export default {
     },
     issue2: {
       question: "Are my ROSE study comments visible to other study participants or my friends on social media site?",
-      answer: "<p>No. All comments you make through ROSE are invisible to other study participants or your social media site friends. For technical and especially privacy reasons, ROSE data never leaves your web browser to servers of social media sites or to the researchers of the study. ROSE does not receive tracking data from any other source either. Though ROSE is integrated in your web browser and the social media sites' interfaces, thus appearing like an \"actual\" social media site function, it completely and exclusively operates in your web browser. Also, there is no way for social media sites to detect from remote whether or not you are using ROSE.</p>"
+      answer: "<p>No. All comments you make through ROSE are invisible to other study participants or your social media site friends. For technical and especially privacy reasons, ROSE data never leaves your web browser to servers of social media sites or to the researchers of the study. ROSE does not receive tracking data from any other source either. Though ROSE is integrated in your web browser and the social media sites' interfaces, thus appearing like an &ldquo;actual&rdquo; social media site function, it completely and exclusively operates in your web browser. Also, there is no way for social media sites to detect from remote whether or not you are using ROSE.</p>"
     },
     issue3: {
       question: "What types of data are recorded by ROSE?",
-      answer: "<p>ROSE records the following types of data:</p><ul><li>Date and time of interactions on social media sites, i.e., the time the study participant engages in an interaction. </li><li>Type of interaction, e.g., \"liking content,\" \"viewing a profile,\" \"sharing content.\"</li><li>Unique identifiers, eight-digit combinations of letters and numbers (e.g., \"2a2d6fc3\") corresponding to each story item (e.g., a picture, a status update) and other user the study participant interacted with. With the identifiers, researchers can detect when study participants interact with the same story item or person repeatedly. But the researchers will not be able to identify the actual item or person.</li><li>General and specific privacy settings concerning interactions, e.g. whether a story item is visible for \"Friends\" only or for the public.</li><li>Diary entries.</li><li>ROSE study comments.</li></ul>"
+      answer: "<p>ROSE records the following types of data:</p><ul><li>Date and time of interactions on social media sites, i.e., the time the study participant engages in an interaction. </li><li>Type of interaction, e.g., &ldquo;liking content&rdquo;, &ldquo;viewing a profile&rdquo;, &ldquo;sharing content&rdquo;.</li><li>Unique identifiers, eight-digit combinations of letters and numbers (e.g., &ldquo;2a2d6fc3&rdquo;) corresponding to each story item (e.g., a picture, a status update) and other user the study participant interacted with. With the identifiers, researchers can detect when study participants interact with the same story item or person repeatedly. But the researchers will not be able to identify the actual item or person.</li><li>General and specific privacy settings concerning interactions, e.g. whether a story item is visible for &ldquo;Friends&rdquo; only or for the public.</li><li>Diary entries.</li><li>ROSE study comments.</li></ul>"
     },
     issue4: {
       question: "Does ROSE collect the actual content I share with my friends on social media sites?",
@@ -173,7 +173,7 @@ export default {
     },
     issue5: {
       question: "How do I control what types of interaction ROSE collect?",
-      answer: "<p>You can easily check the types of interaction recorded from the ROSE user interface (menu item \"Interactions\"). When you export and share your data with the researchers, you can also view all data collected in the compact text-based data format. You will see from the exported data file that there is no personal data collected.</p>"
+      answer: "<p>You can easily check the types of interaction recorded from the ROSE user interface (menu item &ldquo;Interactions&rdquo;). When you export and share your data with the researchers, you can also view all data collected in the compact text-based data format. You will see from the exported data file that there is no personal data collected.</p>"
     },
     issue6: {
       question: "How can I be sure that ROSE makes my data anonymous?",
@@ -216,7 +216,7 @@ export default {
     roseCommentsRating: "Add in-situ rating option",
     roseCommentsRatingDesc: "Check if the in-situ comment function should also ask for rating content.",
     salt: "Cryptographic salt for content identifiers",
-    saltDesc: "ROSE records pseudonymous identifiers for user content allowing researchers to re-identify content without a need to reveal it. These identfiers are derived from user-entered content and a cryptographic salt. As a cryptographic salt you can enter any arbitrary text string, for example \"ROSE123\" or whatever else you like. However, make sure that in case you investigate a group of participants all use the same salt in their ROSE configuration. Otherwise you can not correlate identifiers among participants afterwards.",
+    saltDesc: "ROSE records pseudonymous identifiers for user content allowing researchers to re-identify content without a need to reveal it. These identfiers are derived from user-entered content and a cryptographic salt. As a cryptographic salt you can enter any arbitrary text string, for example &ldquo;ROSE123&rdquo; or whatever else you like. However, make sure that in case you investigate a group of participants all use the same salt in their ROSE configuration. Otherwise you can not correlate identifiers among participants afterwards.",
     hashLength: "Content identifier length",
     hashLengthDesc: "Here you can specify the length of the pseudonymous identifiers created by ROSE. You need to balance participants' privacy and the uniqueness of identifiers: the shorter the identifier the more privacy protecting they are; the longer the identifiers the more unique they are and collusion get unlikely. Every digit adds a factor of 16 to the space of possible identifiers for your study. For example, setting the option to 4 allows for 16*16*16*16=65536 unique identifiers for your study. As a rule of thumb, 5 is a good value if you are unsure how to use this option.",
     repositoryUrl: "URL of tracking package repository",

@@ -220,7 +220,7 @@ export default {
     hashLength: "Content identifier length",
     hashLengthDesc: "Here you can specify the length of the pseudonymous identifiers created by ROSE. You need to balance participants' privacy and the uniqueness of identifiers: the shorter the identifier the more privacy protecting they are; the longer the identifiers the more unique they are and collusion get unlikely. Every digit adds a factor of 16 to the space of possible identifiers for your study. For example, setting the option to 4 allows for 16*16*16*16=65536 unique identifiers for your study. As a rule of thumb, 5 is a good value if you are unsure how to use this option.",
     repositoryUrl: "URL of tracking package repository",
-    repositoryUrlDesc: "ROSE gets its patterns to match user interactions to specific interaction types in tracking packacges from a repository. Here you can enter the URL of this repository.",
+    repositoryUrlDesc: "ROSE gets its patterns to match user interactions to specific interaction types in tracking packages from a repository. Here you can enter the URL of this repository.",
     autoUpdate: "Automatically update tracking packages during study",
     autoUpdateDesc: "While tracking packages with detection patterns are usually only pushed to ROSE when the configuration file is loaded into participants' instances of ROSE, it is also possible to continuously update them while the study is running. This might be necessary for long-term studies, if the user interface of the investigated social media site is likely to change during the course of the study.",
     exportConfig: "Export configuration file",

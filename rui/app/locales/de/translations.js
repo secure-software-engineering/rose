@@ -1,172 +1,274 @@
 export default {
   // General
-  and: "and",
-  yes: "Yes",
-  no: "No",
-  on: "On",
-  off: "Off",
+  and: "und",
+  yes: "Ja",
+  no: "Nein",
+  on: "Ein",
+  off: "Aus",
+  hourly: "Stündlich",
+  daily: "Täglich",
+  weekly: "Wöchentlich",
+  monthly: "Monatlich",
+  yearly: "Jährlich",
 
   action: {
-    save: "Save",
-    cancel: "Cancel",
-    edit: "Edit",
-    hide: "Hide",
-    unhide: "Unhide",
-    delete: "Delete",
-    download: "Download",
-    details: "Details"
+    save: "Speichern",
+    cancel: "Abbrechen",
+    edit: "Editieren",
+    hide: "Verbergen",
+    unhide: "Aufdecken",
+    delete: "Löschen",
+    download: "Exportieren",
+    details: "Details",
+    reset: "Zurücksetzen",
+    update: "Aktualisieren",
+    confirm: "Bestätigen"
+  },
+
+  //Dashboard
+  index: {
+    title: "ROSE Übersicht",
+    subtitle: "Gesamtanzahl gesammelter Datensätze in Ihrer lokalen ROSE-Installation."
   },
 
   // Sidebar Menu
   sidebarMenu: {
-    diary: "Diary",
-    backup: "Backup",
-    settings: "Settings",
-    comments: "Comments",
-    interactions: "Interactions",
-    extracts: "Extracts",
-    networks: "Networks",
-    more: "More",
-    help: "Help",
-    about: "About",
-    extraFeatures: "Extra Features",
-    studyCreator: "Study Creator"
+    data: "Daten",
+    dashboard: "Übersichts",
+    diary: "Tagebuch",
+    backup: "Datenverwaltung",
+    settings: "Einstellungen",
+    comments: "Kommentare",
+    interactions: "Interaktionen",
+    extracts: "Extrakte",
+    networks: "Netzwerke",
+    more: "Mehr",
+    help: "Hilfe",
+    about: "Über",
+    extraFeatures: "Funktionen für Forscher",
+    studyCreator: "Studienkonfigurator",
+    debugLog: "Anwendungsprotokoll",
+    observerEditor: "Editor für Observatoren",
+    dataConverter: "Datenkonverter"
   },
 
+  // ROSE Initialization Wizard
   wizard: {
-    header: "Welcome to ROSE",
-    description: "In this step we first need to configure ROSE to work properly.",
-    configOptions: "Choose one option to configure ROSE.",
-    defaultConfig: "Take the default configuration.",
-    fileConfig: "Select a configuration file...",
-    fileConfigBtn: "Choose file",
-    urlConfig: "Specifiy a URL to an ROSE repository..."
+    header: "Willkommen in ROSE",
+    description: "Zunächst muss ROSE konfiguriert werden, um richtig zu funktionieren.",
+    configOptions: "Wählen Sie eine der beiden Optionen, um ROSE für den ersten Einsatz zu konfigurieren.",
+    defaultConfigHeader: "Standardeinstellungen nutzen",
+    defaultConfigDescription: "Ich habe keine Konfigurationsdatei um ROSE zu benutzen.",
+    defaultBtn: "Nutze Standardeinstellungen",
+    fileConfigHeader: "Konfigurationsdatei benutzen",
+    fileConfigDescription: "Ich habe eine angepasste Konfigurationsdatei, um ROSE für seinen Einsatz vorzubereiten.",
+    fileConfigBtn: "Lade Konfigurationsdatei",
+    urlConfig: "URL zu einem ROSE-Datenspeicher angeben...",
+    privacyNoteTitle: "Hinweise zum Privatsphärenschutz",
+    privacyNote: "<p>ROSE sammelt Daten über Ihre Interaktionen mit Social-Media-Plattformen, falls Sie an einer empirischen Studie zum Nutzungsverhalten teilnehmen, oder für Ihre persönlichen Zwecke. Alle Daten werden nur lokal in Ihrem Webbrowser gespeichert. Die Software übermittelt keine gesammelten Daten über das Internet zu anderen Servern. Zudem sind lokale Daten pseudonymisiert. Um die Funktion zur Datensammlung auszuschalten, gehen Sie in das Einstellungsmenü und nutzen Sie den Schalter mit der Beschriftung 'Datensammlung An/Aus'. Wenn Sie weitere Fragen haben, so besuchen Sie die <a href=\"https://secure-software-engineering.github.io/rose/index.html\">Github-Seiten von ROSE.</p>",
+    overlayNoteTitle: "Information zur Nutzung von Einblendungen",
+    overlayNote: "<p>ROSE blendet auf Social-Media-Plattformen eigene Elemente ein, um dem Nutzer zu ermöglichen Notizen zu betrachteten Inhalten zu hinterlegen. Diese Einblendungen sind eine rote Schleife mit der Aufschrift 'Kommentar' und eine hineinschiebende Nutzerschnittstelle, um Notizen zu verwalten (siehe Bilder unten). Jegliche Daten, welche an diesen Nutzerschnittstellen eingegeben werden, werden nur lokal gespeichert - wie alle anderen Daten auch, welche ROSE sammelt. Wenn Sie die Funktion zur Datensammlung ausschalten, dann verschwinden auch alle Einblendungen.</p>",
+    privacyAgree: "Ich habe die Hinweise zum Datenschutz und Einblendungen gelesen und verstanden. Ich möchte fortfahren."
   },
 
   // Diary Page
   diary: {
-    title: "Diary",
-    subtitle: "Here you can make a note of everything else that attracted your attention"
+    title: "Tagebuch",
+    subtitle: "Hier können Sie über alles was Ihnen auffällt Notizen hinterlassen."
   },
 
-  // Backup Page
+  // Data Management aka Backup Page
   backup: {
-    title: "Data Backup",
-    subtitle: "Here you can review, save or restore all data you supplied or which was recorded by ROSE"
+    title: "Datenverwaltung",
+    subtitle: "Untersuchen, löschen und exportieren aller Daten, welche ROSE gesammelt hat.",
+    resetData: "Alle Daten löschen",
+    resetDataLabel: "Lösche alle Daten die ROSE gesammelt hat.",
+    export: "Daten exportieren",
+    exportLabel: "Exportiere und speichere alle Daten in einer einzigen Datei auf Ihrem Computer."
+  },
+
+  resetDataModal: {
+    question: "Bestätigen Sie das Löschen aller gesammelten Daten",
+    warning: "Möchten Sie wirklich alle gesammelten Daten löschen? Diese Aktion kann nicht rückgängig gemacht werden."
   },
 
   // Settings Page
   settings: {
     title: "Einstellungen",
-    subtitle: "Hier können Sie Ihre ROSE Einstellungen anpassen",
-    language: "Language",
-    languageLabel: "Choose your preferred language. ROSE can also adopt the browser language (\"auto detect\" option).",
-    commentReminder: "Comment Reminder",
-    commentReminderLabel: "ROSE can ocassionally display reminders to remember you to comment on your actions if that is required by the study you are participating in. You can deactivate this features if it disturbs you.",
-    extraFeatures: "Extra Features",
-    extraFeaturesLabel: "ROSE has additional features for field researchers and ROSE developers. These features are normally not visible, but can be activated here.",
-    resetRose: "ROSE Zurücksetzen",
-    resetRoseLabel: "Here you can reset ROSE's configurations. The initialization wizard will appear again asking you to load either a default configuration or a specific study configuration file."
+    subtitle: "Verwalten Sie die Konfiguration von ROSE.",
+    language: "Sprache",
+    languageLabel: "Wählen Sie Ihre bevorzugte Sprache, oder nutzen Sie die Standardsprache Ihres Browsers (&ldquo;Auto detect&rdquo;).",
+    commentReminder: "Erinnerung für Kommentare",
+    commentReminderLabel: "ROSE wird gelegentlich eine Nachricht im unteren Bereich des Bildschirms anzeigen, um Sie daran zu erinnern Ihre Aktionen zu kommentieren, falls das innerhalb einer Forschungsstudie notwendig ist. Sie können diese Funktion ausschalten, falls Sie dadurch gestört werden.",
+    extraFeatures: "Funktionen für Forscher und Entwickler",
+    extraFeaturesLabel: "ROSE hat zusätzliche Funktionen für Forscher und ROSE-Entwickler. Diese Funktionen sind im Hauptmenü nicht sichtbar, wenn sie nicht hier eingeschaltet werden.",
+    resetRose: "ROSE-Konfiguration zurücksetzen",
+    resetRoseLabel: "Wenn Sie die Konfiguration von ROSE zurücksetzen, wird der initiale Begrüßungsbildschirm wieder erscheinen. Sie können dann die Standardkonfiguration auswählen, oder eine spezielle Konfigurationsdatei für Ihre Studie laden.",
+    manualUpdate: "Datensammel-Paket aktualisieren",
+    manualUpdateLabel: "Social-Media-Plattformen verändern gelegentlich die Gestaltung ihrer Webseiten. ROSE benötigt dann eine Aktualisierung der Datensammel-Pakete, um mit diesen Änderungen umgehen zu können. Um eine Aktualisierung manuell auszulösen, klicken Sie bitte den &ldquo;Update&rdquo;-Knopf.",
+    autoUpdate: "Automatische Aktualisierung der Datensammel-Pakete",
+    autoUpdateLabel: "Für automatische Aktualisierungen, um aktuelle Veränderungen bei Social-Media-Plattformen zu berücksichtigen, stellen Sie die automatische Aktualisierung ein.",
+    autoUpdateInterval: "Intervall für automatische Aktualisierungen",
+    autoUpdateIntervalLabel: "ROSE prüft automatisch in bestimmten Zeitintervallen, ob neue Pakete vorliegen.",
+    trackingEnabled: "Datensammlung An/Aus",
+    trackingEnabledLabel: "Schaltet alle Datensammel-Funktionen und Einblendungen an oder aus.",
+    lastChecked: "Zuletzt geprüft",
+    never: "nie",
+    lastUpdated: "Letzte Aktualisierung",
+    signedUpdate: "Signiert",
+    unsignedUpdate: "Nicht signiert",
+    uptodate: "Alle Pakete sind aktuell.",
+    error: "Aktualisierung gescheitert.",
+    success: "Aktualisierung erfolgreich.",
+    noInternetConnection: "Keine Internet-Verbindung"
+  },
+
+  resetConfigModal: {
+    question: "Bestätigen Sie, dass Sie die Konfiguration von ROSE zurücksetzen wollen",
+    warning: "Sind Sie sicher, dass Sie die Konfiguration zurücksetzen wollen? Diese Aktion wird Sie zurück zum initialen Begrüßungsbildschirm bringen. Alle gesammelten Daten bleiben erhalten.",
   },
 
   // Comments Page
   comments: {
-    title: "Comments",
-    subtitle: "Have a look at all your comments",
+    title: "Kommentare",
+    subtitle: "Alle Kommentare, welche Sie in der Seitenleiste eingegeben haben.",
 
-    you: "You",
-    commentedOn: "commented on"
+    you: "Sie",
+    commentedOn: "kommentieren von"
   },
 
   // Interactions Page
   interactions: {
-    title: "Interactions",
-    subtitle: "All your recent interactions",
-    actionOn: "action on"
+    title: "Interaktion",
+    subtitle: "Alle Ihre vergangenen Interaktionen auf dieser Social-Media-Plattform, welche von ROSE aufgezeichnet wurden.",
+    actionOn: "Aktion mit",
+    action: "Aktion"
   },
 
   // Extracts Settings Page
   extracts: {
-    title: "Extracts",
-    subtitle: "ROSE extracted these information"
+    title: "Extrakte",
+    subtitle: "Informationen von ROSE extrahiert"
   },
 
   // Help Page
   help: {
-    title: "Usage notes",
-    subtitle: "Frequently asked questions about ROSE",
+    title: "Hilfe",
+    subtitle: "Häufig gestellte Fragen über ROSE",
 
     issue1: {
-      question: "Where does ROSE collect the data about my Facebook usage and my inserted comments?",
-      answer: "<p>ROSE exclusively collects data in your web browser. ROSE can provide a pre-assembled Mail which you can use to transmit your data to the study advisor. ROSE does not transmit data to Facebook; Facebook can not detect your usage of ROSE with their computer systems. ROSE neither transmits data itself to the study advisor nor receives them.</p><p>There is a disadvantage of this privacy aware concept of ROSE, though: ROSE data can be lost in case system bugs emerge on your computer. With the deletion of ROSE from your web browser all stored data is irretrievably lost.</p>"
+      question: "Woher sammelt ROSE meine Daten und Kommentare auf Social-Media-Plattformen?",
+      answer: "<p>ROSE sammelt alle Daten direkt im Webbrowser und speichert sie auch dort. Es gibt keine Datenaustausch zwischen ROSE und den Social-Media-Plattformen, und auch nicht zwischen ROSE und den Forschern der Studie an der Sie ggf. teilnehmen. ROSE erlaubt Zugriff auf diese Daten durch eine Export-Funktion, über welche Sie die Daten auch an Forscher für den Zweck einer Studie weiterleiten können.</p><p>Diese privatsphäreschützende Gestaltung von ROSE hat einen Nachteil: Da Daten nur lokal gespeichert werden, ohne automatische Weiterleitung, können sie im Falle eines Systemfehlers verloren gehen, und Sie können sie auch versehentlich in Ihrem Browser löschen. In diesem Fall sind die Daten nicht wiederherstellbar.</p>"
     },
     issue2: {
-      question: "Are my ROSE study comments visible for other study participants or Facebook users?",
-      answer: "<p>No, this is impossible for technical reasons. The distribution and therefore visibility for other study participants or Facebook users is impossible because ROSE does not transmit data to Facebook computer systems or to the study advisory. ROSE does not receive data either. Furthermore, Facebook can not even find out about whether you are using ROSE or not. Even though ROSE has a close integration in your web browser and the Facebook interface and therefore is much alike to the &quot;real&quot; Facebook functions this &quot;illusion of an extended Facebook&quot; completely and exclusively takes place in your web browser with ROSE.</p>"
+      question: "Sind meine ROSE-Kommentare für andere Studienteilnehmer oder meine Freunde auf Social-Media-Plattformen sichtbar?",
+      answer: "<p>Nein. Kommentare, die Sie in ROSE machen, sind nicht sichtbar für andere. Aus technischen Gründen und zum Schutz Ihrer Privatsphäre überträgt ROSE keine gesammelten Daten zu anderen Servern der Social-Media-Plattformen und der Studien-Forscher. ROSE empfängt solche Daten auch nicht von anderen Quellen. Da ROSE fest in Ihren Browser integriert und auf den Webseiten der Social-Media-Plattformen sichtbar ist, erscheint es so als wäre es eine echte Funktion dieser Plattformen, wenngleich es allein in Ihrem Browser ausgeführt wird. Es gibt keine Möglichkeit von Social-Media-Plattformen festzustellen, ob Sie ROSE verwenden, oder nicht.</p>"
     },
     issue3: {
-      question: "Which data is being recorded by ROSE?",
-      answer: "<p>ROSE records the following data:</p><ul><li><b>Date and time of interactions in Facebook</b>, e.g., the time the study participant publishes a story item on his/her Timeline.</li><li><b>Type of interaction</b>, e.g., &quot;creating a story item&quot;.</li><li><b>Unique identifiers</b>, which mark the context of interactions. Identifiers are an eight-digit combination of letters and numbers, e.g., &quot;2a2d6fc3&quot;. With commenting on a picture the identifiers correspond to the picture you commented on. Thereby the study advisory can detect if multiple study participants commented on the same picture without ever learning about the content of this picture.</li><li><b>Privacy settings concerning interactions</b>, e.g. whether a story item is visible for &quot;Friends&quot;only or for &quot;Everyone&quot;.</li><li><b>Diary entries.</b></li><li><b>ROSE study comments.</b></li><li><b>Privacy settings in general.</b></li></ul>"
+      question: "Welche Arten von Daten werden von ROSE gesammelt?",
+      answer: "<p>ROSE sammelt folgende Arten von Daten:</p><ul><li>Datum und Zeit von Interaktionen auf Social-Media-Plattformen, also die Zeit zu der Sie die Interaktion ausgelöst haben. </li><li>Art der Interaktion, z.B., &ldquo;liking content&rdquo;, &ldquo;viewing a profile&rdquo;, &ldquo;sharing content&rdquo;.</li><li>Eindeutige Identifikatoren aus Buchstaben und Zahlen (z.B., &ldquo;2a2d6fc3&rdquo;), welche mit dem Inhalt und den Personen in Zusammenhang stehen, mit denen Sie interagiert haben. Mit diesen Identifikatoren können Forscher erkennen, dass Sie mehrfach mit den gleichen Personen oder Inhalten interagiert haben. Die Forscher können jedoch nur Vergleiche anstellen und nicht die tatsächlichen Inhalte oder Personen in Erfahrung bringen.</li><li>Generelle und spezifische Privatssphäre-Einstellungen auf Social-Media-Plattformen, z.B., ob bei Facebook ein Eintrag nur für &ldquo;Freunde&rdquo; sichtbar oder öffentlich ist.</li><li>Studienkommentare.</li></ul>"
     },
     issue4: {
-      question: "Does ROSE collect data which I am sharing with my friends on Facebook?",
-      answer: "<p>No. ROSE does not collect any data which you are sharing with your friends on Facebook. ROSE does not collect any content-related information, e.g., pictures, links, messages on Timelines, chat messages, or the names of groups you attended. ROSE only collects data about the usage of a type of action, e.g. if you are commenting on a picture. In the analysis the study advisors are only able to see that you made use of an action. The study advisors only asses that you made use of a type of action, but does not see if you are commenting on a picture of a polar bear or if you are commenting on a picture showing a friend of yours who is at a party. If you like to record information on the content of an action in order to explain why you made use of a specific action, please use the ROSE comments or your diary.</p>"
+      question: "Sammelt ROSE auch Inhalte, welche ich mit meinen Freunden teile?",
+      answer: "<p>Nein. ROSE sammelt keinerlei derartige Informationen, wie z.B. Bilder, Links, persönliche Nachrichten, Gruppen- und Kontaktnamen. ROSE sammelt nur Daten über die Arten von Interaktionen, z.B., ob Sie ein Bild kommentiert haben, oder mit einem Freund persönliche Nachrichten ausgetauscht haben. In der nachfolgenden Analyse können die Studienforscher nur feststellen, dass Sie eine Interaktion durchgeführt haben, den Zeitpunkt, und die Art der Interaktion. Forscher können z.B. feststellen, dass Sie ein Bild kommentiert haben, aber sie können nicht herausfinden, ob das Bild einen Bären oder Freunde von Ihnen auf einer Party gezeigt hat. Wenn Sie zusätzliche Informationen zu Inhalten hinterlegen möchten, um Ihre Interaktionen zu erklären, dann nutzen Sie bitte die Kommentierungs- oder Tagebuch-Funktionen von ROSE.</p>"
     },
     issue5: {
-      question: "How do I control which interaction data ROSE collected?",
-      answer: "<p>You may easily check this by using the user interface (menu item &quot;interaction tracking&quot;). Moreover you may read which data was collected by ROSE, when you are transferring your data to the study advisors. Even though it is a compact text-based data format, you may easily check that no personal data is transmitted.</p>"
+      question: "Wie kontrolliere ich, welche Arten von Interaktionen ROSE sammelt?",
+      answer: "<p>Sie können dazu einfach den Menüpunkt &ldquo;Interaktionen&rdquo; öffnen. Wenn Sie die Daten exportieren und mit den Forschern teilen möchten, dann können Sie ebenfalls alle Daten in einem kompakten text-basierten Format untersuchen. Sie werden feststellen, dass die exportierten Daten keine persönlichen Informationen von Ihnen enthalten.</p>"
     },
     issue6: {
-      question: "How can I be sure that ROSE makes my data anonymous?",
-      answer: "<p>ROSE data does not contain any information which refers to the Facebook user who created this data. ROSE does not save any Facebook user names or pictures’ and videos’ URLs provided by users. Thus ROSE data does not differ from ethnographically elicited and anonymised data, such as interviews. Anyways, saving content-related information would no be very sufficient as it does no allow contextual analysis</p>"
+      question: "Wie kann ich sicherstellen das ROSE meine Daten anonymisiert?",
+      answer: "<p>ROSE-Daten enthalten praktisch keine Informationen über die eine andere Person herausfinden könnte, welcher Social-Media-Nutzer die Daten erstellt hat. ROSE speichert keine Daten zu Nutzernamen, Bildern, Videos und sonstigen Inhalten, welche Social-Media-Nutzer miteinander austauschen. Deshalb haben ROSE-Daten eine vergleichbare Anonymität wie Daten, die durch andere empirische Forschungsmethoden, wie z.B. anonyme Interviews, gesammelt werden. Beim Export der Daten können Sie den Datensatz, ähnlich einem Interviewtranskript, diesbezüglich gegenprüfen. </p>"
     },
     issue7: {
-      question: "May I review the source code to check previous declarations?",
-      answer: "<p>Yes. ROSE is a free, open-source software under GPL-license (General Public License). You may review the source code and you may change and process it on the conditions of the GPL. In favor of needing assistance, please contact the study advisors.</p>"
+      question: "Kann ich den Quellcode von ROSE einsehen, um diese Erklärungen zum Privatsphärenschutz zu prüfen?",
+      answer: "<p>Ja. ROSE ist freie, quelloffene Software unter der GPL (GNU General Public License). Sie können den Quellcode überprüfen, verändern und weiterverwenden unter den Bedingungen der GPL. Sollten Sie Hilfe benötigen, so kontaktieren Sie den Ansprechpartner für ROSE bei Fraunhofer SIT.</p>"
     },
     issue8: {
-      question: "May I use ROSE for personal purposes after the study ended?",
-      answer: "<p>Yes. You may continue using ROSE and process it without hesitation as it does not send any information to the study advisors automatically. Thereto please note the GPL license’s conditions. However, after the study ended we are not able to endorse you by using the software, e.g. providing ROSE updates.</p>"
+      question: "Kann ich ROSE nach dem Ende einer Studie für persönliche Zwecke weiter benutzen?",
+      answer: "<p>Ja. Sie können ROSE für eigene Zwecke weiter benutzen, es werden automatisch keine Daten zu den Forschern weitergeleitet. Bitte berücksichtigen Sie die GPL-Lizenzbedingungen. Allerdings besteht nach Ende der Studie kein Anspruch auf Unterstützung, wie z.B. ROSE-Aktualisierungen.</p>"
     },
   },
 
   // About Page
   about: {
-    title: "About ROSE",
-    subtitle: "Information about ROSE",
-    description: "ROSE is a browser extension to support empirical Field studies by recording users' interactions with the social network Facebook for a limited period of time. Please consider the help page for further information on ROSE's functioning.",
-    developedBy: "is developed by",
+    title: "Über ROSE",
+    subtitle: "Informationen zu ROSE",
+    description: "ROSE ist eine Webbrowser-Erweiterung, welche empirische Feldstudien unterstützt durch Aufzeichnen von Nutzerinteraktionen mit Social-Media-Plattformen für einen definierte Zeit. Bitte berücksichtigen Sie die Hilfe-Seite für weitere Informationen zu den Funktionen und Nutzung von ROSE.",
+    developedBy: "ROSE wurde entwickelt von",
 
     address: {
-      name: "Fraunhofer Institute for Secure Information Technology SIT",
-      street: "Rheinstrasse 75",
-      country: "Germany"
+      name: "Fraunhofer Institut für Sichere Informationstechnologie SIT",
+      street: "Rheinstraße 75",
+      country: "Deutschland"
     },
 
-    forQuestions: "For questions about ROSE feel free to contact",
-    licenceNotice: "This program is free software;you can redistribute it and/or modify it under the terms of the GNU General Public License version as published by the Free Software Foundation;either version 3 of the License, or (at your option) any later version."
+    forQuestions: "Für Fragen zu ROSE kontaktieren Sie gern den Projektleiter:",
+    licenceNotice: "Dieses Programm ist freie Software. Sie können es unter den Bedingungen der GNU General Public License, wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren, entweder gemäß Version 3 der Lizenz oder (nach Ihrer Option) jeder späteren Version."
   },
 
   // Study Creator Page
   studyCreator: {
-    title: 'Study Creator',
-    subtitle: 'LALALALALALALa',
+    title: 'Studienkonfigurator',
+    subtitle: 'Diese Seite erlaubt das Erstellen einer maßgeschneiderten Konfigurationsdatei für Ihre Studie. Diese Konfigurationsdatei können Sie an Ihre Studienteilnehmer weiterleiten; durch Laden der Datei in die lokale Installation von ROSE passen die Studienteilnehmer ihre ROSE-Installation an die Anforderungen Ihrer Studie an.',
+    roseComments: "In-Situ-Kommentare",
+    roseCommentsDesc: "Aktivieren Sie diese Option, wenn die Funktion für In-Situ-Kommentare für Ihre Teilnehmer verfügbar sein soll. Zur Zeit arbeitet diese Funktion nur für Facebook.",
+    roseCommentsRating: "Hinzufügen der In-Situ-Bewertungsoption",
+    roseCommentsRatingDesc: "Aktivieren, falls die Funktion für In-Situ-Kommentare auch nach Bewertungen von Inhalten fragen soll.",
+    salt: "Kryptografischer Salt für die Inhalte-Identifikatoren",
+    saltDesc: "ROSE zeichnet pseudonyme Identifikatoren für Inhalte auf, welche die Interaktionen zu Inhalten und Personen später zueinander zuordenbar machen, ohne die eigentlichen Inhalte offenzulegen. Diese Identifikatoren werden aus dem Webseiten-Inhalt und einem kryptografischen Salt hergeleitet. Als Salt können Sie eine x-beliebige Zeichenkette verwenden, z.B. &ldquo;ROSE123&rdquo;. Wenn Sie Gruppen von Teilnehmern untersuchen wollen, dann sollte der Salt jedoch bei allen Teilnehmern gleich sein, da Sie sonst nachträglich Daten über Teilnehmer hinweg nicht korrelieren können.",
+    hashLength: "Länge des Identifikators für Inhalte und Personen",
+    hashLengthDesc: "Hier können Sie die Länge der pseudonymen Identifikatoren für ROSE festlegen. Sie müssen dabei Privatsphäre der Teilnehmer und Eindeutigkeit der Identifikatoren abwägen. Kürzere Identifikatoren sind privatsphäreschützender; längere Identifikatoren sind einzigartiger und Kollisionen sind unwahrscheinlicher. Jede zusätzliche Stelle erhöht den Raum verfügbarer Identifikatoren um den Faktor 16. Zum Beispiel, erlaubt die Länge 4 somit 16*16*16*16=65536 eindeutige Identifikatoren für Ihre Studie. Als Daumenregel ist 5 ein in der Praxis bewährter Wert.",
+    repositoryUrl: "URL des Speichers für Datensammel-Pakete",
+    repositoryUrlDesc: "ROSE erhält seine Muster um Nutzerinteraktionen zu erkennen in Datensammel-Paketen aus einem zentralen Speicher. Hier können Sie die URL dieses Online-Speichers eingeben.",
+    autoUpdate: "Automatische Aktualisierung der Muster während der Studie",
+    autoUpdateDesc: "Datensammel-Pakete mit Erkennungsmustern werden normalerweise nur mit einer Konfigurationsdatei in ROSE geladen. Es ist aber auch möglich sie kontinuierlich zu aktualisieren, während eine Studie läuft. Dies ist besonders wichtig für Langzeit-Studien, während der die Webseiten von Social-Media-Plattformen viele Änderungen erfahren können.",
+    exportConfig: "Exportiere Konfigurationsdatei",
+    exportConfigDesc: "Hier können Sie eine Konfigurationsdatei exportieren, welche alle Einstellungen von dieser Seite enthält. Ihre Studienteilnehmer können diese Datei in ihre ROSE-Installation laden.",
+    fingerprint: "Schlüssel-Fingerabdruck des Speichers für Datensammel-Pakete",
+    fingerprintDesc: "Aus Sicherheitsgründen müssen die Muster in den Datensammel-Paketen mit RSA signiert werden. Diese Signatur wird geprüft, bevor ROSE die enthaltenen Muster lädt. Bitte geben Sie den hexadezimalen SHA-1-Fingerabdruck für den öffentlichen Schlüssel ein, welchen ROSE benutzen soll, um die digitale Signatur zu prüfen.",
+    optionalFeaturesHeader: "Optionale Funktionen",
+    privacyHeader: "Privatsphäre-Einstellungen",
+    repositoryHeader: "Speicher für Datensammel-Pakete konfigurieren",
+    configurationHeader: "Datensammlung konfigurieren",
+    autoUpdateHeader: "Automatische Aktualisierung der Datensammel-Pakete konfigurieren",
+    networks: "Zu überwachende Social-Media-Plattformen",
+    networksDesc: "Hier können Sie ein- und ausschalten, auf welchen Webseiten ROSE Daten sammeln soll.",
+    extractors: "Verfügbare Datenextraktoren",
+    observers: "Verfügbare Interaktions-Observatoren",
+    enableAll: "Alle verfügbaren aktivieren",
+    disableAll: "Alle verfügbaren de-aktivieren",
+    forceSecureUpdate: "Sichere Aktualisierungen verlangen",
+    forceSecureUpdateDesc: "Wenn diese Funktion angeschaltet ist, dann sind Aktualisierungen der Datensammel-Pakete nur aus sicherer Quelle erlaubt. Sie müssen dann den korrekten Fingerabdruck des öffentlichen Signaturschlüssels oben angeben.",
+    updateInterval: "Intervall für die automatische Prüfung auf Aktualisierung der Datensammel-Pakete",
+    updateIntervalLabel: "Wählen Sie ein Intervall, um nach Aktualisierungen der Datensammel-Pakete zu suchen",
+    baseFileNotFound: "Ungültige URL der Basisdatei des Datenspeichers.",
 
-    roseComments: "ROSE Comments",
-    roseCommentsDesc: "Check if the ROSE Comments function should be available",
-    roseCommentsRating: "ROSE Comments Rating",
-    roseCommentsRatingDesc: "Check if the ROSE Comments rating function should be available",
-    salt: "Salt",
-    saltDesc: "Whats the purpose of this settings?",
-    hashLength: "Hash Length",
-    hashLengthDesc: "Whats the purpose of this settings?",
-    repositoryUrl: "Repository URL",
-    repositoryUrlDesc: "Whats the purpose of this settings?",
-    autoUpdate: "Automatically Update Observers from Repository",
-    autoUpdateDesc: "Whats the purpose of this settings?",
-    exportConfig: "Export Configuration",
-    exportConfigDesc: "Export configuration to file",
-    fingerprint: "Fingerabdruck",
-    fingerprintDesc: "Whats the purpose of this settings?"
+    table: {
+      enabled: "Status (An/Aus)",
+      name: "Muster-Name",
+      version: "Aktuelle Version",
+      description: "Erläuterung",
+      type: "Typ"
+    }
+  },
+
+  // Application Log
+  debugLog: {
+    title: "Anwendungsprotokoll",
+    subtitle: "Diese Seite zeigt alle Nachrichten, welche die Module von ROSE ausgegeben haben",
+    date: "Zeitstempel",
+    message: "Meldung",
+    module: "Modulname"
+  },
+
+  observerEditor: {
+    title: "Editor für Observations-Muster",
+    subtitle: "Dieser Editor erlaubt das Verändern der Observations-Muster zu Testzwecken, oder um neue zu erstellen. Diese Funktionen ist für Experten."
+  },
+
+  dataConverter: {
+    title: "Datenkonverter",
+    subtitle: "Konverter um XML-ROSE-Exporte in CSV-Dateien umzuwandeln. Laden Sie die XML-Datei und wählen Sie die Datensätze, welche in die CSV-Datei übertragen werden sollen."
   }
 };

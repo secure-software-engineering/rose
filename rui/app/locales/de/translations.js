@@ -55,7 +55,7 @@ export default {
   // ROSE Initialization Wizard
   wizard: {
     header: "Willkommen in ROSE",
-    description: "Zunächst muss ROSE konfiguriert werden um richtig zu funktionieren.",
+    description: "Zunächst muss ROSE konfiguriert werden, um richtig zu funktionieren.",
     configOptions: "Wählen Sie eine der beiden Optionen, um ROSE für den ersten Einsatz zu konfigurieren.",
     defaultConfigHeader: "Standardeinstellungen nutzen",
     defaultConfigDescription: "Ich habe keine Konfigurationsdatei um ROSE zu benutzen.",
@@ -154,10 +154,10 @@ export default {
   // Help Page
   help: {
     title: "Hilfe",
-    subtitle: "Häufig gefragte Fragen über ROSE",
+    subtitle: "Häufig gestellte Fragen über ROSE",
 
     issue1: {
-      question: "Woher sammelt ROSE meine Daten und Kommentar auf Social-Media-Plattformen?",
+      question: "Woher sammelt ROSE meine Daten und Kommentare auf Social-Media-Plattformen?",
       answer: "<p>ROSE sammelt alle Daten direkt im Webbrowser und speichert sie auch dort. Es gibt keine Datenaustausch zwischen ROSE und den Social-Media-Plattformen, und auch nicht zwischen ROSE und den Forschern der Studie an der Sie ggf. teilnehmen. ROSE erlaubt Zugriff auf diese Daten durch eine Export-Funktion, über welche Sie die Daten auch an Forscher für den Zweck einer Studie weiterleiten können.</p><p>Diese privatsphäreschützende Gestaltung von ROSE hat einen Nachteil: Da Daten nur lokal gespeichert werden, ohne automatische Weiterleitung, können sie im Falle eines Systemfehlers verloren gehen, und Sie können sie auch versehentlich in Ihrem Browser löschen. In diesem Fall sind die Daten nicht wiederherstellbar.</p>"
     },
     issue2: {
@@ -181,7 +181,7 @@ export default {
       answer: "<p>ROSE-Daten enthalten praktisch keine Informationen über die eine andere Person herausfinden könnte, welcher Social-Media-Nutzer die Daten erstellt hat. ROSE speichert keine Daten zu Nutzernamen, Bildern, Videos und sonstigen Inhalten, welche Social-Media-Nutzer miteinander austauschen. Deshalb haben ROSE-Daten eine vergleichbare Anonymität wie Daten, die durch andere empirische Forschungsmethoden, wie z.B. anonyme Interviews, gesammelt werden. Beim Export der Daten können Sie den Datensatz, ähnlich einem Interviewtranskript, diesbezüglich gegenprüfen. </p>"
     },
     issue7: {
-      question: "Kann ich den Quellcode von ROSE einsehen, um diese Erklärungen zum Pravatsphärenschutz zu prüfen?",
+      question: "Kann ich den Quellcode von ROSE einsehen, um diese Erklärungen zum Privatsphärenschutz zu prüfen?",
       answer: "<p>Ja. ROSE ist freie, quelloffene Software unter der GPL (GNU General Public License). Sie können den Quellcode überprüfen, verändern und weiterverwenden unter den Bedingungen der GPL. Sollten Sie Hilfe benötigen, so kontaktieren Sie den Ansprechpartner für ROSE bei Fraunhofer SIT.</p>"
     },
     issue8: {
@@ -218,7 +218,7 @@ export default {
     salt: "Kryptografischer Salt für die Inhalte-Identifikatoren",
     saltDesc: "ROSE zeichnet pseudonyme Identifikatoren für Inhalte auf, welche die Interaktionen zu Inhalten und Personen später zueinander zuordenbar machen, ohne die eigentlichen Inhalte offenzulegen. Diese Identifikatoren werden aus dem Webseiten-Inhalt und einem kryptografischen Salt hergeleitet. Als Salt können Sie eine x-beliebige Zeichenkette verwenden, z.B. \"ROSE123\". Wenn Sie Gruppen von Teilnehmern untersuchen wollen, dann sollte der Salt jedoch bei allen Teilnehmern gleich sein, da Sie sonst nachträglich Daten über Teilnehmer hinweg nicht korrelieren können.",
     hashLength: "Länge des Identifikators für Inhalte und Personen",
-    hashLengthDesc: "Hier können Sie Länge der pseudonymen Identifikatoren für ROSE festlegen. Sie müssen dabei Privatsphäre der Teilnehmer und Eindeutigkeit der Identifikatoren abwägen. Kürzere Identifikatoren sind privatsphäreschützender; längere Identifikatoren sind einzigartiger und Kollisionen sind unwahrscheinlicher. Jede zusätzliche Stelle erhöht den Raum verfügbarer Identifikatoren um den Faktor 16. Zum Beispiel, erlaubt die Länge 4 somit 16*16*16*16=65536 eindeutige Identifikatoren für Ihre Studie. Als Daumenregel ist 5 ein in der Praxis bewährter Wert.",
+    hashLengthDesc: "Hier können Sie die Länge der pseudonymen Identifikatoren für ROSE festlegen. Sie müssen dabei Privatsphäre der Teilnehmer und Eindeutigkeit der Identifikatoren abwägen. Kürzere Identifikatoren sind privatsphäreschützender; längere Identifikatoren sind einzigartiger und Kollisionen sind unwahrscheinlicher. Jede zusätzliche Stelle erhöht den Raum verfügbarer Identifikatoren um den Faktor 16. Zum Beispiel, erlaubt die Länge 4 somit 16*16*16*16=65536 eindeutige Identifikatoren für Ihre Studie. Als Daumenregel ist 5 ein in der Praxis bewährter Wert.",
     repositoryUrl: "URL des Speichers für Datensammel-Pakete",
     repositoryUrlDesc: "ROSE erhält seine Muster um Nutzerinteraktionen zu erkennen in Datensammel-Paketen aus einem zentralen Speicher. Hier können Sie die URL dieses Online-Speichers eingeben.",
     autoUpdate: "Automatische Aktualisierung der Muster während der Studie",

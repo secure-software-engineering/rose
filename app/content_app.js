@@ -81,7 +81,6 @@ import FBLoginTracker from './rose/activity-trackers/facebook-login';
                 if (configs.get('roseCommentsIsEnabled')) {
                     if (!facebookUI) facebookUI = new FacebookUI()
                     else facebookUI.injectUI()
-                    facebookUI.redrawUI()
                 }
             }})
         }

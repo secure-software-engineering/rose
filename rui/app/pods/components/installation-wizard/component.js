@@ -4,7 +4,6 @@ export default Ember.Component.extend({
   ajax: Ember.inject.service(),
   read: false,
   unread: function () {
-    // this.$('[file-picker]').attr('disabled')
     return !this.get('read')
   }.property('read'),
 

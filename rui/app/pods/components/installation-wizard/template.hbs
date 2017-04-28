@@ -9,60 +9,60 @@
         </div>
       </h2>
 
-      <form class="ui form">
-        <h4>{{t "wizard.privacyNoteTitle"}}</h4>
-        <p>{{t "wizard.privacyNote"}}</p>
-        <div class="field">
-          {{ui-checkbox class="toggle" checked=read label=(t "wizard.privacyAgree") }}
+      <h4>{{t "wizard.privacyNoteTitle"}}</h4>
+      <p>{{t "wizard.privacyNote"}}</p>
 
-        </div>
-        <br>
-      </form>
-
-      <div class="ui two cards">
-        <div class="card">
-          <div class="content">
-            <div class="header">{{t "wizard.defaultConfigHeader"}}</div>
-            <div class="description">
-              {{t "wizard.defaultConfigDescription"}}
-            </div>
-          </div>
-          <button class="ui primary bottom attached button"
-                  {{action "selectDefaultConfig"}} disabled={{unread}} >
-            {{t "wizard.defaultBtn"}}
-          </button>
-        </div>
-        <div class="card">
-          <div class="content">
-            <div class="header">{{t "wizard.fileConfigHeader"}}</div>
-            <div class="description">
-              {{t "wizard.fileConfigDescription"}}
-            </div>
-          </div>
-          {{#rose-file-picker fileLoaded="fileLoaded"
-                          dropzone=false
-                          preview=false
-                          readAs="readAsText"
-                          class="ui bottom attached primary button"
-                          isEnabled=read}}
-            <i class="add icon"></i>
-            {{t "wizard.fileConfigBtn"}}
-          {{/rose-file-picker}}
-        </div>
-      </div>
-
-
-        <h4>{{t "wizard.overlayNoteTitle"}}</h4>
-        <p>{{t "wizard.overlayNote"}}</p>
-
+      <h4>{{t "wizard.overlayNoteTitle"}}</h4>
+      <p>
+        {{t "wizard.overlayNote"}}
         <div class="ui stackable two column grid">
           <div class="column">
-            <img class="ui fluid bordered image" src="/icons/Screenshot-CommentRibbon.png">
+            <img class="ui fluid image" src="/icons/Screenshot-CommentRibbon.png">
           </div>
           <div class="column">
-            <img class="ui fluid bordered image" src="/icons/Screenshot-Sidebar.png">
+            <img class="ui fluid image" src="/icons/Screenshot-Sidebar.png">
           </div>
         </div>
+      </p>
+
+      <form class="ui form">
+        <div class="field">
+          {{ui-checkbox class="toggle" checked=read label=(t "wizard.privacyAgree") }}
+        </div>
+
+        <div class="ui two cards">
+          <div class="card">
+            <div class="content">
+              <div class="header">{{t "wizard.defaultConfigHeader"}}</div>
+              <div class="description">
+                {{t "wizard.defaultConfigDescription"}}
+              </div>
+            </div>
+            <button class="ui primary bottom attached button"
+                    {{action "selectDefaultConfig"}} disabled={{unread}} >
+              {{t "wizard.defaultBtn"}}
+            </button>
+          </div>
+          <div class="card">
+            <div class="content">
+              <div class="header">{{t "wizard.fileConfigHeader"}}</div>
+              <div class="description">
+                {{t "wizard.fileConfigDescription"}}
+              </div>
+            </div>
+            {{#rose-file-picker fileLoaded="fileLoaded"
+                            dropzone=false
+                            preview=false
+                            readAs="readAsText"
+                            class="ui bottom attached primary button"
+                            isEnabled=read}}
+              <i class="add icon"></i>
+              {{t "wizard.fileConfigBtn"}}
+            {{/rose-file-picker}}
+          </div>
+        </div>
+
+      </form>
 
     </div>
   </div>

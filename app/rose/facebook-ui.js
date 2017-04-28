@@ -74,38 +74,35 @@ export default (function () {
 
     function FacebookUI () {
         this._configs.fetch()
-        this._settings.fetch()
         this._comments.fetch()
-        var extractorsCol = new ExtractorCollection()
-        extractorsCol.fetch({success: function extractorsLoaded (col) {
-            this._statusUpdateExtractor = col.findWhere({name: 'status-update'})
+        this._settings.fetch({success: function () {
+            // Init internationlization
+            var options
+            options = {
+                fallbackLng: 'en',
+                load: 'unspecific',
+                resources: {
+                    en: { translation: localeEn },
+                    de: { translation: localeDe }
+                }
+            }
+
+            var isLanguageSet = this._settings.get('currentLanguage') !== null || this._settings.get('currentLanguage') !== undefined
+            var isLanguageNotAutoDetect = this._settings.get('currentLanguage') !== 'auto'
+            if (isLanguageSet && isLanguageNotAutoDetect) {
+                options.lng = this._settings.get('currentLanguage')
+            } else {
+                options.lng = navigator.language || navigator.userLanguage
+            }
+
+            i18n.init(options)
+
+            this.injectUI()
         }.bind(this)})
 
-        // Init internationlization
-        var options
-        options = {
-            fallbackLng: 'en',
-            load: 'unspecific',
-            resources: {
-                en: { translation: localeEn },
-                de: { translation: localeDe }
-            }
-        }
-
-        var isLanguageSet = this._settings.get('currentLanguage') !== null || this._settings.get('currentLanguage') !== undefined
-        var isLanguageNotAutoDetect = this._settings.get('currentLanguage') !== 'auto'
-        if (isLanguageSet && isLanguageNotAutoDetect) {
-            options.lng = this._settings.get('currentLanguage')
-        } else {
-            options.lng = options.fallbackLng
-        }
-
-        i18n.init(options)
-
-        var MutationObserver = window.MutationObserver || window.WebKitMutationObserver
-        this._observer = new MutationObserver(this.redrawUI.bind(this))
-
-        this.injectUI()
+        new ExtractorCollection().fetch({success: function extractorsLoaded (col) {
+            this._statusUpdateExtractor = col.findWhere({name: 'status-update'})
+        }.bind(this)})
     }
 
     FacebookUI.prototype.injectUI = function () {
@@ -115,6 +112,8 @@ export default (function () {
         this._injectSidebar()
 
         // create MutationObserver to inject elements when new content is loaded into DOM
+        var MutationObserver = window.MutationObserver || window.WebKitMutationObserver
+        this._observer = new MutationObserver(this.redrawUI.bind(this))
         this._observer.observe($('#globalContainer')[0], {
             childList: true,
             subtree: true

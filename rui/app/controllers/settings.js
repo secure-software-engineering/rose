@@ -27,7 +27,13 @@ export default Ember.Controller.extend({
     },
 
     changeI18nLanguage () {
-      this.set('i18n.locale', this.get('settings.user.currentLanguage'))
+      var language = this.get('settings.user.currentLanguage')
+      if (language === 'auto') {
+        language = navigator.language || navigator.userLanguage
+        language = languages.some((lang) => lang.code === language.toLowerCase()) ? language : 'en'
+      }
+
+      this.set('i18n.locale', language)
       this.send('saveSettings')
     },
 

@@ -10239,7 +10239,7 @@ define("rose/templates/index", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 43,
+            "line": 42,
             "column": 0
           }
         },
@@ -10314,18 +10314,12 @@ define("rose/templates/index", ["exports"], function (exports) {
         var el3 = dom.createTextNode("\n        ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("div");
-        dom.setAttribute(el3, "class", "five wide field");
+        dom.setAttribute(el3, "class", "four wide field");
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n        ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("div");
-        dom.setAttribute(el3, "class", "six wide field");
-        var el4 = dom.createTextNode("\n            ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("p");
-        var el5 = dom.createComment("");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
+        dom.setAttribute(el3, "class", "eight wide field");
         var el4 = dom.createTextNode("\n            ");
         dom.appendChild(el3, el4);
         var el4 = dom.createComment("");
@@ -10346,18 +10340,16 @@ define("rose/templates/index", ["exports"], function (exports) {
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element3 = dom.childAt(fragment, [0, 3]);
         var element4 = dom.childAt(fragment, [6]);
-        var element5 = dom.childAt(element4, [3, 3]);
-        var morphs = new Array(7);
+        var morphs = new Array(6);
         morphs[0] = dom.createMorphAt(element3, 1, 1);
         morphs[1] = dom.createMorphAt(dom.childAt(element3, [3]), 0, 0);
         morphs[2] = dom.createMorphAt(fragment, 2, 2, contextualElement);
         morphs[3] = dom.createAttrMorph(element4, 'class');
         morphs[4] = dom.createMorphAt(dom.childAt(element4, [1]), 3, 3);
-        morphs[5] = dom.createMorphAt(dom.childAt(element5, [1]), 0, 0);
-        morphs[6] = dom.createMorphAt(element5, 3, 3);
+        morphs[5] = dom.createMorphAt(dom.childAt(element4, [3, 3]), 1, 1);
         return morphs;
       },
-      statements: [["inline", "t", ["index.title"], [], ["loc", [null, [4, 8], [4, 27]]]], ["inline", "t", ["index.subtitle"], [], ["loc", [null, [5, 32], [5, 54]]]], ["block", "each", [["get", "networks", ["loc", [null, [9, 8], [9, 16]]]]], [], 0, null, ["loc", [null, [9, 0], [23, 9]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [27, 22], [27, 34]]]]]]], ["inline", "t", ["settings.trackingEnabled"], [], ["loc", [null, [30, 6], [30, 38]]]], ["inline", "t", ["settings.trackingEnabledLabel"], [], ["loc", [null, [35, 15], [35, 52]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.trackingEnabled", ["loc", [null, [37, 34], [37, 63]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.user.trackingEnabled", ["loc", [null, [38, 50], [38, 79]]]]], [], ["loc", [null, [38, 32], [38, 80]]]], "onChange", ["subexpr", "action", ["toggleTracking"], [], ["loc", [null, [39, 35], [39, 60]]]]], ["loc", [null, [36, 12], [39, 62]]]]],
+      statements: [["inline", "t", ["index.title"], [], ["loc", [null, [4, 8], [4, 27]]]], ["inline", "t", ["index.subtitle"], [], ["loc", [null, [5, 32], [5, 54]]]], ["block", "each", [["get", "networks", ["loc", [null, [9, 8], [9, 16]]]]], [], 0, null, ["loc", [null, [9, 0], [23, 9]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [27, 22], [27, 34]]]]]]], ["inline", "t", ["settings.trackingEnabled"], [], ["loc", [null, [30, 6], [30, 38]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.trackingEnabled", ["loc", [null, [36, 34], [36, 63]]]]], [], []], "label", ["subexpr", "t", ["settings.trackingEnabledLabel"], [], ["loc", [null, [37, 32], [37, 67]]]], "onChange", ["subexpr", "action", ["toggleTracking"], [], ["loc", [null, [38, 35], [38, 60]]]]], ["loc", [null, [35, 12], [38, 62]]]]],
       locals: [],
       templates: [child0]
     };
@@ -15003,7 +14995,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+54d7ba9e"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+ad69842e"});
 }
 
 /* jshint ignore:end */

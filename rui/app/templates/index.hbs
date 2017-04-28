@@ -30,12 +30,11 @@
       {{t "settings.trackingEnabled"}}
     </h3>
     <div class="fields">
-        <div class="five wide field"></div>
-        <div class="six wide field">
-            <p>{{t "settings.trackingEnabledLabel"}}</p>
+        <div class="four wide field"></div>
+        <div class="eight wide field">
             {{ui-checkbox class="toggle"
                           checked=settings.user.trackingEnabled
-                          label=(boolean-to-yesno settings.user.trackingEnabled)
+                          label=(t "settings.trackingEnabledLabel")
                           onChange=(action "toggleTracking")}}
         </div>
     </div>

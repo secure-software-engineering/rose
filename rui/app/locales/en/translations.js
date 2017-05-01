@@ -115,6 +115,7 @@ export default {
     lastChecked: "Last checked",
     never: "Never",
     lastUpdated: "Last updated",
+    signedStatus: "Status",
     signedUpdate: "Signed",
     unsignedUpdate: "Unsigned",
     uptodate: "Everything is already up-to-date.",

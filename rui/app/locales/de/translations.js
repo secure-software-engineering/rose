@@ -115,6 +115,7 @@ export default {
     lastChecked: "Zuletzt geprüft",
     never: "nie",
     lastUpdated: "Letzte Aktualisierung",
+    signedStatus: "Status",
     signedUpdate: "Signiert",
     unsignedUpdate: "Nicht signiert",
     uptodate: "Alle Pakete sind aktuell.",

@@ -46,9 +46,47 @@
                   onChange=(action "saveSettings")}}
   </div>
 
+
   <div class="field manualUpdate">
     <label>{{t "settings.manualUpdate"}}</label>
     <p>{{t "settings.manualUpdateLabel"}}</p>
+
+    <table class="ui celled small table">
+    <thead>
+      <tr>
+        <th>{{t "settings.lastChecked"}}</th>
+        <th>{{t "settings.lastUpdated"}}</th>
+        <th>{{t "settings.signedStatus"}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          {{#if settings.system.lastChecked}}
+            {{moment-format settings.system.lastChecked 'YYYY-MM-DD HH:mm'}}
+          {{else}}
+            {{t "settings.never"}}
+          {{/if}}
+        </td>
+        <td>
+          {{#if settings.system.lastUpdated}}
+            {{moment-format settings.system.lastUpdated 'YYYY-MM-DD HH:mm'}}
+          {{else}}
+            {{t "settings.never"}}
+          {{/if}}
+        </td>
+        <td class="{{if updateSigned "positive"}}">
+          <i class="{{if updateSigned "lock" "unlock alternate"}} icon"></i>
+          {{#if updateSigned}}
+            {{t "settings.signedUpdate"}}
+          {{else}}
+            {{t "settings.unsignedUpdate"}}
+          {{/if}}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
     {{#if navigator.onLine}}
     <button class="ui {{if updateInProgress "loading"}} button" {{action "manualUpdate"}}>{{t "action.update"}}</button>
     {{else}}
@@ -57,37 +95,6 @@
       <a class="ui basic label">{{t "settings.noInternetConnection"}}</a>
     </div>
     {{/if}}
-
-    <a class="ui label">
-      {{t "settings.lastChecked"}}
-      <div class="detail">
-        {{#if settings.system.lastChecked}}
-          {{moment-format settings.system.lastChecked 'YYYY-MM-DD HH:mm'}}
-        {{else}}
-          {{t "settings.never"}}
-        {{/if}}
-      </div>
-    </a>
-
-    <a class="ui label">
-      {{t "settings.lastUpdated"}}
-      <div class="detail">
-        {{#if settings.system.lastUpdated}}
-          {{moment-format settings.system.lastUpdated 'YYYY-MM-DD HH:mm'}}
-        {{else}}
-          {{t "settings.never"}}
-        {{/if}}
-      </div>
-    </a>
-
-    <a class="ui {{if updateSigned "green"}} label">
-      <i class="{{if updateSigned "lock" "unlock alternate"}} icon"></i>
-        {{#if updateSigned}}
-          {{t "settings.signedUpdate"}}
-        {{else}}
-          {{t "settings.unsignedUpdate"}}
-        {{/if}}
-    </a>
 
     {{#if updateResult}}
     <div class="ui {{updateResult}} message hidden">

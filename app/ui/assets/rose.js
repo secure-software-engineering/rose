@@ -1749,174 +1749,277 @@ define("rose/locales/de/config", ["exports"], function (exports) {
 define("rose/locales/de/translations", ["exports"], function (exports) {
   exports["default"] = {
     // General
-    and: "and",
-    yes: "Yes",
-    no: "No",
-    on: "On",
-    off: "Off",
+    and: "und",
+    yes: "Ja",
+    no: "Nein",
+    on: "Ein",
+    off: "Aus",
+    hourly: "Stündlich",
+    daily: "Täglich",
+    weekly: "Wöchentlich",
+    monthly: "Monatlich",
+    yearly: "Jährlich",
 
     action: {
-      save: "Save",
-      cancel: "Cancel",
-      edit: "Edit",
-      hide: "Hide",
-      unhide: "Unhide",
-      "delete": "Delete",
-      download: "Download",
-      details: "Details"
+      save: "Speichern",
+      cancel: "Abbrechen",
+      edit: "Editieren",
+      hide: "Verbergen",
+      unhide: "Aufdecken",
+      "delete": "Löschen",
+      download: "Exportieren",
+      details: "Details",
+      reset: "Zurücksetzen",
+      update: "Aktualisieren",
+      confirm: "Bestätigen"
+    },
+
+    //Dashboard
+    index: {
+      title: "ROSE Übersicht",
+      subtitle: "Gesamtanzahl gesammelter Datensätze in Ihrer lokalen ROSE-Installation."
     },
 
     // Sidebar Menu
     sidebarMenu: {
-      diary: "Diary",
-      backup: "Backup",
-      settings: "Settings",
-      comments: "Comments",
-      interactions: "Interactions",
-      extracts: "Extracts",
-      networks: "Networks",
-      more: "More",
-      help: "Help",
-      about: "About",
-      extraFeatures: "Extra Features",
-      studyCreator: "Study Creator"
+      data: "Daten",
+      dashboard: "Übersichts",
+      diary: "Tagebuch",
+      backup: "Datenverwaltung",
+      settings: "Einstellungen",
+      comments: "Kommentare",
+      interactions: "Interaktionen",
+      extracts: "Extrakte",
+      networks: "Netzwerke",
+      more: "Mehr",
+      help: "Hilfe",
+      about: "Über",
+      extraFeatures: "Funktionen für Forscher",
+      studyCreator: "Studienkonfigurator",
+      debugLog: "Anwendungsprotokoll",
+      observerEditor: "Editor für Observatoren",
+      dataConverter: "Datenkonverter"
     },
 
+    // ROSE Initialization Wizard
     wizard: {
-      header: "Welcome to ROSE",
-      description: "In this step we first need to configure ROSE to work properly.",
-      configOptions: "Choose one option to configure ROSE.",
-      defaultConfig: "Take the default configuration.",
-      fileConfig: "Select a configuration file...",
-      fileConfigBtn: "Choose file",
-      urlConfig: "Specifiy a URL to an ROSE repository..."
+      header: "Willkommen in ROSE",
+      description: "Zunächst muss ROSE konfiguriert werden, um richtig zu funktionieren.",
+      configOptions: "Wählen Sie eine der beiden Optionen, um ROSE für den ersten Einsatz zu konfigurieren.",
+      defaultConfigHeader: "Standardeinstellungen nutzen",
+      defaultConfigDescription: "Ich habe keine Konfigurationsdatei um ROSE zu benutzen.",
+      defaultBtn: "Nutze Standardeinstellungen",
+      fileConfigHeader: "Konfigurationsdatei benutzen",
+      fileConfigDescription: "Ich habe eine angepasste Konfigurationsdatei, um ROSE für seinen Einsatz vorzubereiten.",
+      fileConfigBtn: "Lade Konfigurationsdatei",
+      urlConfig: "URL zu einem ROSE-Datenspeicher angeben...",
+      privacyNoteTitle: "Hinweise zum Privatsphärenschutz",
+      privacyNote: "<p>ROSE sammelt Daten über Ihre Interaktionen mit Social-Media-Plattformen, falls Sie an einer empirischen Studie zum Nutzungsverhalten teilnehmen, oder für Ihre persönlichen Zwecke. Alle Daten werden nur lokal in Ihrem Webbrowser gespeichert. Die Software übermittelt keine gesammelten Daten über das Internet zu anderen Servern. Zudem sind lokale Daten pseudonymisiert. Um die Funktion zur Datensammlung auszuschalten, gehen Sie in das Einstellungsmenü und nutzen Sie den Schalter mit der Beschriftung 'Datensammlung An/Aus'. Wenn Sie weitere Fragen haben, so besuchen Sie die <a href=\"https://secure-software-engineering.github.io/rose/index.html\">Github-Seiten von ROSE.</p>",
+      overlayNoteTitle: "Information zur Nutzung von Einblendungen",
+      overlayNote: "<p>ROSE blendet auf Social-Media-Plattformen eigene Elemente ein, um dem Nutzer zu ermöglichen Notizen zu betrachteten Inhalten zu hinterlegen. Diese Einblendungen sind eine rote Schleife mit der Aufschrift 'Kommentar' und eine hineinschiebende Nutzerschnittstelle, um Notizen zu verwalten (siehe Bilder unten). Jegliche Daten, welche an diesen Nutzerschnittstellen eingegeben werden, werden nur lokal gespeichert - wie alle anderen Daten auch, welche ROSE sammelt. Wenn Sie die Funktion zur Datensammlung ausschalten, dann verschwinden auch alle Einblendungen.</p>",
+      privacyAgree: "Ich habe die Hinweise zum Datenschutz und Einblendungen gelesen und verstanden. Ich möchte fortfahren."
     },
 
     // Diary Page
     diary: {
-      title: "Diary",
-      subtitle: "Here you can make a note of everything else that attracted your attention"
+      title: "Tagebuch",
+      subtitle: "Hier können Sie über alles was Ihnen auffällt Notizen hinterlassen."
     },
 
-    // Backup Page
+    // Data Management aka Backup Page
     backup: {
-      title: "Data Backup",
-      subtitle: "Here you can review, save or restore all data you supplied or which was recorded by ROSE"
+      title: "Datenverwaltung",
+      subtitle: "Untersuchen, löschen und exportieren aller Daten, welche ROSE gesammelt hat.",
+      resetData: "Alle Daten löschen",
+      resetDataLabel: "Lösche alle Daten die ROSE gesammelt hat.",
+      "export": "Daten exportieren",
+      exportLabel: "Exportiere und speichere alle Daten in einer einzigen Datei auf Ihrem Computer."
+    },
+
+    resetDataModal: {
+      question: "Bestätigen Sie das Löschen aller gesammelten Daten",
+      warning: "Möchten Sie wirklich alle gesammelten Daten löschen? Diese Aktion kann nicht rückgängig gemacht werden."
     },
 
     // Settings Page
     settings: {
       title: "Einstellungen",
-      subtitle: "Hier können Sie Ihre ROSE Einstellungen anpassen",
-      language: "Language",
-      languageLabel: "Choose your preferred language. ROSE can also adopt the browser language (\"auto detect\" option).",
-      commentReminder: "Comment Reminder",
-      commentReminderLabel: "ROSE can ocassionally display reminders to remember you to comment on your actions if that is required by the study you are participating in. You can deactivate this features if it disturbs you.",
-      extraFeatures: "Extra Features",
-      extraFeaturesLabel: "ROSE has additional features for field researchers and ROSE developers. These features are normally not visible, but can be activated here.",
-      resetRose: "ROSE Zurücksetzen",
-      resetRoseLabel: "Here you can reset ROSE's configurations. The initialization wizard will appear again asking you to load either a default configuration or a specific study configuration file."
+      subtitle: "Verwalten Sie die Konfiguration von ROSE.",
+      language: "Sprache",
+      languageLabel: "Wählen Sie Ihre bevorzugte Sprache, oder nutzen Sie die Standardsprache Ihres Browsers (&ldquo;Auto detect&rdquo;).",
+      commentReminder: "Erinnerung für Kommentare",
+      commentReminderLabel: "ROSE wird gelegentlich eine Nachricht im unteren Bereich des Bildschirms anzeigen, um Sie daran zu erinnern Ihre Aktionen zu kommentieren, falls das innerhalb einer Forschungsstudie notwendig ist. Sie können diese Funktion ausschalten, falls Sie dadurch gestört werden.",
+      extraFeatures: "Funktionen für Forscher und Entwickler",
+      extraFeaturesLabel: "ROSE hat zusätzliche Funktionen für Forscher und ROSE-Entwickler. Diese Funktionen sind im Hauptmenü nicht sichtbar, wenn sie nicht hier eingeschaltet werden.",
+      resetRose: "ROSE-Konfiguration zurücksetzen",
+      resetRoseLabel: "Wenn Sie die Konfiguration von ROSE zurücksetzen, wird der initiale Begrüßungsbildschirm wieder erscheinen. Sie können dann die Standardkonfiguration auswählen, oder eine spezielle Konfigurationsdatei für Ihre Studie laden.",
+      manualUpdate: "Datensammel-Paket aktualisieren",
+      manualUpdateLabel: "Social-Media-Plattformen verändern gelegentlich die Gestaltung ihrer Webseiten. ROSE benötigt dann eine Aktualisierung der Datensammel-Pakete, um mit diesen Änderungen umgehen zu können. Um eine Aktualisierung manuell auszulösen, klicken Sie bitte den &ldquo;Update&rdquo;-Knopf.",
+      autoUpdate: "Automatische Aktualisierung der Datensammel-Pakete",
+      autoUpdateLabel: "Für automatische Aktualisierungen, um aktuelle Veränderungen bei Social-Media-Plattformen zu berücksichtigen, stellen Sie die automatische Aktualisierung ein.",
+      autoUpdateInterval: "Intervall für automatische Aktualisierungen",
+      autoUpdateIntervalLabel: "ROSE prüft automatisch in bestimmten Zeitintervallen, ob neue Pakete vorliegen.",
+      trackingEnabled: "Datensammlung An/Aus",
+      trackingEnabledLabel: "Schaltet alle Datensammel-Funktionen und Einblendungen an oder aus.",
+      lastChecked: "Zuletzt geprüft",
+      never: "nie",
+      lastUpdated: "Letzte Aktualisierung",
+      signedStatus: "Status",
+      signedUpdate: "Signiert",
+      unsignedUpdate: "Nicht signiert",
+      uptodate: "Alle Pakete sind aktuell.",
+      error: "Aktualisierung gescheitert.",
+      success: "Aktualisierung erfolgreich.",
+      noInternetConnection: "Keine Internet-Verbindung"
+    },
+
+    resetConfigModal: {
+      question: "Bestätigen Sie, dass Sie die Konfiguration von ROSE zurücksetzen wollen",
+      warning: "Sind Sie sicher, dass Sie die Konfiguration zurücksetzen wollen? Diese Aktion wird Sie zurück zum initialen Begrüßungsbildschirm bringen. Alle gesammelten Daten bleiben erhalten."
     },
 
     // Comments Page
     comments: {
-      title: "Comments",
-      subtitle: "Have a look at all your comments",
+      title: "Kommentare",
+      subtitle: "Alle Kommentare, welche Sie in der Seitenleiste eingegeben haben.",
 
-      you: "You",
-      commentedOn: "commented on"
+      you: "Sie",
+      commentedOn: "kommentieren von"
     },
 
     // Interactions Page
     interactions: {
-      title: "Interactions",
-      subtitle: "All your recent interactions",
-      actionOn: "action on"
+      title: "Interaktion",
+      subtitle: "Alle Ihre vergangenen Interaktionen auf dieser Social-Media-Plattform, welche von ROSE aufgezeichnet wurden.",
+      actionOn: "Aktion mit",
+      action: "Aktion"
     },
 
     // Extracts Settings Page
     extracts: {
-      title: "Extracts",
-      subtitle: "ROSE extracted these information"
+      title: "Extrakte",
+      subtitle: "Informationen von ROSE extrahiert"
     },
 
     // Help Page
     help: {
-      title: "Usage notes",
-      subtitle: "Frequently asked questions about ROSE",
+      title: "Hilfe",
+      subtitle: "Häufig gestellte Fragen über ROSE",
 
       issue1: {
-        question: "Where does ROSE collect the data about my Facebook usage and my inserted comments?",
-        answer: "<p>ROSE exclusively collects data in your web browser. ROSE can provide a pre-assembled Mail which you can use to transmit your data to the study advisor. ROSE does not transmit data to Facebook; Facebook can not detect your usage of ROSE with their computer systems. ROSE neither transmits data itself to the study advisor nor receives them.</p><p>There is a disadvantage of this privacy aware concept of ROSE, though: ROSE data can be lost in case system bugs emerge on your computer. With the deletion of ROSE from your web browser all stored data is irretrievably lost.</p>"
+        question: "Woher sammelt ROSE meine Daten und Kommentare auf Social-Media-Plattformen?",
+        answer: "<p>ROSE sammelt alle Daten direkt im Webbrowser und speichert sie auch dort. Es gibt keine Datenaustausch zwischen ROSE und den Social-Media-Plattformen, und auch nicht zwischen ROSE und den Forschern der Studie an der Sie ggf. teilnehmen. ROSE erlaubt Zugriff auf diese Daten durch eine Export-Funktion, über welche Sie die Daten auch an Forscher für den Zweck einer Studie weiterleiten können.</p><p>Diese privatsphäreschützende Gestaltung von ROSE hat einen Nachteil: Da Daten nur lokal gespeichert werden, ohne automatische Weiterleitung, können sie im Falle eines Systemfehlers verloren gehen, und Sie können sie auch versehentlich in Ihrem Browser löschen. In diesem Fall sind die Daten nicht wiederherstellbar.</p>"
       },
       issue2: {
-        question: "Are my ROSE study comments visible for other study participants or Facebook users?",
-        answer: "<p>No, this is impossible for technical reasons. The distribution and therefore visibility for other study participants or Facebook users is impossible because ROSE does not transmit data to Facebook computer systems or to the study advisory. ROSE does not receive data either. Furthermore, Facebook can not even find out about whether you are using ROSE or not. Even though ROSE has a close integration in your web browser and the Facebook interface and therefore is much alike to the &quot;real&quot; Facebook functions this &quot;illusion of an extended Facebook&quot; completely and exclusively takes place in your web browser with ROSE.</p>"
+        question: "Sind meine ROSE-Kommentare für andere Studienteilnehmer oder meine Freunde auf Social-Media-Plattformen sichtbar?",
+        answer: "<p>Nein. Kommentare, die Sie in ROSE machen, sind nicht sichtbar für andere. Aus technischen Gründen und zum Schutz Ihrer Privatsphäre überträgt ROSE keine gesammelten Daten zu anderen Servern der Social-Media-Plattformen und der Studien-Forscher. ROSE empfängt solche Daten auch nicht von anderen Quellen. Da ROSE fest in Ihren Browser integriert und auf den Webseiten der Social-Media-Plattformen sichtbar ist, erscheint es so als wäre es eine echte Funktion dieser Plattformen, wenngleich es allein in Ihrem Browser ausgeführt wird. Es gibt keine Möglichkeit von Social-Media-Plattformen festzustellen, ob Sie ROSE verwenden, oder nicht.</p>"
       },
       issue3: {
-        question: "Which data is being recorded by ROSE?",
-        answer: "<p>ROSE records the following data:</p><ul><li><b>Date and time of interactions in Facebook</b>, e.g., the time the study participant publishes a story item on his/her Timeline.</li><li><b>Type of interaction</b>, e.g., &quot;creating a story item&quot;.</li><li><b>Unique identifiers</b>, which mark the context of interactions. Identifiers are an eight-digit combination of letters and numbers, e.g., &quot;2a2d6fc3&quot;. With commenting on a picture the identifiers correspond to the picture you commented on. Thereby the study advisory can detect if multiple study participants commented on the same picture without ever learning about the content of this picture.</li><li><b>Privacy settings concerning interactions</b>, e.g. whether a story item is visible for &quot;Friends&quot;only or for &quot;Everyone&quot;.</li><li><b>Diary entries.</b></li><li><b>ROSE study comments.</b></li><li><b>Privacy settings in general.</b></li></ul>"
+        question: "Welche Arten von Daten werden von ROSE gesammelt?",
+        answer: "<p>ROSE sammelt folgende Arten von Daten:</p><ul><li>Datum und Zeit von Interaktionen auf Social-Media-Plattformen, also die Zeit zu der Sie die Interaktion ausgelöst haben. </li><li>Art der Interaktion, z.B., &ldquo;liking content&rdquo;, &ldquo;viewing a profile&rdquo;, &ldquo;sharing content&rdquo;.</li><li>Eindeutige Identifikatoren aus Buchstaben und Zahlen (z.B., &ldquo;2a2d6fc3&rdquo;), welche mit dem Inhalt und den Personen in Zusammenhang stehen, mit denen Sie interagiert haben. Mit diesen Identifikatoren können Forscher erkennen, dass Sie mehrfach mit den gleichen Personen oder Inhalten interagiert haben. Die Forscher können jedoch nur Vergleiche anstellen und nicht die tatsächlichen Inhalte oder Personen in Erfahrung bringen.</li><li>Generelle und spezifische Privatssphäre-Einstellungen auf Social-Media-Plattformen, z.B., ob bei Facebook ein Eintrag nur für &ldquo;Freunde&rdquo; sichtbar oder öffentlich ist.</li><li>Studienkommentare.</li></ul>"
       },
       issue4: {
-        question: "Does ROSE collect data which I am sharing with my friends on Facebook?",
-        answer: "<p>No. ROSE does not collect any data which you are sharing with your friends on Facebook. ROSE does not collect any content-related information, e.g., pictures, links, messages on Timelines, chat messages, or the names of groups you attended. ROSE only collects data about the usage of a type of action, e.g. if you are commenting on a picture. In the analysis the study advisors are only able to see that you made use of an action. The study advisors only asses that you made use of a type of action, but does not see if you are commenting on a picture of a polar bear or if you are commenting on a picture showing a friend of yours who is at a party. If you like to record information on the content of an action in order to explain why you made use of a specific action, please use the ROSE comments or your diary.</p>"
+        question: "Sammelt ROSE auch Inhalte, welche ich mit meinen Freunden teile?",
+        answer: "<p>Nein. ROSE sammelt keinerlei derartige Informationen, wie z.B. Bilder, Links, persönliche Nachrichten, Gruppen- und Kontaktnamen. ROSE sammelt nur Daten über die Arten von Interaktionen, z.B., ob Sie ein Bild kommentiert haben, oder mit einem Freund persönliche Nachrichten ausgetauscht haben. In der nachfolgenden Analyse können die Studienforscher nur feststellen, dass Sie eine Interaktion durchgeführt haben, den Zeitpunkt, und die Art der Interaktion. Forscher können z.B. feststellen, dass Sie ein Bild kommentiert haben, aber sie können nicht herausfinden, ob das Bild einen Bären oder Freunde von Ihnen auf einer Party gezeigt hat. Wenn Sie zusätzliche Informationen zu Inhalten hinterlegen möchten, um Ihre Interaktionen zu erklären, dann nutzen Sie bitte die Kommentierungs- oder Tagebuch-Funktionen von ROSE.</p>"
       },
       issue5: {
-        question: "How do I control which interaction data ROSE collected?",
-        answer: "<p>You may easily check this by using the user interface (menu item &quot;interaction tracking&quot;). Moreover you may read which data was collected by ROSE, when you are transferring your data to the study advisors. Even though it is a compact text-based data format, you may easily check that no personal data is transmitted.</p>"
+        question: "Wie kontrolliere ich, welche Arten von Interaktionen ROSE sammelt?",
+        answer: "<p>Sie können dazu einfach den Menüpunkt &ldquo;Interaktionen&rdquo; öffnen. Wenn Sie die Daten exportieren und mit den Forschern teilen möchten, dann können Sie ebenfalls alle Daten in einem kompakten text-basierten Format untersuchen. Sie werden feststellen, dass die exportierten Daten keine persönlichen Informationen von Ihnen enthalten.</p>"
       },
       issue6: {
-        question: "How can I be sure that ROSE makes my data anonymous?",
-        answer: "<p>ROSE data does not contain any information which refers to the Facebook user who created this data. ROSE does not save any Facebook user names or pictures’ and videos’ URLs provided by users. Thus ROSE data does not differ from ethnographically elicited and anonymised data, such as interviews. Anyways, saving content-related information would no be very sufficient as it does no allow contextual analysis</p>"
+        question: "Wie kann ich sicherstellen das ROSE meine Daten anonymisiert?",
+        answer: "<p>ROSE-Daten enthalten praktisch keine Informationen über die eine andere Person herausfinden könnte, welcher Social-Media-Nutzer die Daten erstellt hat. ROSE speichert keine Daten zu Nutzernamen, Bildern, Videos und sonstigen Inhalten, welche Social-Media-Nutzer miteinander austauschen. Deshalb haben ROSE-Daten eine vergleichbare Anonymität wie Daten, die durch andere empirische Forschungsmethoden, wie z.B. anonyme Interviews, gesammelt werden. Beim Export der Daten können Sie den Datensatz, ähnlich einem Interviewtranskript, diesbezüglich gegenprüfen. </p>"
       },
       issue7: {
-        question: "May I review the source code to check previous declarations?",
-        answer: "<p>Yes. ROSE is a free, open-source software under GPL-license (General Public License). You may review the source code and you may change and process it on the conditions of the GPL. In favor of needing assistance, please contact the study advisors.</p>"
+        question: "Kann ich den Quellcode von ROSE einsehen, um diese Erklärungen zum Privatsphärenschutz zu prüfen?",
+        answer: "<p>Ja. ROSE ist freie, quelloffene Software unter der GPL (GNU General Public License). Sie können den Quellcode überprüfen, verändern und weiterverwenden unter den Bedingungen der GPL. Sollten Sie Hilfe benötigen, so kontaktieren Sie den Ansprechpartner für ROSE bei Fraunhofer SIT.</p>"
       },
       issue8: {
-        question: "May I use ROSE for personal purposes after the study ended?",
-        answer: "<p>Yes. You may continue using ROSE and process it without hesitation as it does not send any information to the study advisors automatically. Thereto please note the GPL license’s conditions. However, after the study ended we are not able to endorse you by using the software, e.g. providing ROSE updates.</p>"
+        question: "Kann ich ROSE nach dem Ende einer Studie für persönliche Zwecke weiter benutzen?",
+        answer: "<p>Ja. Sie können ROSE für eigene Zwecke weiter benutzen, es werden automatisch keine Daten zu den Forschern weitergeleitet. Bitte berücksichtigen Sie die GPL-Lizenzbedingungen. Allerdings besteht nach Ende der Studie kein Anspruch auf Unterstützung, wie z.B. ROSE-Aktualisierungen.</p>"
       }
     },
 
     // About Page
     about: {
-      title: "About ROSE",
-      subtitle: "Information about ROSE",
-      description: "ROSE is a browser extension to support empirical Field studies by recording users' interactions with the social network Facebook for a limited period of time. Please consider the help page for further information on ROSE's functioning.",
-      developedBy: "is developed by",
+      title: "Über ROSE",
+      subtitle: "Informationen zu ROSE",
+      description: "ROSE ist eine Webbrowser-Erweiterung, welche empirische Feldstudien unterstützt durch Aufzeichnen von Nutzerinteraktionen mit Social-Media-Plattformen für einen definierte Zeit. Bitte berücksichtigen Sie die Hilfe-Seite für weitere Informationen zu den Funktionen und Nutzung von ROSE.",
+      developedBy: "ROSE wurde entwickelt von",
 
       address: {
-        name: "Fraunhofer Institute for Secure Information Technology SIT",
-        street: "Rheinstrasse 75",
-        country: "Germany"
+        name: "Fraunhofer Institut für Sichere Informationstechnologie SIT",
+        street: "Rheinstraße 75",
+        country: "Deutschland"
       },
 
-      forQuestions: "For questions about ROSE feel free to contact",
-      licenceNotice: "This program is free software;you can redistribute it and/or modify it under the terms of the GNU General Public License version as published by the Free Software Foundation;either version 3 of the License, or (at your option) any later version."
+      forQuestions: "Für Fragen zu ROSE kontaktieren Sie gern den Projektleiter:",
+      licenceNotice: "Dieses Programm ist freie Software. Sie können es unter den Bedingungen der GNU General Public License, wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren, entweder gemäß Version 3 der Lizenz oder (nach Ihrer Option) jeder späteren Version."
     },
 
     // Study Creator Page
     studyCreator: {
-      title: 'Study Creator',
-      subtitle: 'LALALALALALALa',
+      title: 'Studienkonfigurator',
+      subtitle: 'Diese Seite erlaubt das Erstellen einer maßgeschneiderten Konfigurationsdatei für Ihre Studie. Diese Konfigurationsdatei können Sie an Ihre Studienteilnehmer weiterleiten; durch Laden der Datei in die lokale Installation von ROSE passen die Studienteilnehmer ihre ROSE-Installation an die Anforderungen Ihrer Studie an.',
+      roseComments: "In-Situ-Kommentare",
+      roseCommentsDesc: "Aktivieren Sie diese Option, wenn die Funktion für In-Situ-Kommentare für Ihre Teilnehmer verfügbar sein soll. Zur Zeit arbeitet diese Funktion nur für Facebook.",
+      roseCommentsRating: "Hinzufügen der In-Situ-Bewertungsoption",
+      roseCommentsRatingDesc: "Aktivieren, falls die Funktion für In-Situ-Kommentare auch nach Bewertungen von Inhalten fragen soll.",
+      salt: "Kryptografischer Salt für die Inhalte-Identifikatoren",
+      saltDesc: "ROSE zeichnet pseudonyme Identifikatoren für Inhalte auf, welche die Interaktionen zu Inhalten und Personen später zueinander zuordenbar machen, ohne die eigentlichen Inhalte offenzulegen. Diese Identifikatoren werden aus dem Webseiten-Inhalt und einem kryptografischen Salt hergeleitet. Als Salt können Sie eine x-beliebige Zeichenkette verwenden, z.B. &ldquo;ROSE123&rdquo;. Wenn Sie Gruppen von Teilnehmern untersuchen wollen, dann sollte der Salt jedoch bei allen Teilnehmern gleich sein, da Sie sonst nachträglich Daten über Teilnehmer hinweg nicht korrelieren können.",
+      hashLength: "Länge des Identifikators für Inhalte und Personen",
+      hashLengthDesc: "Hier können Sie die Länge der pseudonymen Identifikatoren für ROSE festlegen. Sie müssen dabei Privatsphäre der Teilnehmer und Eindeutigkeit der Identifikatoren abwägen. Kürzere Identifikatoren sind privatsphäreschützender; längere Identifikatoren sind einzigartiger und Kollisionen sind unwahrscheinlicher. Jede zusätzliche Stelle erhöht den Raum verfügbarer Identifikatoren um den Faktor 16. Zum Beispiel, erlaubt die Länge 4 somit 16*16*16*16=65536 eindeutige Identifikatoren für Ihre Studie. Als Daumenregel ist 5 ein in der Praxis bewährter Wert.",
+      repositoryUrl: "URL des Speichers für Datensammel-Pakete",
+      repositoryUrlDesc: "ROSE erhält seine Muster um Nutzerinteraktionen zu erkennen in Datensammel-Paketen aus einem zentralen Speicher. Hier können Sie die URL dieses Online-Speichers eingeben.",
+      autoUpdate: "Automatische Aktualisierung der Muster während der Studie",
+      autoUpdateDesc: "Datensammel-Pakete mit Erkennungsmustern werden normalerweise nur mit einer Konfigurationsdatei in ROSE geladen. Es ist aber auch möglich sie kontinuierlich zu aktualisieren, während eine Studie läuft. Dies ist besonders wichtig für Langzeit-Studien, während der die Webseiten von Social-Media-Plattformen viele Änderungen erfahren können.",
+      exportConfig: "Exportiere Konfigurationsdatei",
+      exportConfigDesc: "Hier können Sie eine Konfigurationsdatei exportieren, welche alle Einstellungen von dieser Seite enthält. Ihre Studienteilnehmer können diese Datei in ihre ROSE-Installation laden.",
+      fingerprint: "Schlüssel-Fingerabdruck des Speichers für Datensammel-Pakete",
+      fingerprintDesc: "Aus Sicherheitsgründen müssen die Muster in den Datensammel-Paketen mit RSA signiert werden. Diese Signatur wird geprüft, bevor ROSE die enthaltenen Muster lädt. Bitte geben Sie den hexadezimalen SHA-1-Fingerabdruck für den öffentlichen Schlüssel ein, welchen ROSE benutzen soll, um die digitale Signatur zu prüfen.",
+      optionalFeaturesHeader: "Optionale Funktionen",
+      privacyHeader: "Privatsphäre-Einstellungen",
+      repositoryHeader: "Speicher für Datensammel-Pakete konfigurieren",
+      configurationHeader: "Datensammlung konfigurieren",
+      autoUpdateHeader: "Automatische Aktualisierung der Datensammel-Pakete konfigurieren",
+      networks: "Zu überwachende Social-Media-Plattformen",
+      networksDesc: "Hier können Sie ein- und ausschalten, auf welchen Webseiten ROSE Daten sammeln soll.",
+      extractors: "Verfügbare Datenextraktoren",
+      observers: "Verfügbare Interaktions-Observatoren",
+      enableAll: "Alle verfügbaren aktivieren",
+      disableAll: "Alle verfügbaren de-aktivieren",
+      forceSecureUpdate: "Sichere Aktualisierungen verlangen",
+      forceSecureUpdateDesc: "Wenn diese Funktion angeschaltet ist, dann sind Aktualisierungen der Datensammel-Pakete nur aus sicherer Quelle erlaubt. Sie müssen dann den korrekten Fingerabdruck des öffentlichen Signaturschlüssels oben angeben.",
+      updateInterval: "Intervall für die automatische Prüfung auf Aktualisierung der Datensammel-Pakete",
+      updateIntervalLabel: "Wählen Sie ein Intervall, um nach Aktualisierungen der Datensammel-Pakete zu suchen",
+      baseFileNotFound: "Ungültige URL der Basisdatei des Datenspeichers.",
 
-      roseComments: "ROSE Comments",
-      roseCommentsDesc: "Check if the ROSE Comments function should be available",
-      roseCommentsRating: "ROSE Comments Rating",
-      roseCommentsRatingDesc: "Check if the ROSE Comments rating function should be available",
-      salt: "Salt",
-      saltDesc: "Whats the purpose of this settings?",
-      hashLength: "Hash Length",
-      hashLengthDesc: "Whats the purpose of this settings?",
-      repositoryUrl: "Repository URL",
-      repositoryUrlDesc: "Whats the purpose of this settings?",
-      autoUpdate: "Automatically Update Observers from Repository",
-      autoUpdateDesc: "Whats the purpose of this settings?",
-      exportConfig: "Export Configuration",
-      exportConfigDesc: "Export configuration to file",
-      fingerprint: "Fingerabdruck",
-      fingerprintDesc: "Whats the purpose of this settings?"
+      table: {
+        enabled: "Status (An/Aus)",
+        name: "Muster-Name",
+        version: "Aktuelle Version",
+        description: "Erläuterung",
+        type: "Typ"
+      }
+    },
+
+    // Application Log
+    debugLog: {
+      title: "Anwendungsprotokoll",
+      subtitle: "Diese Seite zeigt alle Nachrichten, welche die Module von ROSE ausgegeben haben",
+      date: "Zeitstempel",
+      message: "Meldung",
+      module: "Modulname"
+    },
+
+    observerEditor: {
+      title: "Editor für Observations-Muster",
+      subtitle: "Dieser Editor erlaubt das Verändern der Observations-Muster zu Testzwecken, oder um neue zu erstellen. Diese Funktionen ist für Experten."
+    },
+
+    dataConverter: {
+      title: "Datenkonverter",
+      subtitle: "Konverter um XML-ROSE-Exporte in CSV-Dateien umzuwandeln. Laden Sie die XML-Datei und wählen Sie die Datensätze, welche in die CSV-Datei übertragen werden sollen."
     }
   };
 });
@@ -1959,7 +2062,7 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
       hide: "Hide",
       unhide: "Unhide",
       "delete": "Delete",
-      download: "Download",
+      download: "Export",
       details: "Details",
       reset: "Reset",
       update: "Update",
@@ -1969,7 +2072,7 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
     //Dashboard
     index: {
       title: "ROSE Control Center",
-      subtitle: "Overall number of items collected in your local installation of ROSE."
+      subtitle: "Count of items collected in your local ROSE installation"
     },
 
     // Sidebar Menu
@@ -1996,20 +2099,20 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
     // ROSE Initialization Wizard
     wizard: {
       header: "Welcome to ROSE",
-      description: "In this step we first need to configure ROSE to work properly.",
+      description: "We first need to configure ROSE to work properly.",
       configOptions: "Choose one of the following two options to configure ROSE before your first use.",
-      defaultConfigHeader: "Use the default configuration",
+      defaultConfigHeader: "Use default configuration",
       defaultConfigDescription: "I have no configuration file to customize ROSE.",
-      defaultBtn: "Use the default configuration",
-      fileConfigHeader: "Use a configuration file",
+      defaultBtn: "Use default configuration",
+      fileConfigHeader: "Use configuration file",
       fileConfigDescription: "I have a customized configuration file for initializing ROSE.",
-      fileConfigBtn: "Load the configuration file",
-      urlConfig: "Specifiy a URL to an ROSE repository...",
+      fileConfigBtn: "Load configuration file",
+      urlConfig: "Specifiy a URL to a ROSE repository...",
       privacyNoteTitle: "Privacy Note",
-      privacyNote: "<p>ROSE collects data about your interactions with online social media for the purpose of participating in an empirical study, or for personal purposes. All data collected is stored only locally in your web browser. The software does not transmit any tracking data over the Internet to other servers, and also locally stored data is anonymized. To disable the tracking functions of ROSE go to the settings menu and use the 'tracking on/off' switch. If you have any further question see the <a href=\"https://secure-software-engineering.github.io/rose/index.html\">Github pages of ROSE</a>.</p>",
+      privacyNote: "<p>ROSE collects data about your interactions with social media sites for the purpose of participating in an empirical study, or, if you are not participating in a study, for personal purposes. ROSE stores all collected data locally and in an anonymized way in your web browser. ROSE does not send any tracking data over the Internet to other servers, neither to social media sites nor to the researchers in whose study you might participate. At any time you can disable the tracking functions of ROSE by using the 'tracking on/off' switch in the settings menu. If you have any further questions see the <a href=\"https://secure-software-engineering.github.io/rose/index.html\">Github pages of ROSE</a>.</p>",
       overlayNoteTitle: "Information on the Use of Overlays",
-      overlayNote: "<p>ROSE adds overlays to social media sites such as Facebook thereby enabling the user to take notes on content he or she encounters online. These overlays are a red ribbon with the caption 'Comment' and a sliding-in graphical user interface to manage notes, see pictures below. All data entered to text fields in these overlays is store locally only just like any other data collected by ROSE. Disabling the tracking function also disables all overlays.</p>",
-      privacyAgree: "I have read the notes on privacy and overlays. I want to proceed."
+      overlayNote: "<p>ROSE adds overlays to social media sites such as Facebook thereby enabling the user to take notes on content he or she encounters online. These overlays are a red ribbon with the caption 'Comment' and a sliding-in graphical user interface to manage notes, see pictures below. All data entered to text fields embedded in these overlays is store locally alone, just like any other data collected by ROSE. Disabling the tracking function also disables all overlays.</p>",
+      privacyAgree: "I have read and understood the notes on privacy and overlays. I want to proceed."
     },
 
     // Diary Page
@@ -2021,15 +2124,15 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
     // Data Management aka Backup Page
     backup: {
       title: "Data Management",
-      subtitle: "Clear, review, or download all data history recorded by ROSE.",
-      resetData: "Clear history",
-      resetDataLabel: "Remove all data collected by ROSE.",
+      subtitle: "Clear, review, or export all data recorded by ROSE.",
+      resetData: "Clear all data",
+      resetDataLabel: "Delete all data collected by ROSE.",
       "export": "Export data",
-      exportLabel: "Save and download the data history to a single file locally on your computer."
+      exportLabel: "Export and save all collected data to a single file locally on your computer."
     },
 
     resetDataModal: {
-      question: "Confirm removal of all collected data",
+      question: "Confirm deletion of all collected data",
       warning: "Are you sure you want to delete all data collected? This action cannot be undone."
     },
 
@@ -2038,42 +2141,42 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
       title: "Settings",
       subtitle: "Manage the configuration of ROSE.",
       language: "Language",
-      languageLabel: "Choose your preferred language, or use the default language from the browser (“auto detect” option).",
+      languageLabel: "Choose your preferred language, or use the browser default language (&ldquo;auto detect&rdquo; option).",
       commentReminder: "Comment reminder",
-      commentReminderLabel: "ROSE will occasionally display a message at the bottom of the screen to remind you to comment on your actions if the research study requires you to do so. You can deactivate this feature if it disturbs you.",
+      commentReminderLabel: "ROSE will occasionally display a message at the bottom of the screen reminding you to comment on your actions if a research study requires you to do so. You can deactivate this reminder if it disturbs you.",
       extraFeatures: "Features for researchers and developers",
-      extraFeaturesLabel: "ROSE has additional features for field researchers and ROSE developers. These features are not visible unless activated here.",
+      extraFeaturesLabel: "ROSE has additional features for field researchers and ROSE developers. These features are not visible in the menu unless activated here.",
       resetRose: "Reset ROSE configuration",
       resetRoseLabel: "If you reset the configuration of ROSE, the initialization wizard will appear again. You can choose to either use the default configuration or load a specific study configuration file.",
       manualUpdate: "Update tracking package",
-      manualUpdateLabel: "Social media sites change their webpage design from time to time. ROSE requires an update to work properly when these changes occur. To trigger an update manually, press the “update” button.",
+      manualUpdateLabel: "Social media sites change the design of their web pages from time to time. To adapt to these changes, ROSE requires regular updates of tracking packages containing special patterns for detecting the user interactions. To trigger an update manually, press the “update” button.",
       autoUpdate: "Automatic tracking package update",
       autoUpdateLabel: "For automatic updates to recent changes in social media sites, switch on the automatic update function.",
       autoUpdateInterval: "Automatic update interval",
       autoUpdateIntervalLabel: "ROSE checks automatically for tracking package updates in the specified time interval.",
-      trackingEnabled: "Tracking On/Off",
-      trackingEnabledLabel: "Turns all tracking functions on or off globally.",
-      lastChecked: "Last check",
-      never: "never",
-      lastUpdated: "Last update",
+      trackingEnabled: "Tracking on/off",
+      trackingEnabledLabel: "Turns all tracking functions globally on or off.",
+      lastChecked: "Last checked",
+      never: "Never",
+      lastUpdated: "Last updated",
+      signedStatus: "Status",
       signedUpdate: "Signed",
       unsignedUpdate: "Unsigned",
       uptodate: "Everything is already up-to-date.",
       error: "Update failed.",
-      success: "Update was successful.",
+      success: "Update successful.",
       noInternetConnection: "No internet connection"
     },
 
     resetConfigModal: {
       question: "Confirm resetting the configuration of ROSE",
-      warning: "Are you sure you want to reset the configuration of ROSE. This action will bring you back to the configuration wizard. All collected data will remain unchanged."
+      warning: "Are you sure you want to reset the configuration of ROSE. This action will bring you back to the initial configuration wizard. All collected data will remain unchanged."
     },
 
     // Comments Page
     comments: {
       title: "Comments",
       subtitle: "All comments you have entered using the comment sidebar.",
-
       you: "You",
       commentedOn: "commented on"
     },
@@ -2099,35 +2202,35 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
 
       issue1: {
         question: "Where does ROSE collect the data about my social media sites' usage and my comments from?",
-        answer: "<p>ROSE collects data from and stores data in your web browser. There is no automatic transmission of data between ROSE and the social media sites, or between ROSE and the researchers of the study. ROSE will provide a pre-assembled option through which you can send your data to the researchers.</p><p>There is a disadvantage as a result of this privacy-aware design of ROSE. Since data is stored locally with no automatic uploading, it can get lost in the case of system errors on your computer, or in the case of accidental deletion of ROSE from your web browser. Data is irretrievable once it is lost.</p>"
+        answer: "<p>ROSE collects data from about your interactions directly in your web browser; collected data are also stored in the web browser only. There is no data exchange of data between ROSE and the social media sites, or between ROSE and the researchers of the study in which you might participate. ROSE will provide a pre-assembled option through which you can export your data and can send it to the study researchers in case you wish to do so. Having the user anytime in full control of her data is part of the privacy-aware design of ROSE.</p><p>However, this design also has a small disadvantage you need to be aware of: Since data is stored only locally in your browser, it can get lost in case of system errors on your computer, or in the case of accidental deletion of ROSE from your web browser. All Data is irretrievable once it got lost this way.</p>"
       },
       issue2: {
-        question: "Are my ROSE study comments visible to other study participants or my social media site friends?",
-        answer: "<p>No, the comments you make through ROSE are invisible to other study participants or your social media site friends. For technical reasons, ROSE does not transmit data to the server of the social media sites or to the researchers of the study. ROSE does not receive data from any other source either. Though ROSE is integrated in your web browser and the social media sites interface, thus appearing like “real” social media site functions, it completely and exclusively functions in your web browser. There is no way for the social media sites to detect whether or not you are using ROSE.</p>"
+        question: "Are my ROSE study comments visible to other study participants or my friends on social media site?",
+        answer: "<p>No. All comments you make through ROSE are invisible to other study participants or your social media site friends. For technical and especially privacy reasons, ROSE data never leaves your web browser to servers of social media sites or to the researchers of the study. ROSE does not receive tracking data from any other source either. Though ROSE is integrated in your web browser and the social media sites' interfaces, thus appearing like an &ldquo;actual&rdquo; social media site function, it completely and exclusively operates in your web browser. Also, there is no way for social media sites to detect from remote whether or not you are using ROSE.</p>"
       },
       issue3: {
         question: "What types of data are recorded by ROSE?",
-        answer: "<p>ROSE records the following types of data:</p><ul><li>Date and time of interactions on social media sites, i.e., the time the study participant engages in an interaction. </li><li>Type of interaction, e.g., “liking content,” “viewing a profile,” “sharing content.”</li><li>Unique identifiers, eight-digit combinations of letters and numbers (e.g., \"2a2d6fc3\") that correspond to each story item (e.g., a picture, a status update) the study participant interacted with. With the identifiers, researchers can detect when multiple study participants interact with the same story item. But the researchers will not know the content of the item.</li><li>Privacy settings concerning interactions, e.g. whether a story item is visible for “Friends” only or for the public.</li><li>Diary entries.</li><li>ROSE study comments.</li><li>Privacy settings in general.</li></ul>"
+        answer: "<p>ROSE records the following types of data:</p><ul><li>Date and time of interactions on social media sites, i.e., the time the study participant engages in an interaction. </li><li>Type of interaction, e.g., &ldquo;liking content&rdquo;, &ldquo;viewing a profile&rdquo;, &ldquo;sharing content&rdquo;.</li><li>Unique identifiers, eight-digit combinations of letters and numbers (e.g., &ldquo;2a2d6fc3&rdquo;) corresponding to each story item (e.g., a picture, a status update) and other user the study participant interacted with. With the identifiers, researchers can detect when study participants interact with the same story item or person repeatedly. But the researchers will not be able to identify the actual item or person.</li><li>General and specific privacy settings concerning interactions, e.g. whether a story item is visible for &ldquo;Friends&rdquo; only or for the public.</li><li>Diary entries.</li><li>ROSE study comments.</li></ul>"
       },
       issue4: {
         question: "Does ROSE collect the actual content I share with my friends on social media sites?",
-        answer: "<p>No. ROSE does not collect any content information, such as pictures, links, or messages on Timelines; chat messages; or the name of groups you attended. ROSE only collects data about the usage of a type of interaction, e.g., whether you commented on a picture, or whether you engaged in a chat with a  friend. In the analysis, researchers are only able to see whether you engaged in an interaction, the timestamp, and the type of interaction. For example, researchers can see that you commented on a picture, but they will not know whether the picture is about a polar bear or friends at a party. If you would like to report information regarding the content of an interaction in order to explain why you made use of a specific action, please use the ROSE comments function or the diary function.</p>"
+        answer: "<p>No. ROSE does not collect any content information, such as pictures, links, or messages on Timelines; chat messages; or the name of groups you attended. ROSE only collects data about the usage of a type of interactions, e.g., whether you commented on a picture, or whether you engaged in a chat with a friend. In the analysis, researchers are only able to see whether you engaged in an interaction, the timestamp, and the type of interaction. For example, researchers can see that you commented on a picture, but they will not know whether the picture showed a polar bear or friends at a party. If you would like to report information regarding the content related to an interaction in order to explain why you made use of a specific action, please use the ROSE comment function or the diary function.</p>"
       },
       issue5: {
         question: "How do I control what types of interaction ROSE collect?",
-        answer: "<p>You can easily check the types of interaction recorded from the ROSE user interface (menu item “Interactions”). When you export and share your data with the researchers, you can also view all data collected in the compact text-based data format. You will see from the exported data file that there is no personal data collected.</p>"
+        answer: "<p>You can easily check the types of interaction recorded from the ROSE user interface (menu item &ldquo;Interactions&rdquo;). When you export and share your data with the researchers, you can also view all data collected in the compact text-based data format. You will see from the exported data file that there is no personal data collected.</p>"
       },
       issue6: {
         question: "How can I be sure that ROSE makes my data anonymous?",
-        answer: "<p>ROSE data does not contain any information identifying the social media site user who created the data. ROSE does not save any social media site user names, pictures, or videos provided by users. Thus, ROSE data is similar to anonymized data collected through other means, such as anonymous interviews. </p>"
+        answer: "<p>ROSE data does not contain any information identifying the social media site user who created the data. ROSE does not save any social media site user names, pictures, or videos provided by users. Thus, ROSE data is similar to anonymized data collected through other means, such as anonymous interviews. When you export your data you can cross-check the validity of these privacy claims.</p>"
       },
       issue7: {
         question: "May I review the source code to check previous declarations?",
-        answer: "<p>Yes. ROSE is free, open-source software under GPL-license (General Public License). You may review the source code, change, or process it under the conditions of the GPL. Should you need assistance, please contact the project advisor. </p>"
+        answer: "<p>Yes. ROSE is free, open-source software under GPL (GNU General Public License). You may review the source code, change, or process it under the conditions of the GPL. Should you need assistance, please contact the project contact at Fraunhofer SIT. </p>"
       },
       issue8: {
         question: "May I use ROSE for personal purposes after the study ends?",
-        answer: "<p>Yes. You may continue using ROSE for your own records, as it does not send any information to the researchers automatically. Please note the GPL license’s conditions. However, after the completion of the study, we will not be able to provide any assistance, such as providing ROSE updates.</p>"
+        answer: "<p>Yes. You may continue using ROSE for your own records, as it does not send any information to the researchers automatically. Please note the GPL license’s conditions. However, after the completion of the study, we will not be able to provide you any assistance, such as providing ROSE updates.</p>"
       }
     },
 
@@ -2144,31 +2247,31 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
         country: "Germany"
       },
 
-      forQuestions: "For questions about ROSE, feel free to contact project advisor:",
+      forQuestions: "For questions about ROSE, feel free to contact the project lead:",
       licenceNotice: "This program is free software. You can redistribute it and/or modify it under the terms of the GNU General Public License (version 3 or above) as published by the Free Software Foundation."
     },
 
     // Study Creator Page
     studyCreator: {
       title: 'Study Creator',
-      subtitle: 'With this page you can create a tailored configuration file for your study. You can distribute this configuration file to you study participants; by loading this file into their installations of ROSE participants can adapt their ROSE instances to the specific needs of your empirical study.',
+      subtitle: 'With this page you can create a tailored configuration file for your study. You can distribute this configuration file to your study participants; by loading this file into their installations, ROSE participants can adapt their ROSE instances to the specific needs of your empirical study.',
 
       roseComments: "In-situ comments",
-      roseCommentsDesc: "Check this if ROSE's in-situ comment function should be available to participants. Currently the in-situ comment function works only for Facebook.",
+      roseCommentsDesc: "Check if ROSE's in-situ comment function should be available to participants. Currently the in-situ commenting works only for Facebook.",
       roseCommentsRating: "Add in-situ rating option",
-      roseCommentsRatingDesc: "Check this if the in-situ comment function should also ask for rating content.",
+      roseCommentsRatingDesc: "Check if the in-situ comment function should also ask for rating content.",
       salt: "Cryptographic salt for content identifiers",
-      saltDesc: "ROSE records pseudonymous identifiers for user content that allow researchers to re-identify content without a need to reveal it. These identfiers are derived from user-entered content and a cryptographic salt. As a cryptographic salt you can enter any arbitray text string, for example \"ROSE123\" or whatever else you like. However, make sure that in case you investigate a group of participants all use the same salt in their ROSE configuration. Otherwise you can not correlate identifiers among participants afterwards.",
+      saltDesc: "ROSE records pseudonymous identifiers for user content allowing researchers to re-identify content without a need to reveal it. These identfiers are derived from user-entered content and a cryptographic salt. As a cryptographic salt you can enter any arbitrary text string, for example &ldquo;ROSE123&rdquo; or whatever else you like. However, make sure that in case you investigate a group of participants all use the same salt in their ROSE configuration. Otherwise you can not correlate identifiers among participants afterwards.",
       hashLength: "Content identifier length",
-      hashLengthDesc: "Here you can specify the length of the pseudonymous identifiers created by ROSE. You need to balance participants' privacy and the uniqueness of identifiers: the shorter the identifier the more secure they are; the longer the identifiers the more unique they are. Every digit adds a factor of 16 to the space of possible identifiers for your study. For example, setting the option to 4 allows for 16*16*16*16=65536 unique identifiers for your study. 5 is a good value if you are unsure how to use this option.",
-      repositoryUrl: "URL of pattern repository",
-      repositoryUrlDesc: "ROSE gets its patterns to match user interactions to specific interaction types from a pattern repository. Here you can enter the URL of this repository.",
-      autoUpdate: "Automatically update patterns during study",
-      autoUpdateDesc: "While the patterns are usually only pushed to ROSE when the configuration file is loaded into participants' instances of ROSE, it is also possible to continously update them while the study is running. This might be necessary for long-term studies, if the user interface of the investigated social media site changes.",
+      hashLengthDesc: "Here you can specify the length of the pseudonymous identifiers created by ROSE. You need to balance participants' privacy and the uniqueness of identifiers: the shorter the identifier the more privacy protecting they are; the longer the identifiers the more unique they are and collusion get unlikely. Every digit adds a factor of 16 to the space of possible identifiers for your study. For example, setting the option to 4 allows for 16*16*16*16=65536 unique identifiers for your study. As a rule of thumb, 5 is a good value if you are unsure how to use this option.",
+      repositoryUrl: "URL of tracking package repository",
+      repositoryUrlDesc: "ROSE gets its patterns to match user interactions to specific interaction types in tracking packages from a repository. Here you can enter the URL of this repository.",
+      autoUpdate: "Automatically update tracking packages during study",
+      autoUpdateDesc: "While tracking packages with detection patterns are usually only pushed to ROSE when the configuration file is loaded into participants' instances of ROSE, it is also possible to continuously update them while the study is running. This might be necessary for long-term studies, if the user interface of the investigated social media site is likely to change during the course of the study.",
       exportConfig: "Export configuration file",
-      exportConfigDesc: "Here you can export a configuration file with all the settings entered on this page. Your participants can load this file into their installations of ROSE.",
+      exportConfigDesc: "Here you can create and export a configuration file with all the settings entered on this page. Your participants can load this file into their installations of ROSE.",
       fingerprint: "Pattern repository signing key fingerprint",
-      fingerprintDesc: "For reasons of security, the patterns stored in the pattern repository need to be signed with a RSA private key. This signature is validated before ROSE loads any patterns. Please enter the fingerprint of the public key ROSE shall use to verify the digital signature.",
+      fingerprintDesc: "For reasons of security, the patterns stored in the tracking package repository need to be signed with a RSA private key. This signature is validated before ROSE loads any patterns. Please enter the hexadecimal SHA-1 fingerprint of the public key ROSE shall use to verify the digital signature.",
       optionalFeaturesHeader: "Optional features",
       privacyHeader: "Privacy settings",
       repositoryHeader: "Configure tracking package repository",
@@ -2216,7 +2319,7 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
   };
 });
 define("rose/locales/languages", ["exports"], function (exports) {
-  exports["default"] = [{ name: "Auto detect", code: "auto" }, { name: "English", code: "en" }, { name: "Deutsch", code: "de" }];
+  exports["default"] = [{ name: "English", code: "en" }, { name: "Deutsch", code: "de" }];
 });
 define('rose/models/comment', ['exports', 'ember-data'], function (exports, _emberData) {
 
@@ -5766,7 +5869,7 @@ define("rose/templates/about", ["exports"], function (exports) {
         var el1 = dom.createElement("div");
         dom.setAttribute(el1, "class", "ui divider");
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\nROSE ");
+        var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
@@ -5867,7 +5970,7 @@ define("rose/templates/about", ["exports"], function (exports) {
         morphs[9] = dom.createMorphAt(dom.childAt(fragment, [16]), 1, 1);
         return morphs;
       },
-      statements: [["inline", "t", ["about.title"], [], ["loc", [null, [4, 4], [4, 23]]]], ["inline", "t", ["about.subtitle"], [], ["loc", [null, [5, 28], [5, 50]]]], ["inline", "t", ["about.description"], [], ["loc", [null, [10, 2], [10, 27]]]], ["inline", "t", ["about.developedBy"], [], ["loc", [null, [15, 5], [15, 30]]]], ["inline", "t", ["and"], [], ["loc", [null, [17, 39], [17, 50]]]], ["inline", "t", ["about.address.name"], [], ["loc", [null, [21, 12], [21, 38]]]], ["inline", "t", ["about.address.street"], [], ["loc", [null, [22, 4], [22, 32]]]], ["inline", "t", ["about.address.country"], [], ["loc", [null, [24, 4], [24, 33]]]], ["inline", "t", ["about.forQuestions"], [], ["loc", [null, [28, 2], [28, 28]]]], ["inline", "t", ["about.licenceNotice"], [], ["loc", [null, [34, 2], [34, 29]]]]],
+      statements: [["inline", "t", ["about.title"], [], ["loc", [null, [4, 4], [4, 23]]]], ["inline", "t", ["about.subtitle"], [], ["loc", [null, [5, 28], [5, 50]]]], ["inline", "t", ["about.description"], [], ["loc", [null, [10, 2], [10, 27]]]], ["inline", "t", ["about.developedBy"], [], ["loc", [null, [15, 0], [15, 25]]]], ["inline", "t", ["and"], [], ["loc", [null, [17, 39], [17, 50]]]], ["inline", "t", ["about.address.name"], [], ["loc", [null, [21, 12], [21, 38]]]], ["inline", "t", ["about.address.street"], [], ["loc", [null, [22, 4], [22, 32]]]], ["inline", "t", ["about.address.country"], [], ["loc", [null, [24, 4], [24, 33]]]], ["inline", "t", ["about.forQuestions"], [], ["loc", [null, [28, 2], [28, 28]]]], ["inline", "t", ["about.licenceNotice"], [], ["loc", [null, [34, 2], [34, 29]]]]],
       locals: [],
       templates: []
     };
@@ -11597,11 +11700,263 @@ define("rose/templates/settings", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 52,
+              "line": 65,
+              "column": 10
+            },
+            "end": {
+              "line": 67,
+              "column": 10
+            }
+          },
+          "moduleName": "rose/templates/settings.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("            ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "moment-format", [["get", "settings.system.lastChecked", ["loc", [null, [66, 28], [66, 55]]]], "YYYY-MM-DD HH:mm"], [], ["loc", [null, [66, 12], [66, 76]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child2 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 67,
+              "column": 10
+            },
+            "end": {
+              "line": 69,
+              "column": 10
+            }
+          },
+          "moduleName": "rose/templates/settings.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("            ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "t", ["settings.never"], [], ["loc", [null, [68, 12], [68, 34]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child3 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 72,
+              "column": 10
+            },
+            "end": {
+              "line": 74,
+              "column": 10
+            }
+          },
+          "moduleName": "rose/templates/settings.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("            ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "moment-format", [["get", "settings.system.lastUpdated", ["loc", [null, [73, 28], [73, 55]]]], "YYYY-MM-DD HH:mm"], [], ["loc", [null, [73, 12], [73, 76]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child4 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 74,
+              "column": 10
+            },
+            "end": {
+              "line": 76,
+              "column": 10
+            }
+          },
+          "moduleName": "rose/templates/settings.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("            ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "t", ["settings.never"], [], ["loc", [null, [75, 12], [75, 34]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child5 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 80,
+              "column": 10
+            },
+            "end": {
+              "line": 82,
+              "column": 10
+            }
+          },
+          "moduleName": "rose/templates/settings.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("            ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "t", ["settings.signedUpdate"], [], ["loc", [null, [81, 12], [81, 41]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child6 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 82,
+              "column": 10
+            },
+            "end": {
+              "line": 84,
+              "column": 10
+            }
+          },
+          "moduleName": "rose/templates/settings.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("            ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "t", ["settings.unsignedUpdate"], [], ["loc", [null, [83, 12], [83, 43]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child7 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 90,
               "column": 4
             },
             "end": {
-              "line": 54,
+              "line": 92,
               "column": 4
             }
           },
@@ -11631,12 +11986,12 @@ define("rose/templates/settings", ["exports"], function (exports) {
           morphs[2] = dom.createMorphAt(element6, 0, 0);
           return morphs;
         },
-        statements: [["attribute", "class", ["concat", ["ui ", ["subexpr", "if", [["get", "updateInProgress", ["loc", [null, [53, 27], [53, 43]]]], "loading"], [], ["loc", [null, [53, 22], [53, 55]]]], " button"]]], ["element", "action", ["manualUpdate"], [], ["loc", [null, [53, 64], [53, 89]]]], ["inline", "t", ["action.update"], [], ["loc", [null, [53, 90], [53, 111]]]]],
+        statements: [["attribute", "class", ["concat", ["ui ", ["subexpr", "if", [["get", "updateInProgress", ["loc", [null, [91, 27], [91, 43]]]], "loading"], [], ["loc", [null, [91, 22], [91, 55]]]], " button"]]], ["element", "action", ["manualUpdate"], [], ["loc", [null, [91, 64], [91, 89]]]], ["inline", "t", ["action.update"], [], ["loc", [null, [91, 90], [91, 111]]]]],
         locals: [],
         templates: []
       };
     })();
-    var child2 = (function () {
+    var child8 = (function () {
       return {
         meta: {
           "fragmentReason": false,
@@ -11644,11 +11999,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 54,
+              "line": 92,
               "column": 4
             },
             "end": {
-              "line": 59,
+              "line": 97,
               "column": 4
             }
           },
@@ -11693,259 +12048,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
           morphs[1] = dom.createMorphAt(dom.childAt(element5, [3]), 0, 0);
           return morphs;
         },
-        statements: [["inline", "t", ["action.update"], [], ["loc", [null, [56, 29], [56, 50]]]], ["inline", "t", ["settings.noInternetConnection"], [], ["loc", [null, [57, 32], [57, 69]]]]],
-        locals: [],
-        templates: []
-      };
-    })();
-    var child3 = (function () {
-      return {
-        meta: {
-          "fragmentReason": false,
-          "revision": "Ember@2.2.2",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 64,
-              "column": 8
-            },
-            "end": {
-              "line": 66,
-              "column": 8
-            }
-          },
-          "moduleName": "rose/templates/settings.hbs"
-        },
-        isEmpty: false,
-        arity: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("          ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(1);
-          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
-          return morphs;
-        },
-        statements: [["inline", "moment-format", [["get", "settings.system.lastChecked", ["loc", [null, [65, 26], [65, 53]]]], "YYYY-MM-DD HH:mm"], [], ["loc", [null, [65, 10], [65, 74]]]]],
-        locals: [],
-        templates: []
-      };
-    })();
-    var child4 = (function () {
-      return {
-        meta: {
-          "fragmentReason": false,
-          "revision": "Ember@2.2.2",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 66,
-              "column": 8
-            },
-            "end": {
-              "line": 68,
-              "column": 8
-            }
-          },
-          "moduleName": "rose/templates/settings.hbs"
-        },
-        isEmpty: false,
-        arity: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("          ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(1);
-          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
-          return morphs;
-        },
-        statements: [["inline", "t", ["settings.never"], [], ["loc", [null, [67, 10], [67, 32]]]]],
-        locals: [],
-        templates: []
-      };
-    })();
-    var child5 = (function () {
-      return {
-        meta: {
-          "fragmentReason": false,
-          "revision": "Ember@2.2.2",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 75,
-              "column": 8
-            },
-            "end": {
-              "line": 77,
-              "column": 8
-            }
-          },
-          "moduleName": "rose/templates/settings.hbs"
-        },
-        isEmpty: false,
-        arity: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("          ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(1);
-          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
-          return morphs;
-        },
-        statements: [["inline", "moment-format", [["get", "settings.system.lastUpdated", ["loc", [null, [76, 26], [76, 53]]]], "YYYY-MM-DD HH:mm"], [], ["loc", [null, [76, 10], [76, 74]]]]],
-        locals: [],
-        templates: []
-      };
-    })();
-    var child6 = (function () {
-      return {
-        meta: {
-          "fragmentReason": false,
-          "revision": "Ember@2.2.2",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 77,
-              "column": 8
-            },
-            "end": {
-              "line": 79,
-              "column": 8
-            }
-          },
-          "moduleName": "rose/templates/settings.hbs"
-        },
-        isEmpty: false,
-        arity: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("          ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(1);
-          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
-          return morphs;
-        },
-        statements: [["inline", "t", ["settings.never"], [], ["loc", [null, [78, 10], [78, 32]]]]],
-        locals: [],
-        templates: []
-      };
-    })();
-    var child7 = (function () {
-      return {
-        meta: {
-          "fragmentReason": false,
-          "revision": "Ember@2.2.2",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 85,
-              "column": 8
-            },
-            "end": {
-              "line": 87,
-              "column": 8
-            }
-          },
-          "moduleName": "rose/templates/settings.hbs"
-        },
-        isEmpty: false,
-        arity: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("          ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(1);
-          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
-          return morphs;
-        },
-        statements: [["inline", "t", ["settings.signedUpdate"], [], ["loc", [null, [86, 10], [86, 39]]]]],
-        locals: [],
-        templates: []
-      };
-    })();
-    var child8 = (function () {
-      return {
-        meta: {
-          "fragmentReason": false,
-          "revision": "Ember@2.2.2",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 87,
-              "column": 8
-            },
-            "end": {
-              "line": 89,
-              "column": 8
-            }
-          },
-          "moduleName": "rose/templates/settings.hbs"
-        },
-        isEmpty: false,
-        arity: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("          ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(1);
-          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
-          return morphs;
-        },
-        statements: [["inline", "t", ["settings.unsignedUpdate"], [], ["loc", [null, [88, 10], [88, 41]]]]],
+        statements: [["inline", "t", ["action.update"], [], ["loc", [null, [94, 29], [94, 50]]]], ["inline", "t", ["settings.noInternetConnection"], [], ["loc", [null, [95, 32], [95, 69]]]]],
         locals: [],
         templates: []
       };
@@ -11958,11 +12061,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 92,
+              "line": 99,
               "column": 4
             },
             "end": {
-              "line": 98,
+              "line": 105,
               "column": 4
             }
           },
@@ -12012,7 +12115,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
           morphs[3] = dom.createMorphAt(dom.childAt(element3, [5]), 0, 0);
           return morphs;
         },
-        statements: [["attribute", "class", ["concat", ["ui ", ["get", "updateResult", ["loc", [null, [93, 21], [93, 33]]]], " message hidden"]]], ["attribute", "onclick", ["subexpr", "action", ["closeMessage"], [], ["loc", [null, [94, 36], [94, 61]]]]], ["inline", "t", [["get", "updateResulti18n", ["loc", [null, [95, 30], [95, 46]]]]], [], ["loc", [null, [95, 26], [95, 48]]]], ["content", "updateMessage", ["loc", [null, [96, 9], [96, 26]]]]],
+        statements: [["attribute", "class", ["concat", ["ui ", ["get", "updateResult", ["loc", [null, [100, 21], [100, 33]]]], " message hidden"]]], ["attribute", "onclick", ["subexpr", "action", ["closeMessage"], [], ["loc", [null, [101, 36], [101, 61]]]]], ["inline", "t", [["get", "updateResulti18n", ["loc", [null, [102, 30], [102, 46]]]]], [], ["loc", [null, [102, 26], [102, 48]]]], ["content", "updateMessage", ["loc", [null, [103, 9], [103, 26]]]]],
         locals: [],
         templates: []
       };
@@ -12027,11 +12130,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
               "loc": {
                 "source": null,
                 "start": {
-                  "line": 122,
+                  "line": 129,
                   "column": 8
                 },
                 "end": {
-                  "line": 126,
+                  "line": 133,
                   "column": 8
                 }
               },
@@ -12065,7 +12168,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
               morphs[1] = dom.createMorphAt(element0, 1, 1);
               return morphs;
             },
-            statements: [["attribute", "data-value", ["get", "interval.value", ["loc", [null, [123, 41], [123, 55]]]]], ["inline", "t", [["get", "interval.label", ["loc", [null, [124, 16], [124, 30]]]]], [], ["loc", [null, [124, 12], [124, 32]]]]],
+            statements: [["attribute", "data-value", ["get", "interval.value", ["loc", [null, [130, 41], [130, 55]]]]], ["inline", "t", [["get", "interval.label", ["loc", [null, [131, 16], [131, 30]]]]], [], ["loc", [null, [131, 12], [131, 32]]]]],
             locals: ["interval"],
             templates: []
           };
@@ -12077,11 +12180,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
             "loc": {
               "source": null,
               "start": {
-                "line": 115,
+                "line": 122,
                 "column": 4
               },
               "end": {
-                "line": 128,
+                "line": 135,
                 "column": 4
               }
             },
@@ -12133,7 +12236,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
             morphs[1] = dom.createMorphAt(dom.childAt(fragment, [7]), 1, 1);
             return morphs;
           },
-          statements: [["attribute", "value", ["get", "settings.system.updateInterval", ["loc", [null, [119, 51], [119, 81]]]]], ["block", "each", [["get", "updateIntervals", ["loc", [null, [122, 16], [122, 31]]]]], [], 0, null, ["loc", [null, [122, 8], [126, 17]]]]],
+          statements: [["attribute", "value", ["get", "settings.system.updateInterval", ["loc", [null, [126, 51], [126, 81]]]]], ["block", "each", [["get", "updateIntervals", ["loc", [null, [129, 16], [129, 31]]]]], [], 0, null, ["loc", [null, [129, 8], [133, 17]]]]],
           locals: [],
           templates: [child0]
         };
@@ -12145,11 +12248,11 @@ define("rose/templates/settings", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 110,
+              "line": 117,
               "column": 2
             },
             "end": {
-              "line": 130,
+              "line": 137,
               "column": 2
             }
           },
@@ -12196,7 +12299,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
           morphs[2] = dom.createMorphAt(element2, 5, 5);
           return morphs;
         },
-        statements: [["inline", "t", ["settings.autoUpdateInterval"], [], ["loc", [null, [112, 11], [112, 46]]]], ["inline", "t", ["settings.autoUpdateIntervalLabel"], [], ["loc", [null, [113, 7], [113, 47]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "settings.system.updateInterval", ["loc", [null, [116, 29], [116, 59]]]]], [], []], "onChange", ["subexpr", "action", ["changeAutoUpdate"], [], ["loc", [null, [117, 29], [117, 56]]]]], 0, null, ["loc", [null, [115, 4], [128, 20]]]]],
+        statements: [["inline", "t", ["settings.autoUpdateInterval"], [], ["loc", [null, [119, 11], [119, 46]]]], ["inline", "t", ["settings.autoUpdateIntervalLabel"], [], ["loc", [null, [120, 7], [120, 47]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "settings.system.updateInterval", ["loc", [null, [123, 29], [123, 59]]]]], [], []], "onChange", ["subexpr", "action", ["changeAutoUpdate"], [], ["loc", [null, [124, 29], [124, 56]]]]], 0, null, ["loc", [null, [122, 4], [135, 20]]]]],
         locals: [],
         templates: [child0]
       };
@@ -12215,7 +12318,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 142,
+            "line": 149,
             "column": 0
           }
         },
@@ -12327,7 +12430,7 @@ define("rose/templates/settings", ["exports"], function (exports) {
         var el3 = dom.createTextNode("\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
+        var el2 = dom.createTextNode("\n\n\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
         dom.setAttribute(el2, "class", "field manualUpdate");
@@ -12343,69 +12446,94 @@ define("rose/templates/settings", ["exports"], function (exports) {
         var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n");
+        var el3 = dom.createTextNode("\n\n    ");
         dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("a");
-        dom.setAttribute(el3, "class", "ui label");
-        var el4 = dom.createTextNode("\n      ");
+        var el3 = dom.createElement("table");
+        dom.setAttribute(el3, "class", "ui celled small table");
+        var el4 = dom.createTextNode("\n    ");
         dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("div");
-        dom.setAttribute(el4, "class", "detail");
-        var el5 = dom.createTextNode("\n");
+        var el4 = dom.createElement("thead");
+        var el5 = dom.createTextNode("\n      ");
         dom.appendChild(el4, el5);
-        var el5 = dom.createComment("");
+        var el5 = dom.createElement("tr");
+        var el6 = dom.createTextNode("\n        ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("th");
+        var el7 = dom.createComment("");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n        ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("th");
+        var el7 = dom.createComment("");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n        ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("th");
+        var el7 = dom.createComment("");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n      ");
+        dom.appendChild(el5, el6);
         dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("      ");
+        var el5 = dom.createTextNode("\n    ");
         dom.appendChild(el4, el5);
         dom.appendChild(el3, el4);
         var el4 = dom.createTextNode("\n    ");
         dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("a");
-        dom.setAttribute(el3, "class", "ui label");
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("div");
-        dom.setAttribute(el4, "class", "detail");
-        var el5 = dom.createTextNode("\n");
+        var el4 = dom.createElement("tbody");
+        var el5 = dom.createTextNode("\n      ");
         dom.appendChild(el4, el5);
-        var el5 = dom.createComment("");
+        var el5 = dom.createElement("tr");
+        var el6 = dom.createTextNode("\n        ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("td");
+        var el7 = dom.createTextNode("\n");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createComment("");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("        ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n        ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("td");
+        var el7 = dom.createTextNode("\n");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createComment("");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("        ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n        ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("td");
+        var el7 = dom.createTextNode("\n          ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("i");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createComment("");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("        ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n      ");
+        dom.appendChild(el5, el6);
         dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("      ");
+        var el5 = dom.createTextNode("\n    ");
         dom.appendChild(el4, el5);
         dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n    ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("a");
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("i");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("    ");
+        var el4 = dom.createTextNode("\n  ");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n\n");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n");
         dom.appendChild(el2, el3);
         var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
@@ -12487,14 +12615,15 @@ define("rose/templates/settings", ["exports"], function (exports) {
         var element12 = dom.childAt(element10, [3]);
         var element13 = dom.childAt(element10, [5]);
         var element14 = dom.childAt(element10, [7]);
-        var element15 = dom.childAt(element14, [7]);
-        var element16 = dom.childAt(element14, [9]);
-        var element17 = dom.childAt(element14, [11]);
-        var element18 = dom.childAt(element17, [1]);
-        var element19 = dom.childAt(element10, [9]);
-        var element20 = dom.childAt(element10, [13]);
-        var element21 = dom.childAt(element20, [5]);
-        var morphs = new Array(32);
+        var element15 = dom.childAt(element14, [5]);
+        var element16 = dom.childAt(element15, [1, 1]);
+        var element17 = dom.childAt(element15, [3, 1]);
+        var element18 = dom.childAt(element17, [5]);
+        var element19 = dom.childAt(element18, [1]);
+        var element20 = dom.childAt(element10, [9]);
+        var element21 = dom.childAt(element10, [13]);
+        var element22 = dom.childAt(element21, [5]);
+        var morphs = new Array(33);
         morphs[0] = dom.createMorphAt(element9, 1, 1);
         morphs[1] = dom.createMorphAt(dom.childAt(element9, [3]), 0, 0);
         morphs[2] = dom.createAttrMorph(element10, 'class');
@@ -12509,27 +12638,28 @@ define("rose/templates/settings", ["exports"], function (exports) {
         morphs[11] = dom.createMorphAt(element13, 5, 5);
         morphs[12] = dom.createMorphAt(dom.childAt(element14, [1]), 0, 0);
         morphs[13] = dom.createMorphAt(dom.childAt(element14, [3]), 0, 0);
-        morphs[14] = dom.createMorphAt(element14, 5, 5);
-        morphs[15] = dom.createMorphAt(element15, 1, 1);
-        morphs[16] = dom.createMorphAt(dom.childAt(element15, [3]), 1, 1);
-        morphs[17] = dom.createMorphAt(element16, 1, 1);
-        morphs[18] = dom.createMorphAt(dom.childAt(element16, [3]), 1, 1);
-        morphs[19] = dom.createAttrMorph(element17, 'class');
-        morphs[20] = dom.createAttrMorph(element18, 'class');
-        morphs[21] = dom.createMorphAt(element17, 3, 3);
-        morphs[22] = dom.createMorphAt(element14, 13, 13);
-        morphs[23] = dom.createMorphAt(dom.childAt(element19, [1]), 0, 0);
-        morphs[24] = dom.createMorphAt(dom.childAt(element19, [3]), 0, 0);
-        morphs[25] = dom.createMorphAt(element19, 5, 5);
-        morphs[26] = dom.createMorphAt(element10, 11, 11);
-        morphs[27] = dom.createMorphAt(dom.childAt(element20, [1]), 0, 0);
-        morphs[28] = dom.createMorphAt(dom.childAt(element20, [3]), 0, 0);
-        morphs[29] = dom.createElementMorph(element21);
-        morphs[30] = dom.createMorphAt(element21, 1, 1);
-        morphs[31] = dom.createMorphAt(fragment, 4, 4, contextualElement);
+        morphs[14] = dom.createMorphAt(dom.childAt(element16, [1]), 0, 0);
+        morphs[15] = dom.createMorphAt(dom.childAt(element16, [3]), 0, 0);
+        morphs[16] = dom.createMorphAt(dom.childAt(element16, [5]), 0, 0);
+        morphs[17] = dom.createMorphAt(dom.childAt(element17, [1]), 1, 1);
+        morphs[18] = dom.createMorphAt(dom.childAt(element17, [3]), 1, 1);
+        morphs[19] = dom.createAttrMorph(element18, 'class');
+        morphs[20] = dom.createAttrMorph(element19, 'class');
+        morphs[21] = dom.createMorphAt(element18, 3, 3);
+        morphs[22] = dom.createMorphAt(element14, 7, 7);
+        morphs[23] = dom.createMorphAt(element14, 9, 9);
+        morphs[24] = dom.createMorphAt(dom.childAt(element20, [1]), 0, 0);
+        morphs[25] = dom.createMorphAt(dom.childAt(element20, [3]), 0, 0);
+        morphs[26] = dom.createMorphAt(element20, 5, 5);
+        morphs[27] = dom.createMorphAt(element10, 11, 11);
+        morphs[28] = dom.createMorphAt(dom.childAt(element21, [1]), 0, 0);
+        morphs[29] = dom.createMorphAt(dom.childAt(element21, [3]), 0, 0);
+        morphs[30] = dom.createElementMorph(element22);
+        morphs[31] = dom.createMorphAt(element22, 1, 1);
+        morphs[32] = dom.createMorphAt(fragment, 4, 4, contextualElement);
         return morphs;
       },
-      statements: [["inline", "t", ["settings.title"], [], ["loc", [null, [4, 4], [4, 26]]]], ["inline", "t", ["settings.subtitle"], [], ["loc", [null, [5, 28], [5, 53]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [9, 22], [9, 34]]]]]]], ["inline", "t", ["settings.language"], [], ["loc", [null, [11, 11], [11, 36]]]], ["inline", "t", ["settings.languageLabel"], [], ["loc", [null, [12, 7], [12, 37]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "settings.user.currentLanguage", ["loc", [null, [15, 29], [15, 58]]]]], [], []], "onChange", ["subexpr", "action", ["changeI18nLanguage"], [], ["loc", [null, [16, 29], [16, 58]]]]], 0, null, ["loc", [null, [14, 4], [27, 20]]]], ["inline", "t", ["settings.commentReminder"], [], ["loc", [null, [31, 11], [31, 43]]]], ["inline", "t", ["settings.commentReminderLabel"], [], ["loc", [null, [32, 7], [32, 44]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.commentReminderIsEnabled", ["loc", [null, [34, 26], [34, 64]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.user.commentReminderIsEnabled", ["loc", [null, [35, 42], [35, 80]]]]], [], ["loc", [null, [35, 24], [35, 81]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [36, 27], [36, 50]]]]], ["loc", [null, [33, 4], [36, 52]]]], ["inline", "t", ["settings.extraFeatures"], [], ["loc", [null, [41, 11], [41, 41]]]], ["inline", "t", ["settings.extraFeaturesLabel"], [], ["loc", [null, [42, 7], [42, 42]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.developerModeIsEnabled", ["loc", [null, [44, 26], [44, 62]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.user.developerModeIsEnabled", ["loc", [null, [45, 42], [45, 78]]]]], [], ["loc", [null, [45, 24], [45, 79]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [46, 27], [46, 50]]]]], ["loc", [null, [43, 4], [46, 52]]]], ["inline", "t", ["settings.manualUpdate"], [], ["loc", [null, [50, 11], [50, 40]]]], ["inline", "t", ["settings.manualUpdateLabel"], [], ["loc", [null, [51, 7], [51, 41]]]], ["block", "if", [["get", "navigator.onLine", ["loc", [null, [52, 10], [52, 26]]]]], [], 1, 2, ["loc", [null, [52, 4], [59, 11]]]], ["inline", "t", ["settings.lastChecked"], [], ["loc", [null, [62, 6], [62, 34]]]], ["block", "if", [["get", "settings.system.lastChecked", ["loc", [null, [64, 14], [64, 41]]]]], [], 3, 4, ["loc", [null, [64, 8], [68, 15]]]], ["inline", "t", ["settings.lastUpdated"], [], ["loc", [null, [73, 6], [73, 34]]]], ["block", "if", [["get", "settings.system.lastUpdated", ["loc", [null, [75, 14], [75, 41]]]]], [], 5, 6, ["loc", [null, [75, 8], [79, 15]]]], ["attribute", "class", ["concat", ["ui ", ["subexpr", "if", [["get", "updateSigned", ["loc", [null, [83, 22], [83, 34]]]], "green"], [], ["loc", [null, [83, 17], [83, 44]]]], " label"]]], ["attribute", "class", ["concat", [["subexpr", "if", [["get", "updateSigned", ["loc", [null, [84, 21], [84, 33]]]], "lock", "unlock alternate"], [], ["loc", [null, [84, 16], [84, 61]]]], " icon"]]], ["block", "if", [["get", "updateSigned", ["loc", [null, [85, 14], [85, 26]]]]], [], 7, 8, ["loc", [null, [85, 8], [89, 15]]]], ["block", "if", [["get", "updateResult", ["loc", [null, [92, 10], [92, 22]]]]], [], 9, null, ["loc", [null, [92, 4], [98, 11]]]], ["inline", "t", ["settings.autoUpdate"], [], ["loc", [null, [102, 11], [102, 38]]]], ["inline", "t", ["settings.autoUpdateLabel"], [], ["loc", [null, [103, 7], [103, 39]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [105, 26], [105, 61]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [106, 42], [106, 77]]]]], [], ["loc", [null, [106, 24], [106, 78]]]], "onChange", ["subexpr", "action", ["changeAutoUpdate"], [], ["loc", [null, [107, 27], [107, 54]]]]], ["loc", [null, [104, 4], [107, 56]]]], ["block", "if", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [110, 8], [110, 43]]]]], [], 10, null, ["loc", [null, [110, 2], [130, 9]]]], ["inline", "t", ["settings.resetRose"], [], ["loc", [null, [133, 11], [133, 37]]]], ["inline", "t", ["settings.resetRoseLabel"], [], ["loc", [null, [134, 7], [134, 38]]]], ["element", "action", ["openModal", "reset-config"], [], ["loc", [null, [135, 34], [135, 71]]]], ["inline", "t", ["action.reset"], [], ["loc", [null, [136, 6], [136, 26]]]], ["inline", "partial", ["modal/reset-config"], [], ["loc", [null, [141, 0], [141, 32]]]]],
+      statements: [["inline", "t", ["settings.title"], [], ["loc", [null, [4, 4], [4, 26]]]], ["inline", "t", ["settings.subtitle"], [], ["loc", [null, [5, 28], [5, 53]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [9, 22], [9, 34]]]]]]], ["inline", "t", ["settings.language"], [], ["loc", [null, [11, 11], [11, 36]]]], ["inline", "t", ["settings.languageLabel"], [], ["loc", [null, [12, 7], [12, 37]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "settings.user.currentLanguage", ["loc", [null, [15, 29], [15, 58]]]]], [], []], "onChange", ["subexpr", "action", ["changeI18nLanguage"], [], ["loc", [null, [16, 29], [16, 58]]]]], 0, null, ["loc", [null, [14, 4], [27, 20]]]], ["inline", "t", ["settings.commentReminder"], [], ["loc", [null, [31, 11], [31, 43]]]], ["inline", "t", ["settings.commentReminderLabel"], [], ["loc", [null, [32, 7], [32, 44]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.commentReminderIsEnabled", ["loc", [null, [34, 26], [34, 64]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.user.commentReminderIsEnabled", ["loc", [null, [35, 42], [35, 80]]]]], [], ["loc", [null, [35, 24], [35, 81]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [36, 27], [36, 50]]]]], ["loc", [null, [33, 4], [36, 52]]]], ["inline", "t", ["settings.extraFeatures"], [], ["loc", [null, [41, 11], [41, 41]]]], ["inline", "t", ["settings.extraFeaturesLabel"], [], ["loc", [null, [42, 7], [42, 42]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.developerModeIsEnabled", ["loc", [null, [44, 26], [44, 62]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.user.developerModeIsEnabled", ["loc", [null, [45, 42], [45, 78]]]]], [], ["loc", [null, [45, 24], [45, 79]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [46, 27], [46, 50]]]]], ["loc", [null, [43, 4], [46, 52]]]], ["inline", "t", ["settings.manualUpdate"], [], ["loc", [null, [51, 11], [51, 40]]]], ["inline", "t", ["settings.manualUpdateLabel"], [], ["loc", [null, [52, 7], [52, 41]]]], ["inline", "t", ["settings.lastChecked"], [], ["loc", [null, [57, 12], [57, 40]]]], ["inline", "t", ["settings.lastUpdated"], [], ["loc", [null, [58, 12], [58, 40]]]], ["inline", "t", ["settings.signedStatus"], [], ["loc", [null, [59, 12], [59, 41]]]], ["block", "if", [["get", "settings.system.lastChecked", ["loc", [null, [65, 16], [65, 43]]]]], [], 1, 2, ["loc", [null, [65, 10], [69, 17]]]], ["block", "if", [["get", "settings.system.lastUpdated", ["loc", [null, [72, 16], [72, 43]]]]], [], 3, 4, ["loc", [null, [72, 10], [76, 17]]]], ["attribute", "class", ["concat", [["subexpr", "if", [["get", "updateSigned", ["loc", [null, [78, 24], [78, 36]]]], "positive"], [], ["loc", [null, [78, 19], [78, 49]]]]]]], ["attribute", "class", ["concat", [["subexpr", "if", [["get", "updateSigned", ["loc", [null, [79, 25], [79, 37]]]], "lock", "unlock alternate"], [], ["loc", [null, [79, 20], [79, 65]]]], " icon"]]], ["block", "if", [["get", "updateSigned", ["loc", [null, [80, 16], [80, 28]]]]], [], 5, 6, ["loc", [null, [80, 10], [84, 17]]]], ["block", "if", [["get", "navigator.onLine", ["loc", [null, [90, 10], [90, 26]]]]], [], 7, 8, ["loc", [null, [90, 4], [97, 11]]]], ["block", "if", [["get", "updateResult", ["loc", [null, [99, 10], [99, 22]]]]], [], 9, null, ["loc", [null, [99, 4], [105, 11]]]], ["inline", "t", ["settings.autoUpdate"], [], ["loc", [null, [109, 11], [109, 38]]]], ["inline", "t", ["settings.autoUpdateLabel"], [], ["loc", [null, [110, 7], [110, 39]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [112, 26], [112, 61]]]]], [], []], "label", ["subexpr", "boolean-to-yesno", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [113, 42], [113, 77]]]]], [], ["loc", [null, [113, 24], [113, 78]]]], "onChange", ["subexpr", "action", ["changeAutoUpdate"], [], ["loc", [null, [114, 27], [114, 54]]]]], ["loc", [null, [111, 4], [114, 56]]]], ["block", "if", [["get", "settings.system.autoUpdateIsEnabled", ["loc", [null, [117, 8], [117, 43]]]]], [], 10, null, ["loc", [null, [117, 2], [137, 9]]]], ["inline", "t", ["settings.resetRose"], [], ["loc", [null, [140, 11], [140, 37]]]], ["inline", "t", ["settings.resetRoseLabel"], [], ["loc", [null, [141, 7], [141, 38]]]], ["element", "action", ["openModal", "reset-config"], [], ["loc", [null, [142, 34], [142, 71]]]], ["inline", "t", ["action.reset"], [], ["loc", [null, [143, 6], [143, 26]]]], ["inline", "partial", ["modal/reset-config"], [], ["loc", [null, [148, 0], [148, 32]]]]],
       locals: [],
       templates: [child0, child1, child2, child3, child4, child5, child6, child7, child8, child9, child10]
     };
@@ -14995,7 +15125,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+ad69842e"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+7a45b56e"});
 }
 
 /* jshint ignore:end */

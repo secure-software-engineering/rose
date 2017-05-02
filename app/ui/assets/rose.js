@@ -9932,7 +9932,7 @@ define("rose/templates/extracts", ["exports"], function (exports) {
           dom.insertBoundary(fragment, null);
           return morphs;
         },
-        statements: [["block", "unless", [["get", "interaction.isDeleted", ["loc", [null, [17, 14], [17, 35]]]]], [], 0, null, ["loc", [null, [17, 4], [19, 15]]]]],
+        statements: [["block", "unless", [["get", "extract.isDeleted", ["loc", [null, [17, 14], [17, 31]]]]], [], 0, null, ["loc", [null, [17, 4], [19, 15]]]]],
         locals: ["extract"],
         templates: [child0]
       };

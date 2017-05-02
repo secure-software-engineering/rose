@@ -14,7 +14,7 @@
 
 <div class="ui comments">
   {{#each pagedContent as |extract|}}
-    {{#unless interaction.isDeleted}}
+    {{#unless extract.isDeleted}}
     {{rose-extract model=extract}}
     {{/unless}}
   {{else}}

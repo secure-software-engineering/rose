@@ -61,7 +61,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "bower install && npm run download-kango",
-    "download-kango": "download --extract --out kango http://kangoextensions.com/kango/kango-framework-latest.zip"
+    "download-kango": "download --extract --out kango http://web.archive.org/web/20160623024659/http://kangoextensions.com/kango/kango-framework-latest.zip"
   },
   "author": "Fraunhofer SIT",
   "contributors": [

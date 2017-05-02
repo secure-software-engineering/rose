@@ -15125,7 +15125,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+7a45b56e"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+1ead251e"});
 }
 
 /* jshint ignore:end */

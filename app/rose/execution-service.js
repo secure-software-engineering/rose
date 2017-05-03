@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2015
+Copyright (C) 2015-2017
     Oliver Hoffmann <oliverh855@gmail.com>
 
 This file is part of ROSE.

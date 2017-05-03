@@ -1,7 +1,6 @@
 /*
-Copyright (C) 2013-2015
+Copyright (C) 2013-2017
     Oliver Hoffmann <oliverh855@gmail.com>
-    Sebastian Ruhleder <sebastian.ruhleder@gmail.com>
     Felix Epp <work@felixepp.de>
 
 This file is part of ROSE.

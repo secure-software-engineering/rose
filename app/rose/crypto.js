@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2015
+Copyright (C) 2015-2017
     Felix Epp <work@felixepp.de>
 
 This file is part of ROSE.

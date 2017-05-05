@@ -40,13 +40,20 @@ export default Ember.Controller.extend({
     download: function () {
       const networks = this.get('networks')
         .filterBy('isEnabled', true)
-        .map((network) => JSON.parse(JSON.stringify(network)))
         .map((network) => {
+          network = JSON.parse(JSON.stringify(network))
+          delete network.isEnabled
           if (network.extractors) {
-            network.extractors = network.extractors.filter((extractor) => extractor.isEnabled)
+            network.extractors = network.extractors.filter((extractor) => extractor.isEnabled).map((extractor) => {
+              delete extractor.isEnabled
+              return extractor
+            })
           }
           if (network.observers) {
-            network.observers = network.observers.filter((observer) => observer.isEnabled)
+            network.observers = network.observers.filter((observer) => observer.isEnabled).map((observer) => {
+              delete observer.isEnabled
+              return observer
+            })
           }
           return network
         })

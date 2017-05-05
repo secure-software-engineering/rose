@@ -1459,16 +1459,22 @@ define('rose/controllers/study-creator', ['exports', 'ember', 'npm:normalize-url
 
       download: function download() {
         var networks = this.get('networks').filterBy('isEnabled', true).map(function (network) {
-          return JSON.parse(JSON.stringify(network));
-        }).map(function (network) {
+          network = JSON.parse(JSON.stringify(network));
+          delete network.isEnabled;
           if (network.extractors) {
             network.extractors = network.extractors.filter(function (extractor) {
               return extractor.isEnabled;
+            }).map(function (extractor) {
+              delete extractor.isEnabled;
+              return extractor;
             });
           }
           if (network.observers) {
             network.observers = network.observers.filter(function (observer) {
               return observer.isEnabled;
+            }).map(function (observer) {
+              delete observer.isEnabled;
+              return observer;
             });
           }
           return network;
@@ -15125,7 +15131,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+a07beb8a"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+5f8bf4d1"});
 }
 
 /* jshint ignore:end */

@@ -1,0 +1,58 @@
+[
+    {
+        "name": "link",
+        "network": "reddit",
+        "version": "0.1",
+        "fields": [
+            {
+                "name": "authorId",
+                "selector": "> .entry a.author",
+                "attr": "href",
+                "match": "[^\\\\/]+$",
+                "hash": true
+            },
+            {
+                "name": "contentId",
+                "selector": "> .entry a.comments",
+                "match": "reddit\\.com.+$",
+                "attr": "href",
+                "hash": true
+            }
+        ]
+    },
+    {
+        "name": "comment",
+        "network": "reddit",
+        "version": "0.1",
+        "fields": [
+            {
+                "name": "authorId",
+                "selector": "> .entry a.author",
+                "attr": "href",
+                "match": "[^\\\\/]+$",
+                "hash": true
+            },
+            {
+                "name": "contentId",
+                "selector": "> .entry li:first-child a.bylink",
+                "match": "reddit\\.com.+\\/",
+                "attr": "href",
+                "hash": true
+            },
+            {
+                "name": "commentId",
+                "selector": "> .entry li:first-child a.bylink",
+                "match": "[^\\\\/]+$",
+                "attr": "href",
+                "hash": true
+            },
+            {
+                "name": "parentId",
+                "selector": "> .entry li:nth-child(3) a.bylink",
+                "match": "[^#]+$",
+                "attr": "href",
+                "hash": true
+            }
+        ]
+    }
+]

@@ -1,7 +1,6 @@
 {
   "name": "rose-testing-repository",
   "url": "https://secure-software-engineering.github.io/rose/testing/",
-  "timestamp": 1453224819853,
   "networks": [{
     "id": 1,
     "name": "facebook",
@@ -18,5 +17,12 @@
     "id": 3,
     "name": "twitter",
     "descriptiveName": "twitter"
+  },{
+    "id": 4,
+    "name": "reddit",
+    "descriptiveName": "Reddit",
+    "identifier": "reddit.com",
+    "observers": "reddit/reddit-observers.json",
+    "extractors": "reddit/reddit-extractors.json"
   }]
 }

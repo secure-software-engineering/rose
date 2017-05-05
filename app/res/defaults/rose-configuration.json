@@ -43,8 +43,7 @@
                             "container": "#relationship_bar",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "chat",
@@ -68,8 +67,7 @@
                             "container": ".fbNubFlyoutInner",
                             "extractor": "chat-user-link"
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "chat-reply",
@@ -83,8 +81,7 @@
                             "container": "#pagelet_web_messenger div[role=\"main\"]",
                             "extractor": "chat-user-link"
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "comment-content",
@@ -113,8 +110,7 @@
                             "container": ".mbm",
                             "extractor": "status-update"
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "comment-reply",
@@ -128,8 +124,7 @@
                             "container": ".mbm",
                             "extractor": "status-update"
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "create-event",
@@ -143,8 +138,7 @@
                             "container": "form[action*=\"plans/create\"]",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "decline-event",
@@ -163,8 +157,7 @@
                             "container": "#relationship_bar",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "delete-status-update",
@@ -183,8 +176,7 @@
                             "container": "form",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "event-invite",
@@ -198,8 +190,7 @@
                             "container": "form[action*=\"invite.php\"]",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "friend-request-add",
@@ -228,8 +219,7 @@
                             "container": ".clearfix",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "friend-request-confirm",
@@ -248,8 +238,7 @@
                             "container": "#globalContainer",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "friend-request-reject",
@@ -268,8 +257,7 @@
                             "container": "#globalContainer",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "join-event",
@@ -298,8 +286,7 @@
                             "container": "#relationship_bar",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "like-comment",
@@ -313,8 +300,7 @@
                             "container": ".mbm",
                             "extractor": "status-update"
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "like-content",
@@ -333,8 +319,7 @@
                             "container": ".uiLayer",
                             "extractor": "status-update"
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "like-page",
@@ -368,8 +353,7 @@
                             "container": "a",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "like-photo",
@@ -393,8 +377,7 @@
                             "container": ".fbPhotoSnowliftPopup",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "share-status",
@@ -418,8 +401,7 @@
                             "container": "[data-reactroot]",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "share-status-chat",
@@ -433,8 +415,7 @@
                             "container": "[data-reactroot]",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "unfriend",
@@ -453,8 +434,7 @@
                             "container": "will never be reached",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "unlike-comment",
@@ -468,8 +448,7 @@
                             "container": ".mbm",
                             "extractor": "status-update"
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "unlike-content",
@@ -483,8 +462,7 @@
                             "container": ".mbm",
                             "extractor": "status-update"
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "unlike-page",
@@ -503,8 +481,7 @@
                             "container": ".uiContextualLayer",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "unlike-photo",
@@ -528,8 +505,7 @@
                             "container": ".fbPhotoSnowliftPopup",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "update-status",
@@ -558,8 +534,7 @@
                             "container": "div#pagelet_composer",
                             "extractor": ""
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "upload-photo",
@@ -573,8 +548,7 @@
                             "container": "form",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "upload-video",
@@ -593,8 +567,7 @@
                             "container": "div[role=\"dialog\"]",
                             "extractor": null
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "view-profile",
@@ -608,8 +581,7 @@
                             "container": "a",
                             "extractor": "user-link"
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 }
             ],
             "extractors": [
@@ -632,8 +604,7 @@
                             "attr": "href",
                             "hash": true
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "user-link",
@@ -646,8 +617,7 @@
                             "match": ".+profile\\\\.php\\\\?id=\\\\d+(?=\\\\&)|.+(?=\\\\?)|.+",
                             "hash": true
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "chat-user-link",
@@ -661,8 +631,7 @@
                             "match": ".+profile\\\\.php\\\\?id=\\\\d+(?=\\\\&)|.+(?=\\\\?)|.+",
                             "hash": true
                         }
-                    ],
-                    "isEnabled": true
+                    ]
                 },
                 {
                     "name": "privacy-settings",
@@ -671,7 +640,7 @@
                     "informationUrl": "https://www.facebook.com/settings/?tab=privacy",
                     "interval": 259200000,
                     "container": ".fbSettingsSections",
-                    "version": "0.1",
+                    "version": "0.2",
                     "fields": [
                         {
                             "name": "viewFuturePosts",
@@ -703,8 +672,214 @@
                             "attr": "content",
                             "selector": ".fbSettingsSectionsItem:nth-child(3) .fbSettingsListItem:nth-child(3) .fbSettingsListItemContent > div:last-child"
                         }
-                    ],
-                    "isEnabled": true
+                    ]
+                }
+            ],
+            "isEnabled": true
+        },
+        {
+            "id": 4,
+            "name": "reddit",
+            "descriptiveName": "Reddit",
+            "identifier": "reddit.com",
+            "observers": [
+                {
+                    "name": "view-link",
+                    "network": "reddit",
+                    "type": "click",
+                    "priority": 1,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": ".thing.link a.title",
+                            "container": ".thing",
+                            "extractor": "link"
+                        }
+                    ]
+                },
+                {
+                    "name": "view-comments",
+                    "network": "reddit",
+                    "type": "click",
+                    "priority": 30,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": ".thing.link a.comments",
+                            "container": ".thing",
+                            "extractor": "link"
+                        }
+                    ]
+                },
+                {
+                    "name": "upvote-link",
+                    "network": "reddit",
+                    "type": "click",
+                    "priority": 10,
+                    "version": "0.2",
+                    "patterns": [
+                        {
+                            "node": ".thing.link .unvoted div[data-event-action='upvote'], .thing.link .dislikes div[data-event-action='upvote']",
+                            "container": ".thing",
+                            "extractor": "link"
+                        }
+                    ]
+                },
+                {
+                    "name": "downvote-link",
+                    "network": "reddit",
+                    "type": "click",
+                    "priority": 11,
+                    "version": "0.2",
+                    "patterns": [
+                        {
+                            "node": ".thing.link .unvoted div[data-event-action='downvote'], .thing.link .likes div[data-event-action='downvote']",
+                            "container": ".thing",
+                            "extractor": "link"
+                        }
+                    ]
+                },
+                {
+                    "name": "upvote-comment",
+                    "network": "reddit",
+                    "type": "click",
+                    "priority": 20,
+                    "version": "0.2",
+                    "patterns": [
+                        {
+                            "node": ".thing.comment .unvoted div[data-event-action='upvote'], .thing.comment .dislikes div[data-event-action='upvote']",
+                            "container": ".thing",
+                            "extractor": "comment"
+                        }
+                    ]
+                },
+                {
+                    "name": "downvote-comment",
+                    "network": "reddit",
+                    "type": "click",
+                    "priority": 21,
+                    "version": "0.2",
+                    "patterns": [
+                        {
+                            "node": ".thing.comment .unvoted div[data-event-action='downvote'], .thing.comment .likes div[data-event-action='downvote']",
+                            "container": ".thing",
+                            "extractor": "comment"
+                        }
+                    ]
+                },
+                {
+                    "name": "revoke-upvote-link",
+                    "network": "reddit",
+                    "type": "click",
+                    "priority": 40,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": ".thing.link .likes div[data-event-action='upvote']",
+                            "container": ".thing",
+                            "extractor": "link"
+                        }
+                    ]
+                },
+                {
+                    "name": "revoke-downvote-link",
+                    "network": "reddit",
+                    "type": "click",
+                    "priority": 41,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": ".thing.link .dislikes div[data-event-action='downvote']",
+                            "container": ".thing",
+                            "extractor": "link"
+                        }
+                    ]
+                },
+                {
+                    "name": "revoke-upvote-comment",
+                    "network": "reddit",
+                    "type": "click",
+                    "priority": 42,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": ".thing.comment .likes div[data-event-action='upvote']",
+                            "container": ".thing",
+                            "extractor": "comment"
+                        }
+                    ]
+                },
+                {
+                    "name": "revoke-downvote-comment",
+                    "network": "reddit",
+                    "type": "click",
+                    "priority": 43,
+                    "version": "0.1",
+                    "patterns": [
+                        {
+                            "node": ".thing.comment .dislikes div[data-event-action='downvote']",
+                            "container": ".thing",
+                            "extractor": "comment"
+                        }
+                    ]
+                }
+            ],
+            "extractors": [
+                {
+                    "name": "link",
+                    "network": "reddit",
+                    "version": "0.1",
+                    "fields": [
+                        {
+                            "name": "authorId",
+                            "selector": "> .entry a.author",
+                            "attr": "href",
+                            "match": "[^\\\\/]+$",
+                            "hash": true
+                        },
+                        {
+                            "name": "contentId",
+                            "selector": "> .entry a.comments",
+                            "match": "reddit\\.com.+$",
+                            "attr": "href",
+                            "hash": true
+                        }
+                    ]
+                },
+                {
+                    "name": "comment",
+                    "network": "reddit",
+                    "version": "0.1",
+                    "fields": [
+                        {
+                            "name": "authorId",
+                            "selector": "> .entry a.author",
+                            "attr": "href",
+                            "match": "[^\\\\/]+$",
+                            "hash": true
+                        },
+                        {
+                            "name": "contentId",
+                            "selector": "> .entry li:first-child a.bylink",
+                            "match": "reddit\\.com.+\\/",
+                            "attr": "href",
+                            "hash": true
+                        },
+                        {
+                            "name": "commentId",
+                            "selector": "> .entry li:first-child a.bylink",
+                            "match": "[^\\\\/]+$",
+                            "attr": "href",
+                            "hash": true
+                        },
+                        {
+                            "name": "parentId",
+                            "selector": "> .entry li:nth-child(3) a.bylink",
+                            "match": "[^#]+$",
+                            "attr": "href",
+                            "hash": true
+                        }
+                    ]
                 }
             ],
             "isEnabled": true

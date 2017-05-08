@@ -1431,15 +1431,7 @@ define('rose/controllers/study-creator', ['exports', 'ember', 'npm:normalize-url
 
     updateIntervals: [{ label: 'hourly', value: 3600000 }, { label: 'daily', value: 86400000 }, { label: 'weekly', value: 604800000 }, { label: 'monthly', value: 2629743830 }],
 
-    getExtractors: function getExtractors(url) {
-      return _ember['default'].$.getJSON(url).then(function (list) {
-        return list.map(function (item) {
-          return _ember['default'].Object.create(item);
-        });
-      });
-    },
-
-    getObservers: function getObservers(url) {
+    getPatternRessource: function getPatternRessource(url) {
       return _ember['default'].$.getJSON(url).then(function (list) {
         return list.map(function (item) {
           return _ember['default'].Object.create(item);
@@ -1504,7 +1496,17 @@ define('rose/controllers/study-creator', ['exports', 'ember', 'npm:normalize-url
           if (baseJSON.networks) {
             var networks = baseJSON.networks;
             networks.forEach(function (network) {
-              _ember['default'].RSVP.Promise.all([_this.getExtractors(repositoryURL + '/' + network.extractors), _this.getObservers(repositoryURL + '/' + network.observers)]).then(function (results) {
+              if (!network.observers && !network.extractors) {
+                return;
+              }
+              var requests = [[], []];
+              if (network.extractors) {
+                requests[0] = _this.getPatternRessource(repositoryURL + '/' + network.extractors);
+              }
+              if (network.observers) {
+                requests[1] = _this.getPatternRessource(repositoryURL + '/' + network.observers);
+              }
+              _ember['default'].RSVP.Promise.all(requests).then(function (results) {
                 network.extractors = results[0];
                 network.observers = results[1];
                 _this.get('networks').pushObject(_ember['default'].Object.create(network));
@@ -1529,7 +1531,7 @@ define('rose/controllers/study-creator', ['exports', 'ember', 'npm:normalize-url
       },
 
       toggleForceSecureUpdate: function toggleForceSecureUpdate() {
-        var state = this.get('model.forceSecureUpdate');
+        // const state = this.get('model.forceSecureUpdate')
         this.get('model').save();
       }
     }
@@ -15131,7 +15133,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+5f8bf4d1"});
+  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+5ff3efc0"});
 }
 
 /* jshint ignore:end */

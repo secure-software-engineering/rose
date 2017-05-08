@@ -17,12 +17,7 @@ export default Ember.Controller.extend({
     { label: 'monthly', value: 2629743830 }
   ],
 
-  getExtractors(url) {
-    return Ember.$.getJSON(url)
-      .then((list) => list.map((item) => Ember.Object.create(item)))
-  },
-
-  getObservers(url) {
+  getPatternRessource (url) {
     return Ember.$.getJSON(url)
       .then((list) => list.map((item) => Ember.Object.create(item)))
   },
@@ -66,7 +61,7 @@ export default Ember.Controller.extend({
       window.saveAs(new Blob([jsondata]), fileName)
     },
 
-    fetchBaseFile() {
+    fetchBaseFile () {
       // this.set('networks', [])
       this.setProperties({
         networks: [],
@@ -81,10 +76,17 @@ export default Ember.Controller.extend({
           if (baseJSON.networks) {
             const networks = baseJSON.networks
             networks.forEach((network) => {
-              Ember.RSVP.Promise.all([
-                this.getExtractors(`${repositoryURL}/${network.extractors}`),
-                this.getObservers(`${repositoryURL}/${network.observers}`)
-              ]).then((results) => {
+              if (!network.observers && !network.extractors) {
+                return
+              }
+              let requests = [[], []]
+              if (network.extractors) {
+                requests[0] = this.getPatternRessource(`${repositoryURL}/${network.extractors}`)
+              }
+              if (network.observers) {
+                requests[1] = this.getPatternRessource(`${repositoryURL}/${network.observers}`)
+              }
+              Ember.RSVP.Promise.all(requests).then((results) => {
                 network.extractors = results[0]
                 network.observers = results[1]
                 this.get('networks').pushObject(Ember.Object.create(network))
@@ -95,16 +97,16 @@ export default Ember.Controller.extend({
         .fail(() => this.set('baseFileNotFound', true))
     },
 
-    enableAll(itemList) {
-      itemList.forEach(item => item.set('isEnabled', true))
+    enableAll (itemList) {
+      itemList.forEach((item) => item.set('isEnabled', true))
     },
 
-    disableAll(itemList) {
-      itemList.forEach(item => item.set('isEnabled', false))
+    disableAll (itemList) {
+      itemList.forEach((item) => item.set('isEnabled', false))
     },
 
-    toggleForceSecureUpdate() {
-      const state = this.get('model.forceSecureUpdate')
+    toggleForceSecureUpdate () {
+      // const state = this.get('model.forceSecureUpdate')
       this.get('model').save()
     }
   }

@@ -3074,7 +3074,7 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
         dom.appendChild(el6, el7);
         var el7 = dom.createElement("img");
         dom.setAttribute(el7, "class", "ui fluid image");
-        dom.setAttribute(el7, "src", "/icons/Screenshot-CommentRibbon.png");
+        dom.setAttribute(el7, "src", "../icons/Screenshot-CommentRibbon.png");
         dom.appendChild(el6, el7);
         var el7 = dom.createTextNode("\n          ");
         dom.appendChild(el6, el7);
@@ -3087,7 +3087,7 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
         dom.appendChild(el6, el7);
         var el7 = dom.createElement("img");
         dom.setAttribute(el7, "class", "ui fluid image");
-        dom.setAttribute(el7, "src", "/icons/Screenshot-Sidebar.png");
+        dom.setAttribute(el7, "src", "../icons/Screenshot-Sidebar.png");
         dom.appendChild(el6, el7);
         var el7 = dom.createTextNode("\n          ");
         dom.appendChild(el6, el7);

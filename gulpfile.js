@@ -1,4 +1,5 @@
 var gulp = require('gulp')
+var argv = require('yargs').argv
 var changed = require('gulp-changed')
 var connect = require('gulp-connect')
 var gulpFilter = require('gulp-filter')
@@ -7,10 +8,7 @@ var notify = require('gulp-notify')
 var gulpif = require('gulp-if')
 var uglify = require('gulp-uglify')
 
-var babelify = require('babelify')
 var browserify = require('browserify')
-var browserifyCss = require('browserify-css')
-var hbsfy = require('hbsfy')
 var del = require('del')
 var exec = require('child_process').exec
 var buffer = require('vinyl-buffer')
@@ -29,6 +27,7 @@ var options = {
 }
 
 var manifest = require(ENV.manifest)
+var browser = argv.safari !== undefined ? 'safari' : 'chrome'
 
 gulp.task('build:contentscript', function () {
     return browserify('./app/content_app.js', { paths: [ ENV.app ], debug: false })
@@ -136,14 +135,14 @@ gulp.task('kango:build', [
     })
 })
 
-gulp.task('kango:chrome', [
+gulp.task('kango:dev', [
     'build:backgroundscript',
     'build:contentscript',
     'build:manifest',
     'copy:bowerFiles',
     'copy:staticFiles'
 ], function (cb) {
-    exec('python ' + ENV.kangocli + ' build kango-runtime --target chrome --no-pack --output-directory ' + ENV.dist, function (err) {
+    exec('python ' + ENV.kangocli + ' build kango-runtime --target ' + browser + ' --no-pack --output-directory ' + ENV.dist, function (err) {
         cb(err)
     })
 })
@@ -159,7 +158,7 @@ gulp.task('watch', function () {
     return gulp.watch(ENV.app + '/**/*', ['reload'])
 })
 
-gulp.task('reload', ['kango:chrome'], function () {
+gulp.task('reload', ['kango:dev'], function () {
     return gulp.src(ENV.app + '/**/*')
     .pipe(connect.reload())
     .pipe(notify({
@@ -175,5 +174,5 @@ gulp.task('build', ['clean:dist', 'clean:tmp'], function () {
 
 gulp.task('default', ['clean:dist', 'clean:tmp', 'connect'], function () {
     gulp.start('watch')
-    gulp.start('kango:chrome')
+    gulp.start('kango:dev')
 })

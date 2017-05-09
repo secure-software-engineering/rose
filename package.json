@@ -56,7 +56,8 @@
     "semantic-ui-rating": "^2.2.10",
     "semantic-ui-sidebar": "^2.2.10",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.0.0"
+    "vinyl-source-stream": "^1.0.0",
+    "yargs": "^8.0.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

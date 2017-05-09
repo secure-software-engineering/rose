@@ -43,7 +43,6 @@ import FBLoginTracker from './rose/activity-trackers/facebook-login';
                 if ((new RegExp('^https:\/\/[\w\.\-]*(' + network.get('identifier').replace(/\./g, '\\$&') + ')$')).test(window.location.origin)) {
                     networkName = network.get('name')
 
-                    kango.dispatchMessage('registerTab')
                     kango.addMessageListener('toggle-tracking', function (event) {
                         if (event.data) {
                             startTracking()

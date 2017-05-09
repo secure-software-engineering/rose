@@ -115,21 +115,10 @@ executionService.schedule(Task({
 }))
 
 /* Messaging */
-
-let activeTabIds = []
-
-kango.addMessageListener('registerTab', (evt) => {
-    activeTabIds.push(evt.source._tab.id)
-})
-
-kango.browser.addEventListener(kango.browser.event.TAB_REMOVED, (event) => {
-    activeTabIds = activeTabIds.filter((tabId) => tabId !== event.tabId)
-})
-
-function sendToActiveTabs (event, msg) {
+function sendToAllTabs (event, msg) {
     kango.browser.tabs.getAll((tabs) => {
         for (var i = 0; i < tabs.length; i++) {
-            if (activeTabIds.some((id) => id === tabs[i].getId())) tabs[i].dispatchMessage(event, msg)
+            tabs[i].dispatchMessage(event, msg)
         }
     })
 }
@@ -143,7 +132,7 @@ kango.addMessageListener('reschedule-auto-update', () => {
     scheduleAutoUpdate()
 })
 
-kango.addMessageListener('update-start', () => {
+kango.addMessageListener('update-start', (evt) => {
     Updater.update()
     .then(async (statistics) => {
         // FIXME: should not tamper in localstorage manage by execution service from here
@@ -159,8 +148,8 @@ kango.addMessageListener('update-start', () => {
         log('Updater', JSON.stringify(statistics))
         return statistics
     })
-    .then((status) => kango.dispatchMessage('update-successful', status))
-    .catch((err) => kango.dispatchMessage('update-unsuccessful', err))
+    .then((status) => evt.target.dispatchMessage('update-successful', status))
+    .catch((err) => evt.target.dispatchMessage('update-unsuccessful', err))
 })
 
 kango.addMessageListener('LoadNetworks', (event) => {
@@ -191,13 +180,13 @@ kango.addMessageListener('toggle-tracking', () => {
         if (settings.get('trackingEnabled')) {
             scheduleExtractors()
             scheduleActivityTrackers()
-            sendToActiveTabs('toggle-tracking', true)
+            sendToAllTabs('toggle-tracking', true)
         } else {
             while (extractorEngine.scheduled.length) {
                 executionService.cancel(extractorEngine.scheduled.pop())
             }
             windowTrackers = []
-            sendToActiveTabs('toggle-tracking', false)
+            sendToAllTabs('toggle-tracking', false)
         }
     }})
 })

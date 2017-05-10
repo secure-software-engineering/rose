@@ -1,7 +1,7 @@
 {
-  "name": "rose",
-  "version": "0.0.0",
-  "description": "Small description for rose goes here",
+  "name": "rose-ui",
+  "version": "3.0.1",
+  "description": "The UI for the browser extension ROSE",
   "private": true,
   "directories": {
     "doc": "doc",

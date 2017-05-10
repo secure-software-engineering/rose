@@ -2,7 +2,7 @@
     "name": "ROSE",
     "description": "Research tool for field studies in online social networks.",
     "creator": "Fraunhofer Institute SIT",
-    "version": "3.0.1",
+    "version": "3.0.2",
     "homepage_url": "https://sit4.me/rose",
     "background_scripts": [
         "scripts/chromereload.js",

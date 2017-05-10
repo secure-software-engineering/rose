@@ -1204,14 +1204,16 @@ define('rose/controllers/data-converter', ['exports', 'ember', 'npm:lodash/isArr
     });
 });
 define('rose/controllers/debug-log', ['exports', 'ember', 'ember-cli-pagination/computed/paged-array'], function (exports, _ember, _emberCliPaginationComputedPagedArray) {
-    exports['default'] = _ember['default'].Controller.extend({
-        model: [],
-        queryParams: ["page"],
-        page: 1,
-        perPage: 20,
-        pagedContent: (0, _emberCliPaginationComputedPagedArray['default'])('model', { pageBinding: "page", perPageBinding: "perPage" }),
-        totalPagesBinding: "pagedContent.totalPages"
-    });
+  exports['default'] = _ember['default'].Controller.extend({
+    model: [],
+    queryParams: ['page'],
+    modelSorting: ['date:desc'],
+    log: _ember['default'].computed.sort('model', 'modelSorting'),
+    page: 1,
+    perPage: 20,
+    pagedContent: (0, _emberCliPaginationComputedPagedArray['default'])('log', { pageBinding: 'page', perPageBinding: 'perPage' }),
+    totalPagesBinding: 'pagedContent.totalPages'
+  });
 });
 define('rose/controllers/diary', ['exports', 'ember', 'ember-cli-pagination/computed/paged-array'], function (exports, _ember, _emberCliPaginationComputedPagedArray) {
   exports['default'] = _ember['default'].Controller.extend({
@@ -5582,20 +5584,11 @@ define('rose/routes/data-converter', ['exports', 'ember'], function (exports, _e
   exports['default'] = _ember['default'].Route.extend({});
 });
 define('rose/routes/debug-log', ['exports', 'ember'], function (exports, _ember) {
-    exports['default'] = _ember['default'].Route.extend({
-        model: function model() {
-            var debugLog = [];
-
-            return new Promise(function (resolve, reject) {
-                kango.invokeAsyncCallback('localforage.getItem', 'application-log', function (log) {
-                    log.forEach(function (item) {
-                        return debugLog.push(item);
-                    });
-                    resolve(debugLog.reverse());
-                });
-            });
-        }
-    });
+  exports['default'] = _ember['default'].Route.extend({
+    model: function model() {
+      return localforage.getItem('application-log');
+    }
+  });
 });
 define('rose/routes/diary', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Route.extend({

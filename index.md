@@ -26,7 +26,9 @@ You find the Google Chrome extension page of ROSE here: [Chrome Store](https://c
 
 ### Where can I find more information?  
 
-We are currently preparing a concise guide for researchers using ROSE, developers, and field study participants.
+The following guideline provide more information on specific topics.
+
+[How to execute a study with ROSE](study-procedure.html)
 
 ### Who developed ROSE?
 

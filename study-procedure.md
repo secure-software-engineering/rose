@@ -6,7 +6,7 @@ ROSE is intended to support empirical research into the practices of online soci
 
 The following picture gives an overview of the general study setup. It will be used to explain the general steps for executing a social media study with ROSE. 
 
-![General study workflow with ROSE](/images/rose-basic-setup.png "Study workflow")
+![General study workflow with ROSE](./images/rose-basic-setup.png "Study workflow")
 
 The picture shows three technical entities involved in a study:
   * ROSE as a browser extension run in the **web browsers** of the researchers executing the study and the participants taking part in the study. Both use ROSE in two different modes: the researchers use an expert mode to prepare the study and to process the tracking data by the participants. The participants use ROSE in a study mode with a configuration tailored to the specific needs of the study.

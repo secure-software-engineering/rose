@@ -6,7 +6,9 @@ ROSE is intended to support empirical research into the practices of online soci
 
 The following picture gives an overview of the general study setup. It will be used to explain the general steps for executing a social media study with ROSE. 
 
-![General study workflow with ROSE](/images/rose-basic-setup.png "Study workflow")
+![General study workflow with ROSE](./images/rose-basic-setup.png "Study workflow")
+
+[Enlarge image here](./images/rose-basic-setup.png)
 
 The picture shows three technical entities involved in a study:
   * ROSE as a browser extension run in the **web browsers** of the researchers executing the study and the participants taking part in the study. Both use ROSE in two different modes: the researchers use an expert mode to prepare the study and to process the tracking data by the participants. The participants use ROSE in a study mode with a configuration tailored to the specific needs of the study.
@@ -22,4 +24,36 @@ Each study executed with ROSE has the following general workflow:
   6. Participants hand over their tracking data the researcher for analysis. 
 
 While this is the general workflow, researchers might choose to deviate. For instance, study participants could also use ROSE in the default mode without a configuration file. 
- 
+
+### First steps as a researcher 
+
+First of all ROSE needs to be installed in your local web browser (Chrome or Safari). Use the following links to the respective extension stores:
+
+[Chrome Store](https://chrome.google.com/webstore/detail/rose/chmgghdkcookiojbnchechkhjfbadjkd)
+**Safari link yet to come**
+
+Once you have installed the extension, you can open its main user interface by clicking the ROSE button in your browser
+
+![ROSE icon in Google Chrome](./images/screenshot-rose-button.png "ROSE icon in Google Chrome")
+
+Upon the first run of ROSE what you should now see is a welcome screen with privacy notes and further information the use of overlays.
+
+![Header of the ROSE welcome screen](./images/screenshot-welcome-screen.png "Header of the ROSE welcome screen")
+
+You need to confirm that you have read these notes in order to proceed.
+
+![Confirm privacy note and overlay note](./images/screenshot-confirm-notes.png "Confirm privacy note and overlay note")
+
+As you lack a configuration file you now need to proceed by choosing the option "Use default configuration". At this point, your participants can later import a configuration file provided by you instead of proceeding with the default configuration.
+
+![Load default configuration](./images/screenshot-load-default.png "Load default configuration")
+
+**Configuration files carry parameters for a tailored setup of ROSE. They allow to configure what actions on social media sites ROSE should track at participants' web browsers, whether special comment function shall be active, and how updates for tracking patterns shall be handled. As a researcher you should provide your participants a configuration file fitting the needs of your study. However, you can also ask your participants to use the default configuration although this is not recommended.**
+
+As a researcher you need access to additional ROSE functions that are not visible when starting ROSE the first time. These functions can be enabled by opening the **Settings** and activating the **Features for researchers and developers**.
+
+![Settings dialog accessed from main menu](./images/screenshot-menu-settings.png "Settings dialog accessed from main menu")
+
+![Activate researcher features](./images/screenshot-expert-mode-switch.png "Activate researcher features")
+
+After these step ROSE is prepared to create a study configuration file.

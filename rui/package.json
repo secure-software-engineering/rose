@@ -1,5 +1,5 @@
 {
-  "name": "rose-ui",
+  "name": "rose",
   "version": "3.0.1",
   "description": "The UI for the browser extension ROSE",
   "private": true,

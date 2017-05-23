@@ -224,6 +224,7 @@ export default {
     repositoryUrlDesc: "ROSE gets its patterns to match user interactions to specific interaction types in tracking packages from a repository. Here you can enter the URL of this repository.",
     autoUpdate: "Automatically update tracking packages during study",
     autoUpdateDesc: "While tracking packages with detection patterns are usually only pushed to ROSE when the configuration file is loaded into participants' instances of ROSE, it is also possible to continuously update them while the study is running. This might be necessary for long-term studies, if the user interface of the investigated social media site is likely to change during the course of the study.",
+    exportHeader: "Export configuration",
     exportConfig: "Export configuration file",
     exportConfigDesc: "Here you can create and export a configuration file with all the settings entered on this page. Your participants can load this file into their installations of ROSE.",
     fingerprint: "Pattern repository signing key fingerprint",
@@ -244,6 +245,7 @@ export default {
     updateInterval: "Interval to check for an updated tracking package",
     updateIntervalLabel: "Choose a time interval to check for tracking package updates",
     baseFileNotFound: "Invalid repository base file URL.",
+    fetchRepository: "Retrieve repository to configure tracking",
 
     table: {
       enabled: "Status (on/off)",

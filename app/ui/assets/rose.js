@@ -69,6 +69,25 @@ define('rose/adapters/application', ['exports', 'ember', 'ember-localforage-adap
     }
   });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+ */
 define('rose/adapters/comment', ['exports', 'rose/adapters/kango-adapter'], function (exports, _roseAdaptersKangoAdapter) {
   exports['default'] = _roseAdaptersKangoAdapter['default'].extend({
     collectionNamespace: 'Comments',
@@ -212,6 +231,25 @@ define('rose/adapters/kango-adapter', ['exports', 'ember', 'ember-data', 'npm:lo
         }
     });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/adapters/network', ['exports', 'rose/adapters/kango-adapter'], function (exports, _roseAdaptersKangoAdapter) {
   exports['default'] = _roseAdaptersKangoAdapter['default'].extend({
     collectionNamespace: 'Networks',
@@ -252,16 +290,6 @@ define('rose/app', ['exports', 'ember', 'ember/resolver', 'ember/load-initialize
 
   exports['default'] = App;
 });
-define('rose/components/app-version', ['exports', 'ember-cli-app-version/components/app-version', 'rose/config/environment'], function (exports, _emberCliAppVersionComponentsAppVersion, _roseConfigEnvironment) {
-
-  var name = _roseConfigEnvironment['default'].APP.name;
-  var version = _roseConfigEnvironment['default'].APP.version;
-
-  exports['default'] = _emberCliAppVersionComponentsAppVersion['default'].extend({
-    version: version,
-    name: name
-  });
-});
 define('rose/components/file-picker', ['exports', 'ember-cli-file-picker/components/file-picker'], function (exports, _emberCliFilePickerComponentsFilePicker) {
   Object.defineProperty(exports, 'default', {
     enumerable: true,
@@ -269,9 +297,6 @@ define('rose/components/file-picker', ['exports', 'ember-cli-file-picker/compone
       return _emberCliFilePickerComponentsFilePicker['default'];
     }
   });
-});
-define('rose/components/high-charts', ['exports', 'ember-highcharts/components/high-charts'], function (exports, _emberHighchartsComponentsHighCharts) {
-  exports['default'] = _emberHighchartsComponentsHighCharts['default'];
 });
 define("rose/components/lf-outlet", ["exports", "liquid-fire/ember-internals"], function (exports, _liquidFireEmberInternals) {
   exports["default"] = _liquidFireEmberInternals.StaticOutlet;
@@ -1096,6 +1121,26 @@ define('rose/controllers/application', ['exports', 'ember'], function (exports, 
     }
   });
 });
+/*
+Copyright (C) 2015-2017
+    Oliver Hoffmann <oliverh855@gmail.com>
+    Felix Epp <work@felixepp.de>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/controllers/array', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Controller;
 });
@@ -1142,6 +1187,25 @@ define('rose/controllers/backup', ['exports', 'ember'], function (exports, _embe
     }
   });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/controllers/comments', ['exports', 'ember', 'ember-cli-pagination/computed/paged-array'], function (exports, _ember, _emberCliPaginationComputedPagedArray) {
   exports['default'] = _ember['default'].Controller.extend({
     listSorting: ['createdAt:desc'],
@@ -1154,6 +1218,25 @@ define('rose/controllers/comments', ['exports', 'ember', 'ember-cli-pagination/c
     totalPagesBinding: "pagedContent.totalPages"
   });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/controllers/data-converter', ['exports', 'ember', 'npm:lodash/isArray', 'npm:papaparse', 'npm:flat'], function (exports, _ember, _npmLodashIsArray, _npmPapaparse, _npmFlat) {
     exports['default'] = _ember['default'].Controller.extend({
         tables: [],
@@ -1203,6 +1286,25 @@ define('rose/controllers/data-converter', ['exports', 'ember', 'npm:lodash/isArr
         }
     });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/controllers/debug-log', ['exports', 'ember', 'ember-cli-pagination/computed/paged-array'], function (exports, _ember, _emberCliPaginationComputedPagedArray) {
   exports['default'] = _ember['default'].Controller.extend({
     model: [],
@@ -1215,6 +1317,26 @@ define('rose/controllers/debug-log', ['exports', 'ember', 'ember-cli-pagination/
     totalPagesBinding: 'pagedContent.totalPages'
   });
 });
+/*
+Copyright (C) 2015-2017
+    Oliver Hoffmann <oliverh855@gmail.com>
+    Felix Epp <work@felixepp.de>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/controllers/diary', ['exports', 'ember', 'ember-cli-pagination/computed/paged-array'], function (exports, _ember, _emberCliPaginationComputedPagedArray) {
   exports['default'] = _ember['default'].Controller.extend({
     listSorting: ['createdAt:desc'],
@@ -1242,6 +1364,25 @@ define('rose/controllers/diary', ['exports', 'ember', 'ember-cli-pagination/comp
     }
   });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/controllers/extracts', ['exports', 'ember', 'ember-cli-pagination/computed/paged-array'], function (exports, _ember, _emberCliPaginationComputedPagedArray) {
   exports['default'] = _ember['default'].Controller.extend({
     listSorting: ['createdAt:desc'],
@@ -1254,6 +1395,25 @@ define('rose/controllers/extracts', ['exports', 'ember', 'ember-cli-pagination/c
     totalPagesBinding: "pagedContent.totalPages"
   });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/controllers/index', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Controller.extend({
     settings: _ember['default'].inject.service('settings'),
@@ -1267,6 +1427,26 @@ define('rose/controllers/index', ['exports', 'ember'], function (exports, _ember
     }
   });
 });
+/*
+Copyright (C) 2015-2017
+    Oliver Hoffmann <oliverh855@gmail.com>
+    Felix Epp <work@felixepp.de>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/controllers/interactions', ['exports', 'ember', 'ember-cli-pagination/computed/paged-array'], function (exports, _ember, _emberCliPaginationComputedPagedArray) {
   exports['default'] = _ember['default'].Controller.extend({
     listSorting: ['createdAt:desc'],
@@ -1279,6 +1459,25 @@ define('rose/controllers/interactions', ['exports', 'ember', 'ember-cli-paginati
     totalPagesBinding: "pagedContent.totalPages"
   });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/controllers/object', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Controller;
 });
@@ -1306,6 +1505,25 @@ define('rose/controllers/observer', ['exports', 'ember'], function (exports, _em
         }
     });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/controllers/observers', ['exports', 'ember'], function (exports, _ember) {
     exports['default'] = _ember['default'].Controller.extend({
         listSorting: ['name'],
@@ -1321,6 +1539,25 @@ define('rose/controllers/observers', ['exports', 'ember'], function (exports, _e
         }
     });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages'], function (exports, _ember, _roseLocalesLanguages) {
   exports['default'] = _ember['default'].Controller.extend({
     navigator: _ember['default'].inject.service(),
@@ -1420,6 +1657,26 @@ define('rose/controllers/settings', ['exports', 'ember', 'rose/locales/languages
     }
   });
 });
+/*
+Copyright (C) 2015-2017
+    Oliver Hoffmann <oliverh855@gmail.com>
+    Felix Epp <work@felixepp.de>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/controllers/study-creator', ['exports', 'ember', 'npm:normalize-url'], function (exports, _ember, _npmNormalizeUrl) {
 
   function removeFileName(str) {
@@ -1539,6 +1796,26 @@ define('rose/controllers/study-creator', ['exports', 'ember', 'npm:normalize-url
     }
   });
 });
+/*
+Copyright (C) 2015-2017
+    Oliver Hoffmann <oliverh855@gmail.com>
+    Felix Epp <work@felixepp.de>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/defaults/study-creator', ['exports'], function (exports) {
   exports['default'] = {
     roseCommentsIsEnabled: true,
@@ -1562,6 +1839,25 @@ define('rose/helpers/boolean-to-yesno', ['exports', 'ember'], function (exports,
         }
     });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/helpers/moment-duration', ['exports', 'ember-moment/helpers/moment-duration'], function (exports, _emberMomentHelpersMomentDuration) {
   Object.defineProperty(exports, 'default', {
     enumerable: true,
@@ -1594,12 +1890,6 @@ define('rose/helpers/t', ['exports', 'ember-i18n/helper'], function (exports, _e
     }
   });
 });
-define('rose/initializers/app-version', ['exports', 'ember-cli-app-version/initializer-factory', 'rose/config/environment'], function (exports, _emberCliAppVersionInitializerFactory, _roseConfigEnvironment) {
-  exports['default'] = {
-    name: 'App Version',
-    initialize: (0, _emberCliAppVersionInitializerFactory['default'])(_roseConfigEnvironment['default'].APP.name, _roseConfigEnvironment['default'].APP.version)
-  };
-});
 define("rose/initializers/ember-i18n", ["exports", "rose/instance-initializers/ember-i18n"], function (exports, _roseInstanceInitializersEmberI18n) {
   exports["default"] = {
     name: _roseInstanceInitializersEmberI18n["default"].name,
@@ -1612,52 +1902,6 @@ define("rose/initializers/ember-i18n", ["exports", "rose/instance-initializers/e
 
       _roseInstanceInitializersEmberI18n["default"].initialize(application);
     }
-  };
-});
-define('rose/initializers/export-application-global', ['exports', 'ember', 'rose/config/environment'], function (exports, _ember, _roseConfigEnvironment) {
-  exports.initialize = initialize;
-
-  function initialize() {
-    var application = arguments[1] || arguments[0];
-    if (_roseConfigEnvironment['default'].exportApplicationGlobal !== false) {
-      var theGlobal;
-      if (typeof window !== 'undefined') {
-        theGlobal = window;
-      } else if (typeof global !== 'undefined') {
-        theGlobal = global;
-      } else if (typeof self !== 'undefined') {
-        theGlobal = self;
-      } else {
-        // no reasonable global, just bail
-        return;
-      }
-
-      var value = _roseConfigEnvironment['default'].exportApplicationGlobal;
-      var globalName;
-
-      if (typeof value === 'string') {
-        globalName = value;
-      } else {
-        globalName = _ember['default'].String.classify(_roseConfigEnvironment['default'].modulePrefix);
-      }
-
-      if (!theGlobal[globalName]) {
-        theGlobal[globalName] = application;
-
-        application.reopen({
-          willDestroy: function willDestroy() {
-            this._super.apply(this, arguments);
-            delete theGlobal[globalName];
-          }
-        });
-      }
-    }
-  }
-
-  exports['default'] = {
-    name: 'export-application-global',
-
-    initialize: initialize
   };
 });
 define('rose/initializers/i18n', ['exports', 'ember-i18n-inject/initializers/i18n'], function (exports, _emberI18nInjectInitializersI18n) {
@@ -1676,6 +1920,25 @@ define('rose/initializers/i18n', ['exports', 'ember-i18n-inject/initializers/i18
 });
 define('rose/initializers/kango-api', ['exports'], function (exports) {
   exports.initialize = initialize;
+  /*
+  Copyright (C) 2015-2016
+      Oliver Hoffmann <oliverh855@gmail.com>
+  
+  This file is part of ROSE.
+  
+  ROSE is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  ROSE is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+  */
 
   function initialize(application) {
     application.deferReadiness();
@@ -1702,6 +1965,25 @@ define("rose/initializers/liquid-fire", ["exports", "liquid-fire/router-dsl-ext"
 // imports happen before the app boots.
 define('rose/initializers/settings', ['exports'], function (exports) {
     exports.initialize = initialize;
+    /*
+    Copyright (C) 2015-2016
+        Oliver Hoffmann <oliverh855@gmail.com>
+    
+    This file is part of ROSE.
+    
+    ROSE is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    
+    ROSE is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    
+    You should have received a copy of the GNU General Public License
+    along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+    */
 
     function initialize(application) {
         application.inject('route', 'settings', 'service:settings');
@@ -1736,24 +2018,6 @@ define("rose/instance-initializers/ember-i18n", ["exports", "ember", "ember-i18n
         })();
       }
     }
-  };
-});
-define("rose/locales/de/config", ["exports"], function (exports) {
-  // Ember-I18n inclues configuration for common locales. Most users
-  // can safely delete this file. Use it if you need to override behavior
-  // for a locale or define behavior for a locale that Ember-I18n
-  // doesn't know about.
-  exports["default"] = {
-    // rtl: [true|FALSE],
-    //
-    // pluralForm: function(count) {
-    //   if (count === 0) { return 'zero'; }
-    //   if (count === 1) { return 'one'; }
-    //   if (count === 2) { return 'two'; }
-    //   if (count < 5) { return 'few'; }
-    //   if (count >= 5) { return 'many'; }
-    //   return 'other';
-    // }
   };
 });
 define("rose/locales/de/translations", ["exports"], function (exports) {
@@ -2033,24 +2297,6 @@ define("rose/locales/de/translations", ["exports"], function (exports) {
     }
   };
 });
-define("rose/locales/en/config", ["exports"], function (exports) {
-  // Ember-I18n inclues configuration for common locales. Most users
-  // can safely delete this file. Use it if you need to override behavior
-  // for a locale or define behavior for a locale that Ember-I18n
-  // doesn't know about.
-  exports["default"] = {
-    // rtl: [true|FALSE],
-    //
-    // pluralForm: function(count) {
-    //   if (count === 0) { return 'zero'; }
-    //   if (count === 1) { return 'one'; }
-    //   if (count === 2) { return 'two'; }
-    //   if (count < 5) { return 'few'; }
-    //   if (count >= 5) { return 'many'; }
-    //   return 'other';
-    // }
-  };
-});
 define("rose/locales/en/translations", ["exports"], function (exports) {
   exports["default"] = {
     // General
@@ -2278,6 +2524,7 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
       repositoryUrlDesc: "ROSE gets its patterns to match user interactions to specific interaction types in tracking packages from a repository. Here you can enter the URL of this repository.",
       autoUpdate: "Automatically update tracking packages during study",
       autoUpdateDesc: "While tracking packages with detection patterns are usually only pushed to ROSE when the configuration file is loaded into participants' instances of ROSE, it is also possible to continuously update them while the study is running. This might be necessary for long-term studies, if the user interface of the investigated social media site is likely to change during the course of the study.",
+      exportHeader: "Export configuration",
       exportConfig: "Export configuration file",
       exportConfigDesc: "Here you can create and export a configuration file with all the settings entered on this page. Your participants can load this file into their installations of ROSE.",
       fingerprint: "Pattern repository signing key fingerprint",
@@ -2298,6 +2545,7 @@ define("rose/locales/en/translations", ["exports"], function (exports) {
       updateInterval: "Interval to check for an updated tracking package",
       updateIntervalLabel: "Choose a time interval to check for tracking package updates",
       baseFileNotFound: "Invalid repository base file URL.",
+      fetchRepository: "Retrieve repository to configure tracking",
 
       table: {
         enabled: "Status (on/off)",
@@ -2477,6 +2725,25 @@ define('rose/pods/components/diary-entry/component', ['exports', 'ember'], funct
     }
   });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define("rose/pods/components/diary-entry/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     var child0 = (function () {
@@ -2925,6 +3192,26 @@ define('rose/pods/components/installation-wizard/component', ['exports', 'ember'
     }
   });
 });
+/*
+Copyright (C) 2015-2017
+    Oliver Hoffmann <oliverh855@gmail.com>
+    Felix Epp <work@felixepp.de>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define("rose/pods/components/installation-wizard/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     var child0 = (function () {
@@ -3250,9 +3537,6 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
       templates: [child0]
     };
   })());
-});
-define('rose/pods/components/no-data-message/component', ['exports', 'ember'], function (exports, _ember) {
-  exports['default'] = _ember['default'].Component.extend({});
 });
 define("rose/pods/components/no-data-message/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
@@ -3856,6 +4140,25 @@ define('rose/pods/components/rose-comment/component', ['exports', 'ember'], func
     }
   });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define("rose/pods/components/rose-comment/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     var child0 = (function () {
@@ -4388,6 +4691,25 @@ define('rose/pods/components/rose-extract/component', ['exports', 'ember'], func
     }
   });
 });
+/*
+Copyright (C) 2015
+    Felix Epp <work@felixepp.de>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define("rose/pods/components/rose-extract/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     var child0 = (function () {
@@ -4665,6 +4987,25 @@ define('rose/pods/components/rose-file-picker/component', ['exports', 'ember', '
     isEnabled: true
   });
 });
+/*
+Copyright (C) 2017
+    Felix Epp <work@felixepp.de>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define("rose/pods/components/rose-file-picker/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     var child0 = (function () {
@@ -4938,6 +5279,25 @@ define('rose/pods/components/rose-interaction/component', ['exports', 'ember'], 
     }
   });
 });
+/*
+Copyright (C) 2015
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define("rose/pods/components/rose-interaction/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     var child0 = (function () {
@@ -5406,6 +5766,25 @@ define('rose/pods/components/statistic-item/component', ['exports', 'ember'], fu
         })
     });
 });
+/*
+Copyright (C) 2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define("rose/pods/components/statistic-item/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
@@ -5492,6 +5871,26 @@ define('rose/router', ['exports', 'ember', 'rose/config/environment'], function 
     this.route('data-converter');
   });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+    Felix Epp <work@felixepp.de>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/routes/about', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Route.extend({});
 });
@@ -5540,6 +5939,25 @@ define('rose/routes/application', ['exports', 'ember'], function (exports, _embe
     }
   });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/routes/backup', ['exports', 'ember'], function (exports, _ember) {
 
   var getItem = function getItem(key) {
@@ -5573,6 +5991,25 @@ define('rose/routes/backup', ['exports', 'ember'], function (exports, _ember) {
     }
   });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/routes/comments', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Route.extend({
     model: function model(params) {
@@ -5580,6 +6017,25 @@ define('rose/routes/comments', ['exports', 'ember'], function (exports, _ember) 
     }
   });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/routes/data-converter', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Route.extend({});
 });
@@ -5590,6 +6046,26 @@ define('rose/routes/debug-log', ['exports', 'ember'], function (exports, _ember)
     }
   });
 });
+/*
+Copyright (C) 2015-2017
+    Oliver Hoffmann <oliverh855@gmail.com>
+    Felix Epp <work@felixepp.de>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/routes/diary', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Route.extend({
     model: function model() {
@@ -5597,6 +6073,25 @@ define('rose/routes/diary', ['exports', 'ember'], function (exports, _ember) {
     }
   });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/routes/extracts', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Route.extend({
     model: function model(params) {
@@ -5606,6 +6101,25 @@ define('rose/routes/extracts', ['exports', 'ember'], function (exports, _ember) 
     }
   });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/routes/help', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Route.extend({});
 });
@@ -5628,6 +6142,25 @@ define('rose/routes/index', ['exports', 'ember'], function (exports, _ember) {
     }
   });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/routes/interactions', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Route.extend({
     model: function model(params) {
@@ -5637,6 +6170,25 @@ define('rose/routes/interactions', ['exports', 'ember'], function (exports, _emb
     }
   });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/routes/observer', ['exports', 'ember'], function (exports, _ember) {
     exports['default'] = _ember['default'].Route.extend({
         model: function model(params) {
@@ -5644,6 +6196,25 @@ define('rose/routes/observer', ['exports', 'ember'], function (exports, _ember) 
         }
     });
 });
+/*
+Copyright (C) 2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/routes/observers', ['exports', 'ember'], function (exports, _ember) {
     exports['default'] = _ember['default'].Route.extend({
         model: function model() {
@@ -5662,6 +6233,25 @@ define('rose/routes/observers', ['exports', 'ember'], function (exports, _ember)
         }
     });
 });
+/*
+Copyright (C) 2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/routes/study-creator', ['exports', 'ember', 'rose/defaults/study-creator'], function (exports, _ember, _roseDefaultsStudyCreator) {
   exports['default'] = _ember['default'].Route.extend({
     model: function model() {
@@ -5677,6 +6267,25 @@ define('rose/routes/study-creator', ['exports', 'ember', 'rose/defaults/study-cr
     }
   });
 });
+/*
+Copyright (C) 2015-2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/serializers/application', ['exports', 'ember-data'], function (exports, _emberData) {
   exports['default'] = _emberData['default'].JSONSerializer.extend({});
 });
@@ -5771,6 +6380,25 @@ define('rose/services/navigator', ['exports', 'ember'], function (exports, _embe
         })
     });
 });
+/*
+Copyright (C) 2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define('rose/services/settings', ['exports', 'ember'], function (exports, _ember) {
     var isEmpty = _ember['default'].isEmpty;
     var service = _ember['default'].inject.service;
@@ -5799,6 +6427,26 @@ define('rose/services/settings', ['exports', 'ember'], function (exports, _ember
         }
     });
 });
+/*
+Copyright (C) 2015-2017
+    Oliver Hoffmann <oliverh855@gmail.com>
+    Felix Epp <work@felixepp.de>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define("rose/templates/about", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
@@ -6768,52 +7416,6 @@ define("rose/templates/components/file-picker", ["exports"], function (exports) 
       statements: [["block", "if", [["get", "dropzone", ["loc", [null, [1, 6], [1, 14]]]]], [], 0, 1, ["loc", [null, [1, 0], [7, 7]]]], ["block", "if", [["get", "preview", ["loc", [null, [9, 6], [9, 13]]]]], [], 2, null, ["loc", [null, [9, 0], [11, 7]]]], ["block", "if", [["get", "progress", ["loc", [null, [13, 6], [13, 14]]]]], [], 3, null, ["loc", [null, [13, 0], [17, 7]]]], ["inline", "input", [], ["type", "file", "value", ["subexpr", "@mut", [["get", "file", ["loc", [null, [19, 26], [19, 30]]]]], [], []], "accept", ["subexpr", "@mut", [["get", "accept", ["loc", [null, [19, 38], [19, 44]]]]], [], []], "multiple", ["subexpr", "@mut", [["get", "multiple", ["loc", [null, [19, 54], [19, 62]]]]], [], []], "class", "file-picker__input"], ["loc", [null, [19, 0], [19, 91]]]]],
       locals: [],
       templates: [child0, child1, child2, child3]
-    };
-  })());
-});
-define("rose/templates/components/high-charts", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template((function () {
-    return {
-      meta: {
-        "fragmentReason": {
-          "name": "missing-wrapper",
-          "problems": ["wrong-type"]
-        },
-        "revision": "Ember@2.2.2",
-        "loc": {
-          "source": null,
-          "start": {
-            "line": 1,
-            "column": 0
-          },
-          "end": {
-            "line": 2,
-            "column": 0
-          }
-        },
-        "moduleName": "rose/templates/components/high-charts.hbs"
-      },
-      isEmpty: false,
-      arity: 0,
-      cachedFragment: null,
-      hasRendered: false,
-      buildFragment: function buildFragment(dom) {
-        var el0 = dom.createDocumentFragment();
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        return el0;
-      },
-      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var morphs = new Array(1);
-        morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
-        dom.insertBoundary(fragment, 0);
-        return morphs;
-      },
-      statements: [["content", "yield", ["loc", [null, [1, 0], [1, 9]]]]],
-      locals: [],
-      templates: []
     };
   })());
 });
@@ -13484,11 +14086,11 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 68,
+              "line": 22,
               "column": 4
             },
             "end": {
-              "line": 72,
+              "line": 26,
               "column": 4
             }
           },
@@ -13520,12 +14122,63 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
           morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 1, 1);
           return morphs;
         },
-        statements: [["inline", "t", ["studyCreator.baseFileNotFound"], [], ["loc", [null, [70, 6], [70, 43]]]]],
+        statements: [["inline", "t", ["studyCreator.baseFileNotFound"], [], ["loc", [null, [24, 6], [24, 43]]]]],
         locals: [],
         templates: []
       };
     })();
     var child1 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 37,
+              "column": 4
+            },
+            "end": {
+              "line": 40,
+              "column": 4
+            }
+          },
+          "moduleName": "rose/templates/study-creator.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("label");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("p");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(2);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
+          morphs[1] = dom.createMorphAt(dom.childAt(fragment, [3]), 0, 0);
+          return morphs;
+        },
+        statements: [["inline", "t", ["studyCreator.networks"], [], ["loc", [null, [38, 11], [38, 40]]]], ["inline", "t", ["studyCreator.networksDesc"], [], ["loc", [null, [39, 7], [39, 40]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child2 = (function () {
       var child0 = (function () {
         var child0 = (function () {
           return {
@@ -13535,11 +14188,11 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
               "loc": {
                 "source": null,
                 "start": {
-                  "line": 113,
+                  "line": 61,
                   "column": 12
                 },
                 "end": {
-                  "line": 121,
+                  "line": 69,
                   "column": 12
                 }
               },
@@ -13594,7 +14247,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
               morphs[2] = dom.createMorphAt(dom.childAt(element3, [5]), 0, 0);
               return morphs;
             },
-            statements: [["inline", "ui-checkbox", [], ["class", "fitted toggle", "checked", ["subexpr", "@mut", [["get", "extractor.isEnabled", ["loc", [null, [116, 62], [116, 81]]]]], [], []]], ["loc", [null, [116, 18], [116, 83]]]], ["content", "extractor.name", ["loc", [null, [118, 28], [118, 46]]]], ["content", "extractor.version", ["loc", [null, [119, 20], [119, 41]]]]],
+            statements: [["inline", "ui-checkbox", [], ["class", "fitted toggle", "checked", ["subexpr", "@mut", [["get", "extractor.isEnabled", ["loc", [null, [64, 62], [64, 81]]]]], [], []]], ["loc", [null, [64, 18], [64, 83]]]], ["content", "extractor.name", ["loc", [null, [66, 28], [66, 46]]]], ["content", "extractor.version", ["loc", [null, [67, 20], [67, 41]]]]],
             locals: ["extractor"],
             templates: []
           };
@@ -13607,11 +14260,11 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
               "loc": {
                 "source": null,
                 "start": {
-                  "line": 148,
+                  "line": 96,
                   "column": 12
                 },
                 "end": {
-                  "line": 158,
+                  "line": 106,
                   "column": 12
                 }
               },
@@ -13680,7 +14333,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
               morphs[4] = dom.createMorphAt(dom.childAt(element2, [9]), 0, 0);
               return morphs;
             },
-            statements: [["inline", "ui-checkbox", [], ["class", "fitted toggle", "checked", ["subexpr", "@mut", [["get", "observer.isEnabled", ["loc", [null, [151, 62], [151, 80]]]]], [], []]], ["loc", [null, [151, 18], [151, 82]]]], ["content", "observer.name", ["loc", [null, [153, 28], [153, 45]]]], ["content", "observer.description", ["loc", [null, [154, 20], [154, 44]]]], ["content", "observer.type", ["loc", [null, [155, 20], [155, 37]]]], ["content", "observer.version", ["loc", [null, [156, 20], [156, 40]]]]],
+            statements: [["inline", "ui-checkbox", [], ["class", "fitted toggle", "checked", ["subexpr", "@mut", [["get", "observer.isEnabled", ["loc", [null, [99, 62], [99, 80]]]]], [], []]], ["loc", [null, [99, 18], [99, 82]]]], ["content", "observer.name", ["loc", [null, [101, 28], [101, 45]]]], ["content", "observer.description", ["loc", [null, [102, 20], [102, 44]]]], ["content", "observer.type", ["loc", [null, [103, 20], [103, 37]]]], ["content", "observer.version", ["loc", [null, [104, 20], [104, 40]]]]],
             locals: ["observer"],
             templates: []
           };
@@ -13692,11 +14345,11 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             "loc": {
               "source": null,
               "start": {
-                "line": 99,
+                "line": 47,
                 "column": 8
               },
               "end": {
-                "line": 170,
+                "line": 118,
                 "column": 6
               }
             },
@@ -13959,7 +14612,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             morphs[19] = dom.createMorphAt(element15, 0, 0);
             return morphs;
           },
-          statements: [["inline", "t", ["studyCreator.extractors"], [], ["loc", [null, [102, 12], [102, 43]]]], ["inline", "t", ["studyCreator.table.enabled"], [], ["loc", [null, [107, 20], [107, 54]]]], ["inline", "t", ["studyCreator.table.name"], [], ["loc", [null, [108, 20], [108, 51]]]], ["inline", "t", ["studyCreator.table.version"], [], ["loc", [null, [109, 20], [109, 54]]]], ["block", "each", [["get", "network.extractors", ["loc", [null, [113, 20], [113, 38]]]]], [], 0, null, ["loc", [null, [113, 12], [121, 21]]]], ["element", "action", ["enableAll", ["get", "network.extractors", ["loc", [null, [126, 77], [126, 95]]]]], [], ["loc", [null, [126, 56], [126, 97]]]], ["inline", "t", ["studyCreator.enableAll"], [], ["loc", [null, [126, 98], [126, 128]]]], ["element", "action", ["disableAll", ["get", "network.extractors", ["loc", [null, [127, 78], [127, 96]]]]], [], ["loc", [null, [127, 56], [127, 98]]]], ["inline", "t", ["studyCreator.disableAll"], [], ["loc", [null, [127, 99], [127, 130]]]], ["inline", "t", ["studyCreator.observers"], [], ["loc", [null, [135, 12], [135, 42]]]], ["inline", "t", ["studyCreator.table.enabled"], [], ["loc", [null, [140, 20], [140, 54]]]], ["inline", "t", ["studyCreator.table.name"], [], ["loc", [null, [141, 20], [141, 51]]]], ["inline", "t", ["studyCreator.table.description"], [], ["loc", [null, [142, 20], [142, 58]]]], ["inline", "t", ["studyCreator.table.type"], [], ["loc", [null, [143, 20], [143, 51]]]], ["inline", "t", ["studyCreator.table.version"], [], ["loc", [null, [144, 20], [144, 54]]]], ["block", "each", [["get", "network.observers", ["loc", [null, [148, 20], [148, 37]]]]], [], 1, null, ["loc", [null, [148, 12], [158, 21]]]], ["element", "action", ["enableAll", ["get", "network.observers", ["loc", [null, [163, 77], [163, 94]]]]], [], ["loc", [null, [163, 56], [163, 96]]]], ["inline", "t", ["studyCreator.enableAll"], [], ["loc", [null, [163, 97], [163, 127]]]], ["element", "action", ["disableAll", ["get", "network.observers", ["loc", [null, [164, 78], [164, 95]]]]], [], ["loc", [null, [164, 56], [164, 97]]]], ["inline", "t", ["studyCreator.disableAll"], [], ["loc", [null, [164, 98], [164, 129]]]]],
+          statements: [["inline", "t", ["studyCreator.extractors"], [], ["loc", [null, [50, 12], [50, 43]]]], ["inline", "t", ["studyCreator.table.enabled"], [], ["loc", [null, [55, 20], [55, 54]]]], ["inline", "t", ["studyCreator.table.name"], [], ["loc", [null, [56, 20], [56, 51]]]], ["inline", "t", ["studyCreator.table.version"], [], ["loc", [null, [57, 20], [57, 54]]]], ["block", "each", [["get", "network.extractors", ["loc", [null, [61, 20], [61, 38]]]]], [], 0, null, ["loc", [null, [61, 12], [69, 21]]]], ["element", "action", ["enableAll", ["get", "network.extractors", ["loc", [null, [74, 77], [74, 95]]]]], [], ["loc", [null, [74, 56], [74, 97]]]], ["inline", "t", ["studyCreator.enableAll"], [], ["loc", [null, [74, 98], [74, 128]]]], ["element", "action", ["disableAll", ["get", "network.extractors", ["loc", [null, [75, 78], [75, 96]]]]], [], ["loc", [null, [75, 56], [75, 98]]]], ["inline", "t", ["studyCreator.disableAll"], [], ["loc", [null, [75, 99], [75, 130]]]], ["inline", "t", ["studyCreator.observers"], [], ["loc", [null, [83, 12], [83, 42]]]], ["inline", "t", ["studyCreator.table.enabled"], [], ["loc", [null, [88, 20], [88, 54]]]], ["inline", "t", ["studyCreator.table.name"], [], ["loc", [null, [89, 20], [89, 51]]]], ["inline", "t", ["studyCreator.table.description"], [], ["loc", [null, [90, 20], [90, 58]]]], ["inline", "t", ["studyCreator.table.type"], [], ["loc", [null, [91, 20], [91, 51]]]], ["inline", "t", ["studyCreator.table.version"], [], ["loc", [null, [92, 20], [92, 54]]]], ["block", "each", [["get", "network.observers", ["loc", [null, [96, 20], [96, 37]]]]], [], 1, null, ["loc", [null, [96, 12], [106, 21]]]], ["element", "action", ["enableAll", ["get", "network.observers", ["loc", [null, [111, 77], [111, 94]]]]], [], ["loc", [null, [111, 56], [111, 96]]]], ["inline", "t", ["studyCreator.enableAll"], [], ["loc", [null, [111, 97], [111, 127]]]], ["element", "action", ["disableAll", ["get", "network.observers", ["loc", [null, [112, 78], [112, 95]]]]], [], ["loc", [null, [112, 56], [112, 97]]]], ["inline", "t", ["studyCreator.disableAll"], [], ["loc", [null, [112, 98], [112, 129]]]]],
           locals: [],
           templates: [child0, child1]
         };
@@ -13971,11 +14624,11 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 93,
+              "line": 41,
               "column": 4
             },
             "end": {
-              "line": 172,
+              "line": 120,
               "column": 4
             }
           },
@@ -14013,12 +14666,12 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
           morphs[1] = dom.createMorphAt(element16, 3, 3);
           return morphs;
         },
-        statements: [["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "network.isEnabled", ["loc", [null, [95, 30], [95, 47]]]]], [], []], "class", "toggle", "label", ["subexpr", "@mut", [["get", "network.descriptiveName", ["loc", [null, [97, 28], [97, 51]]]]], [], []], "value", ["subexpr", "@mut", [["get", "network", ["loc", [null, [98, 28], [98, 35]]]]], [], []]], ["loc", [null, [95, 8], [98, 37]]]], ["block", "if", [["get", "network.isEnabled", ["loc", [null, [99, 14], [99, 31]]]]], [], 0, null, ["loc", [null, [99, 8], [170, 13]]]]],
+        statements: [["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "network.isEnabled", ["loc", [null, [43, 30], [43, 47]]]]], [], []], "class", "toggle", "label", ["subexpr", "@mut", [["get", "network.descriptiveName", ["loc", [null, [45, 28], [45, 51]]]]], [], []], "value", ["subexpr", "@mut", [["get", "network", ["loc", [null, [46, 28], [46, 35]]]]], [], []]], ["loc", [null, [43, 8], [46, 37]]]], ["block", "if", [["get", "network.isEnabled", ["loc", [null, [47, 14], [47, 31]]]]], [], 0, null, ["loc", [null, [47, 8], [118, 13]]]]],
         locals: ["network"],
         templates: [child0]
       };
     })();
-    var child2 = (function () {
+    var child3 = (function () {
       var child0 = (function () {
         return {
           meta: {
@@ -14027,11 +14680,11 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             "loc": {
               "source": null,
               "start": {
-                "line": 208,
+                "line": 168,
                 "column": 8
               },
               "end": {
-                "line": 212,
+                "line": 172,
                 "column": 8
               }
             },
@@ -14065,7 +14718,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             morphs[1] = dom.createMorphAt(element0, 1, 1);
             return morphs;
           },
-          statements: [["attribute", "data-value", ["get", "interval.value", ["loc", [null, [209, 41], [209, 55]]]]], ["inline", "t", [["get", "interval.label", ["loc", [null, [210, 16], [210, 30]]]]], [], ["loc", [null, [210, 12], [210, 32]]]]],
+          statements: [["attribute", "data-value", ["get", "interval.value", ["loc", [null, [169, 41], [169, 55]]]]], ["inline", "t", [["get", "interval.label", ["loc", [null, [170, 16], [170, 30]]]]], [], ["loc", [null, [170, 12], [170, 32]]]]],
           locals: ["interval"],
           templates: []
         };
@@ -14077,11 +14730,11 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 201,
+              "line": 161,
               "column": 4
             },
             "end": {
-              "line": 214,
+              "line": 174,
               "column": 4
             }
           },
@@ -14133,7 +14786,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
           morphs[1] = dom.createMorphAt(dom.childAt(fragment, [7]), 1, 1);
           return morphs;
         },
-        statements: [["attribute", "value", ["get", "model.updateInterval", ["loc", [null, [205, 51], [205, 71]]]]], ["block", "each", [["get", "updateIntervals", ["loc", [null, [208, 16], [208, 31]]]]], [], 0, null, ["loc", [null, [208, 8], [212, 17]]]]],
+        statements: [["attribute", "value", ["get", "model.updateInterval", ["loc", [null, [165, 51], [165, 71]]]]], ["block", "each", [["get", "updateIntervals", ["loc", [null, [168, 16], [168, 31]]]]], [], 0, null, ["loc", [null, [168, 8], [172, 17]]]]],
         locals: [],
         templates: [child0]
       };
@@ -14152,7 +14805,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 230,
+            "line": 234,
             "column": 0
           }
         },
@@ -14203,6 +14856,241 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
         var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2, "class", "field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3, "class", "ui input");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2, "class", "field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("button");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("i");
+        dom.setAttribute(el4, "class", "cloud download icon");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2, "class", "field");
+        var el3 = dom.createTextNode("\n");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("h3");
+        dom.setAttribute(el2, "class", "ui dividing header");
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2, "class", "field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2, "class", "field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2, "class", "field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3, "class", "ui input");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2, "class", "field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("h3");
+        dom.setAttribute(el2, "class", "ui dividing header");
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2, "class", "field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2, "class", "field");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("label");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("p");
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("h3");
+        dom.setAttribute(el2, "class", "ui dividing header");
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
@@ -14256,241 +15144,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
         var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("h3");
-        dom.setAttribute(el2, "class", "ui dividing header");
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3, "class", "ui action input");
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("button");
-        var el5 = dom.createTextNode("\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("i");
-        dom.setAttribute(el5, "class", "search icon");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n      ");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n    ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3, "class", "ui input");
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n    ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("h3");
-        dom.setAttribute(el2, "class", "ui dividing header");
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("h3");
-        dom.setAttribute(el2, "class", "ui dividing header");
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
+        var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
         dom.setAttribute(el2, "class", "field");
@@ -14535,70 +15189,69 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
         var element17 = dom.childAt(fragment, [0, 3]);
         var element18 = dom.childAt(fragment, [2]);
         var element19 = dom.childAt(element18, [3]);
-        var element20 = dom.childAt(element18, [5]);
-        var element21 = dom.childAt(element18, [9]);
+        var element20 = dom.childAt(element18, [5, 1]);
+        var element21 = dom.childAt(element18, [7]);
         var element22 = dom.childAt(element18, [11]);
-        var element23 = dom.childAt(element18, [15]);
-        var element24 = dom.childAt(element23, [5]);
-        var element25 = dom.childAt(element24, [3]);
-        var element26 = dom.childAt(element18, [17]);
-        var element27 = dom.childAt(element18, [21]);
-        var element28 = dom.childAt(element18, [25]);
-        var element29 = dom.childAt(element18, [27]);
-        var element30 = dom.childAt(element18, [29]);
-        var element31 = dom.childAt(element18, [31]);
-        var element32 = dom.childAt(element18, [33]);
+        var element23 = dom.childAt(element18, [13]);
+        var element24 = dom.childAt(element18, [15]);
+        var element25 = dom.childAt(element18, [17]);
+        var element26 = dom.childAt(element18, [21]);
+        var element27 = dom.childAt(element18, [23]);
+        var element28 = dom.childAt(element18, [27]);
+        var element29 = dom.childAt(element18, [29]);
+        var element30 = dom.childAt(element18, [33]);
+        var element31 = dom.childAt(element18, [35]);
         var morphs = new Array(45);
         morphs[0] = dom.createMorphAt(element17, 1, 1);
         morphs[1] = dom.createMorphAt(dom.childAt(element17, [3]), 0, 0);
         morphs[2] = dom.createMorphAt(dom.childAt(element18, [1]), 0, 0);
         morphs[3] = dom.createMorphAt(dom.childAt(element19, [1]), 0, 0);
         morphs[4] = dom.createMorphAt(dom.childAt(element19, [3]), 0, 0);
-        morphs[5] = dom.createMorphAt(element19, 5, 5);
-        morphs[6] = dom.createMorphAt(dom.childAt(element20, [1]), 0, 0);
-        morphs[7] = dom.createMorphAt(dom.childAt(element20, [3]), 0, 0);
-        morphs[8] = dom.createMorphAt(element20, 5, 5);
-        morphs[9] = dom.createMorphAt(dom.childAt(element18, [7]), 0, 0);
-        morphs[10] = dom.createMorphAt(dom.childAt(element21, [1]), 0, 0);
-        morphs[11] = dom.createMorphAt(dom.childAt(element21, [3]), 0, 0);
-        morphs[12] = dom.createMorphAt(element21, 5, 5);
+        morphs[5] = dom.createMorphAt(dom.childAt(element19, [5]), 1, 1);
+        morphs[6] = dom.createMorphAt(element19, 7, 7);
+        morphs[7] = dom.createAttrMorph(element20, 'class');
+        morphs[8] = dom.createElementMorph(element20);
+        morphs[9] = dom.createMorphAt(element20, 3, 3);
+        morphs[10] = dom.createMorphAt(element21, 1, 1);
+        morphs[11] = dom.createMorphAt(element21, 2, 2);
+        morphs[12] = dom.createMorphAt(dom.childAt(element18, [9]), 0, 0);
         morphs[13] = dom.createMorphAt(dom.childAt(element22, [1]), 0, 0);
         morphs[14] = dom.createMorphAt(dom.childAt(element22, [3]), 0, 0);
         morphs[15] = dom.createMorphAt(element22, 5, 5);
-        morphs[16] = dom.createMorphAt(dom.childAt(element18, [13]), 0, 0);
-        morphs[17] = dom.createMorphAt(dom.childAt(element23, [1]), 0, 0);
-        morphs[18] = dom.createMorphAt(dom.childAt(element23, [3]), 0, 0);
-        morphs[19] = dom.createMorphAt(element24, 1, 1);
-        morphs[20] = dom.createAttrMorph(element25, 'class');
-        morphs[21] = dom.createElementMorph(element25);
-        morphs[22] = dom.createMorphAt(element23, 7, 7);
-        morphs[23] = dom.createMorphAt(dom.childAt(element26, [1]), 0, 0);
-        morphs[24] = dom.createMorphAt(dom.childAt(element26, [3]), 0, 0);
-        morphs[25] = dom.createMorphAt(dom.childAt(element26, [5]), 1, 1);
-        morphs[26] = dom.createMorphAt(dom.childAt(element18, [19]), 0, 0);
-        morphs[27] = dom.createMorphAt(dom.childAt(element27, [1]), 0, 0);
-        morphs[28] = dom.createMorphAt(dom.childAt(element27, [3]), 0, 0);
-        morphs[29] = dom.createMorphAt(element27, 5, 5);
-        morphs[30] = dom.createMorphAt(dom.childAt(element18, [23]), 0, 0);
-        morphs[31] = dom.createMorphAt(dom.childAt(element28, [1]), 0, 0);
-        morphs[32] = dom.createMorphAt(dom.childAt(element28, [3]), 0, 0);
-        morphs[33] = dom.createMorphAt(element28, 5, 5);
-        morphs[34] = dom.createMorphAt(dom.childAt(element29, [1]), 0, 0);
-        morphs[35] = dom.createMorphAt(dom.childAt(element29, [3]), 0, 0);
-        morphs[36] = dom.createMorphAt(element29, 5, 5);
-        morphs[37] = dom.createMorphAt(dom.childAt(element30, [1]), 0, 0);
-        morphs[38] = dom.createMorphAt(dom.childAt(element30, [3]), 0, 0);
-        morphs[39] = dom.createMorphAt(element30, 5, 5);
-        morphs[40] = dom.createMorphAt(dom.childAt(element31, [1]), 0, 0);
-        morphs[41] = dom.createMorphAt(dom.childAt(element31, [3]), 0, 0);
-        morphs[42] = dom.createMorphAt(element31, 5, 5);
-        morphs[43] = dom.createElementMorph(element32);
-        morphs[44] = dom.createMorphAt(element32, 1, 1);
+        morphs[16] = dom.createMorphAt(dom.childAt(element23, [1]), 0, 0);
+        morphs[17] = dom.createMorphAt(dom.childAt(element23, [3]), 0, 0);
+        morphs[18] = dom.createMorphAt(element23, 5, 5);
+        morphs[19] = dom.createMorphAt(dom.childAt(element24, [1]), 0, 0);
+        morphs[20] = dom.createMorphAt(dom.childAt(element24, [3]), 0, 0);
+        morphs[21] = dom.createMorphAt(dom.childAt(element24, [5]), 1, 1);
+        morphs[22] = dom.createMorphAt(dom.childAt(element25, [1]), 0, 0);
+        morphs[23] = dom.createMorphAt(dom.childAt(element25, [3]), 0, 0);
+        morphs[24] = dom.createMorphAt(element25, 5, 5);
+        morphs[25] = dom.createMorphAt(dom.childAt(element18, [19]), 0, 0);
+        morphs[26] = dom.createMorphAt(dom.childAt(element26, [1]), 0, 0);
+        morphs[27] = dom.createMorphAt(dom.childAt(element26, [3]), 0, 0);
+        morphs[28] = dom.createMorphAt(element26, 5, 5);
+        morphs[29] = dom.createMorphAt(dom.childAt(element27, [1]), 0, 0);
+        morphs[30] = dom.createMorphAt(dom.childAt(element27, [3]), 0, 0);
+        morphs[31] = dom.createMorphAt(element27, 5, 5);
+        morphs[32] = dom.createMorphAt(dom.childAt(element18, [25]), 0, 0);
+        morphs[33] = dom.createMorphAt(dom.childAt(element28, [1]), 0, 0);
+        morphs[34] = dom.createMorphAt(dom.childAt(element28, [3]), 0, 0);
+        morphs[35] = dom.createMorphAt(element28, 5, 5);
+        morphs[36] = dom.createMorphAt(dom.childAt(element29, [1]), 0, 0);
+        morphs[37] = dom.createMorphAt(dom.childAt(element29, [3]), 0, 0);
+        morphs[38] = dom.createMorphAt(element29, 5, 5);
+        morphs[39] = dom.createMorphAt(dom.childAt(element18, [31]), 0, 0);
+        morphs[40] = dom.createMorphAt(dom.childAt(element30, [1]), 0, 0);
+        morphs[41] = dom.createMorphAt(dom.childAt(element30, [3]), 0, 0);
+        morphs[42] = dom.createMorphAt(element30, 5, 5);
+        morphs[43] = dom.createElementMorph(element31);
+        morphs[44] = dom.createMorphAt(element31, 1, 1);
         return morphs;
       },
-      statements: [["inline", "t", ["studyCreator.title"], [], ["loc", [null, [4, 4], [4, 30]]]], ["inline", "t", ["studyCreator.subtitle"], [], ["loc", [null, [5, 28], [5, 57]]]], ["inline", "t", ["studyCreator.optionalFeaturesHeader"], [], ["loc", [null, [10, 33], [10, 76]]]], ["inline", "t", ["studyCreator.roseComments"], [], ["loc", [null, [12, 11], [12, 44]]]], ["inline", "t", ["studyCreator.roseCommentsDesc"], [], ["loc", [null, [13, 7], [13, 44]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [15, 26], [15, 53]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [17, 42], [17, 69]]]]], [], ["loc", [null, [17, 24], [17, 70]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [18, 27], [18, 50]]]]], ["loc", [null, [15, 4], [18, 52]]]], ["inline", "t", ["studyCreator.roseCommentsRating"], [], ["loc", [null, [22, 11], [22, 50]]]], ["inline", "t", ["studyCreator.roseCommentsRatingDesc"], [], ["loc", [null, [23, 7], [23, 50]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [25, 26], [25, 59]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [27, 42], [27, 75]]]]], [], ["loc", [null, [27, 24], [27, 76]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [28, 27], [28, 50]]]]], ["loc", [null, [25, 4], [28, 52]]]], ["inline", "t", ["studyCreator.privacyHeader"], [], ["loc", [null, [31, 33], [31, 67]]]], ["inline", "t", ["studyCreator.salt"], [], ["loc", [null, [34, 11], [34, 36]]]], ["inline", "t", ["studyCreator.saltDesc"], [], ["loc", [null, [35, 7], [35, 36]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.salt", ["loc", [null, [38, 18], [38, 28]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [37, 4], [40, 38]]]], ["inline", "t", ["studyCreator.hashLength"], [], ["loc", [null, [44, 11], [44, 42]]]], ["inline", "t", ["studyCreator.hashLengthDesc"], [], ["loc", [null, [45, 7], [45, 42]]]], ["inline", "input", [], ["type", "number", "value", ["subexpr", "@mut", [["get", "model.hashLength", ["loc", [null, [48, 18], [48, 34]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [47, 4], [50, 38]]]], ["inline", "t", ["studyCreator.repositoryHeader"], [], ["loc", [null, [53, 33], [53, 70]]]], ["inline", "t", ["studyCreator.repositoryUrl"], [], ["loc", [null, [56, 11], [56, 45]]]], ["inline", "t", ["studyCreator.repositoryUrlDesc"], [], ["loc", [null, [57, 7], [57, 45]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.repositoryURL", ["loc", [null, [61, 20], [61, 39]]]]], [], []], "insert-newline", "fetchBaseFile"], ["loc", [null, [60, 6], [62, 46]]]], ["attribute", "class", ["concat", ["ui icon button ", ["subexpr", "if", [["get", "baseFileIsLoading", ["loc", [null, [64, 41], [64, 58]]]], "loading"], [], ["loc", [null, [64, 36], [64, 70]]]]]]], ["element", "action", ["fetchBaseFile"], [], ["loc", [null, [64, 72], [64, 98]]]], ["block", "if", [["get", "baseFileNotFound", ["loc", [null, [68, 10], [68, 26]]]]], [], 0, null, ["loc", [null, [68, 4], [72, 11]]]], ["inline", "t", ["studyCreator.fingerprint"], [], ["loc", [null, [76, 11], [76, 43]]]], ["inline", "t", ["studyCreator.fingerprintDesc"], [], ["loc", [null, [77, 7], [77, 43]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.fingerprint", ["loc", [null, [81, 20], [81, 37]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [80, 6], [83, 40]]]], ["inline", "t", ["studyCreator.configurationHeader"], [], ["loc", [null, [87, 33], [87, 73]]]], ["inline", "t", ["studyCreator.networks"], [], ["loc", [null, [90, 11], [90, 40]]]], ["inline", "t", ["studyCreator.networksDesc"], [], ["loc", [null, [91, 7], [91, 40]]]], ["block", "each", [["get", "networks", ["loc", [null, [93, 12], [93, 20]]]]], [], 1, null, ["loc", [null, [93, 4], [172, 13]]]], ["inline", "t", ["studyCreator.autoUpdateHeader"], [], ["loc", [null, [175, 33], [175, 70]]]], ["inline", "t", ["studyCreator.autoUpdate"], [], ["loc", [null, [178, 11], [178, 42]]]], ["inline", "t", ["studyCreator.autoUpdateDesc"], [], ["loc", [null, [179, 7], [179, 42]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [181, 26], [181, 51]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [183, 42], [183, 67]]]]], [], ["loc", [null, [183, 24], [183, 68]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [184, 27], [184, 50]]]]], ["loc", [null, [181, 4], [184, 52]]]], ["inline", "t", ["studyCreator.forceSecureUpdate"], [], ["loc", [null, [188, 11], [188, 49]]]], ["inline", "t", ["studyCreator.forceSecureUpdateDesc"], [], ["loc", [null, [189, 7], [189, 49]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.forceSecureUpdate", ["loc", [null, [191, 26], [191, 49]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.forceSecureUpdate", ["loc", [null, [193, 42], [193, 65]]]]], [], ["loc", [null, [193, 24], [193, 66]]]], "onChange", ["subexpr", "action", ["toggleForceSecureUpdate"], [], ["loc", [null, [194, 27], [194, 61]]]]], ["loc", [null, [191, 4], [194, 63]]]], ["inline", "t", ["studyCreator.updateInterval"], [], ["loc", [null, [198, 11], [198, 46]]]], ["inline", "t", ["studyCreator.updateIntervalLabel"], [], ["loc", [null, [199, 7], [199, 47]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "model.updateInterval", ["loc", [null, [202, 29], [202, 49]]]]], [], []], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [203, 29], [203, 52]]]]], 2, null, ["loc", [null, [201, 4], [214, 20]]]], ["inline", "t", ["studyCreator.exportConfig"], [], ["loc", [null, [218, 11], [218, 44]]]], ["inline", "t", ["studyCreator.exportConfigDesc"], [], ["loc", [null, [219, 7], [219, 44]]]], ["inline", "input", [], ["value", ["subexpr", "@mut", [["get", "model.fileName", ["loc", [null, [221, 18], [221, 32]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [221, 4], [223, 38]]]], ["element", "action", ["download"], [], ["loc", [null, [226, 36], [226, 57]]]], ["inline", "t", ["action.download"], [], ["loc", [null, [227, 4], [227, 27]]]]],
+      statements: [["inline", "t", ["studyCreator.title"], [], ["loc", [null, [4, 4], [4, 30]]]], ["inline", "t", ["studyCreator.subtitle"], [], ["loc", [null, [5, 28], [5, 57]]]], ["inline", "t", ["studyCreator.configurationHeader"], [], ["loc", [null, [10, 33], [10, 73]]]], ["inline", "t", ["studyCreator.repositoryUrl"], [], ["loc", [null, [13, 11], [13, 45]]]], ["inline", "t", ["studyCreator.repositoryUrlDesc"], [], ["loc", [null, [14, 7], [14, 45]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.repositoryURL", ["loc", [null, [18, 20], [18, 39]]]]], [], []], "insert-newline", "fetchBaseFile"], ["loc", [null, [17, 6], [19, 46]]]], ["block", "if", [["get", "baseFileNotFound", ["loc", [null, [22, 10], [22, 26]]]]], [], 0, null, ["loc", [null, [22, 4], [26, 11]]]], ["attribute", "class", ["concat", ["ui icon button ", ["subexpr", "if", [["get", "baseFileIsLoading", ["loc", [null, [30, 39], [30, 56]]]], "loading"], [], ["loc", [null, [30, 34], [30, 68]]]]]]], ["element", "action", ["fetchBaseFile"], [], ["loc", [null, [30, 70], [30, 96]]]], ["inline", "t", ["studyCreator.fetchRepository"], [], ["loc", [null, [32, 6], [32, 42]]]], ["block", "if", [["get", "networks.length", ["loc", [null, [37, 10], [37, 25]]]]], [], 1, null, ["loc", [null, [37, 4], [40, 11]]]], ["block", "each", [["get", "networks", ["loc", [null, [41, 12], [41, 20]]]]], [], 2, null, ["loc", [null, [41, 4], [120, 13]]]], ["inline", "t", ["studyCreator.autoUpdateHeader"], [], ["loc", [null, [123, 33], [123, 70]]]], ["inline", "t", ["studyCreator.autoUpdate"], [], ["loc", [null, [126, 11], [126, 42]]]], ["inline", "t", ["studyCreator.autoUpdateDesc"], [], ["loc", [null, [127, 7], [127, 42]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [129, 26], [129, 51]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [131, 42], [131, 67]]]]], [], ["loc", [null, [131, 24], [131, 68]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [132, 27], [132, 50]]]]], ["loc", [null, [129, 4], [132, 52]]]], ["inline", "t", ["studyCreator.forceSecureUpdate"], [], ["loc", [null, [136, 11], [136, 49]]]], ["inline", "t", ["studyCreator.forceSecureUpdateDesc"], [], ["loc", [null, [137, 7], [137, 49]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.forceSecureUpdate", ["loc", [null, [139, 26], [139, 49]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.forceSecureUpdate", ["loc", [null, [141, 42], [141, 65]]]]], [], ["loc", [null, [141, 24], [141, 66]]]], "onChange", ["subexpr", "action", ["toggleForceSecureUpdate"], [], ["loc", [null, [142, 27], [142, 61]]]]], ["loc", [null, [139, 4], [142, 63]]]], ["inline", "t", ["studyCreator.fingerprint"], [], ["loc", [null, [146, 11], [146, 43]]]], ["inline", "t", ["studyCreator.fingerprintDesc"], [], ["loc", [null, [147, 7], [147, 43]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.fingerprint", ["loc", [null, [151, 20], [151, 37]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [150, 6], [153, 40]]]], ["inline", "t", ["studyCreator.updateInterval"], [], ["loc", [null, [158, 11], [158, 46]]]], ["inline", "t", ["studyCreator.updateIntervalLabel"], [], ["loc", [null, [159, 7], [159, 47]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "model.updateInterval", ["loc", [null, [162, 29], [162, 49]]]]], [], []], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [163, 29], [163, 52]]]]], 3, null, ["loc", [null, [161, 4], [174, 20]]]], ["inline", "t", ["studyCreator.privacyHeader"], [], ["loc", [null, [177, 33], [177, 67]]]], ["inline", "t", ["studyCreator.salt"], [], ["loc", [null, [180, 11], [180, 36]]]], ["inline", "t", ["studyCreator.saltDesc"], [], ["loc", [null, [181, 7], [181, 36]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.salt", ["loc", [null, [184, 18], [184, 28]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [183, 4], [186, 38]]]], ["inline", "t", ["studyCreator.hashLength"], [], ["loc", [null, [190, 11], [190, 42]]]], ["inline", "t", ["studyCreator.hashLengthDesc"], [], ["loc", [null, [191, 7], [191, 42]]]], ["inline", "input", [], ["type", "number", "value", ["subexpr", "@mut", [["get", "model.hashLength", ["loc", [null, [194, 18], [194, 34]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [193, 4], [196, 38]]]], ["inline", "t", ["studyCreator.optionalFeaturesHeader"], [], ["loc", [null, [199, 33], [199, 76]]]], ["inline", "t", ["studyCreator.roseComments"], [], ["loc", [null, [201, 11], [201, 44]]]], ["inline", "t", ["studyCreator.roseCommentsDesc"], [], ["loc", [null, [202, 7], [202, 44]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [204, 26], [204, 53]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [206, 42], [206, 69]]]]], [], ["loc", [null, [206, 24], [206, 70]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [207, 27], [207, 50]]]]], ["loc", [null, [204, 4], [207, 52]]]], ["inline", "t", ["studyCreator.roseCommentsRating"], [], ["loc", [null, [211, 11], [211, 50]]]], ["inline", "t", ["studyCreator.roseCommentsRatingDesc"], [], ["loc", [null, [212, 7], [212, 50]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [214, 26], [214, 59]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [216, 42], [216, 75]]]]], [], ["loc", [null, [216, 24], [216, 76]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [217, 27], [217, 50]]]]], ["loc", [null, [214, 4], [217, 52]]]], ["inline", "t", ["studyCreator.exportHeader"], [], ["loc", [null, [220, 33], [220, 66]]]], ["inline", "t", ["studyCreator.exportConfig"], [], ["loc", [null, [222, 11], [222, 44]]]], ["inline", "t", ["studyCreator.exportConfigDesc"], [], ["loc", [null, [223, 7], [223, 44]]]], ["inline", "input", [], ["value", ["subexpr", "@mut", [["get", "model.fileName", ["loc", [null, [225, 18], [225, 32]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [225, 4], [227, 38]]]], ["element", "action", ["download"], [], ["loc", [null, [230, 36], [230, 57]]]], ["inline", "t", ["action.download"], [], ["loc", [null, [231, 4], [231, 27]]]]],
       locals: [],
-      templates: [child0, child1, child2]
+      templates: [child0, child1, child2, child3]
     };
   })());
 });
@@ -14622,6 +15275,25 @@ define('rose/transforms/array', ['exports', 'ember', 'ember-data'], function (ex
     }
   });
 });
+/*
+Copyright (C) 2015
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define("rose/transforms/fragment-array", ["exports"], function (exports) {
   exports["default"] = MF.FragmentArrayTransform;
 });
@@ -14647,6 +15319,25 @@ define('rose/transforms/object', ['exports', 'ember-data'], function (exports, _
     }
   });
 });
+/*
+Copyright (C) 2016
+    Oliver Hoffmann <oliverh855@gmail.com>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
 define("rose/transitions/cross-fade", ["exports", "liquid-fire"], function (exports, _liquidFire) {
   exports["default"] = crossFade;
 
@@ -15126,7 +15817,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("rose/app")["default"].create({"name":"rose","version":"0.0.0+c918b8d3"});
+  require("rose/app")["default"].create({});
 }
 
 /* jshint ignore:end */

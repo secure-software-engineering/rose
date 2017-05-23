@@ -7,64 +7,18 @@
 </h2>
 
 <div class="ui form">
-  <h3 class="ui dividing header">{{t "studyCreator.optionalFeaturesHeader"}}</h3>
-  <div class="field">
-    <label>{{t "studyCreator.roseComments"}}</label>
-    <p>{{t "studyCreator.roseCommentsDesc"}}</p>
-
-    {{ui-checkbox checked=model.roseCommentsIsEnabled
-                  class="toggle"
-                  label=(boolean-to-yesno model.roseCommentsIsEnabled)
-                  onChange=(action "saveSettings")}}
-  </div>
-
-  <div class="field">
-    <label>{{t "studyCreator.roseCommentsRating"}}</label>
-    <p>{{t "studyCreator.roseCommentsRatingDesc"}}</p>
-
-    {{ui-checkbox checked=model.roseCommentsRatingIsEnabled
-                  class="toggle"
-                  label=(boolean-to-yesno model.roseCommentsRatingIsEnabled)
-                  onChange=(action "saveSettings")}}
-  </div>
-
-  <h3 class="ui dividing header">{{t "studyCreator.privacyHeader"}}</h3>
-
-  <div class="field">
-    <label>{{t "studyCreator.salt"}}</label>
-    <p>{{t "studyCreator.saltDesc"}}</p>
-
-    {{input type="text"
-            value=model.salt
-            insert-newline="saveSettings"
-            focus-out="saveSettings"}}
-  </div>
-
-  <div class="field">
-    <label>{{t "studyCreator.hashLength"}}</label>
-    <p>{{t "studyCreator.hashLengthDesc"}}</p>
-
-    {{input type="number"
-            value=model.hashLength
-            insert-newline="saveSettings"
-            focus-out="saveSettings"}}
-  </div>
-
-  <h3 class="ui dividing header">{{t "studyCreator.repositoryHeader"}}</h3>
+  <h3 class="ui dividing header">{{t "studyCreator.configurationHeader"}}</h3>
 
   <div class="field">
     <label>{{t "studyCreator.repositoryUrl"}}</label>
     <p>{{t "studyCreator.repositoryUrlDesc"}}</p>
 
-    <div class="ui action input">
+    <div class="ui input">
       {{input type="text"
               value=model.repositoryURL
               insert-newline="fetchBaseFile"}}
-
-      <button class="ui icon button {{if baseFileIsLoading "loading"}}" {{action "fetchBaseFile"}}>
-        <i class="search icon"></i>
-      </button>
     </div>
+
     {{#if baseFileNotFound}}
     <div class="ui pointing red basic label">
       {{t "studyCreator.baseFileNotFound"}}
@@ -73,23 +27,17 @@
   </div>
 
   <div class="field">
-    <label>{{t "studyCreator.fingerprint"}}</label>
-    <p>{{t "studyCreator.fingerprintDesc"}}</p>
-
-    <div class="ui input">
-      {{input type="text"
-              value=model.fingerprint
-              insert-newline="saveSettings"
-              focus-out="saveSettings"}}
-    </div>
+    <button class="ui icon button {{if baseFileIsLoading "loading"}}" {{action "fetchBaseFile"}}>
+      <i class="cloud download icon"></i>
+      {{t "studyCreator.fetchRepository"}}
+    </button>
   </div>
 
-  <h3 class="ui dividing header">{{t "studyCreator.configurationHeader"}}</h3>
-
   <div class="field">
+    {{#if networks.length}}
     <label>{{t "studyCreator.networks"}}</label>
     <p>{{t "studyCreator.networksDesc"}}</p>
-
+    {{/if}}
     {{#each networks as |network|}}
       <div class="field">
         {{ui-checkbox checked=network.isEnabled
@@ -195,6 +143,18 @@
   </div>
 
   <div class="field">
+    <label>{{t "studyCreator.fingerprint"}}</label>
+    <p>{{t "studyCreator.fingerprintDesc"}}</p>
+
+    <div class="ui input">
+      {{input type="text"
+              value=model.fingerprint
+              insert-newline="saveSettings"
+              focus-out="saveSettings"}}
+    </div>
+  </div>
+
+  <div class="field">
     <label>{{t "studyCreator.updateInterval"}}</label>
     <p>{{t "studyCreator.updateIntervalLabel"}}</p>
 
@@ -214,6 +174,50 @@
     {{/ui-dropdown}}
   </div>
 
+  <h3 class="ui dividing header">{{t "studyCreator.privacyHeader"}}</h3>
+
+  <div class="field">
+    <label>{{t "studyCreator.salt"}}</label>
+    <p>{{t "studyCreator.saltDesc"}}</p>
+
+    {{input type="text"
+            value=model.salt
+            insert-newline="saveSettings"
+            focus-out="saveSettings"}}
+  </div>
+
+  <div class="field">
+    <label>{{t "studyCreator.hashLength"}}</label>
+    <p>{{t "studyCreator.hashLengthDesc"}}</p>
+
+    {{input type="number"
+            value=model.hashLength
+            insert-newline="saveSettings"
+            focus-out="saveSettings"}}
+  </div>
+
+  <h3 class="ui dividing header">{{t "studyCreator.optionalFeaturesHeader"}}</h3>
+  <div class="field">
+    <label>{{t "studyCreator.roseComments"}}</label>
+    <p>{{t "studyCreator.roseCommentsDesc"}}</p>
+
+    {{ui-checkbox checked=model.roseCommentsIsEnabled
+                  class="toggle"
+                  label=(boolean-to-yesno model.roseCommentsIsEnabled)
+                  onChange=(action "saveSettings")}}
+  </div>
+
+  <div class="field">
+    <label>{{t "studyCreator.roseCommentsRating"}}</label>
+    <p>{{t "studyCreator.roseCommentsRatingDesc"}}</p>
+
+    {{ui-checkbox checked=model.roseCommentsRatingIsEnabled
+                  class="toggle"
+                  label=(boolean-to-yesno model.roseCommentsRatingIsEnabled)
+                  onChange=(action "saveSettings")}}
+  </div>
+
+  <h3 class="ui dividing header">{{t "studyCreator.exportHeader"}}</h3>
   <div class="field">
     <label>{{t "studyCreator.exportConfig"}}</label>
     <p>{{t "studyCreator.exportConfigDesc"}}</p>

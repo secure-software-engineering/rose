@@ -1,6 +1,6 @@
 {
   "name": "rose",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "The UI for the browser extension ROSE",
   "private": true,
   "directories": {

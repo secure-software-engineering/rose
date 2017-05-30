@@ -59,7 +59,7 @@ export default Ember.Controller.extend({
           network = JSON.parse(JSON.stringify(network))
           delete network.isEnabled
           if (network.extractors) {
-            network.extractors = network.extractors.filter((extractor) => extractor.isEnabled).map((extractor) => {
+            network.extractors = network.extractors.filter((extractor) => extractor.isEnabled || extractor.type !== 'url').map((extractor) => {
               delete extractor.isEnabled
               return extractor
             })
@@ -117,12 +117,14 @@ export default Ember.Controller.extend({
         .fail(() => this.set('baseFileNotFound', true))
     },
 
-    enableAll (itemList) {
-      itemList.forEach((item) => item.set('isEnabled', true))
+    enableAll (network) {
+      network.observers.forEach((item) => item.set('isEnabled', true))
+      network.extractors.forEach((item) => item.set('isEnabled', true))
     },
 
-    disableAll (itemList) {
-      itemList.forEach((item) => item.set('isEnabled', false))
+    disableAll (network) {
+      network.observers.forEach((item) => item.set('isEnabled', false))
+      network.extractors.forEach((item) => item.set('isEnabled', false))
     },
 
     toggleForceSecureUpdate () {

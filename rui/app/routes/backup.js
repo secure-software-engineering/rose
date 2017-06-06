@@ -1,5 +1,6 @@
 /*
-Copyright (C) 2015-2016
+Copyright (C) 2015-2017
+    Felix A. Epp <work@felixepp.de>
     Oliver Hoffmann <oliverh855@gmail.com>
 
 This file is part of ROSE.
@@ -17,37 +18,64 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 */
-import Ember from 'ember';
+import Ember from 'ember'
 
-let getItem = (key) => {
+let addDateString = (dateKeys) => {
+  return (record) => {
+    for (let dateKey of dateKeys) {
+      if (record[dateKey] !== undefined) {
+        record[dateKey + 'String'] = new Date(record[dateKey]).toISOString()
+      }
+    }
+    return record
+  }
+}
+
+let getItem = (key, dateKeys) => {
   return new Ember.RSVP.Promise((resolve) => {
     kango.invokeAsyncCallback('localforage.getItem', key, (data) => {
+      if (dateKeys) {
+        data = data.map(addDateString(dateKeys))
+      }
       resolve({
         type: key,
         data: data
-      });
-    });
-  });
-};
+      })
+    })
+  })
+}
 
 export default Ember.Route.extend({
-  model: function() {
+  model: function () {
+    let getModels = (key, dateKeys) => {
+      return this.store.findAll(key).then((records) => {
+        let data = records.invoke('serialize')
+        if (dateKeys) {
+          data.map(addDateString(dateKeys))
+        }
+        return {
+          type: key,
+          data: data
+        }
+      })
+    }
+
     let promises = [
-      this.store.findAll('comment').then((records) => { return {type: 'comment', data: records.invoke('serialize')} }),
-      this.store.findAll('interaction').then((records) => { return {type: 'interaction', data: records.invoke('serialize')} }),
-      this.store.findAll('extract').then((records) => { return {type: 'extract', data: records.invoke('serialize')} }),
-      this.store.findAll('diary-entry').then((records) => { return {type: 'diary-entry', data: records.invoke('serialize')} }),
-      this.store.findAll('user-setting').then((records) => { return {type: 'user-setting', data: records.invoke('serialize')} }),
-      this.store.findAll('system-config').then((records) => { return {type: 'system-config', data: records.invoke('serialize')} }),
-      getItem('click-activity-records'),
-      getItem('mousemove-activity-records'),
-      getItem('window-activity-records'),
-      getItem('scroll-activity-records'),
-      getItem('fb-login-activity-records'),
+      getModels('comment', ['createdAt', 'updatedAt']),
+      getModels('interaction', ['createdAt']),
+      getModels('extract', ['createdAt']),
+      getModels('diary-entry', ['createdAt', 'updatedAt']),
+      getModels('user-setting'),
+      getModels('system-config'),
+      getItem('click-activity-records', ['date']),
+      getItem('mousemove-activity-records', ['date']),
+      getItem('window-activity-records', ['date']),
+      getItem('scroll-activity-records', ['date']),
+      getItem('fb-login-activity-records', ['date']),
       getItem('install-date'),
       getItem('rose-data-version')
-    ];
+    ]
 
-    return Ember.RSVP.all(promises);
+    return Ember.RSVP.all(promises)
   }
-});
+})

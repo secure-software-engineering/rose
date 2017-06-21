@@ -24,6 +24,8 @@ Using the content of an interaction target, e.g., a newsfeed post, or user ident
 
 You find the Google Chrome extension page of ROSE here: [Chrome Store](https://chrome.google.com/webstore/detail/rose/chmgghdkcookiojbnchechkhjfbadjkd)
 
+The extension for Apple Safari can be downloaded here: [Safari Extensions Gallery](https://safari-extensions.apple.com/details/?id=com.kangoextensions.rose-2Q5XV9C329)
+
 ### Where can I find more information?  
 
 The following guideline provide more information on specific topics.

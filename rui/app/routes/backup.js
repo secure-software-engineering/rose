@@ -73,7 +73,8 @@ export default Ember.Route.extend({
       getItem('scroll-activity-records', ['date']),
       getItem('fb-login-activity-records', ['date']),
       getItem('install-date'),
-      getItem('rose-data-version')
+      getItem('rose-data-version'),
+      getItem('rose-version')
     ]
 
     return Ember.RSVP.all(promises)

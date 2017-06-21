@@ -2,6 +2,7 @@
     "roseCommentsIsEnabled": true,
     "roseCommentsRatingIsEnabled": true,
     "salt": "ROSE",
+    "version": "3.0.3",
     "hashLength": 5,
     "repositoryURL": "https://secure-software-engineering.github.io/rose/master/base.json",
     "autoUpdateIsEnabled": true,

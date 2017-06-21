@@ -10,6 +10,9 @@ export default {
   weekly: 'Wöchentlich',
   monthly: 'Monatlich',
   yearly: 'Jährlich',
+  url: 'periodisch',
+  click: 'Mausklick',
+  input: 'Tastatureingabe',
 
   action: {
     save: 'Speichern',
@@ -235,6 +238,7 @@ export default {
     autoUpdateHeader: 'Automatische Aktualisierung der Datensammel-Pakete konfigurieren',
     networks: 'Zu überwachende Social-Media-Plattformen',
     networksDesc: 'Hier können Sie ein- und ausschalten, auf welchen Webseiten ROSE Daten sammeln soll.',
+    patterns: 'Verfügbare Aufzeichnungsmuster',
     enableAll: 'Alle verfügbaren aktivieren',
     disableAll: 'Alle verfügbaren de-aktivieren',
     forceSecureUpdate: 'Sichere Aktualisierungen verlangen',

@@ -11,8 +11,8 @@ export default {
   monthly: 'Monthly',
   yearly: 'Yearly',
   url: 'periodic',
-  click: 'click',
-  input: 'keyboard',
+  click: 'mouse-click',
+  input: 'keyboard-input',
 
   action: {
     save: 'Save',

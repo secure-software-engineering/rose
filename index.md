@@ -53,3 +53,7 @@ We hope that this list will grow in the future.
 ### Under which license is ROSE published?
 
 ROSE is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+### Imprint
+
+[Terms for site usage/imprint](https://www.sit.fraunhofer.de/en/imprint/)

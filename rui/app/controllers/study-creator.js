@@ -25,6 +25,11 @@ function removeFileName (str) {
   return normalizeUrl(str.substring(0, str.lastIndexOf('/')))
 }
 
+function getPatternRessource (url) {
+  return Ember.$.getJSON(url)
+    .then((list) => list.map((item) => Ember.Object.create(item)))
+}
+
 export default Ember.Controller.extend({
   baseFileIsLoading: false,
   baseFileNotFound: false,
@@ -37,19 +42,10 @@ export default Ember.Controller.extend({
     { label: 'monthly', value: 2629743830 }
   ],
 
-  getPatternRessource (url) {
-    return Ember.$.getJSON(url)
-      .then((list) => list.map((item) => Ember.Object.create(item)))
-  },
-
   actions: {
     saveSettings: function () {
       this.set('model.repositoryURL', normalizeUrl(this.get('model.repositoryURL')))
       this.get('model').save()
-    },
-
-    saveNetworkSettings: function (network) {
-      network.value.save()
     },
 
     download: function () {
@@ -99,16 +95,12 @@ export default Ember.Controller.extend({
               if (!network.observers && !network.extractors) {
                 return
               }
-              let requests = [[], []]
-              if (network.extractors) {
-                requests[0] = this.getPatternRessource(`${repositoryURL}/${network.extractors}`)
-              }
-              if (network.observers) {
-                requests[1] = this.getPatternRessource(`${repositoryURL}/${network.observers}`)
-              }
+              let requests = [
+                (network.extractors ? getPatternRessource(`${repositoryURL}/${network.extractors}`) : []),
+                (network.observers ? getPatternRessource(`${repositoryURL}/${network.observers}`) : [])
+              ]
               Ember.RSVP.Promise.all(requests).then((results) => {
-                network.extractors = results[0]
-                network.observers = results[1]
+                [network.extractors, network.observers] = results
                 this.get('networks').pushObject(Ember.Object.create(network))
               })
             })

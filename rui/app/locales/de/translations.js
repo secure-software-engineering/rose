@@ -31,7 +31,10 @@ export default {
   // Dashboard
   index: {
     title: 'ROSE Übersicht',
-    subtitle: 'Gesamtanzahl gesammelter Datensätze in Ihrer lokalen ROSE-Installation.'
+    subtitle: 'Gesamtanzahl gesammelter Datensätze in Ihrer lokalen ROSE-Installation.',
+    trackingEnabledHeader: 'Jegliches Erfassen von Daten an/aus',
+    trackingEnabled: 'Die Datenerfassung ist komplett aktiviert.',
+    trackingDisabled: 'Die Datenerfassung ist komplett deaktiviert.'
   },
 
   // Sidebar Menu
@@ -113,8 +116,6 @@ export default {
     autoUpdateLabel: 'Für automatische Aktualisierungen, um aktuelle Veränderungen bei Social-Media-Plattformen zu berücksichtigen, stellen Sie die automatische Aktualisierung ein.',
     autoUpdateInterval: 'Intervall für automatische Aktualisierungen',
     autoUpdateIntervalLabel: 'ROSE prüft automatisch in bestimmten Zeitintervallen, ob neue Pakete vorliegen.',
-    trackingEnabled: 'Datensammlung An/Aus',
-    trackingEnabledLabel: 'Schaltet alle Datensammel-Funktionen und Einblendungen an oder aus.',
     lastChecked: 'Zuletzt geprüft',
     never: 'nie',
     lastUpdated: 'Letzte Aktualisierung',

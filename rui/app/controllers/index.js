@@ -22,8 +22,11 @@ import Ember from 'ember'
 
 export default Ember.Controller.extend({
   settings: Ember.inject.service('settings'),
+  trackingEnabledLabel: function () {
+    let trackingEnabled = this.get('settings.user.trackingEnabled')
+    return this.get('i18n').t('index.tracking' + (trackingEnabled ? 'Enabled' : 'Disabled')).toString()
+  }.property('settings.user.trackingEnabled'),
   actions: {
-
     toggleTracking () {
       this.get('settings.user').save().then(() => kango.dispatchMessage('toggle-tracking'))
     }

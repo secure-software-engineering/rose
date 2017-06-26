@@ -27,14 +27,14 @@
 <div class="ui form {{updateResult}}">
     <h3 class="ui center aligned icon header">
       <i class="power icon"></i>
-      {{t "settings.trackingEnabled"}}
+      {{t "index.trackingEnabledHeader"}}
     </h3>
     <div class="fields">
         <div class="four wide field"></div>
         <div class="eight wide field">
             {{ui-checkbox class="toggle"
                           checked=settings.user.trackingEnabled
-                          label=(t "settings.trackingEnabledLabel")
+                          label=trackingEnabledLabel
                           onChange=(action "toggleTracking")}}
         </div>
     </div>

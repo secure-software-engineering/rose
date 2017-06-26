@@ -31,7 +31,10 @@ export default {
   // Dashboard
   index: {
     title: 'ROSE Control Center',
-    subtitle: 'Count of items collected in your local ROSE installation'
+    subtitle: 'Count of items collected in your local ROSE installation',
+    trackingEnabledHeader: 'All Tracking function on/off',
+    trackingEnabled: 'Tracking is globally enabled.',
+    trackingDisabled: 'Tracking is globally disabled.'
   },
 
   // Sidebar Menu
@@ -113,8 +116,6 @@ export default {
     autoUpdateLabel: 'For automatic updates to recent changes in social media sites, switch on the automatic update function.',
     autoUpdateInterval: 'Automatic update interval',
     autoUpdateIntervalLabel: 'ROSE checks automatically for tracking package updates in the specified time interval.',
-    trackingEnabled: 'Tracking on/off',
-    trackingEnabledLabel: 'Turns all tracking functions globally on or off.',
     lastChecked: 'Last checked',
     never: 'Never',
     lastUpdated: 'Last updated',

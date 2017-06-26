@@ -1417,8 +1417,11 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 define('rose/controllers/index', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Controller.extend({
     settings: _ember['default'].inject.service('settings'),
+    trackingEnabledLabel: (function () {
+      var trackingEnabled = this.get('settings.user.trackingEnabled');
+      return this.get('i18n').t('index.tracking' + (trackingEnabled ? 'Enabled' : 'Disabled')).toString();
+    }).property('settings.user.trackingEnabled'),
     actions: {
-
       toggleTracking: function toggleTracking() {
         this.get('settings.user').save().then(function () {
           return kango.dispatchMessage('toggle-tracking');
@@ -2039,6 +2042,9 @@ define('rose/locales/de/translations', ['exports'], function (exports) {
     weekly: 'Wöchentlich',
     monthly: 'Monatlich',
     yearly: 'Jährlich',
+    url: 'periodisch',
+    click: 'Mausklick',
+    input: 'Tastatureingabe',
 
     action: {
       save: 'Speichern',
@@ -2057,7 +2063,10 @@ define('rose/locales/de/translations', ['exports'], function (exports) {
     // Dashboard
     index: {
       title: 'ROSE Übersicht',
-      subtitle: 'Gesamtanzahl gesammelter Datensätze in Ihrer lokalen ROSE-Installation.'
+      subtitle: 'Gesamtanzahl gesammelter Datensätze in Ihrer lokalen ROSE-Installation.',
+      trackingEnabledHeader: 'Jegliches Erfassen von Daten an/aus',
+      trackingEnabled: 'Die Datenerfassung ist komplett aktiviert.',
+      trackingDisabled: 'Die Datenerfassung ist komplett deaktiviert.'
     },
 
     // Sidebar Menu
@@ -2139,8 +2148,6 @@ define('rose/locales/de/translations', ['exports'], function (exports) {
       autoUpdateLabel: 'Für automatische Aktualisierungen, um aktuelle Veränderungen bei Social-Media-Plattformen zu berücksichtigen, stellen Sie die automatische Aktualisierung ein.',
       autoUpdateInterval: 'Intervall für automatische Aktualisierungen',
       autoUpdateIntervalLabel: 'ROSE prüft automatisch in bestimmten Zeitintervallen, ob neue Pakete vorliegen.',
-      trackingEnabled: 'Datensammlung An/Aus',
-      trackingEnabledLabel: 'Schaltet alle Datensammel-Funktionen und Einblendungen an oder aus.',
       lastChecked: 'Zuletzt geprüft',
       never: 'nie',
       lastUpdated: 'Letzte Aktualisierung',
@@ -2264,6 +2271,7 @@ define('rose/locales/de/translations', ['exports'], function (exports) {
       autoUpdateHeader: 'Automatische Aktualisierung der Datensammel-Pakete konfigurieren',
       networks: 'Zu überwachende Social-Media-Plattformen',
       networksDesc: 'Hier können Sie ein- und ausschalten, auf welchen Webseiten ROSE Daten sammeln soll.',
+      patterns: 'Verfügbare Aufzeichnungsmuster',
       enableAll: 'Alle verfügbaren aktivieren',
       disableAll: 'Alle verfügbaren de-aktivieren',
       forceSecureUpdate: 'Sichere Aktualisierungen verlangen',
@@ -2315,8 +2323,8 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
     monthly: 'Monthly',
     yearly: 'Yearly',
     url: 'periodic',
-    click: 'click',
-    input: 'keyboard',
+    click: 'mouse-click',
+    input: 'keyboard-input',
 
     action: {
       save: 'Save',
@@ -2335,7 +2343,10 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
     // Dashboard
     index: {
       title: 'ROSE Control Center',
-      subtitle: 'Count of items collected in your local ROSE installation'
+      subtitle: 'Count of items collected in your local ROSE installation',
+      trackingEnabledHeader: 'All Tracking function on/off',
+      trackingEnabled: 'Tracking is globally enabled.',
+      trackingDisabled: 'Tracking is globally disabled.'
     },
 
     // Sidebar Menu
@@ -2417,8 +2428,6 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
       autoUpdateLabel: 'For automatic updates to recent changes in social media sites, switch on the automatic update function.',
       autoUpdateInterval: 'Automatic update interval',
       autoUpdateIntervalLabel: 'ROSE checks automatically for tracking package updates in the specified time interval.',
-      trackingEnabled: 'Tracking on/off',
-      trackingEnabledLabel: 'Turns all tracking functions globally on or off.',
       lastChecked: 'Last checked',
       never: 'Never',
       lastUpdated: 'Last updated',
@@ -5966,9 +5975,45 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 */
 define('rose/routes/backup', ['exports', 'ember'], function (exports, _ember) {
 
-  var getItem = function getItem(key) {
+  var addDateString = function addDateString(dateKeys) {
+    return function (record) {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = dateKeys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var dateKey = _step.value;
+
+          if (record[dateKey] !== undefined) {
+            record[dateKey + 'String'] = new Date(record[dateKey]).toISOString();
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator['return']) {
+            _iterator['return']();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      return record;
+    };
+  };
+
+  var getItem = function getItem(key, dateKeys) {
     return new _ember['default'].RSVP.Promise(function (resolve) {
       kango.invokeAsyncCallback('localforage.getItem', key, function (data) {
+        if (dateKeys) {
+          data = data.map(addDateString(dateKeys));
+        }
         resolve({
           type: key,
           data: data
@@ -5979,26 +6024,30 @@ define('rose/routes/backup', ['exports', 'ember'], function (exports, _ember) {
 
   exports['default'] = _ember['default'].Route.extend({
     model: function model() {
-      var promises = [this.store.findAll('comment').then(function (records) {
-        return { type: 'comment', data: records.invoke('serialize') };
-      }), this.store.findAll('interaction').then(function (records) {
-        return { type: 'interaction', data: records.invoke('serialize') };
-      }), this.store.findAll('extract').then(function (records) {
-        return { type: 'extract', data: records.invoke('serialize') };
-      }), this.store.findAll('diary-entry').then(function (records) {
-        return { type: 'diary-entry', data: records.invoke('serialize') };
-      }), this.store.findAll('user-setting').then(function (records) {
-        return { type: 'user-setting', data: records.invoke('serialize') };
-      }), this.store.findAll('system-config').then(function (records) {
-        return { type: 'system-config', data: records.invoke('serialize') };
-      }), getItem('click-activity-records'), getItem('mousemove-activity-records'), getItem('window-activity-records'), getItem('scroll-activity-records'), getItem('fb-login-activity-records'), getItem('install-date'), getItem('rose-data-version')];
+      var _this = this;
+
+      var getModels = function getModels(key, dateKeys) {
+        return _this.store.findAll(key).then(function (records) {
+          var data = records.invoke('serialize');
+          if (dateKeys) {
+            data.map(addDateString(dateKeys));
+          }
+          return {
+            type: key,
+            data: data
+          };
+        });
+      };
+
+      var promises = [getModels('comment', ['createdAt', 'updatedAt']), getModels('interaction', ['createdAt']), getModels('extract', ['createdAt']), getModels('diary-entry', ['createdAt', 'updatedAt']), getModels('user-setting'), getModels('system-config'), getItem('click-activity-records', ['date']), getItem('mousemove-activity-records', ['date']), getItem('window-activity-records', ['date']), getItem('scroll-activity-records', ['date']), getItem('fb-login-activity-records', ['date']), getItem('install-date'), getItem('rose-data-version'), getItem('rose-version')];
 
       return _ember['default'].RSVP.all(promises);
     }
   });
 });
 /*
-Copyright (C) 2015-2016
+Copyright (C) 2015-2017
+    Felix A. Epp <work@felixepp.de>
     Oliver Hoffmann <oliverh855@gmail.com>
 
 This file is part of ROSE.
@@ -11061,7 +11110,7 @@ define("rose/templates/index", ["exports"], function (exports) {
         morphs[5] = dom.createMorphAt(dom.childAt(element4, [3, 3]), 1, 1);
         return morphs;
       },
-      statements: [["inline", "t", ["index.title"], [], ["loc", [null, [4, 8], [4, 27]]]], ["inline", "t", ["index.subtitle"], [], ["loc", [null, [5, 32], [5, 54]]]], ["block", "each", [["get", "networks", ["loc", [null, [9, 8], [9, 16]]]]], [], 0, null, ["loc", [null, [9, 0], [23, 9]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [27, 22], [27, 34]]]]]]], ["inline", "t", ["settings.trackingEnabled"], [], ["loc", [null, [30, 6], [30, 38]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.trackingEnabled", ["loc", [null, [36, 34], [36, 63]]]]], [], []], "label", ["subexpr", "t", ["settings.trackingEnabledLabel"], [], ["loc", [null, [37, 32], [37, 67]]]], "onChange", ["subexpr", "action", ["toggleTracking"], [], ["loc", [null, [38, 35], [38, 60]]]]], ["loc", [null, [35, 12], [38, 62]]]]],
+      statements: [["inline", "t", ["index.title"], [], ["loc", [null, [4, 8], [4, 27]]]], ["inline", "t", ["index.subtitle"], [], ["loc", [null, [5, 32], [5, 54]]]], ["block", "each", [["get", "networks", ["loc", [null, [9, 8], [9, 16]]]]], [], 0, null, ["loc", [null, [9, 0], [23, 9]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [27, 22], [27, 34]]]]]]], ["inline", "t", ["index.trackingEnabledHeader"], [], ["loc", [null, [30, 6], [30, 41]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.trackingEnabled", ["loc", [null, [36, 34], [36, 63]]]]], [], []], "label", ["subexpr", "@mut", [["get", "trackingEnabledLabel", ["loc", [null, [37, 32], [37, 52]]]]], [], []], "onChange", ["subexpr", "action", ["toggleTracking"], [], ["loc", [null, [38, 35], [38, 60]]]]], ["loc", [null, [35, 12], [38, 62]]]]],
       locals: [],
       templates: [child0]
     };

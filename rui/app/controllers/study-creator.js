@@ -34,6 +34,9 @@ export default Ember.Controller.extend({
   baseFileIsLoading: false,
   baseFileNotFound: false,
   networks: [],
+  secureUpdateDisabled: function () {
+    return !this.get('model.autoUpdateIsEnabled') || !this.get('model.forceSecureUpdate')
+  }.property('model.autoUpdateIsEnabled', 'model.forceSecureUpdate'),
 
   updateIntervals: [
     { label: 'hourly', value: 3600000 },

@@ -113,7 +113,7 @@
                   onChange=(action "saveSettings")}}
   </div>
 
-  <div class="field">
+  <div class="{{unless model.autoUpdateIsEnabled "disabled "}}field">
     <label>{{t "studyCreator.forceSecureUpdate"}}</label>
     <p>{{t "studyCreator.forceSecureUpdateDesc"}}</p>
 
@@ -123,7 +123,7 @@
                   onChange=(action "toggleForceSecureUpdate")}}
   </div>
 
-  <div class="field">
+  <div class="{{if secureUpdateDisabled "disabled "}}field">
     <label>{{t "studyCreator.fingerprint"}}</label>
     <p>{{t "studyCreator.fingerprintDesc"}}</p>
 
@@ -135,7 +135,7 @@
     </div>
   </div>
 
-  <div class="field">
+  <div class="{{unless model.autoUpdateIsEnabled "disabled "}}field">
     <label>{{t "studyCreator.updateInterval"}}</label>
     <p>{{t "studyCreator.updateIntervalLabel"}}</p>
 
@@ -188,7 +188,7 @@
                   onChange=(action "saveSettings")}}
   </div>
 
-  <div class="field">
+  <div class="{{unless model.roseCommentsIsEnabled "disabled "}}field">
     <label>{{t "studyCreator.roseCommentsRating"}}</label>
     <p>{{t "studyCreator.roseCommentsRatingDesc"}}</p>
 
@@ -198,9 +198,8 @@
                   onChange=(action "saveSettings")}}
   </div>
 
-  <h3 class="ui dividing header">{{t "studyCreator.exportHeader"}}</h3>
-  <div class="field">
-    <label>{{t "studyCreator.exportConfig"}}</label>
+  <h3 class="ui dividing header">{{t "studyCreator.exportConfig"}}</h3>
+  <div class="{{unless model.autoUpdateIsEnabled "disabled"}}field">
     <p>{{t "studyCreator.exportConfigDesc"}}</p>
 
     {{input value=model.fileName

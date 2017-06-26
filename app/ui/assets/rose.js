@@ -1681,34 +1681,34 @@ You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 */
 define('rose/controllers/study-creator', ['exports', 'ember', 'npm:normalize-url'], function (exports, _ember, _npmNormalizeUrl) {
+  var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
 
   function removeFileName(str) {
     return (0, _npmNormalizeUrl['default'])(str.substring(0, str.lastIndexOf('/')));
+  }
+
+  function getPatternRessource(url) {
+    return _ember['default'].$.getJSON(url).then(function (list) {
+      return list.map(function (item) {
+        return _ember['default'].Object.create(item);
+      });
+    });
   }
 
   exports['default'] = _ember['default'].Controller.extend({
     baseFileIsLoading: false,
     baseFileNotFound: false,
     networks: [],
+    secureUpdateDisabled: (function () {
+      return !this.get('model.autoUpdateIsEnabled') || !this.get('model.forceSecureUpdate');
+    }).property('model.autoUpdateIsEnabled', 'model.forceSecureUpdate'),
 
     updateIntervals: [{ label: 'hourly', value: 3600000 }, { label: 'daily', value: 86400000 }, { label: 'weekly', value: 604800000 }, { label: 'monthly', value: 2629743830 }],
-
-    getPatternRessource: function getPatternRessource(url) {
-      return _ember['default'].$.getJSON(url).then(function (list) {
-        return list.map(function (item) {
-          return _ember['default'].Object.create(item);
-        });
-      });
-    },
 
     actions: {
       saveSettings: function saveSettings() {
         this.set('model.repositoryURL', (0, _npmNormalizeUrl['default'])(this.get('model.repositoryURL')));
         this.get('model').save();
-      },
-
-      saveNetworkSettings: function saveNetworkSettings(network) {
-        network.value.save();
       },
 
       download: function download() {
@@ -1761,16 +1761,13 @@ define('rose/controllers/study-creator', ['exports', 'ember', 'npm:normalize-url
               if (!network.observers && !network.extractors) {
                 return;
               }
-              var requests = [[], []];
-              if (network.extractors) {
-                requests[0] = _this.getPatternRessource(repositoryURL + '/' + network.extractors);
-              }
-              if (network.observers) {
-                requests[1] = _this.getPatternRessource(repositoryURL + '/' + network.observers);
-              }
+              var requests = [network.extractors ? getPatternRessource(repositoryURL + '/' + network.extractors) : [], network.observers ? getPatternRessource(repositoryURL + '/' + network.observers) : []];
               _ember['default'].RSVP.Promise.all(requests).then(function (results) {
-                network.extractors = results[0];
-                network.observers = results[1];
+                var _results = _slicedToArray(results, 2);
+
+                network.extractors = _results[0];
+                network.observers = _results[1];
+
                 _this.get('networks').pushObject(_ember['default'].Object.create(network));
               });
             });
@@ -14806,7 +14803,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 215,
+            "line": 214,
             "column": 0
           }
         },
@@ -14959,7 +14956,6 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("label");
@@ -14982,7 +14978,6 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("label");
@@ -15012,7 +15007,6 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("label");
@@ -15118,7 +15112,6 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("label");
@@ -15148,13 +15141,6 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("p");
@@ -15202,7 +15188,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
         var element24 = dom.childAt(element13, [29]);
         var element25 = dom.childAt(element13, [33]);
         var element26 = dom.childAt(element13, [35]);
-        var morphs = new Array(45);
+        var morphs = new Array(49);
         morphs[0] = dom.createMorphAt(element12, 1, 1);
         morphs[1] = dom.createMorphAt(dom.childAt(element12, [3]), 0, 0);
         morphs[2] = dom.createMorphAt(dom.childAt(element13, [1]), 0, 0);
@@ -15219,38 +15205,42 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
         morphs[13] = dom.createMorphAt(dom.childAt(element17, [1]), 0, 0);
         morphs[14] = dom.createMorphAt(dom.childAt(element17, [3]), 0, 0);
         morphs[15] = dom.createMorphAt(element17, 5, 5);
-        morphs[16] = dom.createMorphAt(dom.childAt(element18, [1]), 0, 0);
-        morphs[17] = dom.createMorphAt(dom.childAt(element18, [3]), 0, 0);
-        morphs[18] = dom.createMorphAt(element18, 5, 5);
-        morphs[19] = dom.createMorphAt(dom.childAt(element19, [1]), 0, 0);
-        morphs[20] = dom.createMorphAt(dom.childAt(element19, [3]), 0, 0);
-        morphs[21] = dom.createMorphAt(dom.childAt(element19, [5]), 1, 1);
-        morphs[22] = dom.createMorphAt(dom.childAt(element20, [1]), 0, 0);
-        morphs[23] = dom.createMorphAt(dom.childAt(element20, [3]), 0, 0);
-        morphs[24] = dom.createMorphAt(element20, 5, 5);
-        morphs[25] = dom.createMorphAt(dom.childAt(element13, [19]), 0, 0);
-        morphs[26] = dom.createMorphAt(dom.childAt(element21, [1]), 0, 0);
-        morphs[27] = dom.createMorphAt(dom.childAt(element21, [3]), 0, 0);
-        morphs[28] = dom.createMorphAt(element21, 5, 5);
-        morphs[29] = dom.createMorphAt(dom.childAt(element22, [1]), 0, 0);
-        morphs[30] = dom.createMorphAt(dom.childAt(element22, [3]), 0, 0);
-        morphs[31] = dom.createMorphAt(element22, 5, 5);
-        morphs[32] = dom.createMorphAt(dom.childAt(element13, [25]), 0, 0);
-        morphs[33] = dom.createMorphAt(dom.childAt(element23, [1]), 0, 0);
-        morphs[34] = dom.createMorphAt(dom.childAt(element23, [3]), 0, 0);
-        morphs[35] = dom.createMorphAt(element23, 5, 5);
-        morphs[36] = dom.createMorphAt(dom.childAt(element24, [1]), 0, 0);
-        morphs[37] = dom.createMorphAt(dom.childAt(element24, [3]), 0, 0);
-        morphs[38] = dom.createMorphAt(element24, 5, 5);
-        morphs[39] = dom.createMorphAt(dom.childAt(element13, [31]), 0, 0);
-        morphs[40] = dom.createMorphAt(dom.childAt(element25, [1]), 0, 0);
-        morphs[41] = dom.createMorphAt(dom.childAt(element25, [3]), 0, 0);
-        morphs[42] = dom.createMorphAt(element25, 5, 5);
-        morphs[43] = dom.createElementMorph(element26);
-        morphs[44] = dom.createMorphAt(element26, 1, 1);
+        morphs[16] = dom.createAttrMorph(element18, 'class');
+        morphs[17] = dom.createMorphAt(dom.childAt(element18, [1]), 0, 0);
+        morphs[18] = dom.createMorphAt(dom.childAt(element18, [3]), 0, 0);
+        morphs[19] = dom.createMorphAt(element18, 5, 5);
+        morphs[20] = dom.createAttrMorph(element19, 'class');
+        morphs[21] = dom.createMorphAt(dom.childAt(element19, [1]), 0, 0);
+        morphs[22] = dom.createMorphAt(dom.childAt(element19, [3]), 0, 0);
+        morphs[23] = dom.createMorphAt(dom.childAt(element19, [5]), 1, 1);
+        morphs[24] = dom.createAttrMorph(element20, 'class');
+        morphs[25] = dom.createMorphAt(dom.childAt(element20, [1]), 0, 0);
+        morphs[26] = dom.createMorphAt(dom.childAt(element20, [3]), 0, 0);
+        morphs[27] = dom.createMorphAt(element20, 5, 5);
+        morphs[28] = dom.createMorphAt(dom.childAt(element13, [19]), 0, 0);
+        morphs[29] = dom.createMorphAt(dom.childAt(element21, [1]), 0, 0);
+        morphs[30] = dom.createMorphAt(dom.childAt(element21, [3]), 0, 0);
+        morphs[31] = dom.createMorphAt(element21, 5, 5);
+        morphs[32] = dom.createMorphAt(dom.childAt(element22, [1]), 0, 0);
+        morphs[33] = dom.createMorphAt(dom.childAt(element22, [3]), 0, 0);
+        morphs[34] = dom.createMorphAt(element22, 5, 5);
+        morphs[35] = dom.createMorphAt(dom.childAt(element13, [25]), 0, 0);
+        morphs[36] = dom.createMorphAt(dom.childAt(element23, [1]), 0, 0);
+        morphs[37] = dom.createMorphAt(dom.childAt(element23, [3]), 0, 0);
+        morphs[38] = dom.createMorphAt(element23, 5, 5);
+        morphs[39] = dom.createAttrMorph(element24, 'class');
+        morphs[40] = dom.createMorphAt(dom.childAt(element24, [1]), 0, 0);
+        morphs[41] = dom.createMorphAt(dom.childAt(element24, [3]), 0, 0);
+        morphs[42] = dom.createMorphAt(element24, 5, 5);
+        morphs[43] = dom.createMorphAt(dom.childAt(element13, [31]), 0, 0);
+        morphs[44] = dom.createAttrMorph(element25, 'class');
+        morphs[45] = dom.createMorphAt(dom.childAt(element25, [1]), 0, 0);
+        morphs[46] = dom.createMorphAt(element25, 3, 3);
+        morphs[47] = dom.createElementMorph(element26);
+        morphs[48] = dom.createMorphAt(element26, 1, 1);
         return morphs;
       },
-      statements: [["inline", "t", ["studyCreator.title"], [], ["loc", [null, [4, 4], [4, 30]]]], ["inline", "t", ["studyCreator.subtitle"], [], ["loc", [null, [5, 28], [5, 57]]]], ["inline", "t", ["studyCreator.configurationHeader"], [], ["loc", [null, [10, 33], [10, 73]]]], ["inline", "t", ["studyCreator.repositoryUrl"], [], ["loc", [null, [13, 11], [13, 45]]]], ["inline", "t", ["studyCreator.repositoryUrlDesc"], [], ["loc", [null, [14, 7], [14, 45]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.repositoryURL", ["loc", [null, [18, 20], [18, 39]]]]], [], []], "insert-newline", "fetchBaseFile"], ["loc", [null, [17, 6], [19, 46]]]], ["block", "if", [["get", "baseFileNotFound", ["loc", [null, [22, 10], [22, 26]]]]], [], 0, null, ["loc", [null, [22, 4], [26, 11]]]], ["attribute", "class", ["concat", ["ui icon button ", ["subexpr", "if", [["get", "baseFileIsLoading", ["loc", [null, [30, 39], [30, 56]]]], "loading"], [], ["loc", [null, [30, 34], [30, 68]]]]]]], ["element", "action", ["fetchBaseFile"], [], ["loc", [null, [30, 70], [30, 96]]]], ["inline", "t", ["studyCreator.fetchRepository"], [], ["loc", [null, [32, 6], [32, 42]]]], ["block", "if", [["get", "networks.length", ["loc", [null, [37, 10], [37, 25]]]]], [], 1, null, ["loc", [null, [37, 4], [40, 11]]]], ["block", "each", [["get", "networks", ["loc", [null, [41, 12], [41, 20]]]]], [], 2, null, ["loc", [null, [41, 4], [101, 13]]]], ["inline", "t", ["studyCreator.autoUpdateHeader"], [], ["loc", [null, [104, 33], [104, 70]]]], ["inline", "t", ["studyCreator.autoUpdate"], [], ["loc", [null, [107, 11], [107, 42]]]], ["inline", "t", ["studyCreator.autoUpdateDesc"], [], ["loc", [null, [108, 7], [108, 42]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [110, 26], [110, 51]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [112, 42], [112, 67]]]]], [], ["loc", [null, [112, 24], [112, 68]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [113, 27], [113, 50]]]]], ["loc", [null, [110, 4], [113, 52]]]], ["inline", "t", ["studyCreator.forceSecureUpdate"], [], ["loc", [null, [117, 11], [117, 49]]]], ["inline", "t", ["studyCreator.forceSecureUpdateDesc"], [], ["loc", [null, [118, 7], [118, 49]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.forceSecureUpdate", ["loc", [null, [120, 26], [120, 49]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.forceSecureUpdate", ["loc", [null, [122, 42], [122, 65]]]]], [], ["loc", [null, [122, 24], [122, 66]]]], "onChange", ["subexpr", "action", ["toggleForceSecureUpdate"], [], ["loc", [null, [123, 27], [123, 61]]]]], ["loc", [null, [120, 4], [123, 63]]]], ["inline", "t", ["studyCreator.fingerprint"], [], ["loc", [null, [127, 11], [127, 43]]]], ["inline", "t", ["studyCreator.fingerprintDesc"], [], ["loc", [null, [128, 7], [128, 43]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.fingerprint", ["loc", [null, [132, 20], [132, 37]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [131, 6], [134, 40]]]], ["inline", "t", ["studyCreator.updateInterval"], [], ["loc", [null, [139, 11], [139, 46]]]], ["inline", "t", ["studyCreator.updateIntervalLabel"], [], ["loc", [null, [140, 7], [140, 47]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "model.updateInterval", ["loc", [null, [143, 29], [143, 49]]]]], [], []], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [144, 29], [144, 52]]]]], 3, null, ["loc", [null, [142, 4], [155, 20]]]], ["inline", "t", ["studyCreator.privacyHeader"], [], ["loc", [null, [158, 33], [158, 67]]]], ["inline", "t", ["studyCreator.salt"], [], ["loc", [null, [161, 11], [161, 36]]]], ["inline", "t", ["studyCreator.saltDesc"], [], ["loc", [null, [162, 7], [162, 36]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.salt", ["loc", [null, [165, 18], [165, 28]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [164, 4], [167, 38]]]], ["inline", "t", ["studyCreator.hashLength"], [], ["loc", [null, [171, 11], [171, 42]]]], ["inline", "t", ["studyCreator.hashLengthDesc"], [], ["loc", [null, [172, 7], [172, 42]]]], ["inline", "input", [], ["type", "number", "value", ["subexpr", "@mut", [["get", "model.hashLength", ["loc", [null, [175, 18], [175, 34]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [174, 4], [177, 38]]]], ["inline", "t", ["studyCreator.optionalFeaturesHeader"], [], ["loc", [null, [180, 33], [180, 76]]]], ["inline", "t", ["studyCreator.roseComments"], [], ["loc", [null, [182, 11], [182, 44]]]], ["inline", "t", ["studyCreator.roseCommentsDesc"], [], ["loc", [null, [183, 7], [183, 44]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [185, 26], [185, 53]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [187, 42], [187, 69]]]]], [], ["loc", [null, [187, 24], [187, 70]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [188, 27], [188, 50]]]]], ["loc", [null, [185, 4], [188, 52]]]], ["inline", "t", ["studyCreator.roseCommentsRating"], [], ["loc", [null, [192, 11], [192, 50]]]], ["inline", "t", ["studyCreator.roseCommentsRatingDesc"], [], ["loc", [null, [193, 7], [193, 50]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [195, 26], [195, 59]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [197, 42], [197, 75]]]]], [], ["loc", [null, [197, 24], [197, 76]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [198, 27], [198, 50]]]]], ["loc", [null, [195, 4], [198, 52]]]], ["inline", "t", ["studyCreator.exportHeader"], [], ["loc", [null, [201, 33], [201, 66]]]], ["inline", "t", ["studyCreator.exportConfig"], [], ["loc", [null, [203, 11], [203, 44]]]], ["inline", "t", ["studyCreator.exportConfigDesc"], [], ["loc", [null, [204, 7], [204, 44]]]], ["inline", "input", [], ["value", ["subexpr", "@mut", [["get", "model.fileName", ["loc", [null, [206, 18], [206, 32]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [206, 4], [208, 38]]]], ["element", "action", ["download"], [], ["loc", [null, [211, 36], [211, 57]]]], ["inline", "t", ["action.download"], [], ["loc", [null, [212, 4], [212, 27]]]]],
+      statements: [["inline", "t", ["studyCreator.title"], [], ["loc", [null, [4, 4], [4, 30]]]], ["inline", "t", ["studyCreator.subtitle"], [], ["loc", [null, [5, 28], [5, 57]]]], ["inline", "t", ["studyCreator.configurationHeader"], [], ["loc", [null, [10, 33], [10, 73]]]], ["inline", "t", ["studyCreator.repositoryUrl"], [], ["loc", [null, [13, 11], [13, 45]]]], ["inline", "t", ["studyCreator.repositoryUrlDesc"], [], ["loc", [null, [14, 7], [14, 45]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.repositoryURL", ["loc", [null, [18, 20], [18, 39]]]]], [], []], "insert-newline", "fetchBaseFile"], ["loc", [null, [17, 6], [19, 46]]]], ["block", "if", [["get", "baseFileNotFound", ["loc", [null, [22, 10], [22, 26]]]]], [], 0, null, ["loc", [null, [22, 4], [26, 11]]]], ["attribute", "class", ["concat", ["ui icon button ", ["subexpr", "if", [["get", "baseFileIsLoading", ["loc", [null, [30, 39], [30, 56]]]], "loading"], [], ["loc", [null, [30, 34], [30, 68]]]]]]], ["element", "action", ["fetchBaseFile"], [], ["loc", [null, [30, 70], [30, 96]]]], ["inline", "t", ["studyCreator.fetchRepository"], [], ["loc", [null, [32, 6], [32, 42]]]], ["block", "if", [["get", "networks.length", ["loc", [null, [37, 10], [37, 25]]]]], [], 1, null, ["loc", [null, [37, 4], [40, 11]]]], ["block", "each", [["get", "networks", ["loc", [null, [41, 12], [41, 20]]]]], [], 2, null, ["loc", [null, [41, 4], [101, 13]]]], ["inline", "t", ["studyCreator.autoUpdateHeader"], [], ["loc", [null, [104, 33], [104, 70]]]], ["inline", "t", ["studyCreator.autoUpdate"], [], ["loc", [null, [107, 11], [107, 42]]]], ["inline", "t", ["studyCreator.autoUpdateDesc"], [], ["loc", [null, [108, 7], [108, 42]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [110, 26], [110, 51]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [112, 42], [112, 67]]]]], [], ["loc", [null, [112, 24], [112, 68]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [113, 27], [113, 50]]]]], ["loc", [null, [110, 4], [113, 52]]]], ["attribute", "class", ["concat", [["subexpr", "unless", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [116, 23], [116, 48]]]], "disabled "], [], ["loc", [null, [116, 14], [116, 62]]]], "field"]]], ["inline", "t", ["studyCreator.forceSecureUpdate"], [], ["loc", [null, [117, 11], [117, 49]]]], ["inline", "t", ["studyCreator.forceSecureUpdateDesc"], [], ["loc", [null, [118, 7], [118, 49]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.forceSecureUpdate", ["loc", [null, [120, 26], [120, 49]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.forceSecureUpdate", ["loc", [null, [122, 42], [122, 65]]]]], [], ["loc", [null, [122, 24], [122, 66]]]], "onChange", ["subexpr", "action", ["toggleForceSecureUpdate"], [], ["loc", [null, [123, 27], [123, 61]]]]], ["loc", [null, [120, 4], [123, 63]]]], ["attribute", "class", ["concat", [["subexpr", "if", [["get", "secureUpdateDisabled", ["loc", [null, [126, 19], [126, 39]]]], "disabled "], [], ["loc", [null, [126, 14], [126, 53]]]], "field"]]], ["inline", "t", ["studyCreator.fingerprint"], [], ["loc", [null, [127, 11], [127, 43]]]], ["inline", "t", ["studyCreator.fingerprintDesc"], [], ["loc", [null, [128, 7], [128, 43]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.fingerprint", ["loc", [null, [132, 20], [132, 37]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [131, 6], [134, 40]]]], ["attribute", "class", ["concat", [["subexpr", "unless", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [138, 23], [138, 48]]]], "disabled "], [], ["loc", [null, [138, 14], [138, 62]]]], "field"]]], ["inline", "t", ["studyCreator.updateInterval"], [], ["loc", [null, [139, 11], [139, 46]]]], ["inline", "t", ["studyCreator.updateIntervalLabel"], [], ["loc", [null, [140, 7], [140, 47]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "model.updateInterval", ["loc", [null, [143, 29], [143, 49]]]]], [], []], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [144, 29], [144, 52]]]]], 3, null, ["loc", [null, [142, 4], [155, 20]]]], ["inline", "t", ["studyCreator.privacyHeader"], [], ["loc", [null, [158, 33], [158, 67]]]], ["inline", "t", ["studyCreator.salt"], [], ["loc", [null, [161, 11], [161, 36]]]], ["inline", "t", ["studyCreator.saltDesc"], [], ["loc", [null, [162, 7], [162, 36]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.salt", ["loc", [null, [165, 18], [165, 28]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [164, 4], [167, 38]]]], ["inline", "t", ["studyCreator.hashLength"], [], ["loc", [null, [171, 11], [171, 42]]]], ["inline", "t", ["studyCreator.hashLengthDesc"], [], ["loc", [null, [172, 7], [172, 42]]]], ["inline", "input", [], ["type", "number", "value", ["subexpr", "@mut", [["get", "model.hashLength", ["loc", [null, [175, 18], [175, 34]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [174, 4], [177, 38]]]], ["inline", "t", ["studyCreator.optionalFeaturesHeader"], [], ["loc", [null, [180, 33], [180, 76]]]], ["inline", "t", ["studyCreator.roseComments"], [], ["loc", [null, [182, 11], [182, 44]]]], ["inline", "t", ["studyCreator.roseCommentsDesc"], [], ["loc", [null, [183, 7], [183, 44]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [185, 26], [185, 53]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [187, 42], [187, 69]]]]], [], ["loc", [null, [187, 24], [187, 70]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [188, 27], [188, 50]]]]], ["loc", [null, [185, 4], [188, 52]]]], ["attribute", "class", ["concat", [["subexpr", "unless", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [191, 23], [191, 50]]]], "disabled "], [], ["loc", [null, [191, 14], [191, 64]]]], "field"]]], ["inline", "t", ["studyCreator.roseCommentsRating"], [], ["loc", [null, [192, 11], [192, 50]]]], ["inline", "t", ["studyCreator.roseCommentsRatingDesc"], [], ["loc", [null, [193, 7], [193, 50]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [195, 26], [195, 59]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [197, 42], [197, 75]]]]], [], ["loc", [null, [197, 24], [197, 76]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [198, 27], [198, 50]]]]], ["loc", [null, [195, 4], [198, 52]]]], ["inline", "t", ["studyCreator.exportConfig"], [], ["loc", [null, [201, 33], [201, 66]]]], ["attribute", "class", ["concat", [["subexpr", "unless", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [202, 23], [202, 48]]]], "disabled"], [], ["loc", [null, [202, 14], [202, 61]]]], "field"]]], ["inline", "t", ["studyCreator.exportConfigDesc"], [], ["loc", [null, [203, 7], [203, 44]]]], ["inline", "input", [], ["value", ["subexpr", "@mut", [["get", "model.fileName", ["loc", [null, [205, 18], [205, 32]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [205, 4], [207, 38]]]], ["element", "action", ["download"], [], ["loc", [null, [210, 36], [210, 57]]]], ["inline", "t", ["action.download"], [], ["loc", [null, [211, 4], [211, 27]]]]],
       locals: [],
       templates: [child0, child1, child2, child3]
     };

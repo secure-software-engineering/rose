@@ -114,6 +114,11 @@
   </div>
 
   <div class="{{unless model.autoUpdateIsEnabled "disabled "}}field">
+    {{#unless keyAvailable}}
+    <div class="ui red basic label">
+      {{t "studyCreator.keyUnavailable"}}
+    </div>
+    {{/unless}}
     <label>{{t "studyCreator.forceSecureUpdate"}}</label>
     <p>{{t "studyCreator.forceSecureUpdateDesc"}}</p>
 

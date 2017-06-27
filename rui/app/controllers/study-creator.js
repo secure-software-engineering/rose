@@ -20,6 +20,7 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 */
 import Ember from 'ember'
 import normalizeUrl from 'npm:normalize-url'
+import kbpgp from 'npm:kbpgp'
 
 function removeFileName (str) {
   return normalizeUrl(str.substring(0, str.lastIndexOf('/')))
@@ -43,9 +44,11 @@ export default Ember.Controller.extend({
   baseFileIsLoading: false,
   baseFileNotFound: false,
   networks: [],
+  keyAvailable: true,
+
   secureUpdateDisabled: function () {
-    return !this.get('model.autoUpdateIsEnabled') || !this.get('model.forceSecureUpdate')
-  }.property('model.autoUpdateIsEnabled', 'model.forceSecureUpdate'),
+    return !this.get('model.autoUpdateIsEnabled') || !this.get('model.forceSecureUpdate') || !this.get('keyAvailable')
+  }.property('model.autoUpdateIsEnabled', 'model.forceSecureUpdate', 'keyAvailable'),
 
   updateIntervals: [
     { label: 'hourly', value: 3600000 },
@@ -93,7 +96,8 @@ export default Ember.Controller.extend({
       // this.set('networks', [])
       this.setProperties({
         networks: [],
-        baseFileNotFound: false
+        baseFileNotFound: false,
+        keyAvailable: false
       })
 
       const baseFileUrl = this.get('model.repositoryURL')
@@ -116,6 +120,17 @@ export default Ember.Controller.extend({
                 this.get('networks').pushObject(Ember.Object.create(network))
               })
             })
+
+            Ember.$.get(`${repositoryURL}/public.key`).then((key) => {
+              kbpgp.KeyManager.import_from_armored_pgp({armored: key}, (err, keymanager) => {
+                if (err) {
+                  return console.error(err)
+                }
+                this.set('model.fingerprint', keymanager.get_pgp_fingerprint_str().toUpperCase())
+                this.set('keyAvailable', true)
+              })
+            })
+            .fail(() => this.set('model.forceSecureUpdate', false))
           }
         })
         .fail(() => this.set('baseFileNotFound', true))

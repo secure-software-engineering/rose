@@ -161,10 +161,16 @@
     <label>{{t "studyCreator.salt"}}</label>
     <p>{{t "studyCreator.saltDesc"}}</p>
 
-    {{input type="text"
-            value=model.salt
-            insert-newline="saveSettings"
-            focus-out="saveSettings"}}
+    <div class="ui action input">
+      {{input type="text"
+              value=model.salt
+              insert-newline="saveSettings"
+              focus-out="saveSettings"}}
+
+      <button class="ui button" {{action "generateSalt"}}>
+        {{t "studyCreator.generateSaltButton"}}
+      </button>
+    </div>
   </div>
 
   <div class="field">

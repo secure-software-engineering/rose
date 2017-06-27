@@ -30,6 +30,15 @@ function getPatternRessource (url) {
     .then((list) => list.map((item) => Ember.Object.create(item)))
 }
 
+function randomString (length) {
+  var text = ''
+  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  while (text.length < length) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length))
+  }
+  return text
+}
+
 export default Ember.Controller.extend({
   baseFileIsLoading: false,
   baseFileNotFound: false,
@@ -120,6 +129,10 @@ export default Ember.Controller.extend({
     disableAll (network) {
       network.observers.forEach((item) => item.set('isEnabled', false))
       network.extractors.forEach((item) => item.set('isEnabled', false))
+    },
+
+    generateSalt () {
+      this.set('model.salt', randomString(12))
     },
 
     toggleForceSecureUpdate () {

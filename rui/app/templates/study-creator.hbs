@@ -151,12 +151,8 @@
   <div class="{{unless model.forceSecureUpdate "disabled "}}field">
     <label>{{t "studyCreator.fingerprint"}}</label>
     <p>{{t "studyCreator.fingerprintDesc"}}</p>
-
-    <div class="ui disabled input">
-      {{input type="text"
-              value=model.fingerprint
-              insert-newline="saveSettings"
-              focus-out="saveSettings"}}
+    <div class="ui message">
+      <p>{{model.fingerprint}}</p>
     </div>
   </div>
 
@@ -189,7 +185,7 @@
   </div>
 
   <h3 class="ui dividing header">{{t "studyCreator.optionalFeaturesHeader"}}</h3>
-  <div class="field">
+  <div class="{{if facebookDisabled "disabled "}}field">
     <label>{{t "studyCreator.roseComments"}}</label>
     <p>{{t "studyCreator.roseCommentsDesc"}}</p>
 
@@ -199,7 +195,7 @@
                   onChange=(action "saveSettings")}}
   </div>
 
-  <div class="{{unless model.roseCommentsIsEnabled "disabled "}}field">
+  <div class="{{if facebookDisabled "disabled "}}{{unless model.roseCommentsIsEnabled "disabled "}}field">
     <label>{{t "studyCreator.roseCommentsRating"}}</label>
     <p>{{t "studyCreator.roseCommentsRatingDesc"}}</p>
 
@@ -218,7 +214,7 @@
             focus-out="saveSettings"}}
   </div>
 
-  <button class="ui primary button" {{action "download"}}>
+  <button class="ui {{if exportDisabled "disabled"}} primary button" {{action "download"}}>
     {{t "action.download"}}
   </button>
 

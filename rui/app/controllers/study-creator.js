@@ -46,6 +46,14 @@ export default Ember.Controller.extend({
   networks: [],
   keyAvailable: true,
 
+  exportDisabled: function () {
+    return !this.get('networks').some((network) => network.isEnabled)
+  }.property('networks.@each.isEnabled'),
+
+  facebookDisabled: function () {
+    return !this.get('networks').some((network) => network.name === 'facebook' && network.isEnabled)
+  }.property('networks.@each.isEnabled'),
+
   secureUpdateImpossible: function () {
     if (!this.get('keyAvailable') || !this.get('model.autoUpdateIsEnabled')) {
       this.set('model.forceSecureUpdate', false)

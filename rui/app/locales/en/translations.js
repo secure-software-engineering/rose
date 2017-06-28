@@ -71,9 +71,9 @@ export default {
     fileConfigBtn: 'Load configuration file',
     urlConfig: 'Specifiy a URL to a ROSE repository...',
     privacyNoteTitle: 'Privacy Note',
-    privacyNote: "<p>ROSE collects data about your interactions with social media sites for the purpose of participating in an empirical study, or, if you are not participating in a study, for personal purposes. ROSE stores all collected data locally and in an anonymized way in your web browser. ROSE does not send any tracking data over the Internet to other servers, neither to social media sites nor to the researchers in whose study you might participate. At any time you can disable the tracking functions of ROSE by using the 'tracking on/off' switch in the settings menu. If you have any further questions see the <a href=\"https://secure-software-engineering.github.io/rose/index.html\">Github pages of ROSE</a>.</p>",
+    privacyNote: '<p>ROSE collects data about your interactions with social media sites for the purpose of participating in an empirical study, or, if you are not participating in a study, for personal purposes. ROSE stores all collected data locally and in an anonymized way in your web browser. ROSE does not send any tracking data over the Internet to other servers, neither to social media sites nor to the researchers in whose study you might participate. At any time you can disable the tracking functions of ROSE by using the &ldquo;tracking on/off&rdquo; switch in the settings menu. If you have any further questions see the <a href="https://secure-software-engineering.github.io/rose/index.html">Github pages of ROSE</a>.</p>',
     overlayNoteTitle: 'Information on the Use of Overlays',
-    overlayNote: "<p>ROSE adds overlays to social media sites such as Facebook thereby enabling the user to take notes on content he or she encounters online. These overlays are a red ribbon with the caption 'Comment' and a sliding-in graphical user interface to manage notes, see pictures below. All data entered to text fields embedded in these overlays is store locally alone, just like any other data collected by ROSE. Disabling the tracking function also disables all overlays.</p>",
+    overlayNote: '<p>ROSE adds overlays to social media sites such as Facebook thereby enabling the user to take notes on content he or she encounters online. These overlays are a red ribbon with the caption &ldquo;Comment&rdquo; and a sliding-in graphical user interface to manage notes, see pictures below. All data entered to text fields embedded in these overlays is store locally alone, just like any other data collected by ROSE. Disabling the tracking function also disables all overlays.</p>',
     privacyAgree: 'I have read and understood the notes on privacy and overlays. I want to proceed.'
   },
 
@@ -161,12 +161,12 @@ export default {
     subtitle: 'Frequently asked questions about ROSE',
 
     issue1: {
-      question: "Where does ROSE collect the data about my social media sites' usage and my comments from?",
+      question: 'Where does ROSE collect the data about my social media sites&rsquo; usage and my comments from?',
       answer: '<p>ROSE collects data from about your interactions directly in your web browser; collected data are also stored in the web browser only. There is no data exchange of data between ROSE and the social media sites, or between ROSE and the researchers of the study in which you might participate. ROSE will provide a pre-assembled option through which you can export your data and can send it to the study researchers in case you wish to do so. Having the user anytime in full control of her data is part of the privacy-aware design of ROSE.</p><p>However, this design also has a small disadvantage you need to be aware of: Since data is stored only locally in your browser, it can get lost in case of system errors on your computer, or in the case of accidental deletion of ROSE from your web browser. All Data is irretrievable once it got lost this way.</p>'
     },
     issue2: {
       question: 'Are my ROSE study comments visible to other study participants or my friends on social media site?',
-      answer: "<p>No. All comments you make through ROSE are invisible to other study participants or your social media site friends. For technical and especially privacy reasons, ROSE data never leaves your web browser to servers of social media sites or to the researchers of the study. ROSE does not receive tracking data from any other source either. Though ROSE is integrated in your web browser and the social media sites' interfaces, thus appearing like an &ldquo;actual&rdquo; social media site function, it completely and exclusively operates in your web browser. Also, there is no way for social media sites to detect from remote whether or not you are using ROSE.</p>"
+      answer: '<p>No. All comments you make through ROSE are invisible to other study participants or your social media site friends. For technical and especially privacy reasons, ROSE data never leaves your web browser to servers of social media sites or to the researchers of the study. ROSE does not receive tracking data from any other source either. Though ROSE is integrated in your web browser and the social media sites&rsquo; interfaces, thus appearing like an &ldquo;actual&rdquo; social media site function, it completely and exclusively operates in your web browser. Also, there is no way for social media sites to detect from remote whether or not you are using ROSE.</p>'
     },
     issue3: {
       question: 'What types of data are recorded by ROSE?',
@@ -198,7 +198,7 @@ export default {
   about: {
     title: 'About ROSE',
     subtitle: 'Information about ROSE',
-    description: "ROSE is a browser extension to support empirical field studies by recording users' interactions with social media sites for a limited period of time. Please refer to the Help page for further information on the functions and use of ROSE.",
+    description: 'ROSE is a browser extension to support empirical field studies by recording users&rsquo; interactions with social media sites for a limited period of time. Please refer to the Help page for further information on the functions and use of ROSE.',
     developedBy: 'ROSE is developed by',
 
     address: {
@@ -217,24 +217,24 @@ export default {
     subtitle: 'With this page you can create a tailored configuration file for your study. You can distribute this configuration file to your study participants; by loading this file into their installations, ROSE participants can adapt their ROSE instances to the specific needs of your empirical study.',
 
     roseComments: 'In-situ comments',
-    roseCommentsDesc: "Check if ROSE's in-situ comment function should be available to participants. Currently the in-situ commenting works only for Facebook.",
+    roseCommentsDesc: 'Check if ROSE&rsquo;s in-situ comment function should be available to participants. Currently the in-situ commenting works only for Facebook.',
     roseCommentsRating: 'Add in-situ rating option',
     roseCommentsRatingDesc: 'Check if the in-situ comment function should also ask for rating content.',
     salt: 'Cryptographic salt for content identifiers',
     saltDesc: 'ROSE records pseudonymous identifiers for user content allowing researchers to re-identify content without a need to reveal it. These identfiers are derived from user-entered content and a cryptographic salt. As a cryptographic salt you can enter any arbitrary text string, for example &ldquo;ROSE123&rdquo; or whatever else you like. However, make sure that in case you investigate a group of participants all use the same salt in their ROSE configuration. Otherwise you can not correlate identifiers among participants afterwards.',
     generateSaltButton: 'Generate',
     hashLength: 'Content identifier length',
-    hashLengthDesc: "Here you can specify the length of the pseudonymous identifiers created by ROSE. You need to balance participants' privacy and the uniqueness of identifiers: the shorter the identifier the more privacy protecting they are; the longer the identifiers the more unique they are and collusion get unlikely. Every digit adds a factor of 16 to the space of possible identifiers for your study. For example, setting the option to 4 allows for 16*16*16*16=65536 unique identifiers for your study. As a rule of thumb, 5 is a good value if you are unsure how to use this option.",
+    hashLengthDesc: 'Here you can specify the length of the pseudonymous identifiers created by ROSE. You need to balance participants&rsquo; privacy and the uniqueness of identifiers: the shorter the identifier the more privacy protecting they are; the longer the identifiers the more unique they are and collusion get unlikely. Every digit adds a factor of 16 to the space of possible identifiers for your study. For example, setting the option to 4 allows for 16*16*16*16=65536 unique identifiers for your study. As a rule of thumb, 5 is a good value if you are unsure how to use this option.',
     repositoryUrl: 'URL of tracking package repository',
     repositoryUrlDesc: 'ROSE gets its patterns to match user interactions to specific interaction types in tracking packages from a repository. Here you can enter the URL of this repository.',
     autoUpdate: 'Automatically update tracking packages during study',
-    autoUpdateDesc: "While tracking packages with detection patterns are usually only pushed to ROSE when the configuration file is loaded into participants' instances of ROSE, it is also possible to continuously update them while the study is running. This might be necessary for long-term studies, if the user interface of the investigated social media site is likely to change during the course of the study.",
+    autoUpdateDesc: 'While tracking packages with detection patterns are usually only pushed to ROSE when the configuration file is loaded into participants&rsquo; instances of ROSE, it is also possible to continuously update them while the study is running. This might be necessary for long-term studies, if the user interface of the investigated social media site is likely to change during the course of the study.',
     exportHeader: 'Export configuration',
     exportConfig: 'Export configuration file',
     exportConfigDesc: 'Here you can create and export a configuration file with all the settings entered on this page. Your participants can load this file into their installations of ROSE.',
-    fingerprint: 'Check repository\'s public key fingerprint for Public Key Pinning',
+    fingerprint: 'Check repository&rsquo;s public key fingerprint for Public Key Pinning',
     fingerprintDesc: 'The chosen repository provides a signing key for proving the origin and trustworthiness of patterns. ROSE validates the origin of patterns delivered by this repository before loading them into the tracking engine. Once pattern updates are restricted to the secure mode, ROSE will only update patterns which are signed using an asymmetric key pair with the following public key fingerprint. This fingerprint will be stored in the configuration file and cannot be altered afterwards (called Public Key Pinning). Before continuing, check whether the displayed fingerprint is correct otherwise updates will fail.',
-    optionalFeaturesHeader: 'Optional features',
+    optionalFeaturesHeader: 'Optional Facebook features',
     privacyHeader: 'Privacy settings',
     repositoryHeader: 'Configure tracking package repository',
     configurationHeader: 'Configure tracking',
@@ -246,6 +246,7 @@ export default {
     disableAll: 'Disable all available',
     forceSecureUpdate: 'Force secure update',
     forceSecureUpdateDesc: 'If turned on, update of the tracking package is only allowed from a trustworthy source. You need to provide the correct fingerprint for the signing key above.',
+    keyUnavailable: 'No key in the specifified repository to enable secure update!',
     updateInterval: 'Interval to check for an updated tracking package',
     updateIntervalLabel: 'Choose a time interval to check for tracking package updates',
     baseFileNotFound: 'Invalid repository base file URL.',

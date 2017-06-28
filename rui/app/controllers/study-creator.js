@@ -20,6 +20,7 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 */
 import Ember from 'ember'
 import normalizeUrl from 'npm:normalize-url'
+import kbpgp from 'npm:kbpgp'
 
 function removeFileName (str) {
   return normalizeUrl(str.substring(0, str.lastIndexOf('/')))
@@ -43,9 +44,23 @@ export default Ember.Controller.extend({
   baseFileIsLoading: false,
   baseFileNotFound: false,
   networks: [],
-  secureUpdateDisabled: function () {
-    return !this.get('model.autoUpdateIsEnabled') || !this.get('model.forceSecureUpdate')
-  }.property('model.autoUpdateIsEnabled', 'model.forceSecureUpdate'),
+  keyAvailable: true,
+
+  exportDisabled: function () {
+    return !this.get('networks').some((network) => network.isEnabled)
+  }.property('networks.@each.isEnabled'),
+
+  facebookDisabled: function () {
+    return !this.get('networks').some((network) => network.name === 'facebook' && network.isEnabled)
+  }.property('networks.@each.isEnabled'),
+
+  secureUpdateImpossible: function () {
+    if (!this.get('keyAvailable') || !this.get('model.autoUpdateIsEnabled')) {
+      this.set('model.forceSecureUpdate', false)
+      return true
+    }
+    return false
+  }.property('model.autoUpdateIsEnabled', 'keyAvailable'),
 
   updateIntervals: [
     { label: 'hourly', value: 3600000 },
@@ -116,6 +131,18 @@ export default Ember.Controller.extend({
                 this.get('networks').pushObject(Ember.Object.create(network))
               })
             })
+
+            Ember.$.get(`${repositoryURL}/public.key`).then((key) => {
+              kbpgp.KeyManager.import_from_armored_pgp({armored: key}, (err, keymanager) => {
+                if (err) {
+                  this.set('keyAvailable', false)
+                  return console.error(err)
+                }
+                this.set('model.fingerprint', keymanager.get_pgp_fingerprint_str().toUpperCase())
+                this.set('keyAvailable', true)
+              })
+            })
+            .fail(() => this.set('keyAvailable', false))
           }
         })
         .fail(() => this.set('baseFileNotFound', true))

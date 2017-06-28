@@ -33,11 +33,10 @@
     </button>
   </div>
 
+  {{#if networks.length}}
   <div class="field">
-    {{#if networks.length}}
     <label>{{t "studyCreator.networks"}}</label>
     <p>{{t "studyCreator.networksDesc"}}</p>
-    {{/if}}
     {{#each networks as |network|}}
       <div class="field">
         {{ui-checkbox checked=network.isEnabled
@@ -114,28 +113,6 @@
   </div>
 
   <div class="{{unless model.autoUpdateIsEnabled "disabled "}}field">
-    <label>{{t "studyCreator.forceSecureUpdate"}}</label>
-    <p>{{t "studyCreator.forceSecureUpdateDesc"}}</p>
-
-    {{ui-checkbox checked=model.forceSecureUpdate
-                  class="toggle"
-                  label=(boolean-to-yesno model.forceSecureUpdate)
-                  onChange=(action "toggleForceSecureUpdate")}}
-  </div>
-
-  <div class="{{if secureUpdateDisabled "disabled "}}field">
-    <label>{{t "studyCreator.fingerprint"}}</label>
-    <p>{{t "studyCreator.fingerprintDesc"}}</p>
-
-    <div class="ui input">
-      {{input type="text"
-              value=model.fingerprint
-              insert-newline="saveSettings"
-              focus-out="saveSettings"}}
-    </div>
-  </div>
-
-  <div class="{{unless model.autoUpdateIsEnabled "disabled "}}field">
     <label>{{t "studyCreator.updateInterval"}}</label>
     <p>{{t "studyCreator.updateIntervalLabel"}}</p>
 
@@ -153,6 +130,30 @@
         {{/each}}
       </div>
     {{/ui-dropdown}}
+  </div>
+
+  {{#unless keyAvailable}}
+  <div class="ui red basic label">
+      {{t "studyCreator.keyUnavailable"}}
+  </div>
+  {{/unless}}
+
+  <div class="{{if secureUpdateImpossible "disabled "}}field">
+    <label>{{t "studyCreator.forceSecureUpdate"}}</label>
+    <p>{{t "studyCreator.forceSecureUpdateDesc"}}</p>
+
+    {{ui-checkbox checked=model.forceSecureUpdate
+                  class="toggle"
+                  label=(boolean-to-yesno model.forceSecureUpdate)
+                  onChange=(action "toggleForceSecureUpdate")}}
+  </div>
+
+  <div class="{{unless model.forceSecureUpdate "disabled "}}field">
+    <label>{{t "studyCreator.fingerprint"}}</label>
+    <p>{{t "studyCreator.fingerprintDesc"}}</p>
+    <div class="ui message">
+      <p>{{model.fingerprint}}</p>
+    </div>
   </div>
 
   <h3 class="ui dividing header">{{t "studyCreator.privacyHeader"}}</h3>
@@ -184,7 +185,7 @@
   </div>
 
   <h3 class="ui dividing header">{{t "studyCreator.optionalFeaturesHeader"}}</h3>
-  <div class="field">
+  <div class="{{if facebookDisabled "disabled "}}field">
     <label>{{t "studyCreator.roseComments"}}</label>
     <p>{{t "studyCreator.roseCommentsDesc"}}</p>
 
@@ -194,7 +195,7 @@
                   onChange=(action "saveSettings")}}
   </div>
 
-  <div class="{{unless model.roseCommentsIsEnabled "disabled "}}field">
+  <div class="{{if facebookDisabled "disabled "}}{{unless model.roseCommentsIsEnabled "disabled "}}field">
     <label>{{t "studyCreator.roseCommentsRating"}}</label>
     <p>{{t "studyCreator.roseCommentsRatingDesc"}}</p>
 
@@ -213,7 +214,9 @@
             focus-out="saveSettings"}}
   </div>
 
-  <button class="ui primary button" {{action "download"}}>
+  <button class="ui {{if exportDisabled "disabled"}} primary button" {{action "download"}}>
     {{t "action.download"}}
   </button>
+
+  {{/if}}
 </div>

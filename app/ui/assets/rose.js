@@ -1680,7 +1680,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 */
-define('rose/controllers/study-creator', ['exports', 'ember', 'npm:normalize-url'], function (exports, _ember, _npmNormalizeUrl) {
+define('rose/controllers/study-creator', ['exports', 'ember', 'npm:normalize-url', 'npm:kbpgp'], function (exports, _ember, _npmNormalizeUrl, _npmKbpgp) {
   var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
 
   function removeFileName(str) {
@@ -1708,9 +1708,27 @@ define('rose/controllers/study-creator', ['exports', 'ember', 'npm:normalize-url
     baseFileIsLoading: false,
     baseFileNotFound: false,
     networks: [],
-    secureUpdateDisabled: (function () {
-      return !this.get('model.autoUpdateIsEnabled') || !this.get('model.forceSecureUpdate');
-    }).property('model.autoUpdateIsEnabled', 'model.forceSecureUpdate'),
+    keyAvailable: true,
+
+    exportDisabled: (function () {
+      return !this.get('networks').some(function (network) {
+        return network.isEnabled;
+      });
+    }).property('networks.@each.isEnabled'),
+
+    facebookDisabled: (function () {
+      return !this.get('networks').some(function (network) {
+        return network.name === 'facebook' && network.isEnabled;
+      });
+    }).property('networks.@each.isEnabled'),
+
+    secureUpdateImpossible: (function () {
+      if (!this.get('keyAvailable') || !this.get('model.autoUpdateIsEnabled')) {
+        this.set('model.forceSecureUpdate', false);
+        return true;
+      }
+      return false;
+    }).property('model.autoUpdateIsEnabled', 'keyAvailable'),
 
     updateIntervals: [{ label: 'hourly', value: 3600000 }, { label: 'daily', value: 86400000 }, { label: 'weekly', value: 604800000 }, { label: 'monthly', value: 2629743830 }],
 
@@ -1779,6 +1797,19 @@ define('rose/controllers/study-creator', ['exports', 'ember', 'npm:normalize-url
 
                 _this.get('networks').pushObject(_ember['default'].Object.create(network));
               });
+            });
+
+            _ember['default'].$.get(repositoryURL + '/public.key').then(function (key) {
+              _npmKbpgp['default'].KeyManager.import_from_armored_pgp({ armored: key }, function (err, keymanager) {
+                if (err) {
+                  _this.set('keyAvailable', false);
+                  return console.error(err);
+                }
+                _this.set('model.fingerprint', keymanager.get_pgp_fingerprint_str().toUpperCase());
+                _this.set('keyAvailable', true);
+              });
+            }).fail(function () {
+              return _this.set('keyAvailable', false);
             });
           }
         }).fail(function () {
@@ -2113,9 +2144,9 @@ define('rose/locales/de/translations', ['exports'], function (exports) {
       fileConfigBtn: 'Lade Konfigurationsdatei',
       urlConfig: 'URL zu einem ROSE-Datenspeicher angeben...',
       privacyNoteTitle: 'Hinweise zum Privatsphärenschutz',
-      privacyNote: "<p>ROSE sammelt Daten über Ihre Interaktionen mit Social-Media-Plattformen, falls Sie an einer empirischen Studie zum Nutzungsverhalten teilnehmen, oder für Ihre persönlichen Zwecke. Alle Daten werden nur lokal in Ihrem Webbrowser gespeichert. Die Software übermittelt keine gesammelten Daten über das Internet zu anderen Servern. Zudem sind lokale Daten pseudonymisiert. Um die Funktion zur Datensammlung auszuschalten, gehen Sie in das Einstellungsmenü und nutzen Sie den Schalter mit der Beschriftung 'Datensammlung An/Aus'. Wenn Sie weitere Fragen haben, so besuchen Sie die <a href=\"https://secure-software-engineering.github.io/rose/index.html\">Github-Seiten von ROSE.</p>",
+      privacyNote: '<p>ROSE sammelt Daten über Ihre Interaktionen mit Social-Media-Plattformen, falls Sie an einer empirischen Studie zum Nutzungsverhalten teilnehmen, oder für Ihre persönlichen Zwecke. Alle Daten werden nur lokal in Ihrem Webbrowser gespeichert. Die Software übermittelt keine gesammelten Daten über das Internet zu anderen Servern. Zudem sind lokale Daten pseudonymisiert. Um die Funktion zur Datensammlung auszuschalten, gehen Sie in das Einstellungsmenü und nutzen Sie den Schalter mit der Beschriftung &ldquo;Datensammlung An/Aus&rdquo;. Wenn Sie weitere Fragen haben, so besuchen Sie die <a href="https://secure-software-engineering.github.io/rose/index.html">Github-Seiten von ROSE.</p>',
       overlayNoteTitle: 'Information zur Nutzung von Einblendungen',
-      overlayNote: "<p>ROSE blendet auf Social-Media-Plattformen eigene Elemente ein, um dem Nutzer zu ermöglichen Notizen zu betrachteten Inhalten zu hinterlegen. Diese Einblendungen sind eine rote Schleife mit der Aufschrift 'Kommentar' und eine hineinschiebende Nutzerschnittstelle, um Notizen zu verwalten (siehe Bilder unten). Jegliche Daten, welche an diesen Nutzerschnittstellen eingegeben werden, werden nur lokal gespeichert - wie alle anderen Daten auch, welche ROSE sammelt. Wenn Sie die Funktion zur Datensammlung ausschalten, dann verschwinden auch alle Einblendungen.</p>",
+      overlayNote: '<p>ROSE blendet auf Social-Media-Plattformen eigene Elemente ein, um dem Nutzer zu ermöglichen Notizen zu betrachteten Inhalten zu hinterlegen. Diese Einblendungen sind eine rote Schleife mit der Aufschrift &ldquo;Kommentar&rdquo; und eine hineinschiebende Nutzerschnittstelle, um Notizen zu verwalten (siehe Bilder unten). Jegliche Daten, welche an diesen Nutzerschnittstellen eingegeben werden, werden nur lokal gespeichert - wie alle anderen Daten auch, welche ROSE sammelt. Wenn Sie die Funktion zur Datensammlung ausschalten, dann verschwinden auch alle Einblendungen.</p>',
       privacyAgree: 'Ich habe die Hinweise zum Datenschutz und Einblendungen gelesen und verstanden. Ich möchte fortfahren.'
     },
 
@@ -2273,9 +2304,9 @@ define('rose/locales/de/translations', ['exports'], function (exports) {
       autoUpdateDesc: 'Datensammel-Pakete mit Erkennungsmustern werden normalerweise nur mit einer Konfigurationsdatei in ROSE geladen. Es ist aber auch möglich sie kontinuierlich zu aktualisieren, während eine Studie läuft. Dies ist besonders wichtig für Langzeit-Studien, während der die Webseiten von Social-Media-Plattformen viele Änderungen erfahren können.',
       exportConfig: 'Exportiere Konfigurationsdatei',
       exportConfigDesc: 'Hier können Sie eine Konfigurationsdatei exportieren, welche alle Einstellungen von dieser Seite enthält. Ihre Studienteilnehmer können diese Datei in ihre ROSE-Installation laden.',
-      fingerprint: 'Schlüssel-Fingerabdruck des Speichers für Datensammel-Pakete',
-      fingerprintDesc: 'Aus Sicherheitsgründen müssen die Muster in den Datensammel-Paketen mit RSA signiert werden. Diese Signatur wird geprüft, bevor ROSE die enthaltenen Muster lädt. Bitte geben Sie den hexadezimalen SHA-1-Fingerabdruck für den öffentlichen Schlüssel ein, welchen ROSE benutzen soll, um die digitale Signatur zu prüfen.',
-      optionalFeaturesHeader: 'Optionale Funktionen',
+      fingerprint: 'Prüfen des Schlüssel-Fingerabdrucks des Speichers für Datensammel-Pakete',
+      fingerprintDesc: 'Der ausgewählte Speicher für Datensammel-Pakete enthält einen Signierschlüssel, um die Herkunft und Vertrauenswürdigkeit der Aufzeichnungsmuster nachzuweisen. ROSE prüft die Herkunft aller von diesem Speicher ausgelieferten Muster, bevor es diese lädt. Wenn Aktualisierungen auf &ldquo;sichere Aktualisierungen&rdquo; beschränkt werden, dann wird ROSE nur Muster aktualisieren, welche mit einem Schlüsselpaar signiert wurden, welches den folgenden Fingerabdruck für den öffentlichen Schlüssel besitzt. Dieser Fingerabdruck wird unabänderlich in der Konfigurationsdatei gespeichert. Bevor Sie weitermachen, prüfen Sie, ob der Fingerabdruck korrekt ist, ansonsten werden spätere Aktualisierungen fehlschlagen.',
+      optionalFeaturesHeader: 'Optionale Facebook-Funktionen',
       privacyHeader: 'Privatsphäre-Einstellungen',
       repositoryHeader: 'Speicher für Datensammel-Pakete konfigurieren',
       configurationHeader: 'Datensammlung konfigurieren',
@@ -2394,9 +2425,9 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
       fileConfigBtn: 'Load configuration file',
       urlConfig: 'Specifiy a URL to a ROSE repository...',
       privacyNoteTitle: 'Privacy Note',
-      privacyNote: "<p>ROSE collects data about your interactions with social media sites for the purpose of participating in an empirical study, or, if you are not participating in a study, for personal purposes. ROSE stores all collected data locally and in an anonymized way in your web browser. ROSE does not send any tracking data over the Internet to other servers, neither to social media sites nor to the researchers in whose study you might participate. At any time you can disable the tracking functions of ROSE by using the 'tracking on/off' switch in the settings menu. If you have any further questions see the <a href=\"https://secure-software-engineering.github.io/rose/index.html\">Github pages of ROSE</a>.</p>",
+      privacyNote: '<p>ROSE collects data about your interactions with social media sites for the purpose of participating in an empirical study, or, if you are not participating in a study, for personal purposes. ROSE stores all collected data locally and in an anonymized way in your web browser. ROSE does not send any tracking data over the Internet to other servers, neither to social media sites nor to the researchers in whose study you might participate. At any time you can disable the tracking functions of ROSE by using the &ldquo;tracking on/off&rdquo; switch in the settings menu. If you have any further questions see the <a href="https://secure-software-engineering.github.io/rose/index.html">Github pages of ROSE</a>.</p>',
       overlayNoteTitle: 'Information on the Use of Overlays',
-      overlayNote: "<p>ROSE adds overlays to social media sites such as Facebook thereby enabling the user to take notes on content he or she encounters online. These overlays are a red ribbon with the caption 'Comment' and a sliding-in graphical user interface to manage notes, see pictures below. All data entered to text fields embedded in these overlays is store locally alone, just like any other data collected by ROSE. Disabling the tracking function also disables all overlays.</p>",
+      overlayNote: '<p>ROSE adds overlays to social media sites such as Facebook thereby enabling the user to take notes on content he or she encounters online. These overlays are a red ribbon with the caption &ldquo;Comment&rdquo; and a sliding-in graphical user interface to manage notes, see pictures below. All data entered to text fields embedded in these overlays is store locally alone, just like any other data collected by ROSE. Disabling the tracking function also disables all overlays.</p>',
       privacyAgree: 'I have read and understood the notes on privacy and overlays. I want to proceed.'
     },
 
@@ -2484,12 +2515,12 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
       subtitle: 'Frequently asked questions about ROSE',
 
       issue1: {
-        question: "Where does ROSE collect the data about my social media sites' usage and my comments from?",
+        question: 'Where does ROSE collect the data about my social media sites&rsquo; usage and my comments from?',
         answer: '<p>ROSE collects data from about your interactions directly in your web browser; collected data are also stored in the web browser only. There is no data exchange of data between ROSE and the social media sites, or between ROSE and the researchers of the study in which you might participate. ROSE will provide a pre-assembled option through which you can export your data and can send it to the study researchers in case you wish to do so. Having the user anytime in full control of her data is part of the privacy-aware design of ROSE.</p><p>However, this design also has a small disadvantage you need to be aware of: Since data is stored only locally in your browser, it can get lost in case of system errors on your computer, or in the case of accidental deletion of ROSE from your web browser. All Data is irretrievable once it got lost this way.</p>'
       },
       issue2: {
         question: 'Are my ROSE study comments visible to other study participants or my friends on social media site?',
-        answer: "<p>No. All comments you make through ROSE are invisible to other study participants or your social media site friends. For technical and especially privacy reasons, ROSE data never leaves your web browser to servers of social media sites or to the researchers of the study. ROSE does not receive tracking data from any other source either. Though ROSE is integrated in your web browser and the social media sites' interfaces, thus appearing like an &ldquo;actual&rdquo; social media site function, it completely and exclusively operates in your web browser. Also, there is no way for social media sites to detect from remote whether or not you are using ROSE.</p>"
+        answer: '<p>No. All comments you make through ROSE are invisible to other study participants or your social media site friends. For technical and especially privacy reasons, ROSE data never leaves your web browser to servers of social media sites or to the researchers of the study. ROSE does not receive tracking data from any other source either. Though ROSE is integrated in your web browser and the social media sites&rsquo; interfaces, thus appearing like an &ldquo;actual&rdquo; social media site function, it completely and exclusively operates in your web browser. Also, there is no way for social media sites to detect from remote whether or not you are using ROSE.</p>'
       },
       issue3: {
         question: 'What types of data are recorded by ROSE?',
@@ -2521,7 +2552,7 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
     about: {
       title: 'About ROSE',
       subtitle: 'Information about ROSE',
-      description: "ROSE is a browser extension to support empirical field studies by recording users' interactions with social media sites for a limited period of time. Please refer to the Help page for further information on the functions and use of ROSE.",
+      description: 'ROSE is a browser extension to support empirical field studies by recording users&rsquo; interactions with social media sites for a limited period of time. Please refer to the Help page for further information on the functions and use of ROSE.',
       developedBy: 'ROSE is developed by',
 
       address: {
@@ -2540,24 +2571,24 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
       subtitle: 'With this page you can create a tailored configuration file for your study. You can distribute this configuration file to your study participants; by loading this file into their installations, ROSE participants can adapt their ROSE instances to the specific needs of your empirical study.',
 
       roseComments: 'In-situ comments',
-      roseCommentsDesc: "Check if ROSE's in-situ comment function should be available to participants. Currently the in-situ commenting works only for Facebook.",
+      roseCommentsDesc: 'Check if ROSE&rsquo;s in-situ comment function should be available to participants. Currently the in-situ commenting works only for Facebook.',
       roseCommentsRating: 'Add in-situ rating option',
       roseCommentsRatingDesc: 'Check if the in-situ comment function should also ask for rating content.',
       salt: 'Cryptographic salt for content identifiers',
       saltDesc: 'ROSE records pseudonymous identifiers for user content allowing researchers to re-identify content without a need to reveal it. These identfiers are derived from user-entered content and a cryptographic salt. As a cryptographic salt you can enter any arbitrary text string, for example &ldquo;ROSE123&rdquo; or whatever else you like. However, make sure that in case you investigate a group of participants all use the same salt in their ROSE configuration. Otherwise you can not correlate identifiers among participants afterwards.',
       generateSaltButton: 'Generate',
       hashLength: 'Content identifier length',
-      hashLengthDesc: "Here you can specify the length of the pseudonymous identifiers created by ROSE. You need to balance participants' privacy and the uniqueness of identifiers: the shorter the identifier the more privacy protecting they are; the longer the identifiers the more unique they are and collusion get unlikely. Every digit adds a factor of 16 to the space of possible identifiers for your study. For example, setting the option to 4 allows for 16*16*16*16=65536 unique identifiers for your study. As a rule of thumb, 5 is a good value if you are unsure how to use this option.",
+      hashLengthDesc: 'Here you can specify the length of the pseudonymous identifiers created by ROSE. You need to balance participants&rsquo; privacy and the uniqueness of identifiers: the shorter the identifier the more privacy protecting they are; the longer the identifiers the more unique they are and collusion get unlikely. Every digit adds a factor of 16 to the space of possible identifiers for your study. For example, setting the option to 4 allows for 16*16*16*16=65536 unique identifiers for your study. As a rule of thumb, 5 is a good value if you are unsure how to use this option.',
       repositoryUrl: 'URL of tracking package repository',
       repositoryUrlDesc: 'ROSE gets its patterns to match user interactions to specific interaction types in tracking packages from a repository. Here you can enter the URL of this repository.',
       autoUpdate: 'Automatically update tracking packages during study',
-      autoUpdateDesc: "While tracking packages with detection patterns are usually only pushed to ROSE when the configuration file is loaded into participants' instances of ROSE, it is also possible to continuously update them while the study is running. This might be necessary for long-term studies, if the user interface of the investigated social media site is likely to change during the course of the study.",
+      autoUpdateDesc: 'While tracking packages with detection patterns are usually only pushed to ROSE when the configuration file is loaded into participants&rsquo; instances of ROSE, it is also possible to continuously update them while the study is running. This might be necessary for long-term studies, if the user interface of the investigated social media site is likely to change during the course of the study.',
       exportHeader: 'Export configuration',
       exportConfig: 'Export configuration file',
       exportConfigDesc: 'Here you can create and export a configuration file with all the settings entered on this page. Your participants can load this file into their installations of ROSE.',
-      fingerprint: 'Pattern repository signing key fingerprint',
-      fingerprintDesc: 'For reasons of security, the patterns stored in the tracking package repository need to be signed with a RSA private key. This signature is validated before ROSE loads any patterns. Please enter the hexadecimal SHA-1 fingerprint of the public key ROSE shall use to verify the digital signature.',
-      optionalFeaturesHeader: 'Optional features',
+      fingerprint: 'Check repository&rsquo;s public key fingerprint for Public Key Pinning',
+      fingerprintDesc: 'The chosen repository provides a signing key for proving the origin and trustworthiness of patterns. ROSE validates the origin of patterns delivered by this repository before loading them into the tracking engine. Once pattern updates are restricted to the secure mode, ROSE will only update patterns which are signed using an asymmetric key pair with the following public key fingerprint. This fingerprint will be stored in the configuration file and cannot be altered afterwards (called Public Key Pinning). Before continuing, check whether the displayed fingerprint is correct otherwise updates will fail.',
+      optionalFeaturesHeader: 'Optional Facebook features',
       privacyHeader: 'Privacy settings',
       repositoryHeader: 'Configure tracking package repository',
       configurationHeader: 'Configure tracking',
@@ -2569,6 +2600,7 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
       disableAll: 'Disable all available',
       forceSecureUpdate: 'Force secure update',
       forceSecureUpdateDesc: 'If turned on, update of the tracking package is only allowed from a trustworthy source. You need to provide the correct fingerprint for the signing key above.',
+      keyUnavailable: 'No key in the specifified repository to enable secure update!',
       updateInterval: 'Interval to check for an updated tracking package',
       updateIntervalLabel: 'Choose a time interval to check for tracking package updates',
       baseFileNotFound: 'Invalid repository base file URL.',
@@ -14531,145 +14563,8 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
       };
     })();
     var child1 = (function () {
-      return {
-        meta: {
-          "fragmentReason": false,
-          "revision": "Ember@2.2.2",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 37,
-              "column": 4
-            },
-            "end": {
-              "line": 40,
-              "column": 4
-            }
-          },
-          "moduleName": "rose/templates/study-creator.hbs"
-        },
-        isEmpty: false,
-        arity: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("    ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("label");
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n    ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("p");
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(2);
-          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
-          morphs[1] = dom.createMorphAt(dom.childAt(fragment, [3]), 0, 0);
-          return morphs;
-        },
-        statements: [["inline", "t", ["studyCreator.networks"], [], ["loc", [null, [38, 11], [38, 40]]]], ["inline", "t", ["studyCreator.networksDesc"], [], ["loc", [null, [39, 7], [39, 40]]]]],
-        locals: [],
-        templates: []
-      };
-    })();
-    var child2 = (function () {
       var child0 = (function () {
         var child0 = (function () {
-          return {
-            meta: {
-              "fragmentReason": false,
-              "revision": "Ember@2.2.2",
-              "loc": {
-                "source": null,
-                "start": {
-                  "line": 63,
-                  "column": 12
-                },
-                "end": {
-                  "line": 73,
-                  "column": 12
-                }
-              },
-              "moduleName": "rose/templates/study-creator.hbs"
-            },
-            isEmpty: false,
-            arity: 1,
-            cachedFragment: null,
-            hasRendered: false,
-            buildFragment: function buildFragment(dom) {
-              var el0 = dom.createDocumentFragment();
-              var el1 = dom.createTextNode("              ");
-              dom.appendChild(el0, el1);
-              var el1 = dom.createElement("tr");
-              var el2 = dom.createTextNode("\n                ");
-              dom.appendChild(el1, el2);
-              var el2 = dom.createElement("td");
-              dom.setAttribute(el2, "class", "collapsing");
-              var el3 = dom.createTextNode("\n                  ");
-              dom.appendChild(el2, el3);
-              var el3 = dom.createComment("");
-              dom.appendChild(el2, el3);
-              var el3 = dom.createTextNode("\n                ");
-              dom.appendChild(el2, el3);
-              dom.appendChild(el1, el2);
-              var el2 = dom.createTextNode("\n                ");
-              dom.appendChild(el1, el2);
-              var el2 = dom.createElement("td");
-              var el3 = dom.createElement("strong");
-              var el4 = dom.createComment("");
-              dom.appendChild(el3, el4);
-              dom.appendChild(el2, el3);
-              dom.appendChild(el1, el2);
-              var el2 = dom.createTextNode("\n                ");
-              dom.appendChild(el1, el2);
-              var el2 = dom.createElement("td");
-              var el3 = dom.createComment("");
-              dom.appendChild(el2, el3);
-              dom.appendChild(el1, el2);
-              var el2 = dom.createTextNode("\n                ");
-              dom.appendChild(el1, el2);
-              var el2 = dom.createElement("td");
-              var el3 = dom.createComment("");
-              dom.appendChild(el2, el3);
-              dom.appendChild(el1, el2);
-              var el2 = dom.createTextNode("\n                ");
-              dom.appendChild(el1, el2);
-              var el2 = dom.createElement("td");
-              var el3 = dom.createComment("");
-              dom.appendChild(el2, el3);
-              dom.appendChild(el1, el2);
-              var el2 = dom.createTextNode("\n              ");
-              dom.appendChild(el1, el2);
-              dom.appendChild(el0, el1);
-              var el1 = dom.createTextNode("\n");
-              dom.appendChild(el0, el1);
-              return el0;
-            },
-            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-              var element3 = dom.childAt(fragment, [1]);
-              var morphs = new Array(5);
-              morphs[0] = dom.createMorphAt(dom.childAt(element3, [1]), 1, 1);
-              morphs[1] = dom.createMorphAt(dom.childAt(element3, [3, 0]), 0, 0);
-              morphs[2] = dom.createMorphAt(dom.childAt(element3, [5]), 0, 0);
-              morphs[3] = dom.createMorphAt(dom.childAt(element3, [7]), 0, 0);
-              morphs[4] = dom.createMorphAt(dom.childAt(element3, [9]), 0, 0);
-              return morphs;
-            },
-            statements: [["inline", "ui-checkbox", [], ["class", "fitted toggle", "checked", ["subexpr", "@mut", [["get", "observer.isEnabled", ["loc", [null, [66, 62], [66, 80]]]]], [], []]], ["loc", [null, [66, 18], [66, 82]]]], ["content", "observer.name", ["loc", [null, [68, 28], [68, 45]]]], ["content", "observer.description", ["loc", [null, [69, 20], [69, 44]]]], ["inline", "t", [["get", "observer.type", ["loc", [null, [70, 24], [70, 37]]]]], [], ["loc", [null, [70, 20], [70, 39]]]], ["content", "observer.version", ["loc", [null, [71, 20], [71, 40]]]]],
-            locals: ["observer"],
-            templates: []
-          };
-        })();
-        var child1 = (function () {
           var child0 = (function () {
             return {
               meta: {
@@ -14678,18 +14573,18 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
                 "loc": {
                   "source": null,
                   "start": {
-                    "line": 76,
-                    "column": 14
+                    "line": 62,
+                    "column": 12
                   },
                   "end": {
-                    "line": 86,
-                    "column": 14
+                    "line": 72,
+                    "column": 12
                   }
                 },
                 "moduleName": "rose/templates/study-creator.hbs"
               },
               isEmpty: false,
-              arity: 0,
+              arity: 1,
               cachedFragment: null,
               hasRendered: false,
               buildFragment: function buildFragment(dom) {
@@ -14742,18 +14637,144 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
                 return el0;
               },
               buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-                var element2 = dom.childAt(fragment, [1]);
+                var element3 = dom.childAt(fragment, [1]);
                 var morphs = new Array(5);
-                morphs[0] = dom.createMorphAt(dom.childAt(element2, [1]), 1, 1);
-                morphs[1] = dom.createMorphAt(dom.childAt(element2, [3, 0]), 0, 0);
-                morphs[2] = dom.createMorphAt(dom.childAt(element2, [5]), 0, 0);
-                morphs[3] = dom.createMorphAt(dom.childAt(element2, [7]), 0, 0);
-                morphs[4] = dom.createMorphAt(dom.childAt(element2, [9]), 0, 0);
+                morphs[0] = dom.createMorphAt(dom.childAt(element3, [1]), 1, 1);
+                morphs[1] = dom.createMorphAt(dom.childAt(element3, [3, 0]), 0, 0);
+                morphs[2] = dom.createMorphAt(dom.childAt(element3, [5]), 0, 0);
+                morphs[3] = dom.createMorphAt(dom.childAt(element3, [7]), 0, 0);
+                morphs[4] = dom.createMorphAt(dom.childAt(element3, [9]), 0, 0);
                 return morphs;
               },
-              statements: [["inline", "ui-checkbox", [], ["class", "fitted toggle", "checked", ["subexpr", "@mut", [["get", "extractor.isEnabled", ["loc", [null, [79, 62], [79, 81]]]]], [], []]], ["loc", [null, [79, 18], [79, 83]]]], ["content", "extractor.name", ["loc", [null, [81, 28], [81, 46]]]], ["content", "extractor.description", ["loc", [null, [82, 20], [82, 45]]]], ["inline", "t", [["get", "extractor.type", ["loc", [null, [83, 24], [83, 38]]]]], [], ["loc", [null, [83, 20], [83, 40]]]], ["content", "extractor.version", ["loc", [null, [84, 20], [84, 41]]]]],
-              locals: [],
+              statements: [["inline", "ui-checkbox", [], ["class", "fitted toggle", "checked", ["subexpr", "@mut", [["get", "observer.isEnabled", ["loc", [null, [65, 62], [65, 80]]]]], [], []]], ["loc", [null, [65, 18], [65, 82]]]], ["content", "observer.name", ["loc", [null, [67, 28], [67, 45]]]], ["content", "observer.description", ["loc", [null, [68, 20], [68, 44]]]], ["inline", "t", [["get", "observer.type", ["loc", [null, [69, 24], [69, 37]]]]], [], ["loc", [null, [69, 20], [69, 39]]]], ["content", "observer.version", ["loc", [null, [70, 20], [70, 40]]]]],
+              locals: ["observer"],
               templates: []
+            };
+          })();
+          var child1 = (function () {
+            var child0 = (function () {
+              return {
+                meta: {
+                  "fragmentReason": false,
+                  "revision": "Ember@2.2.2",
+                  "loc": {
+                    "source": null,
+                    "start": {
+                      "line": 75,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 85,
+                      "column": 14
+                    }
+                  },
+                  "moduleName": "rose/templates/study-creator.hbs"
+                },
+                isEmpty: false,
+                arity: 0,
+                cachedFragment: null,
+                hasRendered: false,
+                buildFragment: function buildFragment(dom) {
+                  var el0 = dom.createDocumentFragment();
+                  var el1 = dom.createTextNode("              ");
+                  dom.appendChild(el0, el1);
+                  var el1 = dom.createElement("tr");
+                  var el2 = dom.createTextNode("\n                ");
+                  dom.appendChild(el1, el2);
+                  var el2 = dom.createElement("td");
+                  dom.setAttribute(el2, "class", "collapsing");
+                  var el3 = dom.createTextNode("\n                  ");
+                  dom.appendChild(el2, el3);
+                  var el3 = dom.createComment("");
+                  dom.appendChild(el2, el3);
+                  var el3 = dom.createTextNode("\n                ");
+                  dom.appendChild(el2, el3);
+                  dom.appendChild(el1, el2);
+                  var el2 = dom.createTextNode("\n                ");
+                  dom.appendChild(el1, el2);
+                  var el2 = dom.createElement("td");
+                  var el3 = dom.createElement("strong");
+                  var el4 = dom.createComment("");
+                  dom.appendChild(el3, el4);
+                  dom.appendChild(el2, el3);
+                  dom.appendChild(el1, el2);
+                  var el2 = dom.createTextNode("\n                ");
+                  dom.appendChild(el1, el2);
+                  var el2 = dom.createElement("td");
+                  var el3 = dom.createComment("");
+                  dom.appendChild(el2, el3);
+                  dom.appendChild(el1, el2);
+                  var el2 = dom.createTextNode("\n                ");
+                  dom.appendChild(el1, el2);
+                  var el2 = dom.createElement("td");
+                  var el3 = dom.createComment("");
+                  dom.appendChild(el2, el3);
+                  dom.appendChild(el1, el2);
+                  var el2 = dom.createTextNode("\n                ");
+                  dom.appendChild(el1, el2);
+                  var el2 = dom.createElement("td");
+                  var el3 = dom.createComment("");
+                  dom.appendChild(el2, el3);
+                  dom.appendChild(el1, el2);
+                  var el2 = dom.createTextNode("\n              ");
+                  dom.appendChild(el1, el2);
+                  dom.appendChild(el0, el1);
+                  var el1 = dom.createTextNode("\n");
+                  dom.appendChild(el0, el1);
+                  return el0;
+                },
+                buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+                  var element2 = dom.childAt(fragment, [1]);
+                  var morphs = new Array(5);
+                  morphs[0] = dom.createMorphAt(dom.childAt(element2, [1]), 1, 1);
+                  morphs[1] = dom.createMorphAt(dom.childAt(element2, [3, 0]), 0, 0);
+                  morphs[2] = dom.createMorphAt(dom.childAt(element2, [5]), 0, 0);
+                  morphs[3] = dom.createMorphAt(dom.childAt(element2, [7]), 0, 0);
+                  morphs[4] = dom.createMorphAt(dom.childAt(element2, [9]), 0, 0);
+                  return morphs;
+                },
+                statements: [["inline", "ui-checkbox", [], ["class", "fitted toggle", "checked", ["subexpr", "@mut", [["get", "extractor.isEnabled", ["loc", [null, [78, 62], [78, 81]]]]], [], []]], ["loc", [null, [78, 18], [78, 83]]]], ["content", "extractor.name", ["loc", [null, [80, 28], [80, 46]]]], ["content", "extractor.description", ["loc", [null, [81, 20], [81, 45]]]], ["inline", "t", [["get", "extractor.type", ["loc", [null, [82, 24], [82, 38]]]]], [], ["loc", [null, [82, 20], [82, 40]]]], ["content", "extractor.version", ["loc", [null, [83, 20], [83, 41]]]]],
+                locals: [],
+                templates: []
+              };
+            })();
+            return {
+              meta: {
+                "fragmentReason": false,
+                "revision": "Ember@2.2.2",
+                "loc": {
+                  "source": null,
+                  "start": {
+                    "line": 74,
+                    "column": 12
+                  },
+                  "end": {
+                    "line": 86,
+                    "column": 12
+                  }
+                },
+                "moduleName": "rose/templates/study-creator.hbs"
+              },
+              isEmpty: false,
+              arity: 1,
+              cachedFragment: null,
+              hasRendered: false,
+              buildFragment: function buildFragment(dom) {
+                var el0 = dom.createDocumentFragment();
+                var el1 = dom.createComment("");
+                dom.appendChild(el0, el1);
+                return el0;
+              },
+              buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+                var morphs = new Array(1);
+                morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
+                dom.insertBoundary(fragment, 0);
+                dom.insertBoundary(fragment, null);
+                return morphs;
+              },
+              statements: [["block", "if", [["get", "extractor.type", ["loc", [null, [75, 20], [75, 34]]]]], [], 0, null, ["loc", [null, [75, 14], [85, 21]]]]],
+              locals: ["extractor"],
+              templates: [child0]
             };
           })();
           return {
@@ -14763,36 +14784,168 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
               "loc": {
                 "source": null,
                 "start": {
-                  "line": 75,
-                  "column": 12
+                  "line": 46,
+                  "column": 8
                 },
                 "end": {
-                  "line": 87,
-                  "column": 12
+                  "line": 98,
+                  "column": 6
                 }
               },
               "moduleName": "rose/templates/study-creator.hbs"
             },
             isEmpty: false,
-            arity: 1,
+            arity: 0,
             cachedFragment: null,
             hasRendered: false,
             buildFragment: function buildFragment(dom) {
               var el0 = dom.createDocumentFragment();
-              var el1 = dom.createComment("");
+              var el1 = dom.createTextNode("        ");
+              dom.appendChild(el0, el1);
+              var el1 = dom.createElement("div");
+              dom.setAttribute(el1, "class", "ui field");
+              dom.setAttribute(el1, "style", "padding-top: 15px;");
+              var el2 = dom.createTextNode("\n          ");
+              dom.appendChild(el1, el2);
+              var el2 = dom.createElement("label");
+              var el3 = dom.createTextNode("\n            ");
+              dom.appendChild(el2, el3);
+              var el3 = dom.createComment("");
+              dom.appendChild(el2, el3);
+              var el3 = dom.createTextNode("\n          ");
+              dom.appendChild(el2, el3);
+              dom.appendChild(el1, el2);
+              var el2 = dom.createTextNode("\n          ");
+              dom.appendChild(el1, el2);
+              var el2 = dom.createElement("table");
+              dom.setAttribute(el2, "class", "ui small compact table");
+              var el3 = dom.createTextNode("\n            ");
+              dom.appendChild(el2, el3);
+              var el3 = dom.createElement("thead");
+              dom.setAttribute(el3, "class", "full-width");
+              var el4 = dom.createTextNode("\n              ");
+              dom.appendChild(el3, el4);
+              var el4 = dom.createElement("tr");
+              var el5 = dom.createTextNode("\n                ");
+              dom.appendChild(el4, el5);
+              var el5 = dom.createElement("th");
+              var el6 = dom.createComment("");
+              dom.appendChild(el5, el6);
+              dom.appendChild(el4, el5);
+              var el5 = dom.createTextNode("\n                ");
+              dom.appendChild(el4, el5);
+              var el5 = dom.createElement("th");
+              var el6 = dom.createComment("");
+              dom.appendChild(el5, el6);
+              dom.appendChild(el4, el5);
+              var el5 = dom.createTextNode("\n                ");
+              dom.appendChild(el4, el5);
+              var el5 = dom.createElement("th");
+              var el6 = dom.createComment("");
+              dom.appendChild(el5, el6);
+              dom.appendChild(el4, el5);
+              var el5 = dom.createTextNode("\n                ");
+              dom.appendChild(el4, el5);
+              var el5 = dom.createElement("th");
+              var el6 = dom.createComment("");
+              dom.appendChild(el5, el6);
+              dom.appendChild(el4, el5);
+              var el5 = dom.createTextNode("\n                ");
+              dom.appendChild(el4, el5);
+              var el5 = dom.createElement("th");
+              var el6 = dom.createComment("");
+              dom.appendChild(el5, el6);
+              dom.appendChild(el4, el5);
+              var el5 = dom.createTextNode("\n              ");
+              dom.appendChild(el4, el5);
+              dom.appendChild(el3, el4);
+              var el4 = dom.createTextNode("\n            ");
+              dom.appendChild(el3, el4);
+              dom.appendChild(el2, el3);
+              var el3 = dom.createTextNode("\n            ");
+              dom.appendChild(el2, el3);
+              var el3 = dom.createElement("tbody");
+              var el4 = dom.createTextNode("\n");
+              dom.appendChild(el3, el4);
+              var el4 = dom.createComment("");
+              dom.appendChild(el3, el4);
+              var el4 = dom.createTextNode("\n");
+              dom.appendChild(el3, el4);
+              var el4 = dom.createComment("");
+              dom.appendChild(el3, el4);
+              var el4 = dom.createTextNode("            ");
+              dom.appendChild(el3, el4);
+              dom.appendChild(el2, el3);
+              var el3 = dom.createTextNode("\n            ");
+              dom.appendChild(el2, el3);
+              var el3 = dom.createElement("tfoot");
+              dom.setAttribute(el3, "class", "full-width");
+              var el4 = dom.createTextNode("\n              ");
+              dom.appendChild(el3, el4);
+              var el4 = dom.createElement("tr");
+              var el5 = dom.createTextNode("\n                ");
+              dom.appendChild(el4, el5);
+              var el5 = dom.createElement("th");
+              dom.setAttribute(el5, "colspan", "5");
+              var el6 = dom.createTextNode("\n                  ");
+              dom.appendChild(el5, el6);
+              var el6 = dom.createElement("button");
+              dom.setAttribute(el6, "class", "ui small green button");
+              var el7 = dom.createComment("");
+              dom.appendChild(el6, el7);
+              dom.appendChild(el5, el6);
+              var el6 = dom.createTextNode("\n                  ");
+              dom.appendChild(el5, el6);
+              var el6 = dom.createElement("button");
+              dom.setAttribute(el6, "class", "ui small basic button");
+              var el7 = dom.createComment("");
+              dom.appendChild(el6, el7);
+              dom.appendChild(el5, el6);
+              var el6 = dom.createTextNode("\n                ");
+              dom.appendChild(el5, el6);
+              dom.appendChild(el4, el5);
+              var el5 = dom.createTextNode("\n              ");
+              dom.appendChild(el4, el5);
+              dom.appendChild(el3, el4);
+              var el4 = dom.createTextNode("\n            ");
+              dom.appendChild(el3, el4);
+              dom.appendChild(el2, el3);
+              var el3 = dom.createTextNode("\n          ");
+              dom.appendChild(el2, el3);
+              dom.appendChild(el1, el2);
+              var el2 = dom.createTextNode("\n        ");
+              dom.appendChild(el1, el2);
+              dom.appendChild(el0, el1);
+              var el1 = dom.createTextNode("\n");
               dom.appendChild(el0, el1);
               return el0;
             },
             buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-              var morphs = new Array(1);
-              morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
-              dom.insertBoundary(fragment, 0);
-              dom.insertBoundary(fragment, null);
+              var element4 = dom.childAt(fragment, [1]);
+              var element5 = dom.childAt(element4, [3]);
+              var element6 = dom.childAt(element5, [1, 1]);
+              var element7 = dom.childAt(element5, [3]);
+              var element8 = dom.childAt(element5, [5, 1, 1]);
+              var element9 = dom.childAt(element8, [1]);
+              var element10 = dom.childAt(element8, [3]);
+              var morphs = new Array(12);
+              morphs[0] = dom.createMorphAt(dom.childAt(element4, [1]), 1, 1);
+              morphs[1] = dom.createMorphAt(dom.childAt(element6, [1]), 0, 0);
+              morphs[2] = dom.createMorphAt(dom.childAt(element6, [3]), 0, 0);
+              morphs[3] = dom.createMorphAt(dom.childAt(element6, [5]), 0, 0);
+              morphs[4] = dom.createMorphAt(dom.childAt(element6, [7]), 0, 0);
+              morphs[5] = dom.createMorphAt(dom.childAt(element6, [9]), 0, 0);
+              morphs[6] = dom.createMorphAt(element7, 1, 1);
+              morphs[7] = dom.createMorphAt(element7, 3, 3);
+              morphs[8] = dom.createElementMorph(element9);
+              morphs[9] = dom.createMorphAt(element9, 0, 0);
+              morphs[10] = dom.createElementMorph(element10);
+              morphs[11] = dom.createMorphAt(element10, 0, 0);
               return morphs;
             },
-            statements: [["block", "if", [["get", "extractor.type", ["loc", [null, [76, 20], [76, 34]]]]], [], 0, null, ["loc", [null, [76, 14], [86, 21]]]]],
-            locals: ["extractor"],
-            templates: [child0]
+            statements: [["inline", "t", ["studyCreator.patterns"], [], ["loc", [null, [49, 12], [49, 41]]]], ["inline", "t", ["studyCreator.table.enabled"], [], ["loc", [null, [54, 20], [54, 54]]]], ["inline", "t", ["studyCreator.table.name"], [], ["loc", [null, [55, 20], [55, 51]]]], ["inline", "t", ["studyCreator.table.description"], [], ["loc", [null, [56, 20], [56, 58]]]], ["inline", "t", ["studyCreator.table.type"], [], ["loc", [null, [57, 20], [57, 51]]]], ["inline", "t", ["studyCreator.table.version"], [], ["loc", [null, [58, 20], [58, 54]]]], ["block", "each", [["get", "network.observers", ["loc", [null, [62, 20], [62, 37]]]]], [], 0, null, ["loc", [null, [62, 12], [72, 21]]]], ["block", "each", [["get", "network.extractors", ["loc", [null, [74, 20], [74, 38]]]]], [], 1, null, ["loc", [null, [74, 12], [86, 21]]]], ["element", "action", ["enableAll", ["get", "network", ["loc", [null, [91, 77], [91, 84]]]]], [], ["loc", [null, [91, 56], [91, 86]]]], ["inline", "t", ["studyCreator.enableAll"], [], ["loc", [null, [91, 87], [91, 117]]]], ["element", "action", ["disableAll", ["get", "network", ["loc", [null, [92, 78], [92, 85]]]]], [], ["loc", [null, [92, 56], [92, 87]]]], ["inline", "t", ["studyCreator.disableAll"], [], ["loc", [null, [92, 88], [92, 119]]]]],
+            locals: [],
+            templates: [child0, child1]
           };
         })();
         return {
@@ -14802,239 +14955,12 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             "loc": {
               "source": null,
               "start": {
-                "line": 47,
-                "column": 8
+                "line": 40,
+                "column": 4
               },
               "end": {
-                "line": 99,
-                "column": 6
-              }
-            },
-            "moduleName": "rose/templates/study-creator.hbs"
-          },
-          isEmpty: false,
-          arity: 0,
-          cachedFragment: null,
-          hasRendered: false,
-          buildFragment: function buildFragment(dom) {
-            var el0 = dom.createDocumentFragment();
-            var el1 = dom.createTextNode("        ");
-            dom.appendChild(el0, el1);
-            var el1 = dom.createElement("div");
-            dom.setAttribute(el1, "class", "ui field");
-            dom.setAttribute(el1, "style", "padding-top: 15px;");
-            var el2 = dom.createTextNode("\n          ");
-            dom.appendChild(el1, el2);
-            var el2 = dom.createElement("label");
-            var el3 = dom.createTextNode("\n            ");
-            dom.appendChild(el2, el3);
-            var el3 = dom.createComment("");
-            dom.appendChild(el2, el3);
-            var el3 = dom.createTextNode("\n          ");
-            dom.appendChild(el2, el3);
-            dom.appendChild(el1, el2);
-            var el2 = dom.createTextNode("\n          ");
-            dom.appendChild(el1, el2);
-            var el2 = dom.createElement("table");
-            dom.setAttribute(el2, "class", "ui small compact table");
-            var el3 = dom.createTextNode("\n            ");
-            dom.appendChild(el2, el3);
-            var el3 = dom.createElement("thead");
-            dom.setAttribute(el3, "class", "full-width");
-            var el4 = dom.createTextNode("\n              ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("tr");
-            var el5 = dom.createTextNode("\n                ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createElement("th");
-            var el6 = dom.createComment("");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode("\n                ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createElement("th");
-            var el6 = dom.createComment("");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode("\n                ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createElement("th");
-            var el6 = dom.createComment("");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode("\n                ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createElement("th");
-            var el6 = dom.createComment("");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode("\n                ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createElement("th");
-            var el6 = dom.createComment("");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode("\n              ");
-            dom.appendChild(el4, el5);
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            dom.appendChild(el2, el3);
-            var el3 = dom.createTextNode("\n            ");
-            dom.appendChild(el2, el3);
-            var el3 = dom.createElement("tbody");
-            var el4 = dom.createTextNode("\n");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createComment("");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createComment("");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("            ");
-            dom.appendChild(el3, el4);
-            dom.appendChild(el2, el3);
-            var el3 = dom.createTextNode("\n            ");
-            dom.appendChild(el2, el3);
-            var el3 = dom.createElement("tfoot");
-            dom.setAttribute(el3, "class", "full-width");
-            var el4 = dom.createTextNode("\n              ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("tr");
-            var el5 = dom.createTextNode("\n                ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createElement("th");
-            dom.setAttribute(el5, "colspan", "5");
-            var el6 = dom.createTextNode("\n                  ");
-            dom.appendChild(el5, el6);
-            var el6 = dom.createElement("button");
-            dom.setAttribute(el6, "class", "ui small green button");
-            var el7 = dom.createComment("");
-            dom.appendChild(el6, el7);
-            dom.appendChild(el5, el6);
-            var el6 = dom.createTextNode("\n                  ");
-            dom.appendChild(el5, el6);
-            var el6 = dom.createElement("button");
-            dom.setAttribute(el6, "class", "ui small basic button");
-            var el7 = dom.createComment("");
-            dom.appendChild(el6, el7);
-            dom.appendChild(el5, el6);
-            var el6 = dom.createTextNode("\n                ");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode("\n              ");
-            dom.appendChild(el4, el5);
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            dom.appendChild(el2, el3);
-            var el3 = dom.createTextNode("\n          ");
-            dom.appendChild(el2, el3);
-            dom.appendChild(el1, el2);
-            var el2 = dom.createTextNode("\n        ");
-            dom.appendChild(el1, el2);
-            dom.appendChild(el0, el1);
-            var el1 = dom.createTextNode("\n");
-            dom.appendChild(el0, el1);
-            return el0;
-          },
-          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-            var element4 = dom.childAt(fragment, [1]);
-            var element5 = dom.childAt(element4, [3]);
-            var element6 = dom.childAt(element5, [1, 1]);
-            var element7 = dom.childAt(element5, [3]);
-            var element8 = dom.childAt(element5, [5, 1, 1]);
-            var element9 = dom.childAt(element8, [1]);
-            var element10 = dom.childAt(element8, [3]);
-            var morphs = new Array(12);
-            morphs[0] = dom.createMorphAt(dom.childAt(element4, [1]), 1, 1);
-            morphs[1] = dom.createMorphAt(dom.childAt(element6, [1]), 0, 0);
-            morphs[2] = dom.createMorphAt(dom.childAt(element6, [3]), 0, 0);
-            morphs[3] = dom.createMorphAt(dom.childAt(element6, [5]), 0, 0);
-            morphs[4] = dom.createMorphAt(dom.childAt(element6, [7]), 0, 0);
-            morphs[5] = dom.createMorphAt(dom.childAt(element6, [9]), 0, 0);
-            morphs[6] = dom.createMorphAt(element7, 1, 1);
-            morphs[7] = dom.createMorphAt(element7, 3, 3);
-            morphs[8] = dom.createElementMorph(element9);
-            morphs[9] = dom.createMorphAt(element9, 0, 0);
-            morphs[10] = dom.createElementMorph(element10);
-            morphs[11] = dom.createMorphAt(element10, 0, 0);
-            return morphs;
-          },
-          statements: [["inline", "t", ["studyCreator.patterns"], [], ["loc", [null, [50, 12], [50, 41]]]], ["inline", "t", ["studyCreator.table.enabled"], [], ["loc", [null, [55, 20], [55, 54]]]], ["inline", "t", ["studyCreator.table.name"], [], ["loc", [null, [56, 20], [56, 51]]]], ["inline", "t", ["studyCreator.table.description"], [], ["loc", [null, [57, 20], [57, 58]]]], ["inline", "t", ["studyCreator.table.type"], [], ["loc", [null, [58, 20], [58, 51]]]], ["inline", "t", ["studyCreator.table.version"], [], ["loc", [null, [59, 20], [59, 54]]]], ["block", "each", [["get", "network.observers", ["loc", [null, [63, 20], [63, 37]]]]], [], 0, null, ["loc", [null, [63, 12], [73, 21]]]], ["block", "each", [["get", "network.extractors", ["loc", [null, [75, 20], [75, 38]]]]], [], 1, null, ["loc", [null, [75, 12], [87, 21]]]], ["element", "action", ["enableAll", ["get", "network", ["loc", [null, [92, 77], [92, 84]]]]], [], ["loc", [null, [92, 56], [92, 86]]]], ["inline", "t", ["studyCreator.enableAll"], [], ["loc", [null, [92, 87], [92, 117]]]], ["element", "action", ["disableAll", ["get", "network", ["loc", [null, [93, 78], [93, 85]]]]], [], ["loc", [null, [93, 56], [93, 87]]]], ["inline", "t", ["studyCreator.disableAll"], [], ["loc", [null, [93, 88], [93, 119]]]]],
-          locals: [],
-          templates: [child0, child1]
-        };
-      })();
-      return {
-        meta: {
-          "fragmentReason": false,
-          "revision": "Ember@2.2.2",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 41,
-              "column": 4
-            },
-            "end": {
-              "line": 101,
-              "column": 4
-            }
-          },
-          "moduleName": "rose/templates/study-creator.hbs"
-        },
-        isEmpty: false,
-        arity: 1,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("      ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("div");
-          dom.setAttribute(el1, "class", "field");
-          var el2 = dom.createTextNode("\n        ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("      ");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element11 = dom.childAt(fragment, [1]);
-          var morphs = new Array(2);
-          morphs[0] = dom.createMorphAt(element11, 1, 1);
-          morphs[1] = dom.createMorphAt(element11, 3, 3);
-          return morphs;
-        },
-        statements: [["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "network.isEnabled", ["loc", [null, [43, 30], [43, 47]]]]], [], []], "class", "toggle", "label", ["subexpr", "@mut", [["get", "network.descriptiveName", ["loc", [null, [45, 28], [45, 51]]]]], [], []], "value", ["subexpr", "@mut", [["get", "network", ["loc", [null, [46, 28], [46, 35]]]]], [], []]], ["loc", [null, [43, 8], [46, 37]]]], ["block", "if", [["get", "network.isEnabled", ["loc", [null, [47, 14], [47, 31]]]]], [], 0, null, ["loc", [null, [47, 8], [99, 13]]]]],
-        locals: ["network"],
-        templates: [child0]
-      };
-    })();
-    var child3 = (function () {
-      var child0 = (function () {
-        return {
-          meta: {
-            "fragmentReason": false,
-            "revision": "Ember@2.2.2",
-            "loc": {
-              "source": null,
-              "start": {
-                "line": 149,
-                "column": 8
-              },
-              "end": {
-                "line": 153,
-                "column": 8
+                "line": 100,
+                "column": 4
               }
             },
             "moduleName": "rose/templates/study-creator.hbs"
@@ -15045,15 +14971,19 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
           hasRendered: false,
           buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
-            var el1 = dom.createTextNode("          ");
+            var el1 = dom.createTextNode("      ");
             dom.appendChild(el0, el1);
             var el1 = dom.createElement("div");
-            dom.setAttribute(el1, "class", "item");
-            var el2 = dom.createTextNode("\n            ");
+            dom.setAttribute(el1, "class", "field");
+            var el2 = dom.createTextNode("\n        ");
             dom.appendChild(el1, el2);
             var el2 = dom.createComment("");
             dom.appendChild(el1, el2);
-            var el2 = dom.createTextNode("\n          ");
+            var el2 = dom.createTextNode("\n");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createComment("");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("      ");
             dom.appendChild(el1, el2);
             dom.appendChild(el0, el1);
             var el1 = dom.createTextNode("\n");
@@ -15061,14 +14991,183 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             return el0;
           },
           buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-            var element0 = dom.childAt(fragment, [1]);
+            var element11 = dom.childAt(fragment, [1]);
             var morphs = new Array(2);
-            morphs[0] = dom.createAttrMorph(element0, 'data-value');
-            morphs[1] = dom.createMorphAt(element0, 1, 1);
+            morphs[0] = dom.createMorphAt(element11, 1, 1);
+            morphs[1] = dom.createMorphAt(element11, 3, 3);
             return morphs;
           },
-          statements: [["attribute", "data-value", ["get", "interval.value", ["loc", [null, [150, 41], [150, 55]]]]], ["inline", "t", [["get", "interval.label", ["loc", [null, [151, 16], [151, 30]]]]], [], ["loc", [null, [151, 12], [151, 32]]]]],
-          locals: ["interval"],
+          statements: [["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "network.isEnabled", ["loc", [null, [42, 30], [42, 47]]]]], [], []], "class", "toggle", "label", ["subexpr", "@mut", [["get", "network.descriptiveName", ["loc", [null, [44, 28], [44, 51]]]]], [], []], "value", ["subexpr", "@mut", [["get", "network", ["loc", [null, [45, 28], [45, 35]]]]], [], []]], ["loc", [null, [42, 8], [45, 37]]]], ["block", "if", [["get", "network.isEnabled", ["loc", [null, [46, 14], [46, 31]]]]], [], 0, null, ["loc", [null, [46, 8], [98, 13]]]]],
+          locals: ["network"],
+          templates: [child0]
+        };
+      })();
+      var child1 = (function () {
+        var child0 = (function () {
+          return {
+            meta: {
+              "fragmentReason": false,
+              "revision": "Ember@2.2.2",
+              "loc": {
+                "source": null,
+                "start": {
+                  "line": 126,
+                  "column": 8
+                },
+                "end": {
+                  "line": 130,
+                  "column": 8
+                }
+              },
+              "moduleName": "rose/templates/study-creator.hbs"
+            },
+            isEmpty: false,
+            arity: 1,
+            cachedFragment: null,
+            hasRendered: false,
+            buildFragment: function buildFragment(dom) {
+              var el0 = dom.createDocumentFragment();
+              var el1 = dom.createTextNode("          ");
+              dom.appendChild(el0, el1);
+              var el1 = dom.createElement("div");
+              dom.setAttribute(el1, "class", "item");
+              var el2 = dom.createTextNode("\n            ");
+              dom.appendChild(el1, el2);
+              var el2 = dom.createComment("");
+              dom.appendChild(el1, el2);
+              var el2 = dom.createTextNode("\n          ");
+              dom.appendChild(el1, el2);
+              dom.appendChild(el0, el1);
+              var el1 = dom.createTextNode("\n");
+              dom.appendChild(el0, el1);
+              return el0;
+            },
+            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+              var element0 = dom.childAt(fragment, [1]);
+              var morphs = new Array(2);
+              morphs[0] = dom.createAttrMorph(element0, 'data-value');
+              morphs[1] = dom.createMorphAt(element0, 1, 1);
+              return morphs;
+            },
+            statements: [["attribute", "data-value", ["get", "interval.value", ["loc", [null, [127, 41], [127, 55]]]]], ["inline", "t", [["get", "interval.label", ["loc", [null, [128, 16], [128, 30]]]]], [], ["loc", [null, [128, 12], [128, 32]]]]],
+            locals: ["interval"],
+            templates: []
+          };
+        })();
+        return {
+          meta: {
+            "fragmentReason": false,
+            "revision": "Ember@2.2.2",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 119,
+                "column": 4
+              },
+              "end": {
+                "line": 132,
+                "column": 4
+              }
+            },
+            "moduleName": "rose/templates/study-creator.hbs"
+          },
+          isEmpty: false,
+          arity: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("      ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("div");
+            dom.setAttribute(el1, "class", "default text");
+            var el2 = dom.createTextNode("Select an interval");
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n      ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("input");
+            dom.setAttribute(el1, "type", "hidden");
+            dom.setAttribute(el1, "name", "interval");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n      ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("i");
+            dom.setAttribute(el1, "class", "dropdown icon");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n      ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("div");
+            dom.setAttribute(el1, "class", "menu");
+            var el2 = dom.createTextNode("\n");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createComment("");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("      ");
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var element1 = dom.childAt(fragment, [3]);
+            var morphs = new Array(2);
+            morphs[0] = dom.createAttrMorph(element1, 'value');
+            morphs[1] = dom.createMorphAt(dom.childAt(fragment, [7]), 1, 1);
+            return morphs;
+          },
+          statements: [["attribute", "value", ["get", "model.updateInterval", ["loc", [null, [123, 51], [123, 71]]]]], ["block", "each", [["get", "updateIntervals", ["loc", [null, [126, 16], [126, 31]]]]], [], 0, null, ["loc", [null, [126, 8], [130, 17]]]]],
+          locals: [],
+          templates: [child0]
+        };
+      })();
+      var child2 = (function () {
+        return {
+          meta: {
+            "fragmentReason": false,
+            "revision": "Ember@2.2.2",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 135,
+                "column": 2
+              },
+              "end": {
+                "line": 139,
+                "column": 2
+              }
+            },
+            "moduleName": "rose/templates/study-creator.hbs"
+          },
+          isEmpty: false,
+          arity: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("  ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("div");
+            dom.setAttribute(el1, "class", "ui red basic label");
+            var el2 = dom.createTextNode("\n      ");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createComment("");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("\n  ");
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 1, 1);
+            return morphs;
+          },
+          statements: [["inline", "t", ["studyCreator.keyUnavailable"], [], ["loc", [null, [137, 6], [137, 41]]]]],
+          locals: [],
           templates: []
         };
       })();
@@ -15079,12 +15178,12 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 142,
-              "column": 4
+              "line": 36,
+              "column": 2
             },
             "end": {
-              "line": 155,
-              "column": 4
+              "line": 221,
+              "column": 2
             }
           },
           "moduleName": "rose/templates/study-creator.hbs"
@@ -15095,49 +15194,362 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("      ");
+          var el1 = dom.createTextNode("  ");
           dom.appendChild(el0, el1);
           var el1 = dom.createElement("div");
-          dom.setAttribute(el1, "class", "default text");
-          var el2 = dom.createTextNode("Select an interval");
+          dom.setAttribute(el1, "class", "field");
+          var el2 = dom.createTextNode("\n    ");
           dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n      ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("input");
-          dom.setAttribute(el1, "type", "hidden");
-          dom.setAttribute(el1, "name", "interval");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n      ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("i");
-          dom.setAttribute(el1, "class", "dropdown icon");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n      ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("div");
-          dom.setAttribute(el1, "class", "menu");
+          var el2 = dom.createElement("label");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
           var el2 = dom.createTextNode("\n");
           dom.appendChild(el1, el2);
           var el2 = dom.createComment("");
           dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("      ");
+          var el2 = dom.createTextNode("  ");
           dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("h3");
+          dom.setAttribute(el1, "class", "ui dividing header");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "field");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("label");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("label");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n\n");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("label");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("label");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("div");
+          dom.setAttribute(el2, "class", "ui message");
+          var el3 = dom.createTextNode("\n      ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createElement("p");
+          var el4 = dom.createComment("");
+          dom.appendChild(el3, el4);
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n    ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("h3");
+          dom.setAttribute(el1, "class", "ui dividing header");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "field");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("label");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("div");
+          dom.setAttribute(el2, "class", "ui action input");
+          var el3 = dom.createTextNode("\n      ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n\n      ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createElement("button");
+          dom.setAttribute(el3, "class", "ui button");
+          var el4 = dom.createTextNode("\n        ");
+          dom.appendChild(el3, el4);
+          var el4 = dom.createComment("");
+          dom.appendChild(el3, el4);
+          var el4 = dom.createTextNode("\n      ");
+          dom.appendChild(el3, el4);
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n    ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "field");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("label");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("h3");
+          dom.setAttribute(el1, "class", "ui dividing header");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("label");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("label");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("h3");
+          dom.setAttribute(el1, "class", "ui dividing header");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "field");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("button");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n");
           dom.appendChild(el0, el1);
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element1 = dom.childAt(fragment, [3]);
-          var morphs = new Array(2);
-          morphs[0] = dom.createAttrMorph(element1, 'value');
-          morphs[1] = dom.createMorphAt(dom.childAt(fragment, [7]), 1, 1);
+          var element12 = dom.childAt(fragment, [1]);
+          var element13 = dom.childAt(fragment, [5]);
+          var element14 = dom.childAt(fragment, [7]);
+          var element15 = dom.childAt(fragment, [11]);
+          var element16 = dom.childAt(fragment, [13]);
+          var element17 = dom.childAt(fragment, [17]);
+          var element18 = dom.childAt(element17, [5]);
+          var element19 = dom.childAt(element18, [3]);
+          var element20 = dom.childAt(fragment, [19]);
+          var element21 = dom.childAt(fragment, [23]);
+          var element22 = dom.childAt(fragment, [25]);
+          var element23 = dom.childAt(fragment, [29]);
+          var element24 = dom.childAt(fragment, [31]);
+          var morphs = new Array(44);
+          morphs[0] = dom.createMorphAt(dom.childAt(element12, [1]), 0, 0);
+          morphs[1] = dom.createMorphAt(dom.childAt(element12, [3]), 0, 0);
+          morphs[2] = dom.createMorphAt(element12, 5, 5);
+          morphs[3] = dom.createMorphAt(dom.childAt(fragment, [3]), 0, 0);
+          morphs[4] = dom.createMorphAt(dom.childAt(element13, [1]), 0, 0);
+          morphs[5] = dom.createMorphAt(dom.childAt(element13, [3]), 0, 0);
+          morphs[6] = dom.createMorphAt(element13, 5, 5);
+          morphs[7] = dom.createAttrMorph(element14, 'class');
+          morphs[8] = dom.createMorphAt(dom.childAt(element14, [1]), 0, 0);
+          morphs[9] = dom.createMorphAt(dom.childAt(element14, [3]), 0, 0);
+          morphs[10] = dom.createMorphAt(element14, 5, 5);
+          morphs[11] = dom.createMorphAt(fragment, 9, 9, contextualElement);
+          morphs[12] = dom.createAttrMorph(element15, 'class');
+          morphs[13] = dom.createMorphAt(dom.childAt(element15, [1]), 0, 0);
+          morphs[14] = dom.createMorphAt(dom.childAt(element15, [3]), 0, 0);
+          morphs[15] = dom.createMorphAt(element15, 5, 5);
+          morphs[16] = dom.createAttrMorph(element16, 'class');
+          morphs[17] = dom.createMorphAt(dom.childAt(element16, [1]), 0, 0);
+          morphs[18] = dom.createMorphAt(dom.childAt(element16, [3]), 0, 0);
+          morphs[19] = dom.createMorphAt(dom.childAt(element16, [5, 1]), 0, 0);
+          morphs[20] = dom.createMorphAt(dom.childAt(fragment, [15]), 0, 0);
+          morphs[21] = dom.createMorphAt(dom.childAt(element17, [1]), 0, 0);
+          morphs[22] = dom.createMorphAt(dom.childAt(element17, [3]), 0, 0);
+          morphs[23] = dom.createMorphAt(element18, 1, 1);
+          morphs[24] = dom.createElementMorph(element19);
+          morphs[25] = dom.createMorphAt(element19, 1, 1);
+          morphs[26] = dom.createMorphAt(dom.childAt(element20, [1]), 0, 0);
+          morphs[27] = dom.createMorphAt(dom.childAt(element20, [3]), 0, 0);
+          morphs[28] = dom.createMorphAt(element20, 5, 5);
+          morphs[29] = dom.createMorphAt(dom.childAt(fragment, [21]), 0, 0);
+          morphs[30] = dom.createAttrMorph(element21, 'class');
+          morphs[31] = dom.createMorphAt(dom.childAt(element21, [1]), 0, 0);
+          morphs[32] = dom.createMorphAt(dom.childAt(element21, [3]), 0, 0);
+          morphs[33] = dom.createMorphAt(element21, 5, 5);
+          morphs[34] = dom.createAttrMorph(element22, 'class');
+          morphs[35] = dom.createMorphAt(dom.childAt(element22, [1]), 0, 0);
+          morphs[36] = dom.createMorphAt(dom.childAt(element22, [3]), 0, 0);
+          morphs[37] = dom.createMorphAt(element22, 5, 5);
+          morphs[38] = dom.createMorphAt(dom.childAt(fragment, [27]), 0, 0);
+          morphs[39] = dom.createMorphAt(dom.childAt(element23, [1]), 0, 0);
+          morphs[40] = dom.createMorphAt(element23, 3, 3);
+          morphs[41] = dom.createAttrMorph(element24, 'class');
+          morphs[42] = dom.createElementMorph(element24);
+          morphs[43] = dom.createMorphAt(element24, 1, 1);
           return morphs;
         },
-        statements: [["attribute", "value", ["get", "model.updateInterval", ["loc", [null, [146, 51], [146, 71]]]]], ["block", "each", [["get", "updateIntervals", ["loc", [null, [149, 16], [149, 31]]]]], [], 0, null, ["loc", [null, [149, 8], [153, 17]]]]],
+        statements: [["inline", "t", ["studyCreator.networks"], [], ["loc", [null, [38, 11], [38, 40]]]], ["inline", "t", ["studyCreator.networksDesc"], [], ["loc", [null, [39, 7], [39, 40]]]], ["block", "each", [["get", "networks", ["loc", [null, [40, 12], [40, 20]]]]], [], 0, null, ["loc", [null, [40, 4], [100, 13]]]], ["inline", "t", ["studyCreator.autoUpdateHeader"], [], ["loc", [null, [103, 33], [103, 70]]]], ["inline", "t", ["studyCreator.autoUpdate"], [], ["loc", [null, [106, 11], [106, 42]]]], ["inline", "t", ["studyCreator.autoUpdateDesc"], [], ["loc", [null, [107, 7], [107, 42]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [109, 26], [109, 51]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [111, 42], [111, 67]]]]], [], ["loc", [null, [111, 24], [111, 68]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [112, 27], [112, 50]]]]], ["loc", [null, [109, 4], [112, 52]]]], ["attribute", "class", ["concat", [["subexpr", "unless", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [115, 23], [115, 48]]]], "disabled "], [], ["loc", [null, [115, 14], [115, 62]]]], "field"]]], ["inline", "t", ["studyCreator.updateInterval"], [], ["loc", [null, [116, 11], [116, 46]]]], ["inline", "t", ["studyCreator.updateIntervalLabel"], [], ["loc", [null, [117, 7], [117, 47]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "model.updateInterval", ["loc", [null, [120, 29], [120, 49]]]]], [], []], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [121, 29], [121, 52]]]]], 1, null, ["loc", [null, [119, 4], [132, 20]]]], ["block", "unless", [["get", "keyAvailable", ["loc", [null, [135, 12], [135, 24]]]]], [], 2, null, ["loc", [null, [135, 2], [139, 13]]]], ["attribute", "class", ["concat", [["subexpr", "if", [["get", "secureUpdateImpossible", ["loc", [null, [141, 19], [141, 41]]]], "disabled "], [], ["loc", [null, [141, 14], [141, 55]]]], "field"]]], ["inline", "t", ["studyCreator.forceSecureUpdate"], [], ["loc", [null, [142, 11], [142, 49]]]], ["inline", "t", ["studyCreator.forceSecureUpdateDesc"], [], ["loc", [null, [143, 7], [143, 49]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.forceSecureUpdate", ["loc", [null, [145, 26], [145, 49]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.forceSecureUpdate", ["loc", [null, [147, 42], [147, 65]]]]], [], ["loc", [null, [147, 24], [147, 66]]]], "onChange", ["subexpr", "action", ["toggleForceSecureUpdate"], [], ["loc", [null, [148, 27], [148, 61]]]]], ["loc", [null, [145, 4], [148, 63]]]], ["attribute", "class", ["concat", [["subexpr", "unless", [["get", "model.forceSecureUpdate", ["loc", [null, [151, 23], [151, 46]]]], "disabled "], [], ["loc", [null, [151, 14], [151, 60]]]], "field"]]], ["inline", "t", ["studyCreator.fingerprint"], [], ["loc", [null, [152, 11], [152, 43]]]], ["inline", "t", ["studyCreator.fingerprintDesc"], [], ["loc", [null, [153, 7], [153, 43]]]], ["content", "model.fingerprint", ["loc", [null, [155, 9], [155, 30]]]], ["inline", "t", ["studyCreator.privacyHeader"], [], ["loc", [null, [159, 33], [159, 67]]]], ["inline", "t", ["studyCreator.salt"], [], ["loc", [null, [162, 11], [162, 36]]]], ["inline", "t", ["studyCreator.saltDesc"], [], ["loc", [null, [163, 7], [163, 36]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.salt", ["loc", [null, [167, 20], [167, 30]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [166, 6], [169, 40]]]], ["element", "action", ["generateSalt"], [], ["loc", [null, [171, 32], [171, 57]]]], ["inline", "t", ["studyCreator.generateSaltButton"], [], ["loc", [null, [172, 8], [172, 47]]]], ["inline", "t", ["studyCreator.hashLength"], [], ["loc", [null, [178, 11], [178, 42]]]], ["inline", "t", ["studyCreator.hashLengthDesc"], [], ["loc", [null, [179, 7], [179, 42]]]], ["inline", "input", [], ["type", "number", "value", ["subexpr", "@mut", [["get", "model.hashLength", ["loc", [null, [182, 18], [182, 34]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [181, 4], [184, 38]]]], ["inline", "t", ["studyCreator.optionalFeaturesHeader"], [], ["loc", [null, [187, 33], [187, 76]]]], ["attribute", "class", ["concat", [["subexpr", "if", [["get", "facebookDisabled", ["loc", [null, [188, 19], [188, 35]]]], "disabled "], [], ["loc", [null, [188, 14], [188, 49]]]], "field"]]], ["inline", "t", ["studyCreator.roseComments"], [], ["loc", [null, [189, 11], [189, 44]]]], ["inline", "t", ["studyCreator.roseCommentsDesc"], [], ["loc", [null, [190, 7], [190, 44]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [192, 26], [192, 53]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [194, 42], [194, 69]]]]], [], ["loc", [null, [194, 24], [194, 70]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [195, 27], [195, 50]]]]], ["loc", [null, [192, 4], [195, 52]]]], ["attribute", "class", ["concat", [["subexpr", "if", [["get", "facebookDisabled", ["loc", [null, [198, 19], [198, 35]]]], "disabled "], [], ["loc", [null, [198, 14], [198, 49]]]], ["subexpr", "unless", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [198, 58], [198, 85]]]], "disabled "], [], ["loc", [null, [198, 49], [198, 99]]]], "field"]]], ["inline", "t", ["studyCreator.roseCommentsRating"], [], ["loc", [null, [199, 11], [199, 50]]]], ["inline", "t", ["studyCreator.roseCommentsRatingDesc"], [], ["loc", [null, [200, 7], [200, 50]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [202, 26], [202, 59]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [204, 42], [204, 75]]]]], [], ["loc", [null, [204, 24], [204, 76]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [205, 27], [205, 50]]]]], ["loc", [null, [202, 4], [205, 52]]]], ["inline", "t", ["studyCreator.exportConfig"], [], ["loc", [null, [208, 33], [208, 66]]]], ["inline", "t", ["studyCreator.exportConfigDesc"], [], ["loc", [null, [210, 7], [210, 44]]]], ["inline", "input", [], ["value", ["subexpr", "@mut", [["get", "model.fileName", ["loc", [null, [212, 18], [212, 32]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [212, 4], [214, 38]]]], ["attribute", "class", ["concat", ["ui ", ["subexpr", "if", [["get", "exportDisabled", ["loc", [null, [217, 25], [217, 39]]]], "disabled"], [], ["loc", [null, [217, 20], [217, 52]]]], " primary button"]]], ["element", "action", ["download"], [], ["loc", [null, [217, 69], [217, 90]]]], ["inline", "t", ["action.download"], [], ["loc", [null, [218, 4], [218, 27]]]]],
         locals: [],
-        templates: [child0]
+        templates: [child0, child1, child2]
       };
     })();
     return {
@@ -15154,7 +15566,7 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 220,
+            "line": 223,
             "column": 0
           }
         },
@@ -15261,281 +15673,9 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
         var el3 = dom.createTextNode("\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
+        var el2 = dom.createTextNode("\n\n");
         dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
-        var el3 = dom.createTextNode("\n");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("h3");
-        dom.setAttribute(el2, "class", "ui dividing header");
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3, "class", "ui input");
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n    ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("h3");
-        dom.setAttribute(el2, "class", "ui dividing header");
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3, "class", "ui action input");
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("button");
-        dom.setAttribute(el4, "class", "ui button");
-        var el5 = dom.createTextNode("\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createComment("");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n      ");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n    ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("h3");
-        dom.setAttribute(el2, "class", "ui dividing header");
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("label");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("h3");
-        dom.setAttribute(el2, "class", "ui dividing header");
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "field");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("p");
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("button");
-        dom.setAttribute(el2, "class", "ui primary button");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
+        var el2 = dom.createComment("");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
@@ -15543,79 +15683,27 @@ define("rose/templates/study-creator", ["exports"], function (exports) {
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element12 = dom.childAt(fragment, [0, 3]);
-        var element13 = dom.childAt(fragment, [2]);
-        var element14 = dom.childAt(element13, [3]);
-        var element15 = dom.childAt(element13, [5, 1]);
-        var element16 = dom.childAt(element13, [7]);
-        var element17 = dom.childAt(element13, [11]);
-        var element18 = dom.childAt(element13, [13]);
-        var element19 = dom.childAt(element13, [15]);
-        var element20 = dom.childAt(element13, [17]);
-        var element21 = dom.childAt(element13, [21]);
-        var element22 = dom.childAt(element21, [5]);
-        var element23 = dom.childAt(element22, [3]);
-        var element24 = dom.childAt(element13, [23]);
-        var element25 = dom.childAt(element13, [27]);
-        var element26 = dom.childAt(element13, [29]);
-        var element27 = dom.childAt(element13, [33]);
-        var element28 = dom.childAt(element13, [35]);
-        var morphs = new Array(50);
-        morphs[0] = dom.createMorphAt(element12, 1, 1);
-        morphs[1] = dom.createMorphAt(dom.childAt(element12, [3]), 0, 0);
-        morphs[2] = dom.createMorphAt(dom.childAt(element13, [1]), 0, 0);
-        morphs[3] = dom.createMorphAt(dom.childAt(element14, [1]), 0, 0);
-        morphs[4] = dom.createMorphAt(dom.childAt(element14, [3]), 0, 0);
-        morphs[5] = dom.createMorphAt(dom.childAt(element14, [5]), 1, 1);
-        morphs[6] = dom.createMorphAt(element14, 7, 7);
-        morphs[7] = dom.createAttrMorph(element15, 'class');
-        morphs[8] = dom.createElementMorph(element15);
-        morphs[9] = dom.createMorphAt(element15, 3, 3);
-        morphs[10] = dom.createMorphAt(element16, 1, 1);
-        morphs[11] = dom.createMorphAt(element16, 2, 2);
-        morphs[12] = dom.createMorphAt(dom.childAt(element13, [9]), 0, 0);
-        morphs[13] = dom.createMorphAt(dom.childAt(element17, [1]), 0, 0);
-        morphs[14] = dom.createMorphAt(dom.childAt(element17, [3]), 0, 0);
-        morphs[15] = dom.createMorphAt(element17, 5, 5);
-        morphs[16] = dom.createAttrMorph(element18, 'class');
-        morphs[17] = dom.createMorphAt(dom.childAt(element18, [1]), 0, 0);
-        morphs[18] = dom.createMorphAt(dom.childAt(element18, [3]), 0, 0);
-        morphs[19] = dom.createMorphAt(element18, 5, 5);
-        morphs[20] = dom.createAttrMorph(element19, 'class');
-        morphs[21] = dom.createMorphAt(dom.childAt(element19, [1]), 0, 0);
-        morphs[22] = dom.createMorphAt(dom.childAt(element19, [3]), 0, 0);
-        morphs[23] = dom.createMorphAt(dom.childAt(element19, [5]), 1, 1);
-        morphs[24] = dom.createAttrMorph(element20, 'class');
-        morphs[25] = dom.createMorphAt(dom.childAt(element20, [1]), 0, 0);
-        morphs[26] = dom.createMorphAt(dom.childAt(element20, [3]), 0, 0);
-        morphs[27] = dom.createMorphAt(element20, 5, 5);
-        morphs[28] = dom.createMorphAt(dom.childAt(element13, [19]), 0, 0);
-        morphs[29] = dom.createMorphAt(dom.childAt(element21, [1]), 0, 0);
-        morphs[30] = dom.createMorphAt(dom.childAt(element21, [3]), 0, 0);
-        morphs[31] = dom.createMorphAt(element22, 1, 1);
-        morphs[32] = dom.createElementMorph(element23);
-        morphs[33] = dom.createMorphAt(element23, 1, 1);
-        morphs[34] = dom.createMorphAt(dom.childAt(element24, [1]), 0, 0);
-        morphs[35] = dom.createMorphAt(dom.childAt(element24, [3]), 0, 0);
-        morphs[36] = dom.createMorphAt(element24, 5, 5);
-        morphs[37] = dom.createMorphAt(dom.childAt(element13, [25]), 0, 0);
-        morphs[38] = dom.createMorphAt(dom.childAt(element25, [1]), 0, 0);
-        morphs[39] = dom.createMorphAt(dom.childAt(element25, [3]), 0, 0);
-        morphs[40] = dom.createMorphAt(element25, 5, 5);
-        morphs[41] = dom.createAttrMorph(element26, 'class');
-        morphs[42] = dom.createMorphAt(dom.childAt(element26, [1]), 0, 0);
-        morphs[43] = dom.createMorphAt(dom.childAt(element26, [3]), 0, 0);
-        morphs[44] = dom.createMorphAt(element26, 5, 5);
-        morphs[45] = dom.createMorphAt(dom.childAt(element13, [31]), 0, 0);
-        morphs[46] = dom.createMorphAt(dom.childAt(element27, [1]), 0, 0);
-        morphs[47] = dom.createMorphAt(element27, 3, 3);
-        morphs[48] = dom.createElementMorph(element28);
-        morphs[49] = dom.createMorphAt(element28, 1, 1);
+        var element25 = dom.childAt(fragment, [0, 3]);
+        var element26 = dom.childAt(fragment, [2]);
+        var element27 = dom.childAt(element26, [3]);
+        var element28 = dom.childAt(element26, [5, 1]);
+        var morphs = new Array(11);
+        morphs[0] = dom.createMorphAt(element25, 1, 1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element25, [3]), 0, 0);
+        morphs[2] = dom.createMorphAt(dom.childAt(element26, [1]), 0, 0);
+        morphs[3] = dom.createMorphAt(dom.childAt(element27, [1]), 0, 0);
+        morphs[4] = dom.createMorphAt(dom.childAt(element27, [3]), 0, 0);
+        morphs[5] = dom.createMorphAt(dom.childAt(element27, [5]), 1, 1);
+        morphs[6] = dom.createMorphAt(element27, 7, 7);
+        morphs[7] = dom.createAttrMorph(element28, 'class');
+        morphs[8] = dom.createElementMorph(element28);
+        morphs[9] = dom.createMorphAt(element28, 3, 3);
+        morphs[10] = dom.createMorphAt(element26, 7, 7);
         return morphs;
       },
-      statements: [["inline", "t", ["studyCreator.title"], [], ["loc", [null, [4, 4], [4, 30]]]], ["inline", "t", ["studyCreator.subtitle"], [], ["loc", [null, [5, 28], [5, 57]]]], ["inline", "t", ["studyCreator.configurationHeader"], [], ["loc", [null, [10, 33], [10, 73]]]], ["inline", "t", ["studyCreator.repositoryUrl"], [], ["loc", [null, [13, 11], [13, 45]]]], ["inline", "t", ["studyCreator.repositoryUrlDesc"], [], ["loc", [null, [14, 7], [14, 45]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.repositoryURL", ["loc", [null, [18, 20], [18, 39]]]]], [], []], "insert-newline", "fetchBaseFile"], ["loc", [null, [17, 6], [19, 46]]]], ["block", "if", [["get", "baseFileNotFound", ["loc", [null, [22, 10], [22, 26]]]]], [], 0, null, ["loc", [null, [22, 4], [26, 11]]]], ["attribute", "class", ["concat", ["ui icon button ", ["subexpr", "if", [["get", "baseFileIsLoading", ["loc", [null, [30, 39], [30, 56]]]], "loading"], [], ["loc", [null, [30, 34], [30, 68]]]]]]], ["element", "action", ["fetchBaseFile"], [], ["loc", [null, [30, 70], [30, 96]]]], ["inline", "t", ["studyCreator.fetchRepository"], [], ["loc", [null, [32, 6], [32, 42]]]], ["block", "if", [["get", "networks.length", ["loc", [null, [37, 10], [37, 25]]]]], [], 1, null, ["loc", [null, [37, 4], [40, 11]]]], ["block", "each", [["get", "networks", ["loc", [null, [41, 12], [41, 20]]]]], [], 2, null, ["loc", [null, [41, 4], [101, 13]]]], ["inline", "t", ["studyCreator.autoUpdateHeader"], [], ["loc", [null, [104, 33], [104, 70]]]], ["inline", "t", ["studyCreator.autoUpdate"], [], ["loc", [null, [107, 11], [107, 42]]]], ["inline", "t", ["studyCreator.autoUpdateDesc"], [], ["loc", [null, [108, 7], [108, 42]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [110, 26], [110, 51]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [112, 42], [112, 67]]]]], [], ["loc", [null, [112, 24], [112, 68]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [113, 27], [113, 50]]]]], ["loc", [null, [110, 4], [113, 52]]]], ["attribute", "class", ["concat", [["subexpr", "unless", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [116, 23], [116, 48]]]], "disabled "], [], ["loc", [null, [116, 14], [116, 62]]]], "field"]]], ["inline", "t", ["studyCreator.forceSecureUpdate"], [], ["loc", [null, [117, 11], [117, 49]]]], ["inline", "t", ["studyCreator.forceSecureUpdateDesc"], [], ["loc", [null, [118, 7], [118, 49]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.forceSecureUpdate", ["loc", [null, [120, 26], [120, 49]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.forceSecureUpdate", ["loc", [null, [122, 42], [122, 65]]]]], [], ["loc", [null, [122, 24], [122, 66]]]], "onChange", ["subexpr", "action", ["toggleForceSecureUpdate"], [], ["loc", [null, [123, 27], [123, 61]]]]], ["loc", [null, [120, 4], [123, 63]]]], ["attribute", "class", ["concat", [["subexpr", "if", [["get", "secureUpdateDisabled", ["loc", [null, [126, 19], [126, 39]]]], "disabled "], [], ["loc", [null, [126, 14], [126, 53]]]], "field"]]], ["inline", "t", ["studyCreator.fingerprint"], [], ["loc", [null, [127, 11], [127, 43]]]], ["inline", "t", ["studyCreator.fingerprintDesc"], [], ["loc", [null, [128, 7], [128, 43]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.fingerprint", ["loc", [null, [132, 20], [132, 37]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [131, 6], [134, 40]]]], ["attribute", "class", ["concat", [["subexpr", "unless", [["get", "model.autoUpdateIsEnabled", ["loc", [null, [138, 23], [138, 48]]]], "disabled "], [], ["loc", [null, [138, 14], [138, 62]]]], "field"]]], ["inline", "t", ["studyCreator.updateInterval"], [], ["loc", [null, [139, 11], [139, 46]]]], ["inline", "t", ["studyCreator.updateIntervalLabel"], [], ["loc", [null, [140, 7], [140, 47]]]], ["block", "ui-dropdown", [], ["class", "selection", "selected", ["subexpr", "@mut", [["get", "model.updateInterval", ["loc", [null, [143, 29], [143, 49]]]]], [], []], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [144, 29], [144, 52]]]]], 3, null, ["loc", [null, [142, 4], [155, 20]]]], ["inline", "t", ["studyCreator.privacyHeader"], [], ["loc", [null, [158, 33], [158, 67]]]], ["inline", "t", ["studyCreator.salt"], [], ["loc", [null, [161, 11], [161, 36]]]], ["inline", "t", ["studyCreator.saltDesc"], [], ["loc", [null, [162, 7], [162, 36]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.salt", ["loc", [null, [166, 20], [166, 30]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [165, 6], [168, 40]]]], ["element", "action", ["generateSalt"], [], ["loc", [null, [170, 32], [170, 57]]]], ["inline", "t", ["studyCreator.generateSaltButton"], [], ["loc", [null, [171, 8], [171, 47]]]], ["inline", "t", ["studyCreator.hashLength"], [], ["loc", [null, [177, 11], [177, 42]]]], ["inline", "t", ["studyCreator.hashLengthDesc"], [], ["loc", [null, [178, 7], [178, 42]]]], ["inline", "input", [], ["type", "number", "value", ["subexpr", "@mut", [["get", "model.hashLength", ["loc", [null, [181, 18], [181, 34]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [180, 4], [183, 38]]]], ["inline", "t", ["studyCreator.optionalFeaturesHeader"], [], ["loc", [null, [186, 33], [186, 76]]]], ["inline", "t", ["studyCreator.roseComments"], [], ["loc", [null, [188, 11], [188, 44]]]], ["inline", "t", ["studyCreator.roseCommentsDesc"], [], ["loc", [null, [189, 7], [189, 44]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [191, 26], [191, 53]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [193, 42], [193, 69]]]]], [], ["loc", [null, [193, 24], [193, 70]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [194, 27], [194, 50]]]]], ["loc", [null, [191, 4], [194, 52]]]], ["attribute", "class", ["concat", [["subexpr", "unless", [["get", "model.roseCommentsIsEnabled", ["loc", [null, [197, 23], [197, 50]]]], "disabled "], [], ["loc", [null, [197, 14], [197, 64]]]], "field"]]], ["inline", "t", ["studyCreator.roseCommentsRating"], [], ["loc", [null, [198, 11], [198, 50]]]], ["inline", "t", ["studyCreator.roseCommentsRatingDesc"], [], ["loc", [null, [199, 7], [199, 50]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [201, 26], [201, 59]]]]], [], []], "class", "toggle", "label", ["subexpr", "boolean-to-yesno", [["get", "model.roseCommentsRatingIsEnabled", ["loc", [null, [203, 42], [203, 75]]]]], [], ["loc", [null, [203, 24], [203, 76]]]], "onChange", ["subexpr", "action", ["saveSettings"], [], ["loc", [null, [204, 27], [204, 50]]]]], ["loc", [null, [201, 4], [204, 52]]]], ["inline", "t", ["studyCreator.exportConfig"], [], ["loc", [null, [207, 33], [207, 66]]]], ["inline", "t", ["studyCreator.exportConfigDesc"], [], ["loc", [null, [209, 7], [209, 44]]]], ["inline", "input", [], ["value", ["subexpr", "@mut", [["get", "model.fileName", ["loc", [null, [211, 18], [211, 32]]]]], [], []], "insert-newline", "saveSettings", "focus-out", "saveSettings"], ["loc", [null, [211, 4], [213, 38]]]], ["element", "action", ["download"], [], ["loc", [null, [216, 36], [216, 57]]]], ["inline", "t", ["action.download"], [], ["loc", [null, [217, 4], [217, 27]]]]],
+      statements: [["inline", "t", ["studyCreator.title"], [], ["loc", [null, [4, 4], [4, 30]]]], ["inline", "t", ["studyCreator.subtitle"], [], ["loc", [null, [5, 28], [5, 57]]]], ["inline", "t", ["studyCreator.configurationHeader"], [], ["loc", [null, [10, 33], [10, 73]]]], ["inline", "t", ["studyCreator.repositoryUrl"], [], ["loc", [null, [13, 11], [13, 45]]]], ["inline", "t", ["studyCreator.repositoryUrlDesc"], [], ["loc", [null, [14, 7], [14, 45]]]], ["inline", "input", [], ["type", "text", "value", ["subexpr", "@mut", [["get", "model.repositoryURL", ["loc", [null, [18, 20], [18, 39]]]]], [], []], "insert-newline", "fetchBaseFile"], ["loc", [null, [17, 6], [19, 46]]]], ["block", "if", [["get", "baseFileNotFound", ["loc", [null, [22, 10], [22, 26]]]]], [], 0, null, ["loc", [null, [22, 4], [26, 11]]]], ["attribute", "class", ["concat", ["ui icon button ", ["subexpr", "if", [["get", "baseFileIsLoading", ["loc", [null, [30, 39], [30, 56]]]], "loading"], [], ["loc", [null, [30, 34], [30, 68]]]]]]], ["element", "action", ["fetchBaseFile"], [], ["loc", [null, [30, 70], [30, 96]]]], ["inline", "t", ["studyCreator.fetchRepository"], [], ["loc", [null, [32, 6], [32, 42]]]], ["block", "if", [["get", "networks.length", ["loc", [null, [36, 8], [36, 23]]]]], [], 1, null, ["loc", [null, [36, 2], [221, 9]]]]],
       locals: [],
-      templates: [child0, child1, child2, child3]
+      templates: [child0, child1]
     };
   })());
 });

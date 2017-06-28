@@ -3249,11 +3249,11 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
           "loc": {
             "source": null,
             "start": {
-              "line": 53,
+              "line": 55,
               "column": 12
             },
             "end": {
-              "line": 61,
+              "line": 63,
               "column": 12
             }
           },
@@ -3283,7 +3283,7 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
           morphs[0] = dom.createMorphAt(fragment, 3, 3, contextualElement);
           return morphs;
         },
-        statements: [["inline", "t", ["wizard.fileConfigBtn"], [], ["loc", [null, [60, 14], [60, 42]]]]],
+        statements: [["inline", "t", ["wizard.fileConfigBtn"], [], ["loc", [null, [62, 14], [62, 42]]]]],
         locals: [],
         templates: []
       };
@@ -3301,7 +3301,7 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
             "column": 0
           },
           "end": {
-            "line": 70,
+            "line": 72,
             "column": 0
           }
         },
@@ -3413,6 +3413,11 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
         dom.appendChild(el4, el5);
         var el5 = dom.createTextNode("\n      ");
         dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("div");
+        dom.setAttribute(el4, "class", "ui divider");
         dom.appendChild(el3, el4);
         var el4 = dom.createTextNode("\n\n      ");
         dom.appendChild(el3, el4);
@@ -3534,7 +3539,7 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0, 1, 1]);
         var element1 = dom.childAt(element0, [1, 3]);
-        var element2 = dom.childAt(element0, [11]);
+        var element2 = dom.childAt(element0, [13]);
         var element3 = dom.childAt(element2, [3]);
         var element4 = dom.childAt(element3, [1]);
         var element5 = dom.childAt(element4, [1]);
@@ -3559,7 +3564,7 @@ define("rose/pods/components/installation-wizard/template", ["exports"], functio
         morphs[14] = dom.createMorphAt(element7, 3, 3);
         return morphs;
       },
-      statements: [["inline", "t", ["wizard.header"], [], ["loc", [null, [7, 10], [7, 31]]]], ["inline", "t", ["wizard.description"], [], ["loc", [null, [8, 34], [8, 60]]]], ["inline", "t", ["wizard.privacyNoteTitle"], [], ["loc", [null, [12, 10], [12, 41]]]], ["inline", "t", ["wizard.privacyNote"], [], ["loc", [null, [13, 9], [13, 35]]]], ["inline", "t", ["wizard.overlayNoteTitle"], [], ["loc", [null, [15, 10], [15, 41]]]], ["inline", "t", ["wizard.overlayNote"], [], ["loc", [null, [17, 8], [17, 34]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "read", ["loc", [null, [30, 47], [30, 51]]]]], [], []], "label", ["subexpr", "t", ["wizard.privacyAgree"], [], ["loc", [null, [30, 58], [30, 83]]]]], ["loc", [null, [30, 10], [30, 86]]]], ["inline", "t", ["wizard.defaultConfigHeader"], [], ["loc", [null, [36, 34], [36, 68]]]], ["inline", "t", ["wizard.defaultConfigDescription"], [], ["loc", [null, [38, 16], [38, 55]]]], ["attribute", "disabled", ["get", "unread", ["loc", [null, [42, 64], [42, 70]]]]], ["element", "action", ["selectDefaultConfig"], [], ["loc", [null, [42, 20], [42, 52]]]], ["inline", "t", ["wizard.defaultBtn"], [], ["loc", [null, [43, 14], [43, 39]]]], ["inline", "t", ["wizard.fileConfigHeader"], [], ["loc", [null, [48, 34], [48, 65]]]], ["inline", "t", ["wizard.fileConfigDescription"], [], ["loc", [null, [50, 16], [50, 52]]]], ["block", "rose-file-picker", [], ["fileLoaded", "fileLoaded", "dropzone", false, "preview", false, "readAs", "readAsText", "class", "ui bottom attached primary button", "isEnabled", ["subexpr", "@mut", [["get", "read", ["loc", [null, [58, 38], [58, 42]]]]], [], []]], 0, null, ["loc", [null, [53, 12], [61, 33]]]]],
+      statements: [["inline", "t", ["wizard.header"], [], ["loc", [null, [7, 10], [7, 31]]]], ["inline", "t", ["wizard.description"], [], ["loc", [null, [8, 34], [8, 60]]]], ["inline", "t", ["wizard.privacyNoteTitle"], [], ["loc", [null, [12, 10], [12, 41]]]], ["inline", "t", ["wizard.privacyNote"], [], ["loc", [null, [13, 9], [13, 35]]]], ["inline", "t", ["wizard.overlayNoteTitle"], [], ["loc", [null, [15, 10], [15, 41]]]], ["inline", "t", ["wizard.overlayNote"], [], ["loc", [null, [17, 8], [17, 34]]]], ["inline", "ui-checkbox", [], ["checked", ["subexpr", "@mut", [["get", "read", ["loc", [null, [32, 32], [32, 36]]]]], [], []], "label", ["subexpr", "t", ["wizard.privacyAgree"], [], ["loc", [null, [32, 43], [32, 68]]]]], ["loc", [null, [32, 10], [32, 71]]]], ["inline", "t", ["wizard.defaultConfigHeader"], [], ["loc", [null, [38, 34], [38, 68]]]], ["inline", "t", ["wizard.defaultConfigDescription"], [], ["loc", [null, [40, 16], [40, 55]]]], ["attribute", "disabled", ["get", "unread", ["loc", [null, [44, 64], [44, 70]]]]], ["element", "action", ["selectDefaultConfig"], [], ["loc", [null, [44, 20], [44, 52]]]], ["inline", "t", ["wizard.defaultBtn"], [], ["loc", [null, [45, 14], [45, 39]]]], ["inline", "t", ["wizard.fileConfigHeader"], [], ["loc", [null, [50, 34], [50, 65]]]], ["inline", "t", ["wizard.fileConfigDescription"], [], ["loc", [null, [52, 16], [52, 52]]]], ["block", "rose-file-picker", [], ["fileLoaded", "fileLoaded", "dropzone", false, "preview", false, "readAs", "readAsText", "class", "ui bottom attached primary button", "isEnabled", ["subexpr", "@mut", [["get", "read", ["loc", [null, [60, 38], [60, 42]]]]], [], []]], 0, null, ["loc", [null, [55, 12], [63, 33]]]]],
       locals: [],
       templates: [child0]
     };
@@ -15803,112 +15808,6 @@ define('rose/transitions/wait', ['exports', 'ember'], function (exports, _ember)
     });
   };
 });
-define('rose/utils/fetcher', ['exports', 'npm:denodeify', 'npm:kbpgp', 'npm:isomorphic-fetch'], function (exports, _npmDenodeify, _npmKbpgp, _npmIsomorphicFetch) {
-  var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
-
-  var importFromArmoredPGP = (0, _npmDenodeify['default'])(_npmKbpgp['default'].KeyManager.import_from_armored_pgp);
-  var unbox = (0, _npmDenodeify['default'])(_npmKbpgp['default'].unbox);
-
-  function verify(data, sig, key) {
-    return importFromArmoredPGP({ armored: key }).then(function (kms) {
-      var ring = new _npmKbpgp['default'].keyring.KeyRing();
-      ring.add_key_manager(kms);
-      return unbox({
-        keyfetch: ring,
-        armored: sig,
-        data: new Buffer(data)
-      });
-    }).then(function (literals) {
-      var ds = literals[0].get_data_signer();
-      var km = ds.get_key_manager();
-      return km.get_pgp_fingerprint().toString('hex').toLowerCase();
-    });
-  }
-
-  function fetch(url) {
-    var raw = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
-
-    return (0, _npmIsomorphicFetch['default'])(url).then(function (res) {
-      if (res.status >= 200 && res.status < 300) {
-        return raw ? res.text() : res.json();
-      } else {
-        throw new Error(res.statusText);
-      }
-    });
-  }
-
-  function signedFetchGenerator(key, fp) {
-    return function signedFetch(fileURL) {
-      var _ref, _ref2, fileText, sigText, fingerprint, jsonFile;
-
-      return regeneratorRuntime.async(function signedFetch$(context$2$0) {
-        while (1) switch (context$2$0.prev = context$2$0.next) {
-          case 0:
-            context$2$0.next = 2;
-            return regeneratorRuntime.awrap(Promise.all([fetch(fileURL, true), fetch(fileURL + '.asc', true)]));
-
-          case 2:
-            _ref = context$2$0.sent;
-            _ref2 = _slicedToArray(_ref, 2);
-            fileText = _ref2[0];
-            sigText = _ref2[1];
-            context$2$0.prev = 6;
-            context$2$0.next = 9;
-            return regeneratorRuntime.awrap(verify(fileText, sigText, key));
-
-          case 9:
-            fingerprint = context$2$0.sent;
-            context$2$0.next = 15;
-            break;
-
-          case 12:
-            context$2$0.prev = 12;
-            context$2$0.t0 = context$2$0['catch'](6);
-            throw context$2$0.t0;
-
-          case 15:
-            if (!(fingerprint !== fp)) {
-              context$2$0.next = 17;
-              break;
-            }
-
-            throw new Error('Fingerprint Missmatch: ' + fingerprint + ' ≠ ' + fp);
-
-          case 17:
-            jsonFile = JSON.parse(fileText);
-            return context$2$0.abrupt('return', jsonFile);
-
-          case 19:
-          case 'end':
-            return context$2$0.stop();
-        }
-      }, null, this, [[6, 12]]);
-    };
-  }
-
-  exports.verify = verify;
-  exports.fetch = fetch;
-  exports.signedFetchGenerator = signedFetchGenerator;
-});
-/*
-Copyright (C) 2015-2017
-    Felix Epp <work@felixepp.de>
-
-This file is part of ROSE.
-
-ROSE is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-ROSE is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
- */
 define('rose/utils/i18n/compile-template', ['exports', 'ember-i18n/utils/i18n/compile-template'], function (exports, _emberI18nUtilsI18nCompileTemplate) {
   Object.defineProperty(exports, 'default', {
     enumerable: true,

@@ -46,9 +46,13 @@ export default Ember.Controller.extend({
   networks: [],
   keyAvailable: true,
 
-  secureUpdateDisabled: function () {
-    return !this.get('model.autoUpdateIsEnabled') || !this.get('model.forceSecureUpdate') || !this.get('keyAvailable')
-  }.property('model.autoUpdateIsEnabled', 'model.forceSecureUpdate', 'keyAvailable'),
+  secureUpdateImpossible: function () {
+    if (!this.get('keyAvailable') || !this.get('model.autoUpdateIsEnabled')) {
+      this.set('model.forceSecureUpdate', false)
+      return true
+    }
+    return false
+  }.property('model.autoUpdateIsEnabled', 'keyAvailable'),
 
   updateIntervals: [
     { label: 'hourly', value: 3600000 },
@@ -96,8 +100,7 @@ export default Ember.Controller.extend({
       // this.set('networks', [])
       this.setProperties({
         networks: [],
-        baseFileNotFound: false,
-        keyAvailable: false
+        baseFileNotFound: false
       })
 
       const baseFileUrl = this.get('model.repositoryURL')
@@ -124,13 +127,14 @@ export default Ember.Controller.extend({
             Ember.$.get(`${repositoryURL}/public.key`).then((key) => {
               kbpgp.KeyManager.import_from_armored_pgp({armored: key}, (err, keymanager) => {
                 if (err) {
+                  this.set('keyAvailable', false)
                   return console.error(err)
                 }
                 this.set('model.fingerprint', keymanager.get_pgp_fingerprint_str().toUpperCase())
                 this.set('keyAvailable', true)
               })
             })
-            .fail(() => this.set('model.forceSecureUpdate', false))
+            .fail(() => this.set('keyAvailable', false))
           }
         })
         .fail(() => this.set('baseFileNotFound', true))

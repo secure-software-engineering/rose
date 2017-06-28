@@ -10834,6 +10834,291 @@ define("rose/templates/extracts", ["exports"], function (exports) {
 });
 define("rose/templates/help", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 9,
+              "column": 0
+            },
+            "end": {
+              "line": 75,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/help.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "title");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("i");
+          dom.setAttribute(el2, "class", "dropdown icon");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "content");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "title");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("i");
+          dom.setAttribute(el2, "class", "dropdown icon");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "content");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "title");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("i");
+          dom.setAttribute(el2, "class", "dropdown icon");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "content");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "title");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("i");
+          dom.setAttribute(el2, "class", "dropdown icon");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "content");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "title");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("i");
+          dom.setAttribute(el2, "class", "dropdown icon");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "content");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "title");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("i");
+          dom.setAttribute(el2, "class", "dropdown icon");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "content");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "title");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("i");
+          dom.setAttribute(el2, "class", "dropdown icon");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "content");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "title");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("i");
+          dom.setAttribute(el2, "class", "dropdown icon");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "content");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(16);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 3, 3);
+          morphs[1] = dom.createUnsafeMorphAt(dom.childAt(fragment, [3, 1]), 0, 0);
+          morphs[2] = dom.createMorphAt(dom.childAt(fragment, [5]), 3, 3);
+          morphs[3] = dom.createUnsafeMorphAt(dom.childAt(fragment, [7, 1]), 0, 0);
+          morphs[4] = dom.createMorphAt(dom.childAt(fragment, [9]), 3, 3);
+          morphs[5] = dom.createUnsafeMorphAt(dom.childAt(fragment, [11, 1]), 0, 0);
+          morphs[6] = dom.createMorphAt(dom.childAt(fragment, [13]), 3, 3);
+          morphs[7] = dom.createUnsafeMorphAt(dom.childAt(fragment, [15, 1]), 0, 0);
+          morphs[8] = dom.createMorphAt(dom.childAt(fragment, [17]), 3, 3);
+          morphs[9] = dom.createUnsafeMorphAt(dom.childAt(fragment, [19, 1]), 0, 0);
+          morphs[10] = dom.createMorphAt(dom.childAt(fragment, [21]), 3, 3);
+          morphs[11] = dom.createUnsafeMorphAt(dom.childAt(fragment, [23, 1]), 0, 0);
+          morphs[12] = dom.createMorphAt(dom.childAt(fragment, [25]), 3, 3);
+          morphs[13] = dom.createUnsafeMorphAt(dom.childAt(fragment, [27, 1]), 0, 0);
+          morphs[14] = dom.createMorphAt(dom.childAt(fragment, [29]), 3, 3);
+          morphs[15] = dom.createUnsafeMorphAt(dom.childAt(fragment, [31, 1]), 0, 0);
+          return morphs;
+        },
+        statements: [["inline", "t", ["help.issue1.question"], [], ["loc", [null, [13, 4], [13, 32]]]], ["inline", "t", ["help.issue1.answer"], [], ["loc", [null, [16, 7], [16, 35]]]], ["inline", "t", ["help.issue2.question"], [], ["loc", [null, [21, 4], [21, 32]]]], ["inline", "t", ["help.issue2.answer"], [], ["loc", [null, [24, 7], [24, 35]]]], ["inline", "t", ["help.issue3.question"], [], ["loc", [null, [29, 4], [29, 32]]]], ["inline", "t", ["help.issue3.answer"], [], ["loc", [null, [32, 7], [32, 35]]]], ["inline", "t", ["help.issue4.question"], [], ["loc", [null, [37, 4], [37, 32]]]], ["inline", "t", ["help.issue4.answer"], [], ["loc", [null, [40, 7], [40, 35]]]], ["inline", "t", ["help.issue5.question"], [], ["loc", [null, [45, 4], [45, 32]]]], ["inline", "t", ["help.issue5.answer"], [], ["loc", [null, [48, 7], [48, 35]]]], ["inline", "t", ["help.issue6.question"], [], ["loc", [null, [53, 4], [53, 32]]]], ["inline", "t", ["help.issue6.answer"], [], ["loc", [null, [56, 7], [56, 35]]]], ["inline", "t", ["help.issue7.question"], [], ["loc", [null, [61, 4], [61, 32]]]], ["inline", "t", ["help.issue7.answer"], [], ["loc", [null, [64, 7], [64, 35]]]], ["inline", "t", ["help.issue8.question"], [], ["loc", [null, [69, 4], [69, 32]]]], ["inline", "t", ["help.issue8.answer"], [], ["loc", [null, [72, 7], [72, 35]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
     return {
       meta: {
         "fragmentReason": {
@@ -10848,7 +11133,7 @@ define("rose/templates/help", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 32,
+            "line": 76,
             "column": 0
           }
         },
@@ -10890,114 +11175,22 @@ define("rose/templates/help", ["exports"], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h4");
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
         var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h4");
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h4");
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h4");
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h4");
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h4");
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h4");
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h4");
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0, 3]);
-        var morphs = new Array(18);
+        var morphs = new Array(3);
         morphs[0] = dom.createMorphAt(element0, 1, 1);
         morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]), 0, 0);
-        morphs[2] = dom.createMorphAt(dom.childAt(fragment, [2]), 0, 0);
-        morphs[3] = dom.createUnsafeMorphAt(fragment, 4, 4, contextualElement);
-        morphs[4] = dom.createMorphAt(dom.childAt(fragment, [6]), 0, 0);
-        morphs[5] = dom.createUnsafeMorphAt(fragment, 8, 8, contextualElement);
-        morphs[6] = dom.createMorphAt(dom.childAt(fragment, [10]), 0, 0);
-        morphs[7] = dom.createUnsafeMorphAt(fragment, 12, 12, contextualElement);
-        morphs[8] = dom.createMorphAt(dom.childAt(fragment, [14]), 0, 0);
-        morphs[9] = dom.createUnsafeMorphAt(fragment, 16, 16, contextualElement);
-        morphs[10] = dom.createMorphAt(dom.childAt(fragment, [18]), 0, 0);
-        morphs[11] = dom.createUnsafeMorphAt(fragment, 20, 20, contextualElement);
-        morphs[12] = dom.createMorphAt(dom.childAt(fragment, [22]), 0, 0);
-        morphs[13] = dom.createUnsafeMorphAt(fragment, 24, 24, contextualElement);
-        morphs[14] = dom.createMorphAt(dom.childAt(fragment, [26]), 0, 0);
-        morphs[15] = dom.createUnsafeMorphAt(fragment, 28, 28, contextualElement);
-        morphs[16] = dom.createMorphAt(dom.childAt(fragment, [30]), 0, 0);
-        morphs[17] = dom.createUnsafeMorphAt(fragment, 32, 32, contextualElement);
+        morphs[2] = dom.createMorphAt(fragment, 2, 2, contextualElement);
+        dom.insertBoundary(fragment, null);
         return morphs;
       },
-      statements: [["inline", "t", ["help.title"], [], ["loc", [null, [4, 4], [4, 22]]]], ["inline", "t", ["help.subtitle"], [], ["loc", [null, [5, 28], [5, 49]]]], ["inline", "t", ["help.issue1.question"], [], ["loc", [null, [9, 4], [9, 32]]]], ["inline", "t", ["help.issue1.answer"], [], ["loc", [null, [10, 0], [10, 28]]]], ["inline", "t", ["help.issue2.question"], [], ["loc", [null, [12, 4], [12, 32]]]], ["inline", "t", ["help.issue2.answer"], [], ["loc", [null, [13, 0], [13, 28]]]], ["inline", "t", ["help.issue3.question"], [], ["loc", [null, [15, 4], [15, 32]]]], ["inline", "t", ["help.issue3.answer"], [], ["loc", [null, [16, 0], [16, 28]]]], ["inline", "t", ["help.issue4.question"], [], ["loc", [null, [18, 4], [18, 32]]]], ["inline", "t", ["help.issue4.answer"], [], ["loc", [null, [19, 0], [19, 28]]]], ["inline", "t", ["help.issue5.question"], [], ["loc", [null, [21, 4], [21, 32]]]], ["inline", "t", ["help.issue5.answer"], [], ["loc", [null, [22, 0], [22, 28]]]], ["inline", "t", ["help.issue6.question"], [], ["loc", [null, [24, 4], [24, 32]]]], ["inline", "t", ["help.issue6.answer"], [], ["loc", [null, [25, 0], [25, 28]]]], ["inline", "t", ["help.issue7.question"], [], ["loc", [null, [27, 4], [27, 32]]]], ["inline", "t", ["help.issue7.answer"], [], ["loc", [null, [28, 0], [28, 28]]]], ["inline", "t", ["help.issue8.question"], [], ["loc", [null, [30, 4], [30, 32]]]], ["inline", "t", ["help.issue8.answer"], [], ["loc", [null, [31, 0], [31, 28]]]]],
+      statements: [["inline", "t", ["help.title"], [], ["loc", [null, [4, 4], [4, 22]]]], ["inline", "t", ["help.subtitle"], [], ["loc", [null, [5, 28], [5, 49]]]], ["block", "ui-accordion", [], [], 0, null, ["loc", [null, [9, 0], [75, 17]]]]],
       locals: [],
-      templates: []
+      templates: [child0]
     };
   })());
 });

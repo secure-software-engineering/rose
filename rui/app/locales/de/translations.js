@@ -233,7 +233,7 @@ export default {
     exportConfigDesc: 'Hier können Sie eine Konfigurationsdatei exportieren, welche alle Einstellungen von dieser Seite enthält. Ihre Studienteilnehmer können diese Datei in ihre ROSE-Installation laden.',
     fingerprint: 'Schlüssel-Fingerabdruck des Speichers für Datensammel-Pakete',
     fingerprintDesc: 'Aus Sicherheitsgründen müssen die Muster in den Datensammel-Paketen mit RSA signiert werden. Diese Signatur wird geprüft, bevor ROSE die enthaltenen Muster lädt. Bitte geben Sie den hexadezimalen SHA-1-Fingerabdruck für den öffentlichen Schlüssel ein, welchen ROSE benutzen soll, um die digitale Signatur zu prüfen.',
-    optionalFeaturesHeader: 'Optionale Funktionen',
+    optionalFeaturesHeader: 'Optionale Facebook-Funktionen',
     privacyHeader: 'Privatsphäre-Einstellungen',
     repositoryHeader: 'Speicher für Datensammel-Pakete konfigurieren',
     configurationHeader: 'Datensammlung konfigurieren',

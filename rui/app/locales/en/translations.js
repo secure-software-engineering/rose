@@ -234,7 +234,7 @@ export default {
     exportConfigDesc: 'Here you can create and export a configuration file with all the settings entered on this page. Your participants can load this file into their installations of ROSE.',
     fingerprint: 'Pattern repository signing key fingerprint',
     fingerprintDesc: 'For reasons of security, the patterns stored in the tracking package repository need to be signed with a RSA private key. This signature is validated before ROSE loads any patterns. Please enter the hexadecimal SHA-1 fingerprint of the public key ROSE shall use to verify the digital signature.',
-    optionalFeaturesHeader: 'Optional features',
+    optionalFeaturesHeader: 'Optional Facebook features',
     privacyHeader: 'Privacy settings',
     repositoryHeader: 'Configure tracking package repository',
     configurationHeader: 'Configure tracking',

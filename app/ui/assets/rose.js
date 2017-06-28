@@ -7159,6 +7159,48 @@ define("rose/templates/comments", ["exports"], function (exports) {
         templates: []
       };
     })();
+    var child3 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 23,
+              "column": 0
+            },
+            "end": {
+              "line": 27,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/comments.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "page-numbers", [], ["content", ["subexpr", "@mut", [["get", "pagedContent", ["loc", [null, [24, 26], [24, 38]]]]], [], []], "numPagesToShow", 5, "showFL", true], ["loc", [null, [24, 2], [26, 31]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
     return {
       meta: {
         "fragmentReason": {
@@ -7173,7 +7215,7 @@ define("rose/templates/comments", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 22,
+            "line": 28,
             "column": 0
           }
         },
@@ -7226,22 +7268,26 @@ define("rose/templates/comments", ["exports"], function (exports) {
         var el2 = dom.createComment("");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0, 3]);
-        var morphs = new Array(4);
+        var morphs = new Array(5);
         morphs[0] = dom.createMorphAt(element0, 1, 1);
         morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]), 0, 0);
         morphs[2] = dom.createMorphAt(fragment, 2, 2, contextualElement);
         morphs[3] = dom.createMorphAt(dom.childAt(fragment, [4]), 1, 1);
+        morphs[4] = dom.createMorphAt(fragment, 6, 6, contextualElement);
+        dom.insertBoundary(fragment, null);
         return morphs;
       },
-      statements: [["inline", "t", ["comments.title"], [], ["loc", [null, [4, 4], [4, 26]]]], ["inline", "t", ["comments.subtitle"], [], ["loc", [null, [5, 28], [5, 53]]]], ["block", "if", [["get", "pagedContent", ["loc", [null, [9, 6], [9, 18]]]]], [], 0, null, ["loc", [null, [9, 0], [13, 7]]]], ["block", "each", [["get", "pagedContent", ["loc", [null, [16, 10], [16, 22]]]]], [], 1, 2, ["loc", [null, [16, 2], [20, 11]]]]],
+      statements: [["inline", "t", ["comments.title"], [], ["loc", [null, [4, 4], [4, 26]]]], ["inline", "t", ["comments.subtitle"], [], ["loc", [null, [5, 28], [5, 53]]]], ["block", "if", [["get", "pagedContent", ["loc", [null, [9, 6], [9, 18]]]]], [], 0, null, ["loc", [null, [9, 0], [13, 7]]]], ["block", "each", [["get", "pagedContent", ["loc", [null, [16, 10], [16, 22]]]]], [], 1, 2, ["loc", [null, [16, 2], [20, 11]]]], ["block", "if", [["get", "pagedContent", ["loc", [null, [23, 6], [23, 18]]]]], [], 3, null, ["loc", [null, [23, 0], [27, 7]]]]],
       locals: [],
-      templates: [child0, child1, child2]
+      templates: [child0, child1, child2, child3]
     };
   })());
 });
@@ -10654,6 +10700,48 @@ define("rose/templates/extracts", ["exports"], function (exports) {
         templates: []
       };
     })();
+    var child3 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 25,
+              "column": 0
+            },
+            "end": {
+              "line": 29,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/extracts.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "page-numbers", [], ["content", ["subexpr", "@mut", [["get", "pagedContent", ["loc", [null, [26, 26], [26, 38]]]]], [], []], "numPagesToShow", 5, "showFL", true], ["loc", [null, [26, 2], [28, 31]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
     return {
       meta: {
         "fragmentReason": {
@@ -10668,7 +10756,7 @@ define("rose/templates/extracts", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 24,
+            "line": 30,
             "column": 0
           }
         },
@@ -10721,22 +10809,26 @@ define("rose/templates/extracts", ["exports"], function (exports) {
         var el2 = dom.createComment("");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0, 3]);
-        var morphs = new Array(4);
+        var morphs = new Array(5);
         morphs[0] = dom.createMorphAt(element0, 1, 1);
         morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]), 0, 0);
         morphs[2] = dom.createMorphAt(fragment, 2, 2, contextualElement);
         morphs[3] = dom.createMorphAt(dom.childAt(fragment, [4]), 1, 1);
+        morphs[4] = dom.createMorphAt(fragment, 6, 6, contextualElement);
+        dom.insertBoundary(fragment, null);
         return morphs;
       },
-      statements: [["inline", "t", ["extracts.title"], [], ["loc", [null, [4, 4], [4, 26]]]], ["inline", "t", ["extracts.subtitle"], [], ["loc", [null, [5, 28], [5, 53]]]], ["block", "if", [["get", "pagedContent", ["loc", [null, [9, 6], [9, 18]]]]], [], 0, null, ["loc", [null, [9, 0], [13, 7]]]], ["block", "each", [["get", "pagedContent", ["loc", [null, [16, 10], [16, 22]]]]], [], 1, 2, ["loc", [null, [16, 2], [22, 11]]]]],
+      statements: [["inline", "t", ["extracts.title"], [], ["loc", [null, [4, 4], [4, 26]]]], ["inline", "t", ["extracts.subtitle"], [], ["loc", [null, [5, 28], [5, 53]]]], ["block", "if", [["get", "pagedContent", ["loc", [null, [9, 6], [9, 18]]]]], [], 0, null, ["loc", [null, [9, 0], [13, 7]]]], ["block", "each", [["get", "pagedContent", ["loc", [null, [16, 10], [16, 22]]]]], [], 1, 2, ["loc", [null, [16, 2], [22, 11]]]], ["block", "if", [["get", "pagedContent", ["loc", [null, [25, 6], [25, 18]]]]], [], 3, null, ["loc", [null, [25, 0], [29, 7]]]]],
       locals: [],
-      templates: [child0, child1, child2]
+      templates: [child0, child1, child2, child3]
     };
   })());
 });
@@ -11301,6 +11393,48 @@ define("rose/templates/interactions", ["exports"], function (exports) {
         templates: []
       };
     })();
+    var child3 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 26,
+              "column": 0
+            },
+            "end": {
+              "line": 30,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/interactions.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "page-numbers", [], ["content", ["subexpr", "@mut", [["get", "pagedContent", ["loc", [null, [27, 26], [27, 38]]]]], [], []], "numPagesToShow", 5, "showFL", true], ["loc", [null, [27, 2], [29, 31]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
     return {
       meta: {
         "fragmentReason": {
@@ -11315,7 +11449,7 @@ define("rose/templates/interactions", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 24,
+            "line": 31,
             "column": 0
           }
         },
@@ -11368,22 +11502,26 @@ define("rose/templates/interactions", ["exports"], function (exports) {
         var el2 = dom.createComment("");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
+        var el1 = dom.createTextNode("\n\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0, 3]);
-        var morphs = new Array(4);
+        var morphs = new Array(5);
         morphs[0] = dom.createMorphAt(element0, 1, 1);
         morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]), 0, 0);
         morphs[2] = dom.createMorphAt(fragment, 2, 2, contextualElement);
         morphs[3] = dom.createMorphAt(dom.childAt(fragment, [4]), 1, 1);
+        morphs[4] = dom.createMorphAt(fragment, 6, 6, contextualElement);
+        dom.insertBoundary(fragment, null);
         return morphs;
       },
-      statements: [["inline", "t", ["interactions.title"], [], ["loc", [null, [4, 4], [4, 30]]]], ["inline", "t", ["interactions.subtitle"], [], ["loc", [null, [5, 28], [5, 57]]]], ["block", "if", [["get", "pagedContent", ["loc", [null, [9, 6], [9, 18]]]]], [], 0, null, ["loc", [null, [9, 0], [13, 7]]]], ["block", "each", [["get", "pagedContent", ["loc", [null, [16, 10], [16, 22]]]]], [], 1, 2, ["loc", [null, [16, 2], [22, 11]]]]],
+      statements: [["inline", "t", ["interactions.title"], [], ["loc", [null, [4, 4], [4, 30]]]], ["inline", "t", ["interactions.subtitle"], [], ["loc", [null, [5, 28], [5, 57]]]], ["block", "if", [["get", "pagedContent", ["loc", [null, [9, 6], [9, 18]]]]], [], 0, null, ["loc", [null, [9, 0], [13, 7]]]], ["block", "each", [["get", "pagedContent", ["loc", [null, [16, 10], [16, 22]]]]], [], 1, 2, ["loc", [null, [16, 2], [22, 11]]]], ["block", "if", [["get", "pagedContent", ["loc", [null, [26, 6], [26, 18]]]]], [], 3, null, ["loc", [null, [26, 0], [30, 7]]]]],
       locals: [],
-      templates: [child0, child1, child2]
+      templates: [child0, child1, child2, child3]
     };
   })());
 });

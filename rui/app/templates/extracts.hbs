@@ -21,3 +21,9 @@
     {{no-data-message}}
   {{/each}}
 </div>
+
+{{#if pagedContent}}
+  {{page-numbers  content=pagedContent
+                  numPagesToShow=5
+                  showFL=true}}
+{{/if}}

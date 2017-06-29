@@ -34,7 +34,10 @@ export default {
     subtitle: 'Gesamtanzahl gesammelter Datensätze in Ihrer lokalen ROSE-Installation.',
     trackingEnabledHeader: 'Jegliches Erfassen von Daten an/aus',
     trackingEnabled: 'Die Datenerfassung ist komplett aktiviert.',
-    trackingDisabled: 'Die Datenerfassung ist komplett deaktiviert.'
+    trackingDisabled: 'Die Datenerfassung ist komplett deaktiviert.',
+    comments: 'Kommentare',
+    interactions: 'Interaktionen',
+    extracts: 'Extrakte'
   },
 
   // Sidebar Menu

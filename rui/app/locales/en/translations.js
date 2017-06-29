@@ -34,7 +34,10 @@ export default {
     subtitle: 'Count of items collected in your local ROSE installation',
     trackingEnabledHeader: 'All Tracking function on/off',
     trackingEnabled: 'Tracking is globally enabled.',
-    trackingDisabled: 'Tracking is globally disabled.'
+    trackingDisabled: 'Tracking is globally disabled.',
+    comments: 'Comments',
+    interactions: 'Interactions',
+    extracts: 'Extracts'
   },
 
   // Sidebar Menu

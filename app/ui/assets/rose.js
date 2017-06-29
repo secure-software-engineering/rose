@@ -2107,7 +2107,10 @@ define('rose/locales/de/translations', ['exports'], function (exports) {
       subtitle: 'Gesamtanzahl gesammelter Datensätze in Ihrer lokalen ROSE-Installation.',
       trackingEnabledHeader: 'Jegliches Erfassen von Daten an/aus',
       trackingEnabled: 'Die Datenerfassung ist komplett aktiviert.',
-      trackingDisabled: 'Die Datenerfassung ist komplett deaktiviert.'
+      trackingDisabled: 'Die Datenerfassung ist komplett deaktiviert.',
+      comments: 'Kommentare',
+      interactions: 'Interaktionen',
+      extracts: 'Extrakte'
     },
 
     // Sidebar Menu
@@ -2388,7 +2391,10 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
       subtitle: 'Count of items collected in your local ROSE installation',
       trackingEnabledHeader: 'All Tracking function on/off',
       trackingEnabled: 'Tracking is globally enabled.',
-      trackingDisabled: 'Tracking is globally disabled.'
+      trackingDisabled: 'Tracking is globally disabled.',
+      comments: 'Comments',
+      interactions: 'Interactions',
+      extracts: 'Extracts'
     },
 
     // Sidebar Menu
@@ -5907,7 +5913,7 @@ define("rose/pods/components/statistic-item/template", ["exports"], function (ex
         morphs[1] = dom.createMorphAt(dom.childAt(fragment, [2]), 1, 1);
         return morphs;
       },
-      statements: [["content", "count", ["loc", [null, [2, 4], [2, 13]]]], ["content", "label", ["loc", [null, [5, 4], [5, 13]]]]],
+      statements: [["content", "count", ["loc", [null, [2, 4], [2, 13]]]], ["inline", "t", [["get", "label", ["loc", [null, [5, 8], [5, 13]]]]], [], ["loc", [null, [5, 4], [5, 15]]]]],
       locals: [],
       templates: []
     };
@@ -11236,11 +11242,11 @@ define("rose/templates/index", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 9,
+              "line": 27,
               "column": 0
             },
             "end": {
-              "line": 23,
+              "line": 41,
               "column": 0
             }
           },
@@ -11315,7 +11321,7 @@ define("rose/templates/index", ["exports"], function (exports) {
           morphs[4] = dom.createMorphAt(element0, 7, 7);
           return morphs;
         },
-        statements: [["attribute", "class", ["concat", [["get", "network.name", ["loc", [null, [13, 24], [13, 36]]]], " icon"]]], ["content", "network.descriptiveName", ["loc", [null, [16, 12], [16, 39]]]], ["inline", "statistic-item", [], ["label", "Comments", "network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [19, 46], [19, 58]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.comments", ["loc", [null, [19, 64], [19, 78]]]]], [], []]], ["loc", [null, [19, 4], [19, 80]]]], ["inline", "statistic-item", [], ["label", "Interactions", "network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [20, 50], [20, 62]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.interactions", ["loc", [null, [20, 68], [20, 86]]]]], [], []]], ["loc", [null, [20, 4], [20, 88]]]], ["inline", "statistic-item", [], ["label", "Extracts", "network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [21, 46], [21, 58]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.extracts", ["loc", [null, [21, 64], [21, 78]]]]], [], []]], ["loc", [null, [21, 4], [21, 80]]]]],
+        statements: [["attribute", "class", ["concat", [["get", "network.name", ["loc", [null, [31, 24], [31, 36]]]], " icon"]]], ["content", "network.descriptiveName", ["loc", [null, [34, 12], [34, 39]]]], ["inline", "statistic-item", [], ["label", "index.comments", "network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [37, 52], [37, 64]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.comments", ["loc", [null, [37, 70], [37, 84]]]]], [], []]], ["loc", [null, [37, 4], [37, 86]]]], ["inline", "statistic-item", [], ["label", "index.interactions", "network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [38, 56], [38, 68]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.interactions", ["loc", [null, [38, 74], [38, 92]]]]], [], []]], ["loc", [null, [38, 4], [38, 94]]]], ["inline", "statistic-item", [], ["label", "index.extracts", "network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [39, 52], [39, 64]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.extracts", ["loc", [null, [39, 70], [39, 84]]]]], [], []]], ["loc", [null, [39, 4], [39, 86]]]]],
         locals: ["network"],
         templates: []
       };
@@ -11376,15 +11382,6 @@ define("rose/templates/index", ["exports"], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("div");
-        dom.setAttribute(el1, "class", "ui divider");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
         var el1 = dom.createElement("div");
         var el2 = dom.createTextNode("\n    ");
         dom.appendChild(el1, el2);
@@ -11428,23 +11425,31 @@ define("rose/templates/index", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1, "class", "ui divider");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element3 = dom.childAt(fragment, [0, 3]);
-        var element4 = dom.childAt(fragment, [6]);
+        var element4 = dom.childAt(fragment, [2]);
         var morphs = new Array(6);
         morphs[0] = dom.createMorphAt(element3, 1, 1);
         morphs[1] = dom.createMorphAt(dom.childAt(element3, [3]), 0, 0);
-        morphs[2] = dom.createMorphAt(fragment, 2, 2, contextualElement);
-        morphs[3] = dom.createAttrMorph(element4, 'class');
-        morphs[4] = dom.createMorphAt(dom.childAt(element4, [1]), 3, 3);
-        morphs[5] = dom.createMorphAt(dom.childAt(element4, [3, 3]), 1, 1);
+        morphs[2] = dom.createAttrMorph(element4, 'class');
+        morphs[3] = dom.createMorphAt(dom.childAt(element4, [1]), 3, 3);
+        morphs[4] = dom.createMorphAt(dom.childAt(element4, [3, 3]), 1, 1);
+        morphs[5] = dom.createMorphAt(fragment, 6, 6, contextualElement);
+        dom.insertBoundary(fragment, null);
         return morphs;
       },
-      statements: [["inline", "t", ["index.title"], [], ["loc", [null, [4, 8], [4, 27]]]], ["inline", "t", ["index.subtitle"], [], ["loc", [null, [5, 32], [5, 54]]]], ["block", "each", [["get", "networks", ["loc", [null, [9, 8], [9, 16]]]]], [], 0, null, ["loc", [null, [9, 0], [23, 9]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [27, 22], [27, 34]]]]]]], ["inline", "t", ["index.trackingEnabledHeader"], [], ["loc", [null, [30, 6], [30, 41]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.trackingEnabled", ["loc", [null, [36, 34], [36, 63]]]]], [], []], "label", ["subexpr", "@mut", [["get", "trackingEnabledLabel", ["loc", [null, [37, 32], [37, 52]]]]], [], []], "onChange", ["subexpr", "action", ["toggleTracking"], [], ["loc", [null, [38, 35], [38, 60]]]]], ["loc", [null, [35, 12], [38, 62]]]]],
+      statements: [["inline", "t", ["index.title"], [], ["loc", [null, [4, 8], [4, 27]]]], ["inline", "t", ["index.subtitle"], [], ["loc", [null, [5, 32], [5, 54]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [9, 22], [9, 34]]]]]]], ["inline", "t", ["index.trackingEnabledHeader"], [], ["loc", [null, [12, 6], [12, 41]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.trackingEnabled", ["loc", [null, [18, 34], [18, 63]]]]], [], []], "label", ["subexpr", "@mut", [["get", "trackingEnabledLabel", ["loc", [null, [19, 32], [19, 52]]]]], [], []], "onChange", ["subexpr", "action", ["toggleTracking"], [], ["loc", [null, [20, 35], [20, 60]]]]], ["loc", [null, [17, 12], [20, 62]]]], ["block", "each", [["get", "networks", ["loc", [null, [27, 8], [27, 16]]]]], [], 0, null, ["loc", [null, [27, 0], [41, 9]]]]],
       locals: [],
       templates: [child0]
     };

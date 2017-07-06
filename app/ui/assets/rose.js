@@ -2394,7 +2394,12 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
       trackingDisabled: 'Tracking is globally disabled.',
       comments: 'Comments',
       interactions: 'Interactions',
-      extracts: 'Extracts'
+      extracts: 'Extracts',
+      clicks: 'Clicks',
+      logins: 'Logins',
+      mousemoves: 'Mouse moved (px)',
+      scroll: 'Scrolled (px)',
+      windows: '# tab visits'
     },
 
     // Sidebar Menu
@@ -2758,6 +2763,105 @@ define('rose/models/user-setting', ['exports', 'ember-data'], function (exports,
     currentLanguage: _emberData['default'].attr('string', { defaultValue: 'en' }),
     firstRun: _emberData['default'].attr('boolean', { defaultValue: true })
   });
+});
+define('rose/pods/components/activity-statistic/component', ['exports', 'ember'], function (exports, _ember) {
+  exports['default'] = _ember['default'].Component.extend({
+    tagName: 'td',
+
+    count: _ember['default'].computed('data', function () {
+      var data = this.get('data');
+      var network = this.get('network');
+      var filtered = data.filter(function (activity) {
+        return activity.network === network;
+      });
+      var sum = 0;
+      switch (this.get('type')) {
+        case 'comments':
+        case 'interactions':
+        case 'extracts':
+          //
+          break;
+        case 'clicks':
+        case 'mousemoves':
+        case 'scroll':
+          sum = filtered.reduce(function (sum, activity) {
+            return sum + activity.value;
+          }, 0);
+          break;
+        case 'logins':
+          break;
+        case 'windows':
+          break;
+      }
+      return sum;
+    })
+  });
+});
+/*
+Copyright (C) 2016-2017
+    Oliver Hoffmann <oliverh855@gmail.com>
+    Felix A. Epp <work@felixepp.de>
+
+This file is part of ROSE.
+
+ROSE is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ROSE is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
+*/
+define("rose/pods/components/activity-statistic/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["wrong-type"]
+        },
+        "revision": "Ember@2.2.2",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 3,
+            "column": 0
+          }
+        },
+        "moduleName": "rose/pods/components/activity-statistic/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
+        dom.insertBoundary(fragment, 0);
+        return morphs;
+      },
+      statements: [["content", "count", ["loc", [null, [1, 0], [1, 9]]]]],
+      locals: [],
+      templates: []
+    };
+  })());
 });
 define('rose/pods/components/diary-entry/component', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Component.extend({
@@ -5825,20 +5929,52 @@ define("rose/pods/components/rose-interaction/template", ["exports"], function (
   })());
 });
 define('rose/pods/components/statistic-item/component', ['exports', 'ember'], function (exports, _ember) {
-    exports['default'] = _ember['default'].Component.extend({
-        classNames: ['statistic'],
+  exports['default'] = _ember['default'].Component.extend({
+    tagName: 'td',
 
-        count: _ember['default'].computed('data', function () {
-            var data = this.get('data');
-            var filtered = data.filterBy('network', this.get('network'));
-            var filteredOrigin = data.filterBy('origin.network', this.get('network'));
-            return filtered.length || filteredOrigin.length;
-        })
-    });
+    count: _ember['default'].computed('data', function () {
+      var data = this.get('data');
+      var network = this.get('network');
+
+      var filtered = [];
+      var sum = 0;
+      switch (this.get('type')) {
+        case 'comments':
+          sum = data.filterBy('network', network).length;
+          break;
+        case 'interactions':
+        case 'extracts':
+          sum = data.filterBy('origin.network', network).length;
+          break;
+        case 'clicks':
+        case 'mousemoves':
+        case 'scroll':
+          filtered = data.filter(function (activity) {
+            return activity.network === network;
+          });
+          sum = filtered.reduce(function (sum, activity) {
+            return sum + activity.value;
+          }, 0);
+          break;
+        case 'logins':
+          sum = data.filter(function (activity) {
+            return activity.network === network && activity.value !== false;
+          }).length;
+          break;
+        case 'windows':
+          sum = data.filter(function (activity) {
+            return activity.network === network && activity.value.open && activity.value.active;
+          }).length;
+          break;
+      }
+      return Math.floor(sum);
+    })
+  });
 });
-/*
-Copyright (C) 2016
+/* /*
+Copyright (C) 2016-2017
     Oliver Hoffmann <oliverh855@gmail.com>
+    Felix A. Epp <work@felixepp.de>
 
 This file is part of ROSE.
 
@@ -5861,7 +5997,7 @@ define("rose/pods/components/statistic-item/template", ["exports"], function (ex
       meta: {
         "fragmentReason": {
           "name": "missing-wrapper",
-          "problems": ["multiple-nodes"]
+          "problems": ["wrong-type"]
         },
         "revision": "Ember@2.2.2",
         "loc": {
@@ -5871,7 +6007,7 @@ define("rose/pods/components/statistic-item/template", ["exports"], function (ex
             "column": 0
           },
           "end": {
-            "line": 8,
+            "line": 3,
             "column": 0
           }
         },
@@ -5883,37 +6019,19 @@ define("rose/pods/components/statistic-item/template", ["exports"], function (ex
       hasRendered: false,
       buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
-        var el1 = dom.createElement("div");
-        dom.setAttribute(el1, "class", "value");
-        var el2 = dom.createTextNode("\n    ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("div");
-        dom.setAttribute(el1, "class", "label");
-        var el2 = dom.createTextNode("\n    ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
+        var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var morphs = new Array(2);
-        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [0]), 1, 1);
-        morphs[1] = dom.createMorphAt(dom.childAt(fragment, [2]), 1, 1);
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
+        dom.insertBoundary(fragment, 0);
         return morphs;
       },
-      statements: [["content", "count", ["loc", [null, [2, 4], [2, 13]]]], ["inline", "t", [["get", "label", ["loc", [null, [5, 8], [5, 13]]]]], [], ["loc", [null, [5, 4], [5, 15]]]]],
+      statements: [["content", "count", ["loc", [null, [1, 0], [1, 9]]]]],
       locals: [],
       templates: []
     };
@@ -6234,12 +6352,26 @@ define('rose/routes/help', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Route.extend({});
 });
 define('rose/routes/index', ['exports', 'ember'], function (exports, _ember) {
+
+  var getItem = function getItem(key) {
+    return new _ember['default'].RSVP.Promise(function (resolve) {
+      kango.invokeAsyncCallback('localforage.getItem', key, function (data) {
+        resolve(data);
+      });
+    });
+  };
+
   exports['default'] = _ember['default'].Route.extend({
     model: function model() {
       return _ember['default'].RSVP.hash({
         comments: this.store.findAll('comment'),
         interactions: this.store.findAll('interaction'),
-        extracts: this.store.findAll('extract')
+        extracts: this.store.findAll('extract'),
+        clicks: getItem('click-activity-records'),
+        logins: getItem('fb-login-activity-records'),
+        mousemoves: getItem('mousemove-activity-records'),
+        scroll: getItem('scroll-activity-records'),
+        windows: getItem('window-activity-records')
       });
     },
 
@@ -11242,11 +11374,11 @@ define("rose/templates/index", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 27,
+              "line": 42,
               "column": 0
             },
             "end": {
-              "line": 41,
+              "line": 56,
               "column": 0
             }
           },
@@ -11258,51 +11390,57 @@ define("rose/templates/index", ["exports"], function (exports) {
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createElement("div");
-          dom.setAttribute(el1, "class", "ui four statistics");
-          dom.setAttribute(el1, "style", "margin-top:2em; margin-bottom: -1em;");
-          var el2 = dom.createTextNode("\n    ");
+          var el1 = dom.createTextNode("    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("tr");
+          var el2 = dom.createTextNode("\n      ");
           dom.appendChild(el1, el2);
-          var el2 = dom.createElement("div");
-          dom.setAttribute(el2, "class", "statistic");
+          var el2 = dom.createElement("td");
+          dom.setAttribute(el2, "class", "collapsing");
           var el3 = dom.createTextNode("\n        ");
           dom.appendChild(el2, el3);
-          var el3 = dom.createElement("div");
-          dom.setAttribute(el3, "class", "value");
-          var el4 = dom.createTextNode("\n            ");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createElement("i");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createTextNode("\n        ");
-          dom.appendChild(el3, el4);
+          var el3 = dom.createElement("i");
           dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n        ");
+          var el3 = dom.createTextNode(" ");
           dom.appendChild(el2, el3);
-          var el3 = dom.createElement("div");
-          dom.setAttribute(el3, "class", "label");
-          var el4 = dom.createTextNode("\n            ");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createComment("");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createTextNode("\n        ");
-          dom.appendChild(el3, el4);
+          var el3 = dom.createComment("");
           dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n    ");
+          var el3 = dom.createTextNode("\n      ");
           dom.appendChild(el2, el3);
           dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n    ");
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
           dom.appendChild(el1, el2);
           var el2 = dom.createComment("");
           dom.appendChild(el1, el2);
           var el2 = dom.createTextNode("\n    ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n    ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n");
           dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n");
@@ -11310,18 +11448,23 @@ define("rose/templates/index", ["exports"], function (exports) {
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element0 = dom.childAt(fragment, [0]);
+          var element0 = dom.childAt(fragment, [1]);
           var element1 = dom.childAt(element0, [1]);
-          var element2 = dom.childAt(element1, [1, 1]);
-          var morphs = new Array(5);
+          var element2 = dom.childAt(element1, [1]);
+          var morphs = new Array(10);
           morphs[0] = dom.createAttrMorph(element2, 'class');
-          morphs[1] = dom.createMorphAt(dom.childAt(element1, [3]), 1, 1);
+          morphs[1] = dom.createMorphAt(element1, 3, 3);
           morphs[2] = dom.createMorphAt(element0, 3, 3);
           morphs[3] = dom.createMorphAt(element0, 5, 5);
           morphs[4] = dom.createMorphAt(element0, 7, 7);
+          morphs[5] = dom.createMorphAt(element0, 9, 9);
+          morphs[6] = dom.createMorphAt(element0, 11, 11);
+          morphs[7] = dom.createMorphAt(element0, 13, 13);
+          morphs[8] = dom.createMorphAt(element0, 15, 15);
+          morphs[9] = dom.createMorphAt(element0, 17, 17);
           return morphs;
         },
-        statements: [["attribute", "class", ["concat", [["get", "network.name", ["loc", [null, [31, 24], [31, 36]]]], " icon"]]], ["content", "network.descriptiveName", ["loc", [null, [34, 12], [34, 39]]]], ["inline", "statistic-item", [], ["label", "index.comments", "network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [37, 52], [37, 64]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.comments", ["loc", [null, [37, 70], [37, 84]]]]], [], []]], ["loc", [null, [37, 4], [37, 86]]]], ["inline", "statistic-item", [], ["label", "index.interactions", "network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [38, 56], [38, 68]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.interactions", ["loc", [null, [38, 74], [38, 92]]]]], [], []]], ["loc", [null, [38, 4], [38, 94]]]], ["inline", "statistic-item", [], ["label", "index.extracts", "network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [39, 52], [39, 64]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.extracts", ["loc", [null, [39, 70], [39, 84]]]]], [], []]], ["loc", [null, [39, 4], [39, 86]]]]],
+        statements: [["attribute", "class", ["concat", [["get", "network.name", ["loc", [null, [45, 20], [45, 32]]]], " icon"]]], ["content", "network.descriptiveName", ["loc", [null, [45, 46], [45, 73]]]], ["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [47, 31], [47, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.comments", ["loc", [null, [47, 49], [47, 63]]]]], [], []], "type", "comments"], ["loc", [null, [47, 6], [47, 81]]]], ["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [48, 31], [48, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.interactions", ["loc", [null, [48, 49], [48, 67]]]]], [], []], "type", "interactions"], ["loc", [null, [48, 6], [48, 89]]]], ["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [49, 31], [49, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.extracts", ["loc", [null, [49, 49], [49, 63]]]]], [], []], "type", "extracts"], ["loc", [null, [49, 6], [49, 81]]]], ["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [50, 31], [50, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.clicks", ["loc", [null, [50, 49], [50, 61]]]]], [], []], "type", "clicks"], ["loc", [null, [50, 6], [50, 77]]]], ["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [51, 31], [51, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.scroll", ["loc", [null, [51, 49], [51, 61]]]]], [], []], "type", "scroll"], ["loc", [null, [51, 6], [51, 77]]]], ["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [52, 31], [52, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.mousemoves", ["loc", [null, [52, 49], [52, 65]]]]], [], []], "type", "mousemoves"], ["loc", [null, [52, 6], [52, 85]]]], ["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [53, 31], [53, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.logins", ["loc", [null, [53, 49], [53, 61]]]]], [], []], "type", "logins"], ["loc", [null, [53, 6], [53, 77]]]], ["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [54, 31], [54, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.windows", ["loc", [null, [54, 49], [54, 62]]]]], [], []], "type", "windows"], ["loc", [null, [54, 6], [54, 79]]]]],
         locals: ["network"],
         templates: []
       };
@@ -11330,7 +11473,7 @@ define("rose/templates/index", ["exports"], function (exports) {
       meta: {
         "fragmentReason": {
           "name": "missing-wrapper",
-          "problems": ["multiple-nodes", "wrong-type"]
+          "problems": ["multiple-nodes"]
         },
         "revision": "Ember@2.2.2",
         "loc": {
@@ -11340,7 +11483,7 @@ define("rose/templates/index", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 42,
+            "line": 59,
             "column": 0
           }
         },
@@ -11432,24 +11575,112 @@ define("rose/templates/index", ["exports"], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
+        var el1 = dom.createElement("table");
+        dom.setAttribute(el1, "class", "ui definition table");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("thead");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("tr");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("th");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("th");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("th");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("th");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("th");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("th");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("th");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("th");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("th");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("tbody");
+        var el3 = dom.createTextNode("\n");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element3 = dom.childAt(fragment, [0, 3]);
         var element4 = dom.childAt(fragment, [2]);
-        var morphs = new Array(6);
+        var element5 = dom.childAt(fragment, [6]);
+        var element6 = dom.childAt(element5, [1, 1]);
+        var morphs = new Array(14);
         morphs[0] = dom.createMorphAt(element3, 1, 1);
         morphs[1] = dom.createMorphAt(dom.childAt(element3, [3]), 0, 0);
         morphs[2] = dom.createAttrMorph(element4, 'class');
         morphs[3] = dom.createMorphAt(dom.childAt(element4, [1]), 3, 3);
         morphs[4] = dom.createMorphAt(dom.childAt(element4, [3, 3]), 1, 1);
-        morphs[5] = dom.createMorphAt(fragment, 6, 6, contextualElement);
-        dom.insertBoundary(fragment, null);
+        morphs[5] = dom.createMorphAt(dom.childAt(element6, [3]), 0, 0);
+        morphs[6] = dom.createMorphAt(dom.childAt(element6, [5]), 0, 0);
+        morphs[7] = dom.createMorphAt(dom.childAt(element6, [7]), 0, 0);
+        morphs[8] = dom.createMorphAt(dom.childAt(element6, [9]), 0, 0);
+        morphs[9] = dom.createMorphAt(dom.childAt(element6, [11]), 0, 0);
+        morphs[10] = dom.createMorphAt(dom.childAt(element6, [13]), 0, 0);
+        morphs[11] = dom.createMorphAt(dom.childAt(element6, [15]), 0, 0);
+        morphs[12] = dom.createMorphAt(dom.childAt(element6, [17]), 0, 0);
+        morphs[13] = dom.createMorphAt(dom.childAt(element5, [3]), 1, 1);
         return morphs;
       },
-      statements: [["inline", "t", ["index.title"], [], ["loc", [null, [4, 8], [4, 27]]]], ["inline", "t", ["index.subtitle"], [], ["loc", [null, [5, 32], [5, 54]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [9, 22], [9, 34]]]]]]], ["inline", "t", ["index.trackingEnabledHeader"], [], ["loc", [null, [12, 6], [12, 41]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.trackingEnabled", ["loc", [null, [18, 34], [18, 63]]]]], [], []], "label", ["subexpr", "@mut", [["get", "trackingEnabledLabel", ["loc", [null, [19, 32], [19, 52]]]]], [], []], "onChange", ["subexpr", "action", ["toggleTracking"], [], ["loc", [null, [20, 35], [20, 60]]]]], ["loc", [null, [17, 12], [20, 62]]]], ["block", "each", [["get", "networks", ["loc", [null, [27, 8], [27, 16]]]]], [], 0, null, ["loc", [null, [27, 0], [41, 9]]]]],
+      statements: [["inline", "t", ["index.title"], [], ["loc", [null, [4, 8], [4, 27]]]], ["inline", "t", ["index.subtitle"], [], ["loc", [null, [5, 32], [5, 54]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [9, 22], [9, 34]]]]]]], ["inline", "t", ["index.trackingEnabledHeader"], [], ["loc", [null, [12, 6], [12, 41]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.trackingEnabled", ["loc", [null, [18, 34], [18, 63]]]]], [], []], "label", ["subexpr", "@mut", [["get", "trackingEnabledLabel", ["loc", [null, [19, 32], [19, 52]]]]], [], []], "onChange", ["subexpr", "action", ["toggleTracking"], [], ["loc", [null, [20, 35], [20, 60]]]]], ["loc", [null, [17, 12], [20, 62]]]], ["inline", "t", ["index.comments"], [], ["loc", [null, [31, 10], [31, 32]]]], ["inline", "t", ["index.interactions"], [], ["loc", [null, [32, 10], [32, 36]]]], ["inline", "t", ["index.extracts"], [], ["loc", [null, [33, 10], [33, 32]]]], ["inline", "t", ["index.clicks"], [], ["loc", [null, [34, 10], [34, 30]]]], ["inline", "t", ["index.scroll"], [], ["loc", [null, [35, 10], [35, 30]]]], ["inline", "t", ["index.mousemoves"], [], ["loc", [null, [36, 10], [36, 34]]]], ["inline", "t", ["index.logins"], [], ["loc", [null, [37, 10], [37, 30]]]], ["inline", "t", ["index.windows"], [], ["loc", [null, [38, 10], [38, 31]]]], ["block", "each", [["get", "networks", ["loc", [null, [42, 8], [42, 16]]]]], [], 0, null, ["loc", [null, [42, 0], [56, 9]]]]],
       locals: [],
       templates: [child0]
     };

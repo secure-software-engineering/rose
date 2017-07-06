@@ -37,7 +37,12 @@ export default {
     trackingDisabled: 'Tracking is globally disabled.',
     comments: 'Comments',
     interactions: 'Interactions',
-    extracts: 'Extracts'
+    extracts: 'Extracts',
+    clicks: 'Clicks',
+    logins: 'Logins',
+    mousemoves: 'Mouse moved (px)',
+    scroll: 'Scrolled (px)',
+    windows: '# tab visits'
   },
 
   // Sidebar Menu

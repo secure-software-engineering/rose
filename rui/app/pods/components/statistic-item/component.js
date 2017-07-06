@@ -1,6 +1,7 @@
-/*
-Copyright (C) 2016
+/* /*
+Copyright (C) 2016-2017
     Oliver Hoffmann <oliverh855@gmail.com>
+    Felix A. Epp <work@felixepp.de>
 
 This file is part of ROSE.
 
@@ -17,15 +18,42 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 */
-import Ember from 'ember';
+import Ember from 'ember'
 
 export default Ember.Component.extend({
-    classNames: ['statistic'],
+  tagName: 'td',
 
-    count: Ember.computed('data', function () {
-        const data = this.get('data')
-        const filtered = data.filterBy('network', this.get('network'))
-        const filteredOrigin = data.filterBy('origin.network', this.get('network'))
-        return filtered.length || filteredOrigin.length
-    })
-});
+  count: Ember.computed('data', function () {
+    const data = this.get('data')
+    const network = this.get('network')
+
+    let filtered = []
+    let sum = 0
+    switch (this.get('type')) {
+      case 'comments':
+        sum = data.filterBy('network', network).length
+        break
+      case 'interactions':
+      case 'extracts':
+        sum = data.filterBy('origin.network', network).length
+        break
+      case 'clicks':
+      case 'mousemoves':
+      case 'scroll':
+        filtered = data.filter(activity => activity.network === network)
+        sum = filtered.reduce((sum, activity) => sum + activity.value, 0)
+        break
+      case 'logins':
+        sum = data.filter(activity => {
+          return activity.network === network && activity.value !== false
+        }).length
+        break
+      case 'windows':
+        sum = data.filter(activity => {
+          return activity.network === network && activity.value.open && activity.value.active
+        }).length
+        break
+    }
+    return Math.floor(sum)
+  })
+})

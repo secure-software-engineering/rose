@@ -24,18 +24,35 @@
 
 <div class="ui divider"></div>
 
+<table class="ui definition table">
+  <thead>
+    <tr>
+      <th></th>
+      <th>{{t "index.comments"}}</th>
+      <th>{{t "index.interactions"}}</th>
+      <th>{{t "index.extracts"}}</th>
+      <th>{{t "index.clicks"}}</th>
+      <th>{{t "index.scroll"}}</th>
+      <th>{{t "index.mousemoves"}}</th>
+      <th>{{t "index.logins"}}</th>
+      <th>{{t "index.windows"}}</th>
+    </tr>
+  </thead>
+  <tbody>
 {{#each networks as |network|}}
-<div class="ui four statistics" style="margin-top:2em; margin-bottom: -1em;">
-    <div class="statistic">
-        <div class="value">
-            <i class="{{network.name}} icon"></i>
-        </div>
-        <div class="label">
-            {{network.descriptiveName}}
-        </div>
-    </div>
-    {{statistic-item label="index.comments" network=network.name data=model.comments}}
-    {{statistic-item label="index.interactions" network=network.name data=model.interactions}}
-    {{statistic-item label="index.extracts" network=network.name data=model.extracts}}
-</div>
+    <tr>
+      <td class="collapsing">
+        <i class="{{network.name}} icon"></i> {{network.descriptiveName}}
+      </td>
+      {{statistic-item network=network.name data=model.comments type="comments"}}
+      {{statistic-item network=network.name data=model.interactions type="interactions"}}
+      {{statistic-item network=network.name data=model.extracts type="extracts"}}
+      {{statistic-item network=network.name data=model.clicks type="clicks"}}
+      {{statistic-item network=network.name data=model.scroll type="scroll"}}
+      {{statistic-item network=network.name data=model.mousemoves type="mousemoves"}}
+      {{statistic-item network=network.name data=model.logins type="logins"}}
+      {{statistic-item network=network.name data=model.windows type="windows"}}
+    </tr>
 {{/each}}
+  </tbody>
+</table>

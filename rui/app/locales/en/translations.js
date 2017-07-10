@@ -40,8 +40,8 @@ export default {
     extracts: 'Extracts',
     clicks: 'Clicks',
     logins: 'Logins',
-    mousemoves: 'Mouse moved (px)',
-    scroll: 'Scrolled (px)',
+    mousemoves: 'Mouse moved',
+    scroll: 'Scrolled',
     windows: '# tab visits'
   },
 

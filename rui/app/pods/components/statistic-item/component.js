@@ -20,6 +20,10 @@ along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
 */
 import Ember from 'ember'
 
+function shortenPx (pixels) {
+  return (pixels > 9999 ? Math.floor(pixels / 1000) + 'k' : pixels) + ' px'
+}
+
 export default Ember.Component.extend({
   tagName: 'td',
 
@@ -38,10 +42,13 @@ export default Ember.Component.extend({
         sum = data.filterBy('origin.network', network).length
         break
       case 'clicks':
+        filtered = data.filter(activity => activity.network === network)
+        sum = filtered.reduce((sum, activity) => sum + activity.value, 0)
+        break
       case 'mousemoves':
       case 'scroll':
         filtered = data.filter(activity => activity.network === network)
-        sum = filtered.reduce((sum, activity) => sum + activity.value, 0)
+        sum = shortenPx(filtered.reduce((sum, activity) => sum + activity.value, 0))
         break
       case 'logins':
         sum = data.filter(activity => {
@@ -54,6 +61,6 @@ export default Ember.Component.extend({
         }).length
         break
     }
-    return Math.floor(sum)
+    return sum
   })
 })

@@ -2397,8 +2397,8 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
       extracts: 'Extracts',
       clicks: 'Clicks',
       logins: 'Logins',
-      mousemoves: 'Mouse moved (px)',
-      scroll: 'Scrolled (px)',
+      mousemoves: 'Mouse moved',
+      scroll: 'Scrolled',
       windows: '# tab visits'
     },
 
@@ -2763,105 +2763,6 @@ define('rose/models/user-setting', ['exports', 'ember-data'], function (exports,
     currentLanguage: _emberData['default'].attr('string', { defaultValue: 'en' }),
     firstRun: _emberData['default'].attr('boolean', { defaultValue: true })
   });
-});
-define('rose/pods/components/activity-statistic/component', ['exports', 'ember'], function (exports, _ember) {
-  exports['default'] = _ember['default'].Component.extend({
-    tagName: 'td',
-
-    count: _ember['default'].computed('data', function () {
-      var data = this.get('data');
-      var network = this.get('network');
-      var filtered = data.filter(function (activity) {
-        return activity.network === network;
-      });
-      var sum = 0;
-      switch (this.get('type')) {
-        case 'comments':
-        case 'interactions':
-        case 'extracts':
-          //
-          break;
-        case 'clicks':
-        case 'mousemoves':
-        case 'scroll':
-          sum = filtered.reduce(function (sum, activity) {
-            return sum + activity.value;
-          }, 0);
-          break;
-        case 'logins':
-          break;
-        case 'windows':
-          break;
-      }
-      return sum;
-    })
-  });
-});
-/*
-Copyright (C) 2016-2017
-    Oliver Hoffmann <oliverh855@gmail.com>
-    Felix A. Epp <work@felixepp.de>
-
-This file is part of ROSE.
-
-ROSE is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-ROSE is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with ROSE.  If not, see <http://www.gnu.org/licenses/>.
-*/
-define("rose/pods/components/activity-statistic/template", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template((function () {
-    return {
-      meta: {
-        "fragmentReason": {
-          "name": "missing-wrapper",
-          "problems": ["wrong-type"]
-        },
-        "revision": "Ember@2.2.2",
-        "loc": {
-          "source": null,
-          "start": {
-            "line": 1,
-            "column": 0
-          },
-          "end": {
-            "line": 3,
-            "column": 0
-          }
-        },
-        "moduleName": "rose/pods/components/activity-statistic/template.hbs"
-      },
-      isEmpty: false,
-      arity: 0,
-      cachedFragment: null,
-      hasRendered: false,
-      buildFragment: function buildFragment(dom) {
-        var el0 = dom.createDocumentFragment();
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        return el0;
-      },
-      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var morphs = new Array(1);
-        morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
-        dom.insertBoundary(fragment, 0);
-        return morphs;
-      },
-      statements: [["content", "count", ["loc", [null, [1, 0], [1, 9]]]]],
-      locals: [],
-      templates: []
-    };
-  })());
 });
 define('rose/pods/components/diary-entry/component', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Component.extend({
@@ -5929,6 +5830,11 @@ define("rose/pods/components/rose-interaction/template", ["exports"], function (
   })());
 });
 define('rose/pods/components/statistic-item/component', ['exports', 'ember'], function (exports, _ember) {
+
+  function shortenPx(pixels) {
+    return (pixels > 9999 ? Math.floor(pixels / 1000) + 'k' : pixels) + ' px';
+  }
+
   exports['default'] = _ember['default'].Component.extend({
     tagName: 'td',
 
@@ -5947,14 +5853,21 @@ define('rose/pods/components/statistic-item/component', ['exports', 'ember'], fu
           sum = data.filterBy('origin.network', network).length;
           break;
         case 'clicks':
-        case 'mousemoves':
-        case 'scroll':
           filtered = data.filter(function (activity) {
             return activity.network === network;
           });
           sum = filtered.reduce(function (sum, activity) {
             return sum + activity.value;
           }, 0);
+          break;
+        case 'mousemoves':
+        case 'scroll':
+          filtered = data.filter(function (activity) {
+            return activity.network === network;
+          });
+          sum = shortenPx(filtered.reduce(function (sum, activity) {
+            return sum + activity.value;
+          }, 0));
           break;
         case 'logins':
           sum = data.filter(function (activity) {
@@ -5967,7 +5880,7 @@ define('rose/pods/components/statistic-item/component', ['exports', 'ember'], fu
           }).length;
           break;
       }
-      return Math.floor(sum);
+      return sum;
     })
   });
 });
@@ -11576,7 +11489,7 @@ define("rose/templates/index", ["exports"], function (exports) {
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("table");
-        dom.setAttribute(el1, "class", "ui definition table");
+        dom.setAttribute(el1, "class", "ui compact small celled definition table");
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("thead");

@@ -23,9 +23,6 @@ import Ember from 'ember'
 export default Ember.Component.extend({
   ajax: Ember.inject.service(),
   read: false,
-  unread: function () {
-    return !this.get('read')
-  }.property('read'),
 
   actions: {
 

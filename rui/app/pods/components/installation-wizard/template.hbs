@@ -33,7 +33,7 @@
         </div>
 
         <div class="ui two cards">
-          <div class="card">
+          <div class="{{unless read "disabled"}} field card">
             <div class="content">
               <div class="header">{{t "wizard.defaultConfigHeader"}}</div>
               <div class="description">
@@ -41,26 +41,25 @@
               </div>
             </div>
             <button class="ui primary bottom attached button"
-                    {{action "selectDefaultConfig"}} disabled={{unread}} >
+                    {{action "selectDefaultConfig"}} >
               {{t "wizard.defaultBtn"}}
             </button>
           </div>
-          <div class="card">
+          <div class="{{unless read "disabled"}} field card">
             <div class="content">
               <div class="header">{{t "wizard.fileConfigHeader"}}</div>
               <div class="description">
                 {{t "wizard.fileConfigDescription"}}
               </div>
             </div>
-            {{#rose-file-picker fileLoaded="fileLoaded"
+            {{#file-picker fileLoaded="fileLoaded"
                             dropzone=false
                             preview=false
                             readAs="readAsText"
-                            class="ui bottom attached primary button"
-                            isEnabled=read}}
+                            class="ui bottom attached primary button"}}
               <i class="add icon"></i>
               {{t "wizard.fileConfigBtn"}}
-            {{/rose-file-picker}}
+            {{/file-picker}}
           </div>
         </div>
 

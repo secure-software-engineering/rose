@@ -2,6 +2,10 @@ body {
   padding-top: 15px;
 }
 
+.field.card {
+  height: 142px;
+}
+
 .ui.comments .comment.diary-entry .metadata {
   margin-left: 0;
 }

@@ -5837,16 +5837,22 @@ define('rose/pods/components/statistic-item/component', ['exports', 'ember'], fu
 
   exports['default'] = _ember['default'].Component.extend({
     tagName: 'td',
+    classNames: ['right', 'aligned'],
 
     count: _ember['default'].computed('data', function () {
       var data = this.get('data');
       var network = this.get('network');
+      debugger;
 
       var filtered = [];
       var sum = 0;
       switch (this.get('type')) {
         case 'comments':
-          sum = data.filterBy('network', network).length;
+          if (network === 'facebook') {
+            sum = data.filterBy('network', network).length;
+          } else {
+            sum = '';
+          }
           break;
         case 'interactions':
         case 'extracts':
@@ -5870,9 +5876,13 @@ define('rose/pods/components/statistic-item/component', ['exports', 'ember'], fu
           }, 0));
           break;
         case 'logins':
-          sum = data.filter(function (activity) {
-            return activity.network === network && activity.value !== false;
-          }).length;
+          if (network === 'facebook') {
+            sum = data.filter(function (activity) {
+              return activity.network === network && activity.value !== false;
+            }).length;
+          } else {
+            sum = '';
+          }
           break;
         case 'windows':
           sum = data.filter(function (activity) {

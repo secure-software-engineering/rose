@@ -26,6 +26,7 @@ function shortenPx (pixels) {
 
 export default Ember.Component.extend({
   tagName: 'td',
+  classNames: ['right', 'aligned'],
 
   count: Ember.computed('data', function () {
     const data = this.get('data')
@@ -35,7 +36,11 @@ export default Ember.Component.extend({
     let sum = 0
     switch (this.get('type')) {
       case 'comments':
-        sum = data.filterBy('network', network).length
+        if (network === 'facebook') {
+          sum = data.filterBy('network', network).length
+        } else {
+          sum = ''
+        }
         break
       case 'interactions':
       case 'extracts':
@@ -51,13 +56,17 @@ export default Ember.Component.extend({
         sum = shortenPx(filtered.reduce((sum, activity) => sum + activity.value, 0))
         break
       case 'logins':
-        sum = data.filter(activity => {
-          return activity.network === network && activity.value !== false
-        }).length
+        if (network === 'facebook') {
+          sum = data.filter(activity => {
+            return activity.network === network && activity.value !== false
+          }).length
+        } else {
+          sum = ''
+        }
         break
       case 'windows':
         sum = data.filter(activity => {
-          return activity.network === network && activity.value.open && activity.value.active
+          return activity.value.network === network && activity.value.open && activity.value.active
         }).length
         break
     }

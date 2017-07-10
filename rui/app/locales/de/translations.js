@@ -37,7 +37,13 @@ export default {
     trackingDisabled: 'Die Datenerfassung ist komplett deaktiviert.',
     comments: 'Kommentare',
     interactions: 'Interaktionen',
-    extracts: 'Extrakte'
+    extracts: 'Extrakte',
+    clicks: 'Klicks',
+    scroll: 'Scrolling',
+    mousemoves: 'Mausbewegung',
+    logins: 'Anmeldungen',
+    windows: 'Tabaufrufe',
+    notApplicable: 'n. z.'
   },
 
   // Sidebar Menu

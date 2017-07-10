@@ -27,6 +27,8 @@ function shortenPx (pixels) {
 export default Ember.Component.extend({
   tagName: 'td',
   classNames: ['right', 'aligned'],
+  classNameBindings: ['notApplicable:disabled'],
+  notApplicable: false,
 
   count: Ember.computed('data', function () {
     const data = this.get('data')
@@ -69,6 +71,10 @@ export default Ember.Component.extend({
           return activity.value.network === network && activity.value.open && activity.value.active
         }).length
         break
+    }
+    if (sum === '') {
+      this.set('notApplicable', true)
+      return this.get('i18n').t('index.notApplicable').toString()
     }
     return sum
   })

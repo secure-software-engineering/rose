@@ -2110,7 +2110,13 @@ define('rose/locales/de/translations', ['exports'], function (exports) {
       trackingDisabled: 'Die Datenerfassung ist komplett deaktiviert.',
       comments: 'Kommentare',
       interactions: 'Interaktionen',
-      extracts: 'Extrakte'
+      extracts: 'Extrakte',
+      clicks: 'Klicks',
+      scroll: 'Scrolling',
+      mousemoves: 'Mausbewegung',
+      logins: 'Anmeldungen',
+      windows: 'Tabaufrufe',
+      notApplicable: 'n. z.'
     },
 
     // Sidebar Menu
@@ -2399,7 +2405,8 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
       logins: 'Logins',
       mousemoves: 'Mouse moved',
       scroll: 'Scrolled',
-      windows: '# tab visits'
+      windows: 'Tab visits',
+      notApplicable: 'N/A'
     },
 
     // Sidebar Menu
@@ -5838,11 +5845,12 @@ define('rose/pods/components/statistic-item/component', ['exports', 'ember'], fu
   exports['default'] = _ember['default'].Component.extend({
     tagName: 'td',
     classNames: ['right', 'aligned'],
+    classNameBindings: ['notApplicable:disabled'],
+    notApplicable: false,
 
     count: _ember['default'].computed('data', function () {
       var data = this.get('data');
       var network = this.get('network');
-      debugger;
 
       var filtered = [];
       var sum = 0;
@@ -5886,9 +5894,13 @@ define('rose/pods/components/statistic-item/component', ['exports', 'ember'], fu
           break;
         case 'windows':
           sum = data.filter(function (activity) {
-            return activity.network === network && activity.value.open && activity.value.active;
+            return activity.value.network === network && activity.value.open && activity.value.active;
           }).length;
           break;
+      }
+      if (sum === '') {
+        this.set('notApplicable', true);
+        return this.get('i18n').t('index.notApplicable').toString();
       }
       return sum;
     })
@@ -11297,11 +11309,11 @@ define("rose/templates/index", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 42,
+              "line": 31,
               "column": 0
             },
             "end": {
-              "line": 56,
+              "line": 35,
               "column": 0
             }
           },
@@ -11313,57 +11325,18 @@ define("rose/templates/index", ["exports"], function (exports) {
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("    ");
+          var el1 = dom.createTextNode("      ");
           dom.appendChild(el0, el1);
-          var el1 = dom.createElement("tr");
-          var el2 = dom.createTextNode("\n      ");
+          var el1 = dom.createElement("th");
+          var el2 = dom.createTextNode("\n        ");
           dom.appendChild(el1, el2);
-          var el2 = dom.createElement("td");
-          dom.setAttribute(el2, "class", "collapsing");
-          var el3 = dom.createTextNode("\n        ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createElement("i");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode(" ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createComment("");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n      ");
-          dom.appendChild(el2, el3);
+          var el2 = dom.createElement("i");
           dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n      ");
+          var el2 = dom.createTextNode(" ");
           dom.appendChild(el1, el2);
           var el2 = dom.createComment("");
           dom.appendChild(el1, el2);
           var el2 = dom.createTextNode("\n      ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n      ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n      ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n      ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n      ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n      ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n      ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n    ");
           dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n");
@@ -11373,21 +11346,348 @@ define("rose/templates/index", ["exports"], function (exports) {
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var element0 = dom.childAt(fragment, [1]);
           var element1 = dom.childAt(element0, [1]);
-          var element2 = dom.childAt(element1, [1]);
-          var morphs = new Array(10);
-          morphs[0] = dom.createAttrMorph(element2, 'class');
-          morphs[1] = dom.createMorphAt(element1, 3, 3);
-          morphs[2] = dom.createMorphAt(element0, 3, 3);
-          morphs[3] = dom.createMorphAt(element0, 5, 5);
-          morphs[4] = dom.createMorphAt(element0, 7, 7);
-          morphs[5] = dom.createMorphAt(element0, 9, 9);
-          morphs[6] = dom.createMorphAt(element0, 11, 11);
-          morphs[7] = dom.createMorphAt(element0, 13, 13);
-          morphs[8] = dom.createMorphAt(element0, 15, 15);
-          morphs[9] = dom.createMorphAt(element0, 17, 17);
+          var morphs = new Array(2);
+          morphs[0] = dom.createAttrMorph(element1, 'class');
+          morphs[1] = dom.createMorphAt(element0, 3, 3);
           return morphs;
         },
-        statements: [["attribute", "class", ["concat", [["get", "network.name", ["loc", [null, [45, 20], [45, 32]]]], " icon"]]], ["content", "network.descriptiveName", ["loc", [null, [45, 46], [45, 73]]]], ["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [47, 31], [47, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.comments", ["loc", [null, [47, 49], [47, 63]]]]], [], []], "type", "comments"], ["loc", [null, [47, 6], [47, 81]]]], ["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [48, 31], [48, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.interactions", ["loc", [null, [48, 49], [48, 67]]]]], [], []], "type", "interactions"], ["loc", [null, [48, 6], [48, 89]]]], ["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [49, 31], [49, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.extracts", ["loc", [null, [49, 49], [49, 63]]]]], [], []], "type", "extracts"], ["loc", [null, [49, 6], [49, 81]]]], ["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [50, 31], [50, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.clicks", ["loc", [null, [50, 49], [50, 61]]]]], [], []], "type", "clicks"], ["loc", [null, [50, 6], [50, 77]]]], ["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [51, 31], [51, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.scroll", ["loc", [null, [51, 49], [51, 61]]]]], [], []], "type", "scroll"], ["loc", [null, [51, 6], [51, 77]]]], ["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [52, 31], [52, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.mousemoves", ["loc", [null, [52, 49], [52, 65]]]]], [], []], "type", "mousemoves"], ["loc", [null, [52, 6], [52, 85]]]], ["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [53, 31], [53, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.logins", ["loc", [null, [53, 49], [53, 61]]]]], [], []], "type", "logins"], ["loc", [null, [53, 6], [53, 77]]]], ["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [54, 31], [54, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.windows", ["loc", [null, [54, 49], [54, 62]]]]], [], []], "type", "windows"], ["loc", [null, [54, 6], [54, 79]]]]],
+        statements: [["attribute", "class", ["concat", [["get", "network.name", ["loc", [null, [33, 20], [33, 32]]]], " icon"]]], ["content", "network.descriptiveName", ["loc", [null, [33, 46], [33, 73]]]]],
+        locals: ["network"],
+        templates: []
+      };
+    })();
+    var child1 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 41,
+              "column": 0
+            },
+            "end": {
+              "line": 43,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/index.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [42, 31], [42, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.comments", ["loc", [null, [42, 49], [42, 63]]]]], [], []], "type", "comments"], ["loc", [null, [42, 6], [42, 81]]]]],
+        locals: ["network"],
+        templates: []
+      };
+    })();
+    var child2 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 47,
+              "column": 0
+            },
+            "end": {
+              "line": 49,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/index.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [48, 31], [48, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.interactions", ["loc", [null, [48, 49], [48, 67]]]]], [], []], "type", "interactions"], ["loc", [null, [48, 6], [48, 89]]]]],
+        locals: ["network"],
+        templates: []
+      };
+    })();
+    var child3 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 53,
+              "column": 0
+            },
+            "end": {
+              "line": 55,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/index.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [54, 31], [54, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.extracts", ["loc", [null, [54, 49], [54, 63]]]]], [], []], "type", "extracts"], ["loc", [null, [54, 6], [54, 81]]]]],
+        locals: ["network"],
+        templates: []
+      };
+    })();
+    var child4 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 59,
+              "column": 0
+            },
+            "end": {
+              "line": 61,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/index.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [60, 31], [60, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.clicks", ["loc", [null, [60, 49], [60, 61]]]]], [], []], "type", "clicks"], ["loc", [null, [60, 6], [60, 77]]]]],
+        locals: ["network"],
+        templates: []
+      };
+    })();
+    var child5 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 65,
+              "column": 0
+            },
+            "end": {
+              "line": 67,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/index.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [66, 31], [66, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.scroll", ["loc", [null, [66, 49], [66, 61]]]]], [], []], "type", "scroll"], ["loc", [null, [66, 6], [66, 77]]]]],
+        locals: ["network"],
+        templates: []
+      };
+    })();
+    var child6 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 71,
+              "column": 0
+            },
+            "end": {
+              "line": 73,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/index.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [72, 31], [72, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.mousemoves", ["loc", [null, [72, 49], [72, 65]]]]], [], []], "type", "mousemoves"], ["loc", [null, [72, 6], [72, 85]]]]],
+        locals: ["network"],
+        templates: []
+      };
+    })();
+    var child7 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 77,
+              "column": 0
+            },
+            "end": {
+              "line": 79,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/index.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [78, 31], [78, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.logins", ["loc", [null, [78, 49], [78, 61]]]]], [], []], "type", "logins"], ["loc", [null, [78, 6], [78, 77]]]]],
+        locals: ["network"],
+        templates: []
+      };
+    })();
+    var child8 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 83,
+              "column": 0
+            },
+            "end": {
+              "line": 85,
+              "column": 0
+            }
+          },
+          "moduleName": "rose/templates/index.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "statistic-item", [], ["network", ["subexpr", "@mut", [["get", "network.name", ["loc", [null, [84, 31], [84, 43]]]]], [], []], "data", ["subexpr", "@mut", [["get", "model.windows", ["loc", [null, [84, 49], [84, 62]]]]], [], []], "type", "windows"], ["loc", [null, [84, 6], [84, 79]]]]],
         locals: ["network"],
         templates: []
       };
@@ -11406,7 +11706,7 @@ define("rose/templates/index", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 59,
+            "line": 89,
             "column": 0
           }
         },
@@ -11499,7 +11799,7 @@ define("rose/templates/index", ["exports"], function (exports) {
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("table");
-        dom.setAttribute(el1, "class", "ui compact small celled definition table");
+        dom.setAttribute(el1, "class", "ui celled definition table");
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("thead");
@@ -11510,55 +11810,11 @@ define("rose/templates/index", ["exports"], function (exports) {
         dom.appendChild(el3, el4);
         var el4 = dom.createElement("th");
         dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n      ");
+        var el4 = dom.createTextNode("\n");
         dom.appendChild(el3, el4);
-        var el4 = dom.createElement("th");
-        var el5 = dom.createComment("");
-        dom.appendChild(el4, el5);
+        var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("th");
-        var el5 = dom.createComment("");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("th");
-        var el5 = dom.createComment("");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("th");
-        var el5 = dom.createComment("");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("th");
-        var el5 = dom.createComment("");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("th");
-        var el5 = dom.createComment("");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("th");
-        var el5 = dom.createComment("");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("th");
-        var el5 = dom.createComment("");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n    ");
+        var el4 = dom.createTextNode("    ");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n  ");
@@ -11567,11 +11823,135 @@ define("rose/templates/index", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("tbody");
-        var el3 = dom.createTextNode("\n");
+        var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
+        var el3 = dom.createElement("tr");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("td");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("    ");
+        dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("  ");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("tr");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("td");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("tr");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("td");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("tr");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("td");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("tr");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("td");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("tr");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("td");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("tr");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("td");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("tr");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("td");
+        var el5 = dom.createComment("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n");
@@ -11582,30 +11962,46 @@ define("rose/templates/index", ["exports"], function (exports) {
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element3 = dom.childAt(fragment, [0, 3]);
-        var element4 = dom.childAt(fragment, [2]);
-        var element5 = dom.childAt(fragment, [6]);
-        var element6 = dom.childAt(element5, [1, 1]);
-        var morphs = new Array(14);
-        morphs[0] = dom.createMorphAt(element3, 1, 1);
-        morphs[1] = dom.createMorphAt(dom.childAt(element3, [3]), 0, 0);
-        morphs[2] = dom.createAttrMorph(element4, 'class');
-        morphs[3] = dom.createMorphAt(dom.childAt(element4, [1]), 3, 3);
-        morphs[4] = dom.createMorphAt(dom.childAt(element4, [3, 3]), 1, 1);
-        morphs[5] = dom.createMorphAt(dom.childAt(element6, [3]), 0, 0);
-        morphs[6] = dom.createMorphAt(dom.childAt(element6, [5]), 0, 0);
-        morphs[7] = dom.createMorphAt(dom.childAt(element6, [7]), 0, 0);
-        morphs[8] = dom.createMorphAt(dom.childAt(element6, [9]), 0, 0);
-        morphs[9] = dom.createMorphAt(dom.childAt(element6, [11]), 0, 0);
-        morphs[10] = dom.createMorphAt(dom.childAt(element6, [13]), 0, 0);
-        morphs[11] = dom.createMorphAt(dom.childAt(element6, [15]), 0, 0);
-        morphs[12] = dom.createMorphAt(dom.childAt(element6, [17]), 0, 0);
-        morphs[13] = dom.createMorphAt(dom.childAt(element5, [3]), 1, 1);
+        var element2 = dom.childAt(fragment, [0, 3]);
+        var element3 = dom.childAt(fragment, [2]);
+        var element4 = dom.childAt(fragment, [6]);
+        var element5 = dom.childAt(element4, [3]);
+        var element6 = dom.childAt(element5, [1]);
+        var element7 = dom.childAt(element5, [3]);
+        var element8 = dom.childAt(element5, [5]);
+        var element9 = dom.childAt(element5, [7]);
+        var element10 = dom.childAt(element5, [9]);
+        var element11 = dom.childAt(element5, [11]);
+        var element12 = dom.childAt(element5, [13]);
+        var element13 = dom.childAt(element5, [15]);
+        var morphs = new Array(22);
+        morphs[0] = dom.createMorphAt(element2, 1, 1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element2, [3]), 0, 0);
+        morphs[2] = dom.createAttrMorph(element3, 'class');
+        morphs[3] = dom.createMorphAt(dom.childAt(element3, [1]), 3, 3);
+        morphs[4] = dom.createMorphAt(dom.childAt(element3, [3, 3]), 1, 1);
+        morphs[5] = dom.createMorphAt(dom.childAt(element4, [1, 1]), 3, 3);
+        morphs[6] = dom.createMorphAt(dom.childAt(element6, [1]), 0, 0);
+        morphs[7] = dom.createMorphAt(element6, 3, 3);
+        morphs[8] = dom.createMorphAt(dom.childAt(element7, [1]), 0, 0);
+        morphs[9] = dom.createMorphAt(element7, 3, 3);
+        morphs[10] = dom.createMorphAt(dom.childAt(element8, [1]), 0, 0);
+        morphs[11] = dom.createMorphAt(element8, 3, 3);
+        morphs[12] = dom.createMorphAt(dom.childAt(element9, [1]), 0, 0);
+        morphs[13] = dom.createMorphAt(element9, 3, 3);
+        morphs[14] = dom.createMorphAt(dom.childAt(element10, [1]), 0, 0);
+        morphs[15] = dom.createMorphAt(element10, 3, 3);
+        morphs[16] = dom.createMorphAt(dom.childAt(element11, [1]), 0, 0);
+        morphs[17] = dom.createMorphAt(element11, 3, 3);
+        morphs[18] = dom.createMorphAt(dom.childAt(element12, [1]), 0, 0);
+        morphs[19] = dom.createMorphAt(element12, 3, 3);
+        morphs[20] = dom.createMorphAt(dom.childAt(element13, [1]), 0, 0);
+        morphs[21] = dom.createMorphAt(element13, 3, 3);
         return morphs;
       },
-      statements: [["inline", "t", ["index.title"], [], ["loc", [null, [4, 8], [4, 27]]]], ["inline", "t", ["index.subtitle"], [], ["loc", [null, [5, 32], [5, 54]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [9, 22], [9, 34]]]]]]], ["inline", "t", ["index.trackingEnabledHeader"], [], ["loc", [null, [12, 6], [12, 41]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.trackingEnabled", ["loc", [null, [18, 34], [18, 63]]]]], [], []], "label", ["subexpr", "@mut", [["get", "trackingEnabledLabel", ["loc", [null, [19, 32], [19, 52]]]]], [], []], "onChange", ["subexpr", "action", ["toggleTracking"], [], ["loc", [null, [20, 35], [20, 60]]]]], ["loc", [null, [17, 12], [20, 62]]]], ["inline", "t", ["index.comments"], [], ["loc", [null, [31, 10], [31, 32]]]], ["inline", "t", ["index.interactions"], [], ["loc", [null, [32, 10], [32, 36]]]], ["inline", "t", ["index.extracts"], [], ["loc", [null, [33, 10], [33, 32]]]], ["inline", "t", ["index.clicks"], [], ["loc", [null, [34, 10], [34, 30]]]], ["inline", "t", ["index.scroll"], [], ["loc", [null, [35, 10], [35, 30]]]], ["inline", "t", ["index.mousemoves"], [], ["loc", [null, [36, 10], [36, 34]]]], ["inline", "t", ["index.logins"], [], ["loc", [null, [37, 10], [37, 30]]]], ["inline", "t", ["index.windows"], [], ["loc", [null, [38, 10], [38, 31]]]], ["block", "each", [["get", "networks", ["loc", [null, [42, 8], [42, 16]]]]], [], 0, null, ["loc", [null, [42, 0], [56, 9]]]]],
+      statements: [["inline", "t", ["index.title"], [], ["loc", [null, [4, 8], [4, 27]]]], ["inline", "t", ["index.subtitle"], [], ["loc", [null, [5, 32], [5, 54]]]], ["attribute", "class", ["concat", ["ui form ", ["get", "updateResult", ["loc", [null, [9, 22], [9, 34]]]]]]], ["inline", "t", ["index.trackingEnabledHeader"], [], ["loc", [null, [12, 6], [12, 41]]]], ["inline", "ui-checkbox", [], ["class", "toggle", "checked", ["subexpr", "@mut", [["get", "settings.user.trackingEnabled", ["loc", [null, [18, 34], [18, 63]]]]], [], []], "label", ["subexpr", "@mut", [["get", "trackingEnabledLabel", ["loc", [null, [19, 32], [19, 52]]]]], [], []], "onChange", ["subexpr", "action", ["toggleTracking"], [], ["loc", [null, [20, 35], [20, 60]]]]], ["loc", [null, [17, 12], [20, 62]]]], ["block", "each", [["get", "networks", ["loc", [null, [31, 8], [31, 16]]]]], [], 0, null, ["loc", [null, [31, 0], [35, 9]]]], ["inline", "t", ["index.comments"], [], ["loc", [null, [40, 10], [40, 32]]]], ["block", "each", [["get", "networks", ["loc", [null, [41, 8], [41, 16]]]]], [], 1, null, ["loc", [null, [41, 0], [43, 9]]]], ["inline", "t", ["index.interactions"], [], ["loc", [null, [46, 10], [46, 36]]]], ["block", "each", [["get", "networks", ["loc", [null, [47, 8], [47, 16]]]]], [], 2, null, ["loc", [null, [47, 0], [49, 9]]]], ["inline", "t", ["index.extracts"], [], ["loc", [null, [52, 10], [52, 32]]]], ["block", "each", [["get", "networks", ["loc", [null, [53, 8], [53, 16]]]]], [], 3, null, ["loc", [null, [53, 0], [55, 9]]]], ["inline", "t", ["index.clicks"], [], ["loc", [null, [58, 10], [58, 30]]]], ["block", "each", [["get", "networks", ["loc", [null, [59, 8], [59, 16]]]]], [], 4, null, ["loc", [null, [59, 0], [61, 9]]]], ["inline", "t", ["index.scroll"], [], ["loc", [null, [64, 10], [64, 30]]]], ["block", "each", [["get", "networks", ["loc", [null, [65, 8], [65, 16]]]]], [], 5, null, ["loc", [null, [65, 0], [67, 9]]]], ["inline", "t", ["index.mousemoves"], [], ["loc", [null, [70, 10], [70, 34]]]], ["block", "each", [["get", "networks", ["loc", [null, [71, 8], [71, 16]]]]], [], 6, null, ["loc", [null, [71, 0], [73, 9]]]], ["inline", "t", ["index.logins"], [], ["loc", [null, [76, 10], [76, 30]]]], ["block", "each", [["get", "networks", ["loc", [null, [77, 8], [77, 16]]]]], [], 7, null, ["loc", [null, [77, 0], [79, 9]]]], ["inline", "t", ["index.windows"], [], ["loc", [null, [82, 10], [82, 31]]]], ["block", "each", [["get", "networks", ["loc", [null, [83, 8], [83, 16]]]]], [], 8, null, ["loc", [null, [83, 0], [85, 9]]]]],
       locals: [],
-      templates: [child0]
+      templates: [child0, child1, child2, child3, child4, child5, child6, child7, child8]
     };
   })());
 });

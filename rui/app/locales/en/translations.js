@@ -42,7 +42,8 @@ export default {
     logins: 'Logins',
     mousemoves: 'Mouse moved',
     scroll: 'Scrolled',
-    windows: '# tab visits'
+    windows: 'Tab visits',
+    notApplicable: 'N/A'
   },
 
   // Sidebar Menu

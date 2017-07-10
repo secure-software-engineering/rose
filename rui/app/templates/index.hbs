@@ -24,35 +24,65 @@
 
 <div class="ui divider"></div>
 
-<table class="ui compact small celled definition table">
+<table class="ui celled definition table">
   <thead>
     <tr>
       <th></th>
-      <th>{{t "index.comments"}}</th>
-      <th>{{t "index.interactions"}}</th>
-      <th>{{t "index.extracts"}}</th>
-      <th>{{t "index.clicks"}}</th>
-      <th>{{t "index.scroll"}}</th>
-      <th>{{t "index.mousemoves"}}</th>
-      <th>{{t "index.logins"}}</th>
-      <th>{{t "index.windows"}}</th>
+{{#each networks as |network|}}
+      <th>
+        <i class="{{network.name}} icon"></i> {{network.descriptiveName}}
+      </th>
+{{/each}}
     </tr>
   </thead>
   <tbody>
-{{#each networks as |network|}}
     <tr>
-      <td class="collapsing">
-        <i class="{{network.name}} icon"></i> {{network.descriptiveName}}
-      </td>
+      <td>{{t "index.comments"}}</td>
+{{#each networks as |network|}}
       {{statistic-item network=network.name data=model.comments type="comments"}}
-      {{statistic-item network=network.name data=model.interactions type="interactions"}}
-      {{statistic-item network=network.name data=model.extracts type="extracts"}}
-      {{statistic-item network=network.name data=model.clicks type="clicks"}}
-      {{statistic-item network=network.name data=model.scroll type="scroll"}}
-      {{statistic-item network=network.name data=model.mousemoves type="mousemoves"}}
-      {{statistic-item network=network.name data=model.logins type="logins"}}
-      {{statistic-item network=network.name data=model.windows type="windows"}}
-    </tr>
 {{/each}}
+    </tr>
+    <tr>
+      <td>{{t "index.interactions"}}</td>
+{{#each networks as |network|}}
+      {{statistic-item network=network.name data=model.interactions type="interactions"}}
+{{/each}}
+    </tr>
+    <tr>
+      <td>{{t "index.extracts"}}</td>
+{{#each networks as |network|}}
+      {{statistic-item network=network.name data=model.extracts type="extracts"}}
+{{/each}}
+    </tr>
+    <tr>
+      <td>{{t "index.clicks"}}</td>
+{{#each networks as |network|}}
+      {{statistic-item network=network.name data=model.clicks type="clicks"}}
+{{/each}}
+    </tr>
+    <tr>
+      <td>{{t "index.scroll"}}</td>
+{{#each networks as |network|}}
+      {{statistic-item network=network.name data=model.scroll type="scroll"}}
+{{/each}}
+    </tr>
+    <tr>
+      <td>{{t "index.mousemoves"}}</td>
+{{#each networks as |network|}}
+      {{statistic-item network=network.name data=model.mousemoves type="mousemoves"}}
+{{/each}}
+    </tr>
+    <tr>
+      <td>{{t "index.logins"}}</td>
+{{#each networks as |network|}}
+      {{statistic-item network=network.name data=model.logins type="logins"}}
+{{/each}}
+    </tr>
+    <tr>
+      <td>{{t "index.windows"}}</td>
+{{#each networks as |network|}}
+      {{statistic-item network=network.name data=model.windows type="windows"}}
+{{/each}}
+    </tr>
   </tbody>
 </table>

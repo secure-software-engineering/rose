@@ -9,22 +9,21 @@
 <div class="ui form">
   <h3 class="ui dividing header">{{t "studyCreator.configurationHeader"}}</h3>
 
-  <div class="field">
-    <label>{{t "studyCreator.repositoryUrl"}}</label>
-    <p>{{t "studyCreator.repositoryUrlDesc"}}</p>
+  {{#help-field label="studyCreator.repositoryUrl"
+               description="studyCreator.repositoryUrlDesc"}}
 
     <div class="ui input">
       {{input type="text"
               value=model.repositoryURL
               insert-newline="fetchBaseFile"}}
     </div>
+  {{/help-field}}
 
-    {{#if baseFileNotFound}}
-    <div class="ui pointing red basic label">
-      {{t "studyCreator.baseFileNotFound"}}
-    </div>
-    {{/if}}
+  {{#if baseFileNotFound}}
+  <div class="ui pointing red basic label">
+    {{t "studyCreator.baseFileNotFound"}}
   </div>
+  {{/if}}
 
   <div class="field">
     <button class="ui icon button {{if baseFileIsLoading "loading"}}" {{action "fetchBaseFile"}}>
@@ -34,9 +33,9 @@
   </div>
 
   {{#if networks.length}}
-  <div class="field">
-    <label>{{t "studyCreator.networks"}}</label>
-    <p>{{t "studyCreator.networksDesc"}}</p>
+
+  {{#help-field label="studyCreator.networks"
+                description="studyCreator.networksDesc"}}
     {{#each networks as |network|}}
       <div class="field">
         {{ui-checkbox checked=network.isEnabled
@@ -98,23 +97,21 @@
       {{/if}}
       </div>
     {{/each}}
-  </div>
+  {{/help-field}}
 
   <h3 class="ui dividing header">{{t "studyCreator.autoUpdateHeader"}}</h3>
 
-  <div class="field">
-    <label>{{t "studyCreator.autoUpdate"}}</label>
-    <p>{{t "studyCreator.autoUpdateDesc"}}</p>
-
+  {{#help-field label="studyCreator.autoUpdate"
+                description="studyCreator.autoUpdateDesc"}}
     {{ui-checkbox checked=model.autoUpdateIsEnabled
                   class="toggle"
                   label=(boolean-to-yesno model.autoUpdateIsEnabled)
                   onChange=(action "saveSettings")}}
-  </div>
+  {{/help-field}}
 
-  <div class="{{unless model.autoUpdateIsEnabled "disabled "}}field">
-    <label>{{t "studyCreator.updateInterval"}}</label>
-    <p>{{t "studyCreator.updateIntervalLabel"}}</p>
+  {{#help-field label="studyCreator.updateInterval"
+                description="studyCreator.updateIntervalLabel"
+                class=(unless model.autoUpdateIsEnabled "disabled ")}}
 
     {{#ui-dropdown  class="selection"
                     selected=model.updateInterval
@@ -130,7 +127,7 @@
         {{/each}}
       </div>
     {{/ui-dropdown}}
-  </div>
+  {{/help-field}}
 
   {{#unless keyAvailable}}
   <div class="ui red basic label">
@@ -138,29 +135,28 @@
   </div>
   {{/unless}}
 
-  <div class="{{if secureUpdateImpossible "disabled "}}field">
-    <label>{{t "studyCreator.forceSecureUpdate"}}</label>
-    <p>{{t "studyCreator.forceSecureUpdateDesc"}}</p>
+  {{#help-field label="studyCreator.forceSecureUpdate"
+                description="studyCreator.forceSecureUpdateDesc"
+                class=(if secureUpdateImpossible "disabled ")}}
 
     {{ui-checkbox checked=model.forceSecureUpdate
                   class="toggle"
                   label=(boolean-to-yesno model.forceSecureUpdate)
                   onChange=(action "toggleForceSecureUpdate")}}
-  </div>
+  {{/help-field}}
 
-  <div class="{{unless model.forceSecureUpdate "disabled "}}field">
-    <label>{{t "studyCreator.fingerprint"}}</label>
-    <p>{{t "studyCreator.fingerprintDesc"}}</p>
+  {{#help-field label="studyCreator.fingerprint"
+                description="studyCreator.fingerprintDesc"
+                class=(unless model.forceSecureUpdate "disabled ")}}
     <div class="ui message">
       <p>{{model.fingerprint}}</p>
     </div>
-  </div>
+  {{/help-field}}
 
   <h3 class="ui dividing header">{{t "studyCreator.privacyHeader"}}</h3>
 
-  <div class="field">
-    <label>{{t "studyCreator.salt"}}</label>
-    <p>{{t "studyCreator.saltDesc"}}</p>
+  {{#help-field label="studyCreator.salt"
+                description="studyCreator.saltDesc"}}
 
     <div class="ui action input">
       {{input type="text"
@@ -172,38 +168,36 @@
         {{t "studyCreator.generateSaltButton"}}
       </button>
     </div>
-  </div>
+  {{/help-field}}
 
-  <div class="field">
-    <label>{{t "studyCreator.hashLength"}}</label>
-    <p>{{t "studyCreator.hashLengthDesc"}}</p>
-
+  {{#help-field label="studyCreator.hashLength"
+                description="studyCreator.hashLengthDesc"}}
     {{input type="number"
             value=model.hashLength
             insert-newline="saveSettings"
             focus-out="saveSettings"}}
-  </div>
+  {{/help-field}}
 
   <h3 class="ui dividing header">{{t "studyCreator.optionalFeaturesHeader"}}</h3>
-  <div class="{{if facebookDisabled "disabled "}}field">
-    <label>{{t "studyCreator.roseComments"}}</label>
-    <p>{{t "studyCreator.roseCommentsDesc"}}</p>
+
+  {{#help-field label="studyCreator.roseComments"
+                description="studyCreator.roseCommentsDesc"
+                class=(if facebookDisabled "disabled ")}}
 
     {{ui-checkbox checked=model.roseCommentsIsEnabled
                   class="toggle"
                   label=(boolean-to-yesno model.roseCommentsIsEnabled)
                   onChange=(action "saveSettings")}}
-  </div>
+  {{/help-field}}
 
-  <div class="{{if facebookDisabled "disabled "}}{{unless model.roseCommentsIsEnabled "disabled "}}field">
-    <label>{{t "studyCreator.roseCommentsRating"}}</label>
-    <p>{{t "studyCreator.roseCommentsRatingDesc"}}</p>
-
+  {{#help-field label="studyCreator.roseCommentsRating"
+                description="studyCreator.roseCommentsRatingDesc"
+                class=(if facebookDisabled "disabled " (unless model.roseCommentsIsEnabled "disabled "))}}
     {{ui-checkbox checked=model.roseCommentsRatingIsEnabled
                   class="toggle"
                   label=(boolean-to-yesno model.roseCommentsRatingIsEnabled)
                   onChange=(action "saveSettings")}}
-  </div>
+  {{/help-field}}
 
   <h3 class="ui dividing header">{{t "studyCreator.exportConfig"}}</h3>
   <div class="field">

@@ -2,6 +2,10 @@ body {
   padding-top: 15px;
 }
 
+.ui.form .ember-view.field > label {
+	margin-bottom: 0.75em
+}
+
 .field.card {
   height: 142px;
 }

@@ -166,7 +166,7 @@ header {
 
 header ul {
   list-style:none;
-  height:40px;
+  height:52px;
   padding:0;
   background: #f4f4f4;
   border-radius:5px;
@@ -175,10 +175,10 @@ header ul {
 }
 
 header li {
-  width:134px;
+  width:89px;
   float:left;
   border-right:1px solid #e0e0e0;
-  height:40px;
+  height:52px;
 }
 
 header li:first-child a {
@@ -212,9 +212,9 @@ strong {
   font-weight:700;
 }
 
-header ul li + li {
+header ul li + li + li {
   border-right:none;
-  width:134px;
+  width:89px;
 }
 
 header ul a strong {
@@ -310,8 +310,8 @@ footer {
     width:99%;
   }
 
-  header li, header ul li + li {
-    width:49%;
+  header li, header ul li + li + li {
+    width:33%;
   }
 }
 

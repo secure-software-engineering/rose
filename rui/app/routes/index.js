@@ -22,7 +22,7 @@ import Ember from 'ember'
 let getItem = (key) => {
   return new Ember.RSVP.Promise((resolve) => {
     kango.invokeAsyncCallback('localforage.getItem', key, (data) => {
-      resolve(data)
+      resolve((data === null ? [] : data))
     })
   })
 }

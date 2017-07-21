@@ -41,7 +41,8 @@ export default Ember.Component.extend({
         if (network === 'facebook') {
           sum = data.filterBy('network', network).length
         } else {
-          sum = ''
+          this.set('notApplicable', true)
+          sum = this.get('i18n').t('index.notApplicable').toString()
         }
         break
       case 'interactions':
@@ -63,7 +64,8 @@ export default Ember.Component.extend({
             return activity.network === network && activity.value !== false
           }).length
         } else {
-          sum = ''
+          this.set('notApplicable', true)
+          sum = this.get('i18n').t('index.notApplicable').toString()
         }
         break
       case 'windows':
@@ -71,10 +73,6 @@ export default Ember.Component.extend({
           return activity.value.network === network && activity.value.open && activity.value.active
         }).length
         break
-    }
-    if (sum === '') {
-      this.set('notApplicable', true)
-      return this.get('i18n').t('index.notApplicable').toString()
     }
     return sum
   })

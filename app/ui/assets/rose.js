@@ -5584,7 +5584,8 @@ define('rose/pods/components/statistic-item/component', ['exports', 'ember'], fu
           if (network === 'facebook') {
             sum = data.filterBy('network', network).length;
           } else {
-            sum = '';
+            this.set('notApplicable', true);
+            sum = this.get('i18n').t('index.notApplicable').toString();
           }
           break;
         case 'interactions':
@@ -5614,7 +5615,8 @@ define('rose/pods/components/statistic-item/component', ['exports', 'ember'], fu
               return activity.network === network && activity.value !== false;
             }).length;
           } else {
-            sum = '';
+            this.set('notApplicable', true);
+            sum = this.get('i18n').t('index.notApplicable').toString();
           }
           break;
         case 'windows':
@@ -5622,10 +5624,6 @@ define('rose/pods/components/statistic-item/component', ['exports', 'ember'], fu
             return activity.value.network === network && activity.value.open && activity.value.active;
           }).length;
           break;
-      }
-      if (sum === '') {
-        this.set('notApplicable', true);
-        return this.get('i18n').t('index.notApplicable').toString();
       }
       return sum;
     })
@@ -6016,7 +6014,7 @@ define('rose/routes/index', ['exports', 'ember'], function (exports, _ember) {
   var getItem = function getItem(key) {
     return new _ember['default'].RSVP.Promise(function (resolve) {
       kango.invokeAsyncCallback('localforage.getItem', key, function (data) {
-        resolve(data);
+        resolve(data === null ? [] : data);
       });
     });
   };

@@ -2330,6 +2330,7 @@ define('rose/locales/de/translations', ['exports'], function (exports) {
       updateInterval: 'Intervall für die automatische Prüfung auf Aktualisierung der Datensammel-Pakete',
       updateIntervalLabel: 'Wählen Sie ein Intervall, um nach Aktualisierungen der Datensammel-Pakete zu suchen',
       baseFileNotFound: 'Ungültige URL der Basisdatei des Datenspeichers.',
+      fetchRepository: 'Pakete laden zur Konfiguration der Datensammlung',
 
       table: {
         enabled: 'Status (An/Aus)',
@@ -2395,7 +2396,7 @@ define('rose/locales/en/translations', ['exports'], function (exports) {
     index: {
       title: 'ROSE Control Center',
       subtitle: 'Count of items collected in your local ROSE installation',
-      trackingEnabledHeader: 'All Tracking function on/off',
+      trackingEnabledHeader: 'All tracking function on/off',
       trackingEnabled: 'Tracking is globally enabled.',
       trackingDisabled: 'Tracking is globally disabled.',
       comments: 'Comments',

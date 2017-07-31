@@ -32,7 +32,7 @@ export default {
   index: {
     title: 'ROSE Control Center',
     subtitle: 'Count of items collected in your local ROSE installation',
-    trackingEnabledHeader: 'All Tracking function on/off',
+    trackingEnabledHeader: 'All tracking function on/off',
     trackingEnabled: 'Tracking is globally enabled.',
     trackingDisabled: 'Tracking is globally disabled.',
     comments: 'Comments',

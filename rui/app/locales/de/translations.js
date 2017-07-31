@@ -257,6 +257,7 @@ export default {
     updateInterval: 'Intervall für die automatische Prüfung auf Aktualisierung der Datensammel-Pakete',
     updateIntervalLabel: 'Wählen Sie ein Intervall, um nach Aktualisierungen der Datensammel-Pakete zu suchen',
     baseFileNotFound: 'Ungültige URL der Basisdatei des Datenspeichers.',
+    fetchRepository: 'Pakete laden zur Konfiguration der Datensammlung',
 
     table: {
       enabled: 'Status (An/Aus)',

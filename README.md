@@ -32,7 +32,15 @@ In the following paper we describe how we use ROSE in our empirical field studie
 Build
 -----
 
-To build ROSE you need `node, npm, bower, ember-cli and gulp` installed. You can build your own copy of ROSE with the following steps
+To build ROSE you need `node, npm, bower, ember-cli and gulp` installed.
+
+We use the kango framework, which has to be integrated manually.
+
+1. Download from http://web.archive.org/web/20160623024659/http://kangoextensions.com/kango/kango-framework-latest.zip
+2. Extract the archive into the rose root folder
+3. Rename it to `kango`
+
+You can build your own copy of ROSE with the following steps
 
 1. Install dependencies with `npm`
     ```
@@ -49,7 +57,7 @@ To build ROSE you need `node, npm, bower, ember-cli and gulp` installed. You can
     cd ..
     ```
 
-3. Build packages for Chrome, Firefox and Safari with Kango
+3. Build packages for Chrome and Safari with Kango into respective folders in `dist`
     ```
     gulp build
     ```

@@ -50,8 +50,8 @@ import Task from './rose/task'
     }
 
     const roseVersion = await localforage.getItem('rose-version')
-    if (!roseVersion || roseVersion < '3.0.4') {
-        await localforage.setItem('rose-version', '3.0.4')
+    if (!roseVersion || roseVersion < '3.0.5') {
+        await localforage.setItem('rose-version', '3.0.5')
     }
 
     scheduleAutoUpdate()

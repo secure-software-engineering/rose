@@ -1,8 +1,8 @@
 title: ROSE
 description: Research Tool for Online Social Environments
-google_analytics: 
+google_analytics:
 show_downloads: true
 theme: jekyll-theme-minimal
-
+exclude: [app, docs, kango, kango-runtime, node_modules, rui]
 gems:
   - jekyll-mentions

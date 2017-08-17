@@ -8,7 +8,7 @@ The following picture gives an overview of the general study setup. It will be u
 
 ![General study workflow with ROSE](./images/rose-basic-setup.png "Study workflow")
 
-[Enlarge image here](./images/rose-basic-setup.png)
+[Enlarge image](./images/rose-basic-setup.png)
 
 The picture shows three technical entities involved in a study:
   * ROSE as a browser extension run in the *web browsers* of the researchers executing the study and the participants taking part in the study. Both use ROSE in two different modes: the researchers use an expert mode to prepare the study and to process the tracking data by the participants. The participants use ROSE in a study mode with a configuration tailored to the specific needs of the study.
@@ -30,7 +30,7 @@ While this is the general workflow, researchers might choose to deviate. For ins
 First of all ROSE needs to be installed in your local web browser (Chrome or Safari). Use the following links to the respective extension stores:
 
 [Chrome Store](https://chrome.google.com/webstore/detail/rose/chmgghdkcookiojbnchechkhjfbadjkd)
-*Safari Extension Gallery link yet to come*
+[Safari Extensions Gallery](https://safari-extensions.apple.com/details/?id=com.kangoextensions.rose-2Q5XV9C329)
 
 Once you have installed the extension, you can open its main user interface by clicking the ROSE button in your browser
 
@@ -60,16 +60,16 @@ After these step ROSE is prepared to create a study configuration file.
 
 ### Creating a study configuration file
 
-Before creating a study configuration file, you should finalize the study design so far that the following question can be answered:
+Before creating a study configuration file, you should finalize the study design so far that you can answer the following basic questions:
 
   * On which social media site shall participants' actions being tracked?
   * What kind of actions need to be tracked?
   * Do dependencies between actions matter? Is it important for the study whether different, subsequent actions aiming on the same item need to be identified as such, e.g., in Facebook a "Like" and a "Comment" is applied to the same posting. 
-  * Do dependencies between actions across study participants matter? For example, are participants belonging to a group whose members regularly interact on particular items on a social media site, and is this entanglement relevant for the study?
-  * How critical is continuity for the study? If tracking of certain actions is suspended for a couple of days because of changes in the social media site does this easily become mission critical to the study?
+  * Do dependencies between actions across study participants matter? For example, are participants belonging to a group whose members regularly interact on particular items on a social media site, and is this entanglement relevant for your study?
+  * How critical is continuity for the study? If tracking of certain actions is suspended for a couple of days because of changes on the social media site does this easily become mission critical to your study?
   * Shall participants comment on their actions in situ as part of the study design?
 
-ROSE can be used in various ways to satisfy the different needs expressed by the answers to these questions. It might require different settings in the configuration file to account for your needs, and, in certain case also changes in the ROSE infrastructure as shown early on in this description.
+ROSE can be used in various ways to satisfy the different needs expressed by the answers to these questions. It might require specific settings in the configuration file to account for your needs, and, in certain cases also changes in the ROSE infrastructure as explained earlier.
 
 As a first step you should take a look at the study creator which can be access with the main menu "Researcher Features" and "Study Creator" after you have enabled the expert features as explained before.
 
@@ -79,7 +79,7 @@ For ROSE to function properly at participants' installations a valid repository 
 
 ![Configure repository base file](./images/screenshot-repository-base.png "Configure repository base file")
 
-The base file of the repository stored at the Github pages of the ROSE project is set as default; you can use this repository for your study. *However, you need to keep in mind that the ROSE developers cannot promise that this repository is up-to-date and the tracking functions you intend to use are working properly all the time. If it is critical to your study having uninterrupted tracking of participants you should consider setting up and maintaining your own repository, which we will describe on further pages of this documentation yet to come.*
+The base file of the repository stored at the Github pages of the ROSE project is set as default; you can use this repository for your study. *However, you need to keep in mind that the ROSE developers cannot promise that this repository is up-to-date and the tracking functions you intend to use are working properly for the whole time of your study. If it is critical to your study having uninterrupted tracking of participants you should consider setting up and maintaining your own repository, which we will describe on further pages of this documentation yet to come.*
 
 Besides choosing an appropriate repository solution, during the study you should also anyway monitor whether tracking patterns are yet working properly. If you choose to use the ROSE Github repository you can create a trouble ticket in case you find a tracking pattern to be broken. The issue management can be found [here](https://github.com/secure-software-engineering/rose/issues). 
 
@@ -93,7 +93,7 @@ Once you set up the repository correctly the patterns it contains are use to cre
 
 After you have activate a social media site all available patterns are shown. Enable all those actions you require to be track for the purpose of your study. You can track more actions as required but this might be in conflict with your research protocol. Also you can track actions on multiple social media sites the same time; activate all required social media sites and select the actions to be tracked individually for each site. 
 
-*As mentioned before during the study you should repeatedly check whether the tracking patterns for each selected action is working properly. If a pattern gets broken correct it if you use your own repository or inform the repository administrator*
+*As mentioned before during the study you should repeatedly check whether the tracking patterns for each selected action are working properly. If a pattern gets broken correct it if you use your own repository or inform the repository administrator*
 
 Setting the repository and range of the tracking function is the major step towards a study configuration file. However, few additional options need to be considered before finalizing the study creator.
 
@@ -114,6 +114,51 @@ The next option to consider is the *secure update*. ROSE has build-in cryptograp
 *The public key of the ROSE Github repository key pair has the SHA-1 fingerprint 25E769C697EC2C20DA3BDDE9F188CF170FA234E8. The associated private key is sealed in a hardware token only accessible to team members.*
 
 Finally, the interval to check updates need to be set. The shorter the interval the faster revised patterns get activate, but the more network traffic ROSE creates. 
+
+#### Identifiers and privacy options
+
+An important feature of ROSE is its ability not only to track participants' actions but also references to the content at which actions targeted. This feature has a privacy-aware design that is researchers can analyze dependencies between participants' actions but cannot reveal the actual plain content involved in those actions such as the actual text messages in chats, text of postings in newsfeed, photos, videos et cetera. This privacy protection is achieved with identifiers calculated from the online content - visible or invisible - with which the participants interact. How this works is explained with the following picture.
+
+![How ROSE generates content identifiers](./images/rose-identifiers.png "ROSE identifiers")
+
+[Enlarge image](./images/rose-identifiers.png)
+
+In this example, participant A uses Facebook and "likes" a posting on her "wall" (left column). ROSE records this action as it has a pattern available for tracking "like" events on Facebook. But ROSE not only records the event but also - depending on the tracking pattern - reads out a visible or invisible part of the content of the posting, in this case we assume it is the text string "Tonight's episode will air on HBO." This string is concatenated with a cryptographic *salt* - in our case "ROSE123" - and finally fed into a cryptographic hash function. This function returns a string called message digest, a kind of short version of the initial string. This calculation is irreversible making it impossible for someone who wants to break the privacy of participant A to restore the original content only from message digest in participant A's ROSE data.
+
+However, someone with access to Facebook's content could calculate hash values for available content and re-identify in ROSE data the content participant A interacted with. For that reason ROSE stores only a small snippet with a previously defined *content identifier length* - in our case five digits - thereby intentionally creating collusions when someone tries to re-identify content. That means that not only the content in the post of participant A leads to the content identifier "da39a" but also multiple other kinds of content at Facebook. This can be understood as a kind of laying false trails in the data making it much more difficult (and computationally costly) to specifically re-identify participant A. As a side effect, identifiers are easier to handle during data analysis as they are shorter.
+
+This protection mechanism can be tightened even more by choosing a random salt (not a predictable string "ROSE123" as in our example) and to remove the salt from participants' ROSE data sets before further using or sharing them. Without any knowledge of the used salt, it is practically unfeasible to re-identify participant A by means of the identifiers ROSE creates. 
+
+Coming back to the depicted example, in case participant A initiates another action (middle column) referring to a different object than before (posting "I got a nasty habit; I take tea at three.") this leads to a different identifier "de9fsc". But if participant A or even another study participant B executes an action on the same post mentioned first in our example (right column), the content identifier remains the same "da39a" and both actions can be correlated from ROSE data by the researchers afterwards.
+
+Of course, as only a snippet of the message digest is stored, actions might also correlate via their identifiers because of collusions. But this is unlikely if the *content identifier length* was chosen long enough with respect to the kind of study you plan. As a rule on thumb, an identifier length of five allows for 16⁵ (~1 million) different identifiers which should be sufficient for studies which aim on correlating actions across a multitude of participants. If you want to correlate actions only within the data of individual participants, a length of four digits (16⁴~65 thousand identifiers) should be sufficient. It might help to roughly estimate the size of the set of identifiers in which you want to find correlations and multiply it with a fixed factor such as 1000 to calculate the size of the space of possible of identifiers. Starting from this required identifier space size you can easily calculate the appropriate *content identifier length*.
+
+To configure this privacy mechanism the study creator provides two options already mentioned before:
+
+  * *Cryptographic salt for content identifiers* allows to set up the salt used to generate ROSE identifiers. As noted before you can generate a random salt and can remove it later from ROSE data when you decide to share this data for the purpose of your research. 
+  * *Content identifier length* the length of the snippet cut of from the message digest. Every additional digit increases the available identifier space by a factor of 16. Choose the identifier length according to your requirements of correlating ROSE data for individual participants or across participants.
+
+#### Optional Facebook features
+
+Finally, an experimental comment function specifically for Facebook can be activated in the study configuration. To use this feature you also need to enable tracking Facebook actions when configuring the action tracking as described before. 
+
+This comment function can be used by study participants to comment content in Facebook in situ for the purpose of your study. It is directly embedded into the user interface of the Facebook wall of participants by adding a red ribbon on single wall items as shown in the following picture.
+
+![Comment function ribbon](./images/screenshot-ribbon.png "Comment function ribbon")
+
+After the participant clicks the ribbon, a sidebar slides in from the left screen boundary with input fields and rating options, see picture below. The participant can enter comments which are stored in the participant's ROSE data. 
+
+![Input field of the comment function](./images/screenshot-survey.png "Input field of the comment function")
+
+A ROSE identifier is assigned to each comment representing the wall item to which it relates. Hence comments can also be related to participant's actions on this item.
+
+In the study configurator you can choose whether the comment function should be visible to participants by enabling or disabling *In-situ comments*. The *in-situ rating option* can be activated separately.
+
+#### Exporting and using the configuration file
+
+After you finished configuring your study, you need to export the created configuration into a file which is the last option on the study configurator page. You can enter a file name and by clicking "Export" the file is created and you can store it on your computer. 
+
+Later for your study you need to distribute this configuration file to your participants. On the welcome screen participants can load this file instead of the default configuration when they open the ROSE user interface for the first time. Participants' local installations are then adapted to the needs of your study.
 
 
 

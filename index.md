@@ -2,11 +2,11 @@
 
 ### What is ROSE?
 
-ROSE is a web browser extension for Google Chrome, Mac OS X Safari, and Mozilla Firefox that allowing empirical researchers to collect detailed in-situ data on participants usage of social media websites such as Facebook, Twitter, or Google+ during the course of an empirical field study. Also the software implements a whole research workflow including creating a study with ROSE, deploying a ROSE configuration to participants' installations of ROSE tailored to specific study needs, and aids for analyzing collected data.
+ROSE is a web browser extension for Google Chrome, Mac OS X Safari, and Mozilla Firefox that allows empirical researchers to collect detailed in-situ data on participants usage of social media websites such as Facebook, Twitter, or Google+ during the course of an empirical field study. Also the software implements a whole research workflow including creating a study with ROSE, deploying a ROSE configuration to participants' installations of ROSE tailored to specific study needs, and aids for analyzing collected data.
 
 ### So ROSE basically counts clicks in Facebook, Twitter etc.? That's simple, isn't it?
 
-While it sounds easy to collect in-situ field data the evil is in the details: any data collection needs to balance study participants' privacy interests and the level of detail the data collection is aiming at. Moreover, web pages such as Facebook or Google+ are constantly changing their design and structure making it technically difficult to observe defined events locally at participants' web browsers. Any data collection tool must be able to adapt to these changes easily and just in time.
+While it sounds easy to collect in-situ field data the devil is in the details: any data collection needs to balance study participants' privacy interests and the level of detail the data collection is aiming at. Moreover, web pages such as Facebook or Google+ are constantly changing their design and structure making it technically difficult to observe defined events locally at participants' web browsers. Any data collection tool must be able to adapt to these changes easily and just in time.
 
 We developed ROSE within our own empirical studies of interactional privacy on social network sites. We revised ROSE with any new requirement we found in our work. ROSE crystallizes years of experience in doing multi-method empirical research, and we hope that by providing this tool we can support the research community giving back some of our experiences and encounters.
 
@@ -14,15 +14,15 @@ We developed ROSE within our own empirical studies of interactional privacy on s
 
 We developed a unique privacy-aware design for ROSE: 
 
-The first decision was that ROSE needed to be a browser extension. A browser extension enables study participants to control and monitor all collected data locally on their computer at any time. Other solutions like Facebook Apps allow similar data collections more easily but data are stored on servers of the app provider finally out of control of study participants. When using ROSE, only the participant herself decides when to hand over which data to the researchers in whose study she participates. At any time, participants can time check the data ROSE records about her use of social network sites.
+The first decision was that ROSE needed to be a browser extension. A browser extension enables study participants to control and monitor all collected data locally on their computer at any time. Other solutions like Facebook Apps allow similar data collections more easily but data are stored on servers of the app provider finally out of control of study participants. When using ROSE, only the participant herself decides when to hand over which data to the researchers in whose study she participates. At any time, participants can check the data ROSE records about her use of social network sites.
 
 A second important decision was about recording the content or targets of interactions. For researchers it is important to know not only when a participant interacted with a social network site, but also the kind of items or persons she interacted with. For example, on Facebook, a user might "like" a newsfeed post and later comment on the same post. For researchers it is important to recognize this dependency between both actions. 
 
-Using the content of an interaction target, e.g., a newsfeed post, or user identifiers such as people's names, ROSE calculates unique identifiers enabling researchers to track the structure and dependencies among interactions while perserving participants' privacy at the same time. These identifiers allow to relate interactions to each other, but prevent researchers from getting access to actual content or being able to identify real persons.   
+Using the content of an interaction target, e.g., a newsfeed post, or user identifiers such as people's names, ROSE calculates unique identifiers enabling researchers to track the structure and dependencies among interactions while perserving participants' privacy at the same time. These identifiers allow to relate interactions to each other, but prevent researchers from getting access to actual content or being able to identify real persons.  
 
 ### How can I try it out?
 
-You find the Google Chrome extension page of ROSE here: [Chrome Store](https://chrome.google.com/webstore/detail/rose/chmgghdkcookiojbnchechkhjfbadjkd)
+You can find the Google Chrome extension of ROSE here: [Chrome Store](https://chrome.google.com/webstore/detail/rose/chmgghdkcookiojbnchechkhjfbadjkd)
 
 The extension for Apple Safari can be downloaded here: [Safari Extensions Gallery](https://safari-extensions.apple.com/details/?id=com.kangoextensions.rose-2Q5XV9C329)
 
